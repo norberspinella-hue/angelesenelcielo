@@ -1,0 +1,42 @@
+import type { Metadata } from "next";
+import { Inter, Playfair_Display } from "next/font/google";
+import Script from "next/script";
+import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: 'swap',
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: 'swap',
+});
+
+export const metadata: Metadata = {
+  title: "Ángeles en el Cielo | Todas las mascotas van al cielo",
+  description: "Una experiencia memorial digital para mascotas fallecidas. Cada foto guarda una historia. Cada historia deja una huella.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="es">
+      <head>
+        <Script
+          defer
+          data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
+          src="https://plausible.io/js/script.tagged-events.js"
+        />
+      </head>
+      <body className={`${inter.variable} ${playfair.variable} antialiased`}>
+        {children}
+      </body>
+    </html>
+  );
+}
