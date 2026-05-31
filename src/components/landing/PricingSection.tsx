@@ -13,7 +13,7 @@ export function PricingSection() {
 
       <div className="pricing-grid">
         {/* Plan 1 */}
-        <div className="plan-card heaven-card flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.04)]" style={{ backgroundColor: '#ede1ff', borderColor: 'white', borderWidth: '2px' }}>
+        <div className="plan-card heaven-card flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.04)]" style={{ backgroundColor: '#EDE8F5', borderColor: 'white', borderWidth: '2px' }}>
           <h3 className="plan-title text-[#1E2A78]">Recuerdo Inicial</h3>
           <p className="microcopy mt-2 text-[#5A639C]">Un espacio sencillo y eterno para siempre</p>
           <div className="plan-price text-[#1E2A78]">1,99 €</div>
@@ -32,7 +32,7 @@ export function PricingSection() {
         </div>
 
         {/* Plan 2 */}
-        <div className="plan-card heaven-card is-featured flex flex-col shadow-[0_0_15px_rgba(255,215,100,0.8),_0_0_40px_rgba(240,160,50,0.6)]" style={{ backgroundColor: '#ede1ff', borderColor: 'white', borderWidth: '2px' }}>
+        <div className="plan-card heaven-card is-featured flex flex-col shadow-[0_0_15px_rgba(255,215,100,0.8),_0_0_40px_rgba(240,160,50,0.6)]" style={{ backgroundColor: '#EDE8F5', borderColor: 'white', borderWidth: '2px' }}>
           <div className="plan-badge bg-[#1E2A78] text-white">El más elegido</div>
           <h3 className="plan-title text-[#1E2A78]">Estrella Anual</h3>
           <p className="microcopy mt-2 text-[#5A639C]">Mayor visibilidad renovable cada año</p>
@@ -52,7 +52,7 @@ export function PricingSection() {
         </div>
 
         {/* Plan 3 */}
-        <div className="plan-card heaven-card flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.04)]" style={{ backgroundColor: '#FCF5EE', borderColor: 'white', borderWidth: '2px' }}>
+        <div className="plan-card heaven-card flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.04)]" style={{ backgroundColor: '#EDE8F5', borderColor: 'white', borderWidth: '2px' }}>
           <h3 className="plan-title text-[#8A6033]">Recuerdo Eterno</h3>
           <p className="microcopy mt-2 text-[#9A7D63]">El homenaje máximo, sin renovaciones</p>
           <div className="plan-price text-[#8A6033]">9,99€</div>
