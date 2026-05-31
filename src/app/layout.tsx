@@ -33,6 +33,9 @@ export default function RootLayout({
           data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
           src="https://plausible.io/js/script.tagged-events.js"
         />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet" />
       </head>
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
         {children}
