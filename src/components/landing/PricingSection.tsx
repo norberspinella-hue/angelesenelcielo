@@ -33,7 +33,7 @@ export function PricingSection() {
               <li>Escribe su historia y dedicatoria</li>
             </ul>
             
-            <Link href="/mural-global" className="w-full mt-4 flex items-center justify-center min-h-[52px] rounded-full text-[#1E2A78] font-normal shadow-[0_4px_14px_rgba(0,0,0,0.05)] transition hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)]" style={{ backgroundColor: 'white', border: '1px solid white' }}>
+            <Link href="/mural-global" className="btn-inicial-heaven w-full mt-4 text-center">
               Elegir Inicial
             </Link>
           </div>
@@ -60,7 +60,7 @@ export function PricingSection() {
               <li>Recordatorio especial de aniversario</li>
             </ul>
             
-            <Link href="/mural-global" className="w-full mt-4 flex items-center justify-center min-h-[52px] rounded-full text-white font-normal shadow-[0_8px_20px_rgba(30,42,120,0.3)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(30,42,120,0.4)]" style={{ background: 'linear-gradient(to right, #2C3B96, #1E2A78)' }}>
+            <Link href="/mural-global" className="btn-estrella-heaven w-full mt-4 text-center">
               Elegir Estrella
             </Link>
           </div>
