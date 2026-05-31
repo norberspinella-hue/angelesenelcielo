@@ -14,9 +14,11 @@ export function PricingSection() {
 
       <div className="pricing-grid">
         {/* Plan 1 */}
-        <div className="plan-card heaven-card flex flex-col relative overflow-hidden group shadow-[0_8px_30px_rgba(0,0,0,0.04)]" style={{ backgroundColor: '#EDE8F5', borderColor: 'white', borderWidth: '2px' }}>
-          <Image src="/images/placeholders/first.webp" alt="Fondo Recuerdo Inicial" fill className="object-cover z-0 transition-transform duration-700 group-hover:scale-110" />
-          <div className="absolute inset-0 bg-white/20 z-0 transition-opacity duration-700 group-hover:bg-white/0" />
+        <div className="plan-card heaven-card flex flex-col relative group shadow-[0_8px_30px_rgba(0,0,0,0.04)]" style={{ backgroundColor: '#EDE8F5', borderColor: 'white', borderWidth: '2px' }}>
+          <div className="absolute inset-0 rounded-[28px] overflow-hidden z-0">
+            <Image src="/images/placeholders/first.webp" alt="Fondo Recuerdo Inicial" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-white/20 transition-opacity duration-700 group-hover:bg-white/0" />
+          </div>
           
           <div className="relative z-10 flex flex-col h-full flex-1">
             <h3 className="plan-title text-[#1E2A78]">Recuerdo Inicial</h3>
@@ -38,9 +40,11 @@ export function PricingSection() {
         </div>
 
         {/* Plan 2 */}
-        <div className="plan-card heaven-card is-featured flex flex-col relative overflow-hidden group shadow-[0_0_15px_rgba(255,215,100,0.8),_0_0_40px_rgba(240,160,50,0.6)]" style={{ backgroundColor: '#EDE8F5', borderColor: 'white', borderWidth: '2px' }}>
-          <Image src="/images/placeholders/first.webp" alt="Fondo Estrella Anual" fill className="object-cover z-0 transition-transform duration-700 group-hover:scale-110" />
-          <div className="absolute inset-0 bg-white/20 z-0 transition-opacity duration-700 group-hover:bg-white/0" />
+        <div className="plan-card heaven-card is-featured flex flex-col relative group shadow-[0_0_15px_rgba(255,215,100,0.8),_0_0_40px_rgba(240,160,50,0.6)]" style={{ backgroundColor: '#EDE8F5', borderColor: 'white', borderWidth: '2px' }}>
+          <div className="absolute inset-0 rounded-[28px] overflow-hidden z-0">
+            <Image src="/images/placeholders/first.webp" alt="Fondo Estrella Anual" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-white/20 transition-opacity duration-700 group-hover:bg-white/0" />
+          </div>
           
           <div className="plan-badge bg-[#1E2A78] text-white">El más elegido</div>
           <div className="relative z-10 flex flex-col h-full flex-1">
@@ -63,9 +67,11 @@ export function PricingSection() {
         </div>
 
         {/* Plan 3 */}
-        <div className="plan-card heaven-card flex flex-col relative overflow-hidden group shadow-[0_8px_30px_rgba(0,0,0,0.04)]" style={{ backgroundColor: '#EDE8F5', borderColor: 'white', borderWidth: '2px' }}>
-          <Image src="/images/placeholders/two.webp" alt="Fondo Recuerdo Eterno" fill className="object-cover z-0 transition-transform duration-700 group-hover:scale-110" />
-          <div className="absolute inset-0 bg-white/20 z-0 transition-opacity duration-700 group-hover:bg-white/0" />
+        <div className="plan-card heaven-card flex flex-col relative group shadow-[0_8px_30px_rgba(0,0,0,0.04)]" style={{ backgroundColor: '#EDE8F5', borderColor: 'white', borderWidth: '2px' }}>
+          <div className="absolute inset-0 rounded-[28px] overflow-hidden z-0">
+            <Image src="/images/placeholders/two.webp" alt="Fondo Recuerdo Eterno" fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+            <div className="absolute inset-0 bg-white/20 transition-opacity duration-700 group-hover:bg-white/0" />
+          </div>
           
           <div className="relative z-10 flex flex-col h-full flex-1">
             <h3 className="plan-title text-[#8A6033]">Recuerdo Eterno</h3>
