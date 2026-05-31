@@ -10,6 +10,7 @@ import { Footer } from '@/components/landing/Footer';
 import { RainbowBridge } from '@/components/landing/RainbowBridge';
 import { MuralPreview } from '@/components/landing/MuralPreview';
 import { HeavenCTAButton } from '@/components/ui/HeavenCTAButton';
+import { TrustStrip } from '@/components/landing/TrustStrip';
 
 export default function AngelesEnElCieloLanding() {
   return (
@@ -56,6 +57,8 @@ export default function AngelesEnElCieloLanding() {
               <HeavenCTAButton href="/mural-global" className="py-3 px-6 text-base" />
             </div>
           </section>
+
+          <TrustStrip />
         </div>
       </main>
 
