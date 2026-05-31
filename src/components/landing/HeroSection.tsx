@@ -26,7 +26,8 @@ export function HeroSection() {
             1.000.000 de espacios para recordar, amar y honrar.
           </p>
           <p className="text-[#1E2A78] mt-4 opacity-90 leading-relaxed max-w-[500px]">
-            Un mural interactivo en el cielo, donde cada angelito tiene su propio lugar eterno. Forma parte del mural de angelitos antes que se complete.
+            Un mural interactivo en el cielo, donde cada angelito tiene su propio lugar eterno.
+            <span className="block mt-3">Forma parte del mural más grande del mundo antes que se complete.</span>
           </p>
           <div className="heaven-hero-actions mt-8 flex flex-wrap gap-4">
             <HeavenCTAButton href="/mural-global" className="py-3 px-6 text-base" />
