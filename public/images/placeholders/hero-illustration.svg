@@ -1,16 +1,43 @@
-<svg xmlns="http://www.0000.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
-  <!-- Hero Illustration placeholder -->
-  <rect width="600" height="400" fill="#F5E6D3" rx="20" /> <!-- Pastel background -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#C8B8E8"/>
+      <stop offset="100%" stop-color="#F4D4D9"/>
+    </linearGradient>
+    <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#E5C88A" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#E5C88A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
   
-  <!-- Silhouette placeholder -->
-  <g fill="#001F3F" transform="translate(150, 100)">
-    <!-- Dog -->
-    <path d="M 50,200 C 50,100 150,100 150,200 Z" opacity="0.8" />
-    <circle cx="100" cy="90" r="40" opacity="0.8" />
-    <!-- Cat -->
-    <path d="M 200,200 C 200,140 260,140 260,200 Z" opacity="0.8" />
-    <circle cx="230" cy="130" r="30" opacity="0.8" />
-  </g>
+  <!-- Sky Background (transparent so it blends with hero background, but let's add a subtle glow) -->
+  <rect width="600" height="400" fill="url(#skyGrad)" rx="30" opacity="0.3"/>
   
-  <text x="300" y="350" font-family="Inter, sans-serif" font-size="20" fill="#001F3F" text-anchor="middle">Ilustración Perrito + Gato (Placeholder)</text>
+  <!-- Moon / Sun Glow -->
+  <circle cx="300" cy="150" r="100" fill="url(#moonGlow)"/>
+  <circle cx="300" cy="150" r="40" fill="#FFF8F4"/>
+  
+  <!-- Rainbow arc -->
+  <path d="M 100 350 A 200 200 0 0 1 500 350" fill="none" stroke="#F4D4D9" stroke-width="8" opacity="0.8"/>
+  <path d="M 110 350 A 190 190 0 0 1 490 350" fill="none" stroke="#E5C88A" stroke-width="8" opacity="0.6"/>
+  <path d="M 120 350 A 180 180 0 0 1 480 350" fill="none" stroke="#C8B8E8" stroke-width="8" opacity="0.8"/>
+  
+  <!-- Clouds -->
+  <path d="M 50 350 Q 80 300 120 350 Q 150 320 200 350" fill="#FFF8F4" opacity="0.9"/>
+  <path d="M 400 350 Q 450 310 480 350 Q 520 320 550 350" fill="#FFF8F4" opacity="0.9"/>
+  
+  <!-- Golden Retriever Silhouette -->
+  <path d="M 230 350 C 230 250, 280 200, 280 160 C 280 140, 290 130, 310 140 C 330 150, 320 180, 320 200 C 320 250, 310 300, 350 350 Z" fill="#C9A961"/>
+  <!-- Dog Ear & Detail -->
+  <path d="M 285 145 C 275 160, 280 180, 290 170" fill="#1E2A78" opacity="0.2"/>
+  
+  <!-- Cat Silhouette -->
+  <path d="M 340 350 C 340 280, 360 250, 360 220 C 360 210, 370 200, 380 210 C 390 220, 380 240, 380 260 C 380 300, 390 320, 420 350 Z" fill="#706A95"/>
+  <!-- Cat Ears -->
+  <polygon points="360,220 355,200 370,210" fill="#706A95"/>
+  <polygon points="380,210 385,195 375,205" fill="#706A95"/>
+  
+  <!-- Base Clouds (over dog and cat feet) -->
+  <path d="M 0 400 L 0 340 Q 100 320 300 350 Q 500 340 600 360 L 600 400 Z" fill="#FFF8F4"/>
+  <path d="M 0 400 L 0 360 Q 150 330 300 370 Q 450 350 600 380 L 600 400 Z" fill="#F5E6D3" opacity="0.5"/>
 </svg>

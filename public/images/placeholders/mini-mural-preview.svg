@@ -1,20 +1,42 @@
-<svg xmlns="http://www.0000.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
-  <!-- Mini Mural Preview placeholder -->
-  <rect width="400" height="300" fill="#FFF8F4" rx="16" />
-  
-  <g opacity="0.6">
-    <!-- Grid pattern -->
-    <rect x="20" y="20" width="40" height="40" fill="#F8C7D8" rx="4" />
-    <rect x="70" y="20" width="40" height="40" fill="#D4AF37" rx="4" />
-    <rect x="120" y="20" width="40" height="40" fill="#001F3F" rx="4" />
-    
-    <rect x="20" y="70" width="40" height="40" fill="#E6E6FA" rx="4" />
-    <rect x="70" y="70" width="40" height="40" fill="#F8C7D8" rx="4" />
-    <rect x="120" y="70" width="40" height="40" fill="#F5E6D3" rx="4" />
-    
-    <!-- And some more abstract slots -->
-    <rect x="20" y="120" width="90" height="90" fill="#D4AF37" rx="8" /> <!-- 2x2 block -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" width="100%" height="100%">
+  <defs>
+    <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+      <!-- Base grid lines -->
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E5C88A" stroke-width="1" opacity="0.3"/>
+    </pattern>
+    <linearGradient id="fadeEdge" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFF8F4" stop-opacity="1"/>
+      <stop offset="15%" stop-color="#FFF8F4" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#FFF8F4" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#FFF8F4" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="fadeEdgeY" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFF8F4" stop-opacity="1"/>
+      <stop offset="20%" stop-color="#FFF8F4" stop-opacity="0"/>
+      <stop offset="80%" stop-color="#FFF8F4" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#FFF8F4" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1000" height="400" fill="#FFF8F4"/>
+  <rect width="1000" height="400" fill="url(#gridPattern)"/>
+
+  <!-- Decorative populated blocks -->
+  <g opacity="0.8">
+    <rect x="200" y="80" width="40" height="40" fill="#C9A961" rx="4"/>
+    <rect x="240" y="120" width="40" height="40" fill="#1E2A78" rx="4"/>
+    <rect x="360" y="240" width="80" height="80" fill="#C8B8E8" rx="8"/>
+    <rect x="400" y="160" width="120" height="120" fill="#E5C88A" rx="12"/>
+    <rect x="560" y="200" width="40" height="40" fill="#F4D4D9" rx="4"/>
+    <rect x="640" y="120" width="80" height="80" fill="#C9A961" rx="8"/>
+    <rect x="760" y="280" width="40" height="40" fill="#1E2A78" rx="4"/>
+    <rect x="800" y="80" width="40" height="40" fill="#C8B8E8" rx="4"/>
+    <rect x="280" y="280" width="40" height="40" fill="#F4D4D9" rx="4"/>
+    <rect x="480" y="80" width="40" height="40" fill="#1E2A78" rx="4"/>
+    <rect x="720" y="200" width="40" height="40" fill="#E5C88A" rx="4"/>
   </g>
-  
-  <text x="200" y="260" font-family="Inter, sans-serif" font-size="16" fill="#001F3F" text-anchor="middle">Mini Mural Preview (Placeholder)</text>
+
+  <!-- Fading edges to blend with background -->
+  <rect width="1000" height="400" fill="url(#fadeEdge)"/>
+  <rect width="1000" height="400" fill="url(#fadeEdgeY)"/>
 </svg>

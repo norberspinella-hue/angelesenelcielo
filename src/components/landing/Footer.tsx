@@ -1,0 +1,18 @@
+import Link from 'next/link';
+
+export function Footer() {
+  return (
+    <footer className="py-12 border-t border-white/40 mt-16 text-center">
+      <div className="flex flex-wrap justify-center gap-6 text-sm text-[#706A95]">
+        <Link href="/aviso-legal" className="hover:text-[#6F5FA8]">Aviso Legal</Link>
+        <Link href="/privacidad" className="hover:text-[#6F5FA8]">Privacidad</Link>
+        <Link href="/cookies" className="hover:text-[#6F5FA8]">Cookies</Link>
+        <Link href="/condiciones-contratacion" className="hover:text-[#6F5FA8]">Condiciones</Link>
+      </div>
+      
+      <div className="mt-8 text-xs text-[#706A95]">
+        © {new Date().getFullYear()} Ángeles en el Cielo. Todos los derechos reservados.
+      </div>
+    </footer>
+  );
+}
