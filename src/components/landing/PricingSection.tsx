@@ -5,10 +5,9 @@ export function PricingSection() {
   return (
     <section id="planes" className="pt-16 pb-[62px]">
       <div className="text-center mb-16">
-        <h2 className="section-title">Elige cómo mantener su luz encendida</h2>
-        <p className="body-copy max-w-[600px] mx-auto mt-4">
-          Opciones accesibles para que el recuerdo de tu compañero perdure, 
-          con diferentes niveles de protagonismo en nuestro mural global.
+        <h2 className="section-title">Su amor ocupó un lugar inmenso en tu vida</h2>
+        <p className="body-copy max-w-[700px] mx-auto mt-4">
+          Ahora puedes elegir cómo quieres que su foto aparezca en el mural: como una pequeña luz, como una huella visible o como una constelación que siga brillando para siempre
         </p>
       </div>
 
