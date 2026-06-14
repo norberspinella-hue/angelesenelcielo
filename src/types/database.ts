@@ -134,6 +134,45 @@ export interface Database {
         }
         Update: Partial<Database['public']['Tables']['email_logs']['Insert']>
       }
+      certificates: {
+        Row: {
+          id: string
+          order_id: string
+          user_email: string
+          pet_name: string
+          plan: string
+          founder_number: number | null
+          slot_code: string | null
+          pet_photo_url: string
+          profile_url: string | null
+          upload_token: string
+          status: string
+          certificate_pdf_url: string | null
+          certificate_png_url: string | null
+          created_at: string
+          uploaded_at: string | null
+          delivered_at: string | null
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          user_email: string
+          pet_name: string
+          plan: string
+          founder_number?: number | null
+          slot_code?: string | null
+          pet_photo_url: string
+          profile_url?: string | null
+          upload_token: string
+          status?: string
+          certificate_pdf_url?: string | null
+          certificate_png_url?: string | null
+          created_at?: string
+          uploaded_at?: string | null
+          delivered_at?: string | null
+        }
+        Update: Partial<Database['public']['Tables']['certificates']['Insert']>
+      }
     }
   }
 }

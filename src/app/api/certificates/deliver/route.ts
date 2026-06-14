@@ -15,12 +15,14 @@ export async function POST(req: NextRequest) {
     const supabase = createAdminClient();
 
     // 1. Buscar certificate por upload_token y status uploaded
-    const { data: cert, error: fetchError } = await supabase
-      .from('certificates')
+    const { data, error: fetchError } = await (supabase
+      .from('certificates') as any)
       .select('*')
       .eq('upload_token', token)
       .eq('status', 'uploaded')
       .single();
+
+    const cert = data as any;
 
     if (fetchError || !cert) {
       return NextResponse.json(
@@ -40,8 +42,8 @@ export async function POST(req: NextRequest) {
     });
 
     // 3. Actualizar status de la orden a 'delivered'
-    const { error: updateError } = await supabase
-      .from('certificates')
+    const { error: updateError } = await (supabase
+      .from('certificates') as any)
       .update({
         status: 'delivered',
         delivered_at: new Date().toISOString()

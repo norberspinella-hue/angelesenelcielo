@@ -17,12 +17,14 @@ export async function POST(req: NextRequest) {
     const supabase = createAdminClient();
 
     // 1. Validar token y verificar que está en estado pending
-    const { data: cert, error: fetchError } = await supabase
-      .from('certificates')
+    const { data, error: fetchError } = await (supabase
+      .from('certificates') as any)
       .select('*')
       .eq('upload_token', token)
       .eq('status', 'pending')
       .single();
+
+    const cert = data as any;
 
     if (fetchError || !cert) {
       return NextResponse.json(
@@ -85,8 +87,8 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Actualizar tabla a 'uploaded'
-    const { error: updateError } = await supabase
-      .from('certificates')
+    const { error: updateError } = await (supabase
+      .from('certificates') as any)
       .update({
         status: 'uploaded',
         certificate_pdf_url: pdfSignedData.signedUrl,

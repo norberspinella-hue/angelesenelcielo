@@ -229,7 +229,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        onWheel={handleWheel}
+        onWheel={(e) => handleWheel(e.nativeEvent)}
         onClick={handleClick}
         style={{ width: viewport.width, height: viewport.height }}
       />

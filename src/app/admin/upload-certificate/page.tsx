@@ -26,11 +26,13 @@ export default async function UploadCertificatePage({ searchParams }: PageProps)
   }
 
   const supabase = createAdminClient();
-  const { data: cert, error } = await supabase
-    .from('certificates')
+  const { data, error } = await (supabase
+    .from('certificates') as any)
     .select('*')
     .eq('upload_token', token)
     .single();
+
+  const cert = data as any;
 
   if (error || !cert) {
     return (

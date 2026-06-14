@@ -34,8 +34,8 @@ export async function createCertificateOrder(params: CreateCertificateOrderParam
   // Generar un token único de 64 caracteres hex (32 bytes) para seguridad
   const uploadToken = crypto.randomBytes(32).toString('hex');
 
-  const { data, error } = await supabase
-    .from('certificates')
+  const { data, error } = await (supabase
+    .from('certificates') as any)
     .insert({
       order_id: params.orderId,
       user_email: params.userEmail,
