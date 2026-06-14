@@ -58,11 +58,19 @@ export function useMuralViewport(initialWidth = 1200, initialHeight = 800) {
     isDragging.current = false;
   }, []);
 
-  const handleWheel = useCallback((e: WheelEvent) => {
+  const handleWheel = useCallback((e: WheelEvent, canvasRect?: DOMRect) => {
     e.preventDefault(); // Prevent default browser scrolling
     
     // Determine the point under the cursor to zoom towards
-    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    let rect = canvasRect;
+    if (!rect) {
+      const target = (e.currentTarget || e.target) as HTMLElement;
+      if (target && typeof target.getBoundingClientRect === 'function') {
+        rect = target.getBoundingClientRect();
+      } else {
+        return; // Unable to determine rect
+      }
+    }
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 

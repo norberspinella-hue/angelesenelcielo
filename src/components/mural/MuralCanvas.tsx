@@ -168,8 +168,8 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
             ctx.shadowBlur = (slotSize > 12 ? 4 : 2) * glowIntensity;
             ctx.globalAlpha = 0.7 + 0.3 * glowIntensity;
 
-            ctx.fillStyle = seeded.color;
-            ctx.strokeStyle = seeded.color; // Remove the hardcoded gold and just use the seeded color
+            ctx.fillStyle = seeded.color + 'EE';
+            ctx.strokeStyle = seeded.color + 'EE'; // Use same color with EE opacity
             ctx.lineWidth = 0.3;
             rr(sx, sy, cell, cell, radius);
             ctx.fill();
@@ -180,9 +180,9 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
             ctx.shadowBlur = 0;
           } else {
             // Empty slot
-            ctx.fillStyle = 'rgba(255,255,255,0.15)'; // Slightly whiter instead of purple
-            ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-            ctx.lineWidth = 0.3;
+            ctx.fillStyle = 'rgba(220, 200, 240, 0.45)';
+            ctx.strokeStyle = 'rgba(180, 150, 210, 0.65)';
+            ctx.lineWidth = 0.8;
             rr(sx, sy, cell, cell, Math.max(1, cell * 0.12));
             ctx.fill();
             if (slotSize > 4) ctx.stroke();
@@ -221,6 +221,10 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
     <div 
       ref={containerRef} 
       className="w-full h-full relative overflow-hidden"
+      style={{
+        background: 'rgba(255, 245, 255, 0.25)',
+        backdropFilter: 'blur(2px)'
+      }}
     >
       <canvas
         ref={canvasRef}
@@ -229,7 +233,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        onWheel={(e) => handleWheel(e.nativeEvent)}
+        onWheel={(e) => handleWheel(e.nativeEvent, canvasRef.current?.getBoundingClientRect())}
         onClick={handleClick}
         style={{ width: viewport.width, height: viewport.height }}
       />
