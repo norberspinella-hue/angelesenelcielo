@@ -33,11 +33,25 @@ export default function MuralGlobalPage() {
   };
 
   return (
-    <main className="mural-page fixed inset-0 w-screen h-screen overflow-hidden">
+    <main className="mural-page font-inter fixed inset-0 w-screen h-screen overflow-hidden">
       <ParticlesBackground />
 
       {/* The Interactive Canvas */}
-      <div className="mural-canvas-wrapper absolute inset-0 z-0">
+      <div 
+        className="mural-canvas-wrapper absolute z-0"
+        style={{
+          top: '90px',
+          left: '360px',
+          right: '20px', 
+          bottom: '80px',
+          borderRadius: '20px',
+          overflow: 'hidden',
+          background: 'rgba(255, 245, 255, 0.20)',
+          backdropFilter: 'blur(1px)',
+          border: '1.5px solid rgba(255,255,255,0.55)',
+          boxShadow: '0 8px 32px rgba(180,140,220,0.12)',
+        }}
+      >
         <MuralCanvas 
           ref={canvasRef}
           onSelectSlot={handleSelectSlot} 
@@ -47,7 +61,13 @@ export default function MuralGlobalPage() {
       </div>
 
       {/* Top Nav (Superior) */}
-      <header className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between px-6 py-3 w-[min(1180px,calc(100%-32px))] bg-white/80 backdrop-blur-md rounded-full border border-white/90 shadow-sm pointer-events-auto">
+      <header 
+        className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between px-6 py-3 w-[min(1180px,calc(100%-32px))] rounded-full border border-white/90 shadow-sm pointer-events-auto"
+        style={{
+          backdropFilter: 'blur(12px)',
+          background: 'rgba(255,255,255,0.75)'
+        }}
+      >
         <div className="flex items-center gap-4">
           <img src="/images/placeholders/logo-angeles-cielo.svg" alt="Logo" className="h-6" />
           <Link href="/angeles-en-el-cielo" className="text-sm font-semibold text-[#706A95] hover:text-[#1E2A78] transition-colors">
@@ -77,7 +97,7 @@ export default function MuralGlobalPage() {
         >
           <div className="flex items-center gap-2 mb-2">
             <span className="text-2xl">🌟</span>
-            <h1 className="font-serif font-bold text-xl text-[#1E2A78]">Mural de Ángeles</h1>
+            <h1 className="font-playfair font-bold text-xl text-[#1E2A78]">Mural de Ángeles</h1>
           </div>
           <p className="text-[#706A95] text-sm mb-2 leading-relaxed">
             Un millón de ángeles de 4 patas, un solo cielo global.

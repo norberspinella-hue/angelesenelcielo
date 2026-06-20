@@ -8,10 +8,10 @@ export const MAX_ZOOM = 8;
 export const ZOOM_FACTOR = 1.15;
 
 export const PREMIUM_ZONE = {
-  x: 460,
-  y: 460,
-  w: 80,
-  h: 80,
+  x: 483,
+  y: 485,
+  w: 34,
+  h: 30,
 };
 
 export type ViewportState = {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface StepPlanAndSlotProps {
   onNext: () => void;
@@ -10,30 +10,43 @@ interface StepPlanAndSlotProps {
 export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSelectedSlot }: StepPlanAndSlotProps) {
   const plans = [
     {
-      id: 'recuerdo_inicial',
-      title: 'Recuerdo Inicial',
+      id: 'huellita',
+      title: 'Huellita',
       price: '1,99 €',
       duration: 'pago único',
       slots: '1 slot',
       icon: '⭐'
     },
     {
-      id: 'estrella_anual',
-      title: 'Estrella Anual',
+      id: 'estrella_brillante',
+      title: 'Estrella Brillante',
       price: '4,99 €',
       duration: '/ año',
       slots: '4 slots',
       icon: '⭐⭐⭐⭐'
     },
     {
-      id: 'recuerdo_eterno',
-      title: 'Recuerdo Eterno',
+      id: 'corazon_eterno',
+      title: 'Corazón Eterno',
       price: '9,99 €',
       duration: 'pago único',
       slots: '9 slots',
       icon: '⭐ 3x3'
     }
   ];
+
+  const [founderInfo, setFounderInfo] = useState<{ count: number; maxFounders: number; available: boolean } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/mural/founders')
+      .then(res => res.json())
+      .then(data => {
+        if (data && !data.error) {
+          setFounderInfo(data);
+        }
+      })
+      .catch(err => console.error('Error fetching founders:', err));
+  }, []);
 
   return (
     <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
@@ -69,6 +82,22 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
           </div>
         ))}
 
+        {selectedPlan === 'corazon_eterno' && founderInfo?.available && (
+          <div className="mt-2 p-3 bg-gradient-to-r from-[#FFF8E7] to-[#FCE7BA] rounded-xl border border-[#E5C88A] shadow-sm flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#C9A961] shrink-0">
+              <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <p className="text-sm font-bold text-[#8A6033]">
+                Eres el fundador #{founderInfo.count + 1}
+              </p>
+              <p className="text-xs text-[#9A7D63] mt-0.5">
+                tu espacio irá en la zona central del mural
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
           <h4 className="text-sm font-bold text-[#1E2A78] mb-2">Vista previa de presencia en el mural</h4>
           <div className="flex flex-col gap-4">
@@ -98,12 +127,12 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
                   const isMainSlot = actualCol === preSelectedSlot?.col && actualRow === preSelectedSlot?.row;
                   let isSelected = false;
                   
-                  if (selectedPlan === 'recuerdo_inicial') {
+                  if (selectedPlan === 'huellita') {
                     isSelected = isMainSlot;
-                  } else if (selectedPlan === 'estrella_anual') {
+                  } else if (selectedPlan === 'estrella_brillante') {
                     isSelected = actualCol >= (preSelectedSlot?.col || 0) && actualCol < (preSelectedSlot?.col || 0) + 2 &&
                                  actualRow >= (preSelectedSlot?.row || 0) && actualRow < (preSelectedSlot?.row || 0) + 2;
-                  } else if (selectedPlan === 'recuerdo_eterno') {
+                  } else if (selectedPlan === 'corazon_eterno') {
                     isSelected = actualCol >= (preSelectedSlot?.col || 0) && actualCol < (preSelectedSlot?.col || 0) + 3 &&
                                  actualRow >= (preSelectedSlot?.row || 0) && actualRow < (preSelectedSlot?.row || 0) + 3;
                   }

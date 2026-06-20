@@ -3,6 +3,8 @@ import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 import { createCertificateOrder } from '@/lib/certificates';
+import { createAdminClient } from '@/lib/supabase/server';
+import { FOUNDER_CONFIG } from '@/lib/founderConfig';
 
 // Desactivar el parseo automático de body de Next.js para poder validar la firma de Stripe
 export const dynamic = 'force-dynamic';
@@ -70,15 +72,39 @@ export async function POST(req: NextRequest) {
     // Validación de datos mínimos requeridos
     if (orderId && userEmail && petName && plan && petPhotoUrl) {
       try {
-        const founderNumber = founderNumberRaw ? parseInt(founderNumberRaw, 10) : undefined;
+        let finalFounderNumber = founderNumberRaw ? parseInt(founderNumberRaw, 10) : undefined;
+        let finalPlan = plan;
+
+        if (plan === 'corazon_eterno' && slotCode) {
+          const supabase = createAdminClient();
+          const { count } = await supabase
+            .from('mural_slots')
+            .select('id', { count: 'exact', head: true })
+            .eq('plan', 'corazon_eterno')
+            .eq('is_founder', true);
+
+          const currentCount = count || 0;
+          const isFounder = currentCount < FOUNDER_CONFIG.maxFounders;
+
+          if (isFounder) {
+            finalFounderNumber = currentCount + 1;
+            finalPlan = 'fundador';
+          }
+
+          // @ts-ignore: These columns will be added to DB manually, TS might not know them yet
+          await supabase.from('mural_slots').update({
+            is_founder: isFounder,
+            founder_number: isFounder ? finalFounderNumber : null,
+          }).eq('id', slotCode);
+        }
         
         // Crear orden de certificado
         await createCertificateOrder({
           orderId,
           userEmail,
           petName,
-          plan,
-          founderNumber: founderNumber !== undefined && isNaN(founderNumber) ? undefined : founderNumber,
+          plan: finalPlan,
+          founderNumber: finalFounderNumber !== undefined && isNaN(finalFounderNumber) ? undefined : finalFounderNumber,
           slotCode,
           petPhotoUrl,
           profileUrl,

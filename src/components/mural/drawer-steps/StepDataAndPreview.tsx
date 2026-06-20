@@ -61,9 +61,9 @@ export function StepDataAndPreview({ onNext, onBack, draftData, setDraftData, se
           <div className="bg-[#FFF8F4] border border-[#F8C7D8] rounded-lg p-3">
             <label className="block text-xs font-bold text-[#1E2A78] mb-1">Plan seleccionado</label>
             <div className="text-sm text-[#1E2A78]">
-              {selectedPlan === 'recuerdo_eterno' ? 'Recuerdo Eterno (9,99€)' : 
-               selectedPlan === 'estrella_anual' ? 'Estrella Anual (4,99€/año)' : 
-               'Recuerdo Inicial (1€)'}
+              {selectedPlan === 'corazon_eterno' ? 'Corazón Eterno (9,99€)' : 
+               selectedPlan === 'estrella_brillante' ? 'Estrella Brillante (4,99€/año)' : 
+               'Huellita (1€)'}
             </div>
           </div>
 

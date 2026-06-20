@@ -14,7 +14,7 @@ interface MuralDrawerProps {
 
 export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData }: MuralDrawerProps) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [selectedPlan, setSelectedPlan] = useState<string>('recuerdo_eterno');
+  const [selectedPlan, setSelectedPlan] = useState<string>('corazon_eterno');
   const [draftData, setDraftData] = useState<any>({
     name: '',
     date: '',

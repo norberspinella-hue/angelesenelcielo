@@ -21,8 +21,8 @@ import React from "react";
 
 // ─── Tipos ──────────────────────────────────────────────────────────────────
 
-export type CertificateType = "recuerdo_eterno" | "huella_eterna";
-export type BadgeLabel = "Recuerdo Eterno" | "Huella Eterna" | "Angelito Fundador";
+export type CertificateType = "corazon_eterno" | "huella_eterna";
+export type BadgeLabel = "Corazón Eterno" | "Huella Eterna" | "Angelito Fundador";
 
 export interface DoradoEternoCertificateData {
   petName: string;
@@ -46,8 +46,8 @@ export interface DoradoEternoCertificateData {
 export const EXAMPLE_DATA: DoradoEternoCertificateData = {
   petName: "Rocky",
   petPhotoUrl: "/images/example-pet.jpg",
-  certificateType: "recuerdo_eterno",
-  planName: "Recuerdo Eterno",
+  certificateType: "corazon_eterno",
+  planName: "Corazón Eterno",
   slotsCount: 9,
   slotLabel: "9 lugares en el Cielo",
   creationDate: "22·05·2026",
@@ -55,13 +55,13 @@ export const EXAMPLE_DATA: DoradoEternoCertificateData = {
   profileUrl: "https://todaslasmascotasvanalcielo.com/angeles-en-el-cielo/rocky",
   shortUrl: "aec.link/rocky",
   qrImageUrl: "/qr/rocky.png",
-  badgeLabel: "Recuerdo Eterno",
+  badgeLabel: "Corazón Eterno",
 };
 
 // ─── Textos emocionales por tipo ─────────────────────────────────────────────
 
 const EMOTIONAL_TEXTS: Record<CertificateType, (name: string) => string> = {
-  recuerdo_eterno: (name) =>
+  corazon_eterno: (name) =>
     `Con amor confirmamos que ${name} tiene un lugar\nen el Mural de Ángeles en el Cielo.\nSu amor, su luz y los momentos compartidos\nvivirán por siempre en nuestros corazones.`,
   huella_eterna: (name) =>
     `En honor a ${name}, por haber dejado una huella\nque el tiempo no borra.\nSu recuerdo forma parte del Mural de Ángeles en el Cielo,\ndonde su historia seguirá brillando para siempre.`,
@@ -70,7 +70,7 @@ const EMOTIONAL_TEXTS: Record<CertificateType, (name: string) => string> = {
 // ─── Títulos por tipo ────────────────────────────────────────────────────────
 
 const CERTIFICATE_SUBTITLES: Record<CertificateType, string> = {
-  recuerdo_eterno: "DE RECUERDO ETERNO",
+  corazon_eterno: "DE CORAZÓN ETERNO",
   huella_eterna: "DE HUELLA ETERNA",
 };
 
@@ -98,7 +98,7 @@ export function DoradoEternoCertificateA4({
   const subtitle = CERTIFICATE_SUBTITLES[data.certificateType];
   const emotionalText =
     data.emotionalMessage ?? EMOTIONAL_TEXTS[data.certificateType](data.petName);
-  const badgeText = data.badgeLabel ?? "Recuerdo Eterno";
+  const badgeText = data.badgeLabel ?? "Corazón Eterno";
   const nameFontSize = petNameFontSize(data.petName);
 
   // Escalar todo el certificado con transform

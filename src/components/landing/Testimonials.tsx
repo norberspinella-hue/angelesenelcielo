@@ -10,7 +10,7 @@ export function Testimonials() {
         </p>
         <div className="mt-8">
           <div className="font-bold text-[#1E2A78]">Laura G.</div>
-          <div className="text-[#706A95] text-sm mt-1">Mamá de Max (Estrella Anual)</div>
+          <div className="text-[#706A95] text-sm mt-1">Mamá de Max (Estrella Brillante)</div>
         </div>
         
         {/* Carousel Dots */}

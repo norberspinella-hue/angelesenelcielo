@@ -21,7 +21,7 @@ export interface Database {
           dedication: string | null
           story_answers: Json
           generated_story: string | null
-          plan_type: 'recuerdo_inicial' | 'estrella_anual' | 'recuerdo_eterno'
+          plan_type: 'huellita' | 'estrella_brillante' | 'corazon_eterno'
           price_paid: number
           currency: string
           slots_count: 1 | 4 | 9
@@ -59,7 +59,7 @@ export interface Database {
           status: 'available' | 'reserved_pending_payment' | 'occupied' | 'blocked_admin' | 'sponsor_private'
           memorial_id: string | null
           reserved_until: string | null
-          plan_type: 'recuerdo_inicial' | 'estrella_anual' | 'recuerdo_eterno' | null
+          plan_type: 'huellita' | 'estrella_brillante' | 'corazon_eterno' | null
           created_at: string
           updated_at: string
         }

@@ -19,9 +19,9 @@ export interface CreateCertificateOrderParams {
 
 const PLAN_LABELS: Record<string, string> = {
   fundador: 'Angelito Fundador',
-  eterno: 'Recuerdo Eterno',
-  estrella: 'Estrella Anual',
-  inicial: 'Recuerdo Inicial',
+  corazon_eterno: 'Corazón Eterno',
+  estrella_brillante: 'Estrella Brillante',
+  huellita: 'Huellita',
 };
 
 /**

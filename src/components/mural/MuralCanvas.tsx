@@ -35,6 +35,12 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
 
   // Track pointer down to differentiate click from drag
   const [pointerDownPos, setPointerDownPos] = useState<{ x: number; y: number } | null>(null);
+  const [showPremiumBadge, setShowPremiumBadge] = useState(true);
+
+  // Sync calculations for HTML overlays
+  const slotSizeScreen = getSlotSize(viewport.zoom);
+  const premiumCenterX = viewport.x + (PZ.x + PZ.w / 2) * slotSizeScreen;
+  const premiumCenterY = viewport.y + (PZ.y + PZ.h / 2) * slotSizeScreen;
 
   const onCanvasPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     setPointerDownPos({ x: e.clientX, y: e.clientY });
@@ -94,6 +100,16 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
 
     let rafId: number;
 
+    const particles: any[] = Array.from({length: 18}).map(() => ({
+      gX: Math.random() * PZ.w,
+      gY: Math.random() * PZ.h,
+      vX: (Math.random() - 0.5) * 0.05,
+      vY: -Math.random() * 0.1 - 0.05,
+      life: Math.random() * 100,
+      maxLife: 50 + Math.random() * 50,
+      size: Math.random() * 4 + 3
+    }));
+
     const render = () => {
       const dpr = window.devicePixelRatio || 1;
       // Setup high-DPI canvas
@@ -126,21 +142,41 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
         ctx.closePath();
       };
 
-      // Draw premium zone glow first
-      if (
-        range.colStart <= PREMIUM_ZONE.x + PREMIUM_ZONE.w && 
-        range.colEnd >= PREMIUM_ZONE.x &&
-        range.rowStart <= PREMIUM_ZONE.y + PREMIUM_ZONE.h && 
-        range.rowEnd >= PREMIUM_ZONE.y
-      ) {
-        ctx.fillStyle = 'rgba(255, 220, 97, 0.04)';
-        const px = viewport.x + PREMIUM_ZONE.x * slotSize;
-        const py = viewport.y + PREMIUM_ZONE.y * slotSize;
-        const pw = PREMIUM_ZONE.w * slotSize;
-        const ph = PREMIUM_ZONE.h * slotSize;
-        rr(px, py, pw, ph, Math.max(1, cell * 0.5));
-        ctx.fill();
-      }
+      // Draw premium zone frame
+      const px = viewport.x + PZ.x * slotSize;
+      const py = viewport.y + PZ.y * slotSize;
+      const pw = PZ.w * slotSize;
+      const ph = PZ.h * slotSize;
+
+      // Premium slots gradient (covers the whole premium zone)
+      const premiumGrad = ctx.createLinearGradient(px, py, px + pw, py + ph);
+      premiumGrad.addColorStop(0, 'rgba(255, 208, 170, 0.25)'); // #FFD0AA
+      premiumGrad.addColorStop(1, 'rgba(255, 182, 186, 0.25)'); // #FFB6BA
+      
+      const premiumGradStroke = ctx.createLinearGradient(px, py, px + pw, py + ph);
+      premiumGradStroke.addColorStop(0, 'rgba(255, 208, 170, 0.65)'); 
+      premiumGradStroke.addColorStop(1, 'rgba(255, 182, 186, 0.65)'); 
+
+      // Marco exterior coral pulsante
+      const time = Date.now() / 1000;
+      const pulse = 0.5 + 0.5 * Math.sin(time * 1.2);
+      ctx.shadowBlur = 20 + pulse * 15;
+      ctx.shadowColor = 'rgba(255, 192, 163, 0.8)';
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.80 + pulse * 0.20})`;
+      ctx.lineWidth = 3;
+      rr(px, py, pw, ph, 12);
+      ctx.stroke();
+
+      // Marco interior fino blanco con resplandor coral
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = 'rgba(255, 192, 163, 0.8)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.90)';
+      ctx.lineWidth = 1;
+      rr(px + 5, py + 5, pw - 10, ph - 10, 10);
+      ctx.stroke();
+      
+      // Reset shadow for slots
+      ctx.shadowBlur = 0;
 
       // Draw slots
       for (let row = range.rowStart; row <= range.rowEnd; row++) {
@@ -150,6 +186,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
           const key = `${col},${row}`;
           const seeded = seedMap.get(key);
           const isSelected = selectedSlot?.col === col && selectedSlot?.row === row;
+          const isPremium = col >= PZ.x && col < PZ.x + PZ.w && row >= PZ.y && row < PZ.y + PZ.h;
           const radius = Math.max(1, cell * 0.15);
 
           if (isSelected) {
@@ -159,6 +196,25 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
             rr(sx, sy, cell, cell, radius);
             ctx.fill();
             ctx.stroke();
+          } else if (isPremium) {
+            // Animación de pulso
+            const phase = (col * 7 + row * 13) % (Math.PI * 2);
+            const glowIntensity = 0.6 + 0.4 * Math.sin(Date.now() / 1500 + phase);
+            
+            ctx.fillStyle = premiumGrad;
+            ctx.strokeStyle = premiumGradStroke;
+            ctx.lineWidth = 0.8;
+
+            if (!showPremiumBadge) {
+              ctx.shadowBlur = 10 + glowIntensity * 8;
+              ctx.shadowColor = 'rgba(255, 192, 163, 0.75)';
+            }
+            
+            rr(sx, sy, cell, cell, radius);
+            ctx.fill();
+            if (slotSize > 4) ctx.stroke();
+            
+            ctx.shadowBlur = 0;
           } else if (seeded) {
             // Animación de pulso (glow) basada en fase
             const phase = (col * 7 + row * 13) % (Math.PI * 2);
@@ -180,8 +236,8 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
             ctx.shadowBlur = 0;
           } else {
             // Empty slot
-            ctx.fillStyle = 'rgba(220, 200, 240, 0.45)';
-            ctx.strokeStyle = 'rgba(180, 150, 210, 0.65)';
+            ctx.fillStyle = 'rgba(220, 200, 240, 0.20)';
+            ctx.strokeStyle = 'rgba(180, 150, 210, 0.30)';
             ctx.lineWidth = 0.8;
             rr(sx, sy, cell, cell, Math.max(1, cell * 0.12));
             ctx.fill();
@@ -190,13 +246,41 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
         }
       }
 
+      // Draw particles
+      particles.forEach(p => {
+        p.life++;
+        if (p.life > p.maxLife) {
+          p.life = 0;
+          p.maxLife = 50 + Math.random() * 50;
+          p.gX = Math.random() * PZ.w;
+          p.gY = PZ.h * 0.5 + Math.random() * PZ.h * 0.5; // start lower half
+          p.vX = (Math.random() - 0.5) * 0.05;
+          p.vY = -Math.random() * 0.1 - 0.05;
+        }
+        p.gX += p.vX;
+        p.gY += p.vY;
+        
+        const screenX = viewport.x + (PZ.x + p.gX) * slotSize;
+        const screenY = viewport.y + (PZ.y + p.gY) * slotSize;
+        const opacity = 1 - (p.life / p.maxLife);
+        const screenSize = p.size * Math.max(0.5, slotSize/16);
+
+        ctx.beginPath();
+        ctx.arc(screenX, screenY, screenSize, 0, Math.PI * 2);
+        const grad = ctx.createRadialGradient(screenX, screenY, 0, screenX, screenY, screenSize);
+        grad.addColorStop(0, `rgba(255,184,208,${opacity})`);
+        grad.addColorStop(1, `rgba(255,128,168,0)`);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      });
+
       rafId = requestAnimationFrame(render);
     };
 
     rafId = requestAnimationFrame(render);
     
     return () => cancelAnimationFrame(rafId);
-  }, [viewport, seedMap, selectedSlot]);
+  }, [viewport, seedMap, selectedSlot, showPremiumBadge]);
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (pointerDownPos) {
@@ -212,8 +296,19 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
     const my = e.clientY - rect.top;
     
     const coord = screenToGrid(mx, my, viewport);
-    if (coord && onSelectSlot) {
-      onSelectSlot(coord.col, coord.row);
+    if (coord) {
+      const { col, row } = coord;
+      const inPremiumZone = 
+        col >= PZ.x && col < PZ.x + PZ.w && 
+        row >= PZ.y && row < PZ.y + PZ.h;
+
+      if (!inPremiumZone) {
+        setShowPremiumBadge(true);
+      }
+
+      if (onSelectSlot) {
+        onSelectSlot(col, row);
+      }
     }
   };
 
@@ -237,6 +332,38 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
         onClick={handleClick}
         style={{ width: viewport.width, height: viewport.height }}
       />
+      
+      <div 
+        className="absolute flex flex-col items-center justify-center cursor-pointer"
+        style={{
+          left: premiumCenterX + 'px',
+          top: premiumCenterY + 'px',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 20,
+          pointerEvents: showPremiumBadge ? 'auto' : 'none',
+          opacity: showPremiumBadge ? 1 : 0,
+          transition: 'opacity 0.4s ease',
+          animation: 'levitate 3s ease-in-out infinite',
+        }}
+        onClick={() => setShowPremiumBadge(false)}
+      >
+        <img 
+          src="/images/icons/Badgefundadores.svg"
+          alt="Ángeles Fundadores"
+          style={{
+            width: `${140 * viewport.zoom}px`,
+            height: `${140 * viewport.zoom}px`,
+            filter: `drop-shadow(0 0 ${18 * viewport.zoom}px rgba(255,150,180,0.80)) drop-shadow(0 0 ${36 * viewport.zoom}px rgba(255,200,60,0.40))`,
+          }}
+        />
+      </div>
+
+      <style>{`
+        @keyframes levitate {
+          0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+          50% { transform: translate(-50%, -50%) translateY(-10px); }
+        }
+      `}</style>
     </div>
   );
 });

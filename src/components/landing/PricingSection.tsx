@@ -20,7 +20,7 @@ export function PricingSection() {
           </div>
           
           <div className="relative z-10 flex flex-col h-full flex-1">
-            <h3 className="plan-title text-[#1E2A78]">Recuerdo Inicial</h3>
+            <h3 className="plan-title text-[#1E2A78]">Huellita</h3>
             <p className="microcopy mt-2 text-[#5A639C]">Un espacio sencillo y eterno para siempre</p>
             <div className="plan-price text-[#1E2A78]">1,99 €</div>
             <span className="plan-meta text-sm text-[#5A639C]">Pago único (IVA incluido)</span>
@@ -47,7 +47,7 @@ export function PricingSection() {
           
           <div className="plan-badge bg-[#1E2A78] text-white">El más elegido</div>
           <div className="relative z-10 flex flex-col h-full flex-1">
-            <h3 className="plan-title text-[#1E2A78]">Estrella Anual</h3>
+            <h3 className="plan-title text-[#1E2A78]">Estrella Brillante</h3>
             <p className="microcopy mt-2 text-[#5A639C]">Mayor visibilidad renovable cada año</p>
             <div className="plan-price text-[#1E2A78]">4,99€</div>
             <span className="plan-meta text-sm text-[#5A639C]">Al año (IVA incluido)</span>
@@ -73,7 +73,7 @@ export function PricingSection() {
           </div>
           
           <div className="relative z-10 flex flex-col h-full flex-1">
-            <h3 className="plan-title text-[#8A6033]">Recuerdo Eterno</h3>
+            <h3 className="plan-title text-[#8A6033]">Corazón Eterno</h3>
             <p className="microcopy mt-2 text-[#9A7D63]">El homenaje máximo, sin renovaciones</p>
             <div className="plan-price text-[#8A6033]">9,99€</div>
             <span className="plan-meta text-sm text-[#9A7D63]">Pago único (IVA incluido)</span>
