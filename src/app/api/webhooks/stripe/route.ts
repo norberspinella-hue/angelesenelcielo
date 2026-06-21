@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
             finalPlan = 'fundador';
           }
 
-          // @ts-ignore: These columns will be added to DB manually, TS might not know them yet
+          // @ts-expect-error: These columns will be added to DB manually, TS might not know them yet
           await supabase.from('mural_slots').update({
             is_founder: isFounder,
             founder_number: isFounder ? finalFounderNumber : null,

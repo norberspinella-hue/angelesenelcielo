@@ -112,13 +112,17 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
 
     const render = () => {
       const dpr = window.devicePixelRatio || 1;
-      // Setup high-DPI canvas
-      canvas.width = viewport.width * dpr;
-      canvas.height = viewport.height * dpr;
-      ctx.scale(dpr, dpr);
-      
-      // Clear
-      ctx.clearRect(0, 0, viewport.width, viewport.height);
+      const targetWidth = Math.floor(viewport.width * dpr);
+      const targetHeight = Math.floor(viewport.height * dpr);
+
+      // Only resize the canvas buffer when size actually changes (prevents 60fps GPU texture re-allocations)
+      if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        ctx.scale(dpr, dpr);
+      } else {
+        ctx.clearRect(0, 0, viewport.width, viewport.height);
+      }
 
       const slotSize = getSlotSize(viewport.zoom);
       const gap = Math.max(0.5, slotSize * 0.08);

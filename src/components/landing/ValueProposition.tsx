@@ -6,7 +6,7 @@ export function ValueProposition() {
       <div className="section-header text-center mb-12 px-6">
         <h2 className="section-title text-[#1E2A78] mb-4">Comparte la historia de tu peque</h2>
         <p className="text-[#706A95] max-w-2xl mx-auto">
-          Responde algunas preguntas para honrar su vida y mantener vivo su recuerdo.
+          Honra la vida de tu angelito, manten vivo su recuerdo para siempre<br />en el mural más grande del mundo
         </p>
       </div>
       

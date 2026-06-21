@@ -10,7 +10,10 @@ export function OfferStrip() {
         <div>
           <h3 className="offer-title text-[#394B87] whitespace-nowrap">Huellita</h3>
           <p className="offer-detail">Ocupa 1 espacio en el mural</p>
-          <div className="offer-price">1,99 €</div>
+          <div className="offer-price">
+            1,99 €
+            <span className="offer-period text-[17px] font-normal text-[#706A95]">/ año</span>
+          </div>
         </div>
       </div>
       

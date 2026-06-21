@@ -12,8 +12,8 @@ export function StepCheckoutSummary({ onBack, onCheckout, draftData, selectedPla
   const getPlanDetails = () => {
     switch(selectedPlan) {
       case 'corazon_eterno': return { title: 'Corazón Eterno', price: '9,99 €', duration: 'Para siempre', slots: '9 slots' };
-      case 'estrella_brillante': return { title: 'Estrella Brillante', price: '4,99 €/año', duration: '1 año', slots: '4 slots' };
-      default: return { title: 'Huellita', price: '1,99 €', duration: 'Para siempre', slots: '1 slot' };
+      case 'estrella_brillante': return { title: 'Estrella Brillante', price: '4,99 €', duration: 'Para siempre', slots: '4 slots' };
+      default: return { title: 'Huellita', price: '1,99 €/año', duration: '1 año', slots: '1 slot' };
     }
   };
 

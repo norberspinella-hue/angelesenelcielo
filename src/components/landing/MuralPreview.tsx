@@ -41,9 +41,10 @@ export function MuralPreview() {
 
       {/* Right Column */}
       <div className="mural-preview-right flex-1">
-        <h3 className="text-[#1E2A78] font-bold text-xl mb-6 flex items-center gap-2">
+        <h3 className="text-[#1E2A78] font-bold text-xl mb-1 flex items-center gap-2">
           Fundadores <span className="text-[#C9A961] text-base">★</span>
         </h3>
+        <p className="text-[#706A95] mb-6">(1000 primeros angeles de 4 patas)</p>
         <div className="grid grid-cols-4 gap-4">
           {founders.map((pet) => (
             <div key={`founder-${pet.id}`} className="flex flex-col items-center gap-2 relative">

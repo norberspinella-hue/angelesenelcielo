@@ -13,7 +13,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       id: 'huellita',
       title: 'Huellita',
       price: '1,99 €',
-      duration: 'pago único',
+      duration: '/ año',
       slots: '1 slot',
       icon: '⭐'
     },
@@ -21,7 +21,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       id: 'estrella_brillante',
       title: 'Estrella Brillante',
       price: '4,99 €',
-      duration: '/ año',
+      duration: 'Para siempre',
       slots: '4 slots',
       icon: '⭐⭐⭐⭐'
     },
@@ -29,7 +29,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       id: 'corazon_eterno',
       title: 'Corazón Eterno',
       price: '9,99 €',
-      duration: 'pago único',
+      duration: 'Para siempre',
       slots: '9 slots',
       icon: '⭐ 3x3'
     }

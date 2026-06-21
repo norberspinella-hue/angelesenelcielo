@@ -5,6 +5,7 @@ import { MuralCanvas, MuralCanvasRef } from '@/components/mural/MuralCanvas';
 import { MuralControls } from '@/components/mural/MuralControls';
 import { MuralDrawer } from '@/components/mural/MuralDrawer';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { ParticlesBackground } from '@/components/mural/ParticlesBackground';
 
@@ -69,7 +70,7 @@ export default function MuralGlobalPage() {
         }}
       >
         <div className="flex items-center gap-4">
-          <img src="/images/placeholders/logo-angeles-cielo.svg" alt="Logo" className="h-6" />
+          <Image src="/images/icons/Logo Ángeles en el Cielo.svg" alt="Ángeles en el Cielo" width={175} height={50} className="h-10 w-auto object-contain" />
           <Link href="/angeles-en-el-cielo" className="text-sm font-semibold text-[#706A95] hover:text-[#1E2A78] transition-colors">
             ← Volver a la landing
           </Link>
@@ -96,7 +97,7 @@ export default function MuralGlobalPage() {
           style={{ maskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 70%, transparent 100%)' }}
         >
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-2xl">🌟</span>
+            <span className="text-2xl">🩷</span>
             <h1 className="font-playfair font-bold text-xl text-[#1E2A78]">Mural de Ángeles</h1>
           </div>
           <p className="text-[#706A95] text-sm mb-2 leading-relaxed">
@@ -108,7 +109,10 @@ export default function MuralGlobalPage() {
           
           <div className="flex flex-col gap-3">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-[#706A95] flex items-center gap-2">🐾 Ocupados</span>
+              <span className="text-[#706A95] flex items-center gap-2">
+                <Image src="/images/icons/plans/icon-plan-inicial.svg" alt="Ocupados" width={32} height={32} />
+                Ocupados
+              </span>
               <span className="font-bold text-[#1E2A78]">50.000</span>
             </div>
             <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
@@ -116,12 +120,18 @@ export default function MuralGlobalPage() {
             </div>
             
             <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-[#706A95] flex items-center gap-2">⭐ Libres</span>
+              <span className="text-[#706A95] flex items-center gap-2">
+                <Image src="/images/icons/plans/icon-plan-estrella.svg" alt="Libres" width={32} height={32} />
+                Libres
+              </span>
               <span className="font-bold text-[#C9A961]">950.000</span>
             </div>
             
             <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-[#706A95] flex items-center gap-2">🕊️ Ángeles fundadores</span>
+              <span className="text-[#706A95] flex items-center gap-2">
+                <Image src="/images/icons/plans/icon-plan-eterno.svg" alt="Fundadores" width={32} height={32} />
+                Ángeles fundadores
+              </span>
               <span className="font-bold text-[#1E2A78]">48.210</span>
             </div>
             

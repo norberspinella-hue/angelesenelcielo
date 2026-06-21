@@ -21,19 +21,19 @@ export function PricingSection() {
           
           <div className="relative z-10 flex flex-col h-full flex-1">
             <h3 className="plan-title text-[#1E2A78]">Huellita</h3>
-            <p className="microcopy mt-2 text-[#5A639C]">Un espacio sencillo y eterno para siempre</p>
+            <p className="microcopy mt-2 text-[#5A639C]">Un espacio para tu pequeño</p>
             <div className="plan-price text-[#1E2A78]">1,99 €</div>
-            <span className="plan-meta text-sm text-[#5A639C]">Pago único (IVA incluido)</span>
+            <span className="plan-meta text-sm text-[#5A639C]">Anual</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>1 bloque en el mural (1x1)</li>
-              <li>Perfil público para siempre</li>
-              <li>Sube su mejor foto</li>
+              <li>Perfil público</li>
+              <li>Sube su foto más bonita</li>
               <li>Escribe su historia y dedicatoria</li>
             </ul>
             
             <Link href="/mural-global" className="btn-inicial-heaven w-full mt-4 text-center">
-              Elegir Inicial
+              Elige Huellita
             </Link>
           </div>
         </div>
@@ -48,19 +48,20 @@ export function PricingSection() {
           <div className="plan-badge bg-[#1E2A78] text-white">El más elegido</div>
           <div className="relative z-10 flex flex-col h-full flex-1">
             <h3 className="plan-title text-[#1E2A78]">Estrella Brillante</h3>
-            <p className="microcopy mt-2 text-[#5A639C]">Mayor visibilidad renovable cada año</p>
+            <p className="microcopy mt-2 text-[#5A639C]">Mayor visibilidad para siempre</p>
             <div className="plan-price text-[#1E2A78]">4,99€</div>
-            <span className="plan-meta text-sm text-[#5A639C]">Al año (IVA incluido)</span>
+            <span className="plan-meta text-sm text-[#5A639C]">Para siempre</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>4 bloques en el mural (2x2)</li>
               <li>Destaca más visualmente</li>
               <li>Perfil público enriquecido</li>
               <li>Recordatorio especial de aniversario</li>
+              <li>Certificado Estrella</li>
             </ul>
             
             <Link href="/mural-global" className="btn-estrella-heaven w-full mt-4 text-center">
-              Elegir Estrella
+              Elige Estrella Brillante
             </Link>
           </div>
         </div>
@@ -76,17 +77,18 @@ export function PricingSection() {
             <h3 className="plan-title text-[#8A6033]">Corazón Eterno</h3>
             <p className="microcopy mt-2 text-[#9A7D63]">El homenaje máximo, sin renovaciones</p>
             <div className="plan-price text-[#8A6033]">9,99€</div>
-            <span className="plan-meta text-sm text-[#9A7D63]">Pago único (IVA incluido)</span>
+            <span className="plan-meta text-sm text-[#9A7D63]">Para siempre</span>
             
             <ul className="plan-list flex-1 text-[#9A7D63]">
               <li>9 bloques en el mural (3x3)</li>
-              <li>Tamaño máximo para siempre</li>
+              <li>Tamaño máximo para siempre y más visible que el resto</li>
               <li>Perfil público destacado</li>
-              <li>Un legado inborrable en el centro</li>
+              <li>Certificado Especial Aniversario</li>
+              <li>Certificado Corazón Eterno</li>
             </ul>
             
             <Link href="/mural-global" className="btn-secondary-heaven w-full mt-4 !bg-[#EBD5D0] hover:!bg-[#D7BCB6] !text-[#8A6033] !border-none">
-              Elegir Eterno
+              Elige Corazón Eterno
             </Link>
           </div>
         </div>
