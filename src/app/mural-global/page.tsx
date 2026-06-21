@@ -1,19 +1,42 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { MuralCanvas, MuralCanvasRef } from '@/components/mural/MuralCanvas';
 import { MuralControls } from '@/components/mural/MuralControls';
 import { MuralDrawer } from '@/components/mural/MuralDrawer';
 import Link from 'next/link';
 import Image from 'next/image';
-
 import { ParticlesBackground } from '@/components/mural/ParticlesBackground';
+
 
 export default function MuralGlobalPage() {
   const [selectedSlot, setSelectedSlot] = useState<{ col: number; row: number } | null>(null);
   const [slotData, setSlotData] = useState<any | null>(null);
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const canvasRef = useRef<MuralCanvasRef>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
 
   const handleSelectSlot = async (col: number, row: number) => {
     setSelectedSlot({ col, row });
@@ -35,7 +58,6 @@ export default function MuralGlobalPage() {
 
   return (
     <main className="mural-page font-inter fixed inset-0 w-screen h-screen overflow-hidden">
-      <ParticlesBackground />
 
       {/* The Interactive Canvas */}
       <div 
@@ -77,14 +99,11 @@ export default function MuralGlobalPage() {
         </div>
         
         <div className="flex items-center gap-4">
-          <button className="text-[#706A95] text-sm font-semibold hover:text-[#1E2A78]">
-            Pantalla completa
-          </button>
-          <button className="flex items-center gap-2 bg-[#E5C88A]/30 pl-1 pr-4 py-1 rounded-full text-[#1E2A78] font-bold hover:bg-[#E5C88A]/50 transition-colors">
-            <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">
-              U
-            </div>
-            <span className="text-sm">Norberto</span>
+          <button 
+            onClick={toggleFullscreen}
+            className="text-[#706A95] text-sm font-semibold hover:text-[#1E2A78]"
+          >
+            {isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
           </button>
         </div>
       </header>
@@ -159,9 +178,9 @@ export default function MuralGlobalPage() {
       {/* Leyenda (Inferior Centro) */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto hidden md:block">
         <div className="bg-white/80 backdrop-blur-md px-6 py-2.5 rounded-full shadow-md border border-white flex items-center gap-6 text-xs font-semibold text-[#706A95]">
-          <div className="flex items-center gap-1.5"><span className="text-[#C9A961] text-sm">★</span> Libre</div>
-          <div className="flex items-center gap-1.5"><span className="text-[#1E2A78] text-sm">🐾</span> Ocupado</div>
-          <div className="flex items-center gap-1.5"><span className="text-[#D94F8B] text-sm">♥</span> En reserva</div>
+          <div className="flex items-center gap-1.5"><Image src="/images/icons/plans/icon-plan-estrella.svg" alt="Libre" width={20} height={20} /> Libre</div>
+          <div className="flex items-center gap-1.5"><Image src="/images/icons/plans/icon-plan-inicial.svg" alt="Ocupado" width={20} height={20} /> Ocupado</div>
+          <div className="flex items-center gap-1.5"><Image src="/images/icons/plans/icon-plan-eterno.svg" alt="En reserva" width={20} height={20} /> En reserva</div>
           <div className="flex items-center gap-1.5">
             <div className="w-3 h-3 rounded-sm border-2 border-[#C9A961] bg-[#FBEF8A]"></div> Tu selección
           </div>

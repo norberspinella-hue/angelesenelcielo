@@ -161,7 +161,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       <div className="pt-4 border-t border-gray-100">
         <button 
           onClick={onNext}
-          className="btn-primary-heaven w-full"
+          className="btn-primary-heaven btn-drawer-cta w-full"
         >
           Continuar →
         </button>

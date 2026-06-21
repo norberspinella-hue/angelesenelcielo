@@ -16,10 +16,10 @@ export function MuralControls({
     <div className="absolute bottom-8 right-6 z-50 flex flex-col gap-2 pointer-events-auto">
       <button 
         onClick={onCenter}
-        className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-white flex items-center justify-center text-[#1E2A78] hover:bg-white hover:text-[#C9A961] transition-colors font-bold text-sm"
-        title="Centrar en el mural"
+        className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-white flex items-center justify-center text-[#1E2A78] hover:bg-white hover:text-[#C9A961] transition-colors font-bold text-[10px]"
+        title="Centrar Mural"
       >
-        Center
+        Centrar
       </button>
       
       <div className="flex flex-col rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-white overflow-hidden items-center">

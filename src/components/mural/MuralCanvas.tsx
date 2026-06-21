@@ -100,14 +100,35 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
 
     let rafId: number;
 
-    const particles: any[] = Array.from({length: 18}).map(() => ({
+    const img1 = new window.Image();
+    img1.src = '/images/icons/butterfly1.svg';
+    const img2 = new window.Image();
+    img2.src = '/images/icons/butterfly2.svg';
+
+    const butterflies: any[] = Array.from({length: 10}).map((_, i) => ({
+      x: Math.random() * 2000, // Initial random x
+      y: Math.random() * 1500, // Initial random y
+      vX: (Math.random() - 0.5) * 0.5,
+      vY: -Math.random() * 0.5 - 0.5,
+      life: Math.random() * 400,
+      maxLife: 300 + Math.random() * 200,
+      size: Math.random() * 15 + 25, // 25px to 40px
+      img: i % 2 === 0 ? img1 : img2,
+      wobbleOffset: Math.random() * Math.PI * 2,
+      wobbleSpeed: 0.02 + Math.random() * 0.02
+    }));
+
+    const pzButterflies: any[] = Array.from({length: 10}).map((_, i) => ({
       gX: Math.random() * PZ.w,
       gY: Math.random() * PZ.h,
-      vX: (Math.random() - 0.5) * 0.05,
-      vY: -Math.random() * 0.1 - 0.05,
-      life: Math.random() * 100,
-      maxLife: 50 + Math.random() * 50,
-      size: Math.random() * 4 + 3
+      vX: (Math.random() - 0.5) * 0.03,
+      vY: -Math.random() * 0.05 - 0.02,
+      life: Math.random() * 200,
+      maxLife: 150 + Math.random() * 100,
+      size: Math.random() * 2 + 1.5,
+      img: i % 2 === 0 ? img1 : img2,
+      wobbleOffset: Math.random() * Math.PI * 2,
+      wobbleSpeed: 0.05 + Math.random() * 0.05
     }));
 
     const render = () => {
@@ -250,32 +271,58 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel
         }
       }
 
-      // Draw particles
-      particles.forEach(p => {
-        p.life++;
-        if (p.life > p.maxLife) {
-          p.life = 0;
-          p.maxLife = 50 + Math.random() * 50;
-          p.gX = Math.random() * PZ.w;
-          p.gY = PZ.h * 0.5 + Math.random() * PZ.h * 0.5; // start lower half
-          p.vX = (Math.random() - 0.5) * 0.05;
-          p.vY = -Math.random() * 0.1 - 0.05;
+      // Draw butterflies over the entire viewport
+      butterflies.forEach(b => {
+        b.life++;
+        if (b.life > b.maxLife) {
+          b.life = 0;
+          b.maxLife = 300 + Math.random() * 200;
+          b.x = Math.random() * viewport.width;
+          b.y = viewport.height + 50; // start slightly below screen
+          b.vX = (Math.random() - 0.5) * 0.5;
+          b.vY = -Math.random() * 0.5 - 0.5;
         }
-        p.gX += p.vX;
-        p.gY += p.vY;
+        b.x += b.vX;
+        b.y += b.vY;
         
-        const screenX = viewport.x + (PZ.x + p.gX) * slotSize;
-        const screenY = viewport.y + (PZ.y + p.gY) * slotSize;
-        const opacity = 1 - (p.life / p.maxLife);
-        const screenSize = p.size * Math.max(0.5, slotSize/16);
+        const screenX = b.x + Math.sin(b.life * b.wobbleSpeed + b.wobbleOffset) * 30;
+        const screenY = b.y;
+        const opacity = Math.sin((b.life / b.maxLife) * Math.PI);
+        
+        const drawSize = b.size;
 
-        ctx.beginPath();
-        ctx.arc(screenX, screenY, screenSize, 0, Math.PI * 2);
-        const grad = ctx.createRadialGradient(screenX, screenY, 0, screenX, screenY, screenSize);
-        grad.addColorStop(0, `rgba(255,184,208,${opacity})`);
-        grad.addColorStop(1, `rgba(255,128,168,0)`);
-        ctx.fillStyle = grad;
-        ctx.fill();
+        if (b.img.complete) {
+          ctx.globalAlpha = opacity * 0.85;
+          ctx.drawImage(b.img, screenX - drawSize/2, screenY - drawSize/2, drawSize, drawSize);
+          ctx.globalAlpha = 1;
+        }
+      });
+
+      // Draw butterflies tied strictly to the premium zone
+      pzButterflies.forEach(b => {
+        b.life++;
+        if (b.life > b.maxLife) {
+          b.life = 0;
+          b.maxLife = 150 + Math.random() * 100;
+          b.gX = Math.random() * PZ.w;
+          b.gY = PZ.h * 0.5 + Math.random() * PZ.h * 0.5; // start lower half
+          b.vX = (Math.random() - 0.5) * 0.03;
+          b.vY = -Math.random() * 0.05 - 0.02;
+        }
+        b.gX += b.vX;
+        b.gY += b.vY;
+        
+        const screenX = viewport.x + (PZ.x + b.gX + Math.sin(b.life * b.wobbleSpeed + b.wobbleOffset) * 0.5) * slotSize;
+        const screenY = viewport.y + (PZ.y + b.gY) * slotSize;
+        const opacity = Math.sin((b.life / b.maxLife) * Math.PI);
+        
+        const drawSize = b.size * Math.max(0.5, slotSize / 2);
+
+        if (b.img.complete) {
+          ctx.globalAlpha = opacity * 0.85;
+          ctx.drawImage(b.img, screenX - drawSize/2, screenY - drawSize/2, drawSize, drawSize);
+          ctx.globalAlpha = 1;
+        }
       });
 
       rafId = requestAnimationFrame(render);

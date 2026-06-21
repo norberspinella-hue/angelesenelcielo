@@ -71,7 +71,10 @@ export function StepPhotoAndData({ onNext, onBack, draftData, setDraftData, sele
         {/* Columna Derecha: Preview */}
         <div className="flex-1 flex flex-col">
           <label className="block text-sm font-bold text-[#1E2A78] mb-1">Preview de tu recuerdo</label>
-          <div className="flex-1 bg-[#F5E6D3] rounded-2xl p-4 flex flex-col items-center justify-center relative overflow-hidden border border-[#E5C88A]">
+          <div 
+            className="flex-1 bg-[#F5E6D3] rounded-2xl p-4 flex flex-col items-center justify-center relative overflow-hidden border border-[#E5C88A]"
+            style={{ backgroundImage: 'url("/images/mural%20preview/previewrecuerdo.svg")', backgroundSize: 'cover', backgroundPosition: 'center' }}
+          >
             {/* Halo y marco simulado */}
             <div className="w-24 h-24 rounded-full bg-white mb-4 border-4 border-[#C9A961] shadow-lg flex items-center justify-center overflow-hidden">
               <span className="text-4xl text-gray-300">🐾</span>
@@ -90,14 +93,14 @@ export function StepPhotoAndData({ onNext, onBack, draftData, setDraftData, sele
       <div className="pt-4 border-t border-gray-100 flex gap-4">
         <button 
           onClick={onBack}
-          className="btn-secondary-heaven px-6"
+          className="btn-secondary-heaven btn-drawer-back px-6"
         >
           ← Volver
         </button>
         <button 
           onClick={onNext}
           disabled={!isFormValid}
-          className="btn-primary-heaven flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary-heaven btn-drawer-cta flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Continuar →
         </button>

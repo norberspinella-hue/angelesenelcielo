@@ -47,7 +47,9 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData }: MuralDr
       
       {/* The Drawer Panel */}
       <div 
-        className="relative pointer-events-auto w-full lg:w-[600px] h-full bg-white shadow-2xl rounded-l-[32px] overflow-hidden flex flex-col p-8 animate-in slide-in-from-right duration-300 border-l border-white/50"
+        className={`relative pointer-events-auto h-full bg-white shadow-2xl rounded-l-[16px] overflow-hidden flex flex-row animate-in slide-in-from-right duration-300 border-l border-white/50 ${
+          isOccupied ? 'w-full lg:w-[600px] p-8' : 'w-[98vw] max-w-[1800px]'
+        }`}
       >
         <button 
           onClick={handleClose}
@@ -56,9 +58,89 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData }: MuralDr
           ✕
         </button>
 
+        {!isOccupied && (
+          <div className="hidden md:block flex-1 h-full relative shrink-0" style={{ borderRadius: '16px 0 0 16px', overflow: 'hidden' }}>
+            <img 
+              src="/images/mascota-emotiva.webp"
+              alt="Mascota en el cielo"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'right center' }}
+            />
+            <div 
+              className="absolute pointer-events-none" 
+              style={{ 
+                top: '35%', 
+                left: '4%', 
+                transform: 'translate(-5%, -50%)', 
+                width: 'min(85%, 520px)',
+                textAlign: 'center'
+              }}
+            >
+              {/* Fondo difuminado detrás del texto */}
+              <div 
+                className="absolute inset-[-60px] -z-10"
+                style={{
+                  background: 'radial-gradient(circle, rgba(255,248,240,0.85) 0%, rgba(255,248,240,0.5) 45%, transparent 75%)',
+                  filter: 'blur(25px)',
+                  borderRadius: '50%'
+                }}
+              />
+              
+              {/* Icono decorativo (corazón con huella/aureola) */}
+              <div className="flex justify-center mb-[18px] opacity-90 drop-shadow-md">
+                <img 
+                  src="/images/icons/logoheart.svg" 
+                  alt="Corazón de Ángeles" 
+                  className="h-[100px] w-auto object-contain"
+                />
+              </div>
+
+              <h2 
+                style={{ 
+                  fontFamily: 'var(--font-display), Georgia, serif', 
+                  fontSize: 'clamp(32px, 3.5vw, 48px)', 
+                  lineHeight: '1.15',
+                  fontWeight: 700, 
+                  background: 'linear-gradient(to right, #151D54, #A393C4)', /* 15% más oscuro que #1E2A78 y #C8B8E8 */
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  color: 'transparent',
+                  marginBottom: '24px',
+                  letterSpacing: '-0.02em',
+                  textShadow: 'none'
+                }}
+              >
+                Un lugar en el cielo<br/>
+                para quien iluminó<br/>
+                tu mundo
+              </h2>
+
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <div style={{ flexBasis: '64px', height: '0', borderTop: '1px solid rgba(201, 169, 97, 0.5)' }}></div>
+                <span className="text-[#C9A961] text-lg">✦</span>
+                <div style={{ flexBasis: '64px', height: '0', borderTop: '1px solid rgba(201, 169, 97, 0.5)' }}></div>
+              </div>
+
+              <p 
+                style={{ 
+                  fontFamily: 'var(--font-display), Georgia, serif',
+                  fontSize: 'clamp(16px, 1.8vw, 21px)', 
+                  lineHeight: '1.5',
+                  color: '#2A365C', 
+                  fontWeight: 500,
+                  textShadow: '0 1px 2px rgba(255,255,255,0.8)'
+                }}
+              >
+                Honra su memoria, compártela con amor<br/>
+                y mantén viva su luz para siempre.
+              </p>
+            </div>
+          </div>
+        )}
+
         {isOccupied ? (
           /* VISTA: Slot Ocupado (Perfil) */
-          <div className="flex flex-col h-full animate-in fade-in duration-300">
+          <div className="flex flex-col w-full h-full animate-in fade-in duration-300">
             <div className="text-center py-4 flex-1">
               <div className="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-[#C9A961] overflow-hidden bg-gray-100 shadow-xl">
                 <img 
@@ -80,7 +162,7 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData }: MuralDr
           </div>
         ) : (
           /* VISTA: Flujo de Creación (Fase 4) */
-          <div className="flex flex-col h-full relative z-10">
+          <div className="flex flex-col w-full md:w-[500px] lg:w-[550px] shrink-0 h-full relative z-10 p-6 md:p-8 overflow-y-auto">
             <div className="flex items-center gap-2 mb-6">
               <span className="text-xl">⭐</span>
               <span className="font-bold text-[#1E2A78]">Añadir mi angelito al cielo</span>

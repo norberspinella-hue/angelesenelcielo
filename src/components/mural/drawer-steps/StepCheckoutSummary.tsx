@@ -68,13 +68,13 @@ export function StepCheckoutSummary({ onBack, onCheckout, draftData, selectedPla
       <div className="pt-4 border-t border-gray-100 flex flex-col gap-3">
         <button 
           onClick={onCheckout}
-          className="bg-[#1E2A78] text-white font-bold py-3 px-6 rounded-full shadow-md hover:bg-[#151C5C] hover:shadow-lg transition-all w-full flex items-center justify-center gap-2"
+          className="btn-drawer-cta text-white font-bold py-3 px-6 rounded-full shadow-md hover:shadow-lg transition-all w-full flex items-center justify-center gap-2"
         >
-          Ir a Stripe Checkout ↗
+          Ir a Stripe Checkout →
         </button>
         <button 
           onClick={onBack}
-          className="text-[#706A95] text-sm font-semibold hover:text-[#1E2A78] py-2"
+          className="text-[#1E2A78] text-sm font-bold mt-2 hover:underline btn-drawer-back"
         >
           ← Volver a datos
         </button>
