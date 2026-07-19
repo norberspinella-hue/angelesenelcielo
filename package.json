@@ -19,13 +19,17 @@
     "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18",
+    "react-easy-crop": "^6.2.2",
     "resend": "^6.12.3",
+    "sharp": "^0.35.3",
     "stripe": "^22.1.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-easy-crop": "^1.16.0",
+    "@types/sharp": "^0.31.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
     "postcss": "^8",

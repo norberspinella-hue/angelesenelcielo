@@ -154,6 +154,7 @@ export function useMuralViewport(initialWidth = 1200, initialHeight = 800) {
 
   return {
     viewport,
+    setViewport,
     updateViewportSize,
     handlePointerDown,
     handlePointerMove,

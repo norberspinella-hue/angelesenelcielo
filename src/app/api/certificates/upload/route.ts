@@ -85,7 +85,6 @@ export async function POST(req: NextRequest) {
     if (pngSignError || !pngSignedData) {
       throw new Error(`Error al firmar URL del PNG: ${pngSignError?.message}`);
     }
-
     // 3. Actualizar tabla a 'uploaded'
     const { error: updateError } = await (supabase
       .from('certificates') as any)
@@ -93,7 +92,7 @@ export async function POST(req: NextRequest) {
         status: 'uploaded',
         certificate_pdf_url: pdfSignedData.signedUrl,
         certificate_png_url: pngSignedData.signedUrl,
-        uploaded_at: new Date().toISOString()
+        updated_at: new Date().toISOString()
       })
       .eq('id', cert.id);
 
@@ -102,7 +101,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 4. Llamar a la API de entrega (/api/certificates/deliver) para procesar el envío del correo electrónico al cliente
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://todaslasmascotasvanalcielo.com';
+    const baseUrl = process.env.NEXT_PUBLIC_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://todaslasmascotasvanalcielo.com';
     const deliverRes = await fetch(`${baseUrl}/api/certificates/deliver`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

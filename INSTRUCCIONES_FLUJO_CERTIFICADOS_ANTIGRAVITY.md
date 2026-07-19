@@ -140,7 +140,7 @@ export async function sendUserPendingEmail(
   }
 
   await resend.emails.send({
-    from: 'Ángeles en el Cielo <hola@todaslasmascotasvanalcielo.com>',
+    from: 'Ángeles en el Cielo <hello@todaslasmascotasvanalcielo.com>',
     to: userEmail,
     subject: `✨ El certificado de ${petName} está en camino`,
     react: CertificatePendingEmail({ petName, planLabel: planLabel[plan] }),

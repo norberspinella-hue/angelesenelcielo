@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Previsualización de Tarjetas de Perfil</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      background: radial-gradient(circle at center, #8a7ab2, #4c3c72);
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: sans-serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+    }
+
+    /* TARJETA 1 — EL RECUERDO */
+    .card-memorial {
+      width: 100%;
+      height: 374px; /* Altura exacta para coincidir con la suma de los fondos (262px + 112px) */
+      background: linear-gradient(180deg, #D5B2F1 0%, #EAA8C3 60%, #F5D3C8 100%);
+      border-radius: 24px;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 12px 40px rgba(30, 10, 50, 0.25);
+      padding: 32px 20px 24px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    /* Fondo superior (Cielo celestial con previewrecuerdo.svg, cortando exactamente en la línea rosa) */
+    .card-top-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 262px; /* Corte exacto en el divisor rosa */
+      background: url("/images/mural-preview/previewrecuerdo.svg") no-repeat center top / cover;
+      z-index: 2;
+    }
+
+    /* Fondo inferior (Los perritos bannerdogs adaptándose al ancho de la tarjeta) */
+    .card-bottom-bg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 112px;
+      background: url("/images/mural-preview/bannerdogs.png") no-repeat center bottom / 100% 100%;
+      z-index: 1;
+    }
+
+    /* Capa de nubes al fondo (deshabilitada para que solo se vea bannerdogs abajo) */
+    .clouds-overlay {
+      display: none;
+    }
+
+    /* Foto con halo y medalla del plan */
+    .photo-wrapper {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      margin-bottom: 12px;
+      margin-top: 12px;
+      z-index: 3;
+    }
+
+    /* Halo dorado 3D inclinado brillante */
+    .halo-ring {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%) rotateX(45deg);
+      width: 88px;
+      height: 34px;
+      border-radius: 50%;
+      border: 3.5px solid #FFF59D;
+      box-shadow: 0 0 20px #FFF59D, 0 0 8px #FFD54F, inset 0 0 12px #FFF59D;
+      background: rgba(255, 245, 157, 0.12);
+      z-index: 1;
+    }
+
+    /* Foto */
+    .photo-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4.5px solid #FFE082;
+      box-shadow: 0 4px 15px rgba(255, 213, 79, 0.25);
+      background-color: #ffffff;
+      position: relative;
+      z-index: 2;
+    }
+
+    .photo-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Corazón del plan estrella ampliado 100% (tamaño duplicado) manteniendo la posición central */
+    .plan-badge-corner {
+      position: absolute;
+      bottom: -32px; /* Ajustado de -10px a -32px para mantener el centro del círculo de 88px */
+      right: -32px;  /* Ajustado de -10px a -32px para mantener el centro del círculo de 88px */
+      width: 88px;   /* Duplicado de 44px a 88px (100% de ampliación) */
+      height: 88px;  /* Duplicado de 44px a 88px (100% de ampliación) */
+      z-index: 5;
+    }
+
+    /* Nombre */
+    .pet-name {
+      font-family: Georgia, serif;
+      font-weight: 700;
+      fontSize: 32px;
+      color: #4A3F6B;
+      margin: 0 0 4px;
+      font-style: italic;
+      z-index: 3;
+    }
+
+    /* Tagline */
+    .tagline {
+      font-size: 14px;
+      color: #7B6F9A;
+      margin: 0 0 12px;
+      font-weight: 500;
+      z-index: 3;
+    }
+
+    /* Divisor */
+    .divider {
+      position: absolute;
+      top: 262px;
+      left: 20px;
+      width: calc(100% - 40px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      transform: translateY(-50%);
+      z-index: 10;
+    }
+
+    .divider-line {
+      height: 1px;
+      background: rgba(236,111,163,0.35);
+      flex: 1;
+    }
+
+    .divider-heart {
+      color: #EC6F9B;
+      font-size: 11px;
+    }
+
+    .btn-luz {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.55);
+      border: 1.5px solid rgba(244, 114, 182, 0.3);
+      border-radius: 999px;
+      padding: 8px 24px;
+      color: #4A3F6B;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 15px rgba(244, 114, 182, 0.08);
+      backdrop-filter: blur(4px);
+      text-decoration: none;
+      cursor: pointer;
+      z-index: 10;
+      white-space: nowrap;
+    }
+
+    /* TARJETA 2 — COMPARTIR */
+    .card-share {
+      width: 100%;
+      background: linear-gradient(180deg, rgba(253, 244, 245, 0.75) 0%, rgba(243, 222, 233, 0.75) 100%);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 24px;
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
+      box-shadow: 0 12px 40px rgba(30, 10, 50, 0.15);
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .btn-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,0.05);
+      color: #706A95;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .share-title {
+      font-family: Georgia, serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: #4A3F6B;
+      margin: 0 0 6px;
+      text-align: center;
+    }
+
+    .share-desc {
+      font-size: 12px;
+      color: #7B6F9A;
+      margin: 0 0 20px;
+      font-family: sans-serif;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .social-row {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .social-btn-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .social-btn-container:hover {
+      transform: translateY(-2px);
+    }
+
+    .social-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .social-label {
+      font-size: 11px;
+      color: #4A3F6B;
+      font-family: sans-serif;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- TARJETA 1 — EL RECUERDO -->
+    <div class="card-memorial">
+      <!-- Capa de fondo superior con degradado CSS limpio (cubre la parte del cielo) -->
+      <div class="card-top-bg"></div>
+      <!-- Capa de fondo inferior (los perritos comenzando exactamente abajo del divisor) -->
+      <div class="card-bottom-bg"></div>
+      <div class="clouds-overlay"></div>
+
+      <!-- Foto -->
+      <div class="photo-wrapper">
+        <div class="halo-ring"></div>
+        <div class="photo-inner">
+          <img src="/images/placeholders/first.webp" alt="Mascota">
+        </div>
+        <!-- Medalla del Plan Estrella (el corazón del plan) encima de la línea circular contenedora -->
+        <img class="plan-badge-corner" src="/images/icons/plans/icon-plan-eterno.svg" alt="Medalla Plan">
+      </div>
+
+      <!-- Nombre (sin alas) -->
+      <h3 class="pet-name">Galleta</h3>
+
+      <p class="tagline">Siempre en nuestros corazones</p>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-heart">🩷</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <a class="btn-luz">9 luces en el cielo 🐾</a>
+    </div>
+
+    <!-- TARJETA 2 — COMPARTIR -->
+    <div class="card-share">
+      <button class="btn-close">✕</button>
+
+      <!-- Logo corazón alado morado sólido del boceto -->
+      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+        <svg width="56" height="28" viewBox="0 0 56 28" fill="none">
+          <path d="M18 14C12 8.5 5.5 8.5 1 10.5c2 4.5 6 6.5 14 6.5" stroke="#C084FC" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M17 11.5c-4.5-4-9-4-12-2.5 1.5 3 4.5 4.5 10.5 4.5" stroke="#C084FC" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M38 14C44 8.5 50.5 8.5 55 10.5c-2 4.5-6 6.5-14 6.5" stroke="#C084FC" stroke-width="2.2" stroke-linecap="round" style="transform-origin: 28px 14px;"/>
+          <path d="M39 11.5c4.5-4 9-4 12-2.5-1.5 3-4.5 4.5-10.5 4.5" stroke="#C084FC" stroke-width="1.8" stroke-linecap="round" style="transform-origin: 28px 14px;"/>
+          <path d="M28 23.5S20 17.5 20 12.5a4 4 0 0 1 8 0 4 4 0 0 1 8 0c0 5-8 11-8 11z" fill="#7C3AED"/>
+        </svg>
+      </div>
+
+      <h4 class="share-title">Haz que su recuerdo siga brillando</h4>
+      <p class="share-desc">Comparte a Galleta y ayuda a que su luz llegue a más personas. ✨</p>
+
+      <div class="social-row">
+        <div class="social-btn-container">
+          <div class="social-btn" style="background: #25D366; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.35);">
+            <svg width="24" height="24" viewBox="0 0 16 16" fill="white" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+            </svg>
+          </div>
+          <span class="social-label">WhatsApp</span>
+        </div>
+
+        <div class="social-btn-container">
+          <div class="social-btn" style="background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); box-shadow: 0 8px 20px rgba(220, 39, 67, 0.35);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="3" width="18" height="18" rx="5.5" stroke="white" stroke-width="2.2"/>
+              <circle cx="12" cy="12" r="4.4" stroke="white" stroke-width="2.2"/>
+              <circle cx="17.3" cy="6.7" r="1.3" fill="white"/>
+            </svg>
+          </div>
+          <span class="social-label">Instagram</span>
+        </div>
+
+        <div class="social-btn-container">
+          <div class="social-btn" style="background: #1877F2; box-shadow: 0 8px 20px rgba(24, 119, 242, 0.35);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 13.5h2.5l1-4H14v-2c0-1.03.3-2 2-2h1.5V1.5c-.3-.04-1.2-.1-2.5-.1-2.6 0-4.5 1.6-4.5 4.5v3.1H7v4h3.5V22h3.5V13.5z" fill="white"/>
+            </svg>
+          </div>
+          <span class="social-label">Facebook</span>
+        </div>
+
+        <div class="social-btn-container">
+          <div class="social-btn" style="background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%); box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+          </div>
+          <span class="social-label">Copiar enlace</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

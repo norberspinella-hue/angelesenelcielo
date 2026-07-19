@@ -16,22 +16,36 @@ export async function GET(request: Request) {
 
     // Fetch occupied blocks within the requested coordinate range
     const { data, error } = await supabase
-      .from('mural_blocks')
-      .select('col, row, width, height, status, star_id, stars(name, photo_url)')
-      .gte('col', minCol)
-      .lte('col', maxCol)
-      .gte('row', minRow)
-      .lte('row', maxRow)
-      .in('status', ['reserved', 'occupied']); // Only return active blocks
+      .from('mural_slots')
+      .select('x, y, status, plan_type, memorial_id, memorials(pet_name, photo_url, dedication)')
+      .gte('x', minCol)
+      .lte('x', maxCol)
+      .gte('y', minRow)
+      .lte('y', maxRow)
+      .in('status', ['reserved_pending_payment', 'occupied']); // Only return active blocks
 
     if (error) {
       console.error('Error fetching mural slots:', error);
       return NextResponse.json({ error: 'Failed to fetch slots' }, { status: 500 });
     }
 
+    const mappedData = (data || []).map((slot: any) => ({
+      col: slot.x,
+      row: slot.y,
+      width: 1,
+      height: 1,
+      status: slot.status,
+      star_id: slot.memorial_id,
+      photoUrl: slot.memorials?.photo_url || '',
+      stars: {
+        name: slot.memorials?.pet_name || '',
+        message: slot.memorials?.dedication || '',
+      }
+    }));
+
     return NextResponse.json({
-      data: data || [],
-      count: data?.length || 0,
+      data: mappedData,
+      count: mappedData.length,
       timestamp: new Date().toISOString()
     });
   } catch (error) {

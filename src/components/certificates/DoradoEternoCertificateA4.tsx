@@ -52,7 +52,7 @@ export const EXAMPLE_DATA: DoradoEternoCertificateData = {
   slotLabel: "9 lugares en el Cielo",
   creationDate: "22·05·2026",
   memoryCode: "AEC-000126",
-  profileUrl: "https://todaslasmascotasvanalcielo.com/angeles-en-el-cielo/rocky",
+  profileUrl: "https://todaslasmascotasvanalcielo.com/rocky",
   shortUrl: "aec.link/rocky",
   qrImageUrl: "/qr/rocky.png",
   badgeLabel: "Corazón Eterno",

@@ -90,7 +90,7 @@ export async function sendUserPendingEmail(
   plan: string
 ) {
   const planLabel = PLAN_LABELS[plan] || plan;
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'hola@todaslasmascotasvanalcielo.com';
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'hello@todaslasmascotasvanalcielo.com';
 
   const { error } = await resend.emails.send({
     from: `Ángeles en el Cielo <${fromEmail}>`,
@@ -116,7 +116,7 @@ export async function sendDesignerEmail(params: {
   petPhotoUrl: string;
   uploadToken: string;
 }) {
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'hola@todaslasmascotasvanalcielo.com';
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'hello@todaslasmascotasvanalcielo.com';
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@todaslasmascotasvanalcielo.com';
   
   // URL base de la aplicación
@@ -154,18 +154,48 @@ export async function sendUserDeliveryEmail(params: {
   certificatePngUrl: string;
   profileUrl: string;
 }) {
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'hola@todaslasmascotasvanalcielo.com';
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'hello@todaslasmascotasvanalcielo.com';
 
   const { error } = await resend.emails.send({
     from: `Ángeles en el Cielo <${fromEmail}>`,
     to: params.userEmail,
     subject: `🎁 El certificado de ${params.petName} ya está listo`,
-    react: React.createElement(CertificateDeliveryEmail, {
-      petName: params.petName,
-      pdfUrl: params.certificatePdfUrl,
-      pngUrl: params.certificatePngUrl,
-      profileUrl: params.profileUrl,
-    }),
+    html: `
+      <div style="font-family: Georgia, serif; max-width: 600px; 
+      margin: 0 auto; padding: 40px 20px;
+      background: linear-gradient(160deg, #ffe8f0, #f5e8ff);">
+        <h1 style="color: #4A3F6B; font-size: 28px;">
+          🎁 El certificado de ${params.petName} ya está listo
+        </h1>
+        <p style="color: #7B6F9A; font-size: 16px; line-height: 1.6;">
+          Tu certificado personalizado ha sido creado con mucho cariño.
+          <strong>${params.petName}</strong> tiene ahora su lugar eterno en el mural.
+        </p>
+        <div style="margin: 32px 0; display: flex; flex-direction: column; gap: 16px;">
+          <a href="${params.certificatePdfUrl}" 
+             style="background: linear-gradient(90deg, #ff82ad, #ec5f96);
+             color: white; padding: 14px 28px; border-radius: 999px;
+             text-decoration: none; font-weight: 700; font-size: 16px;
+             display: inline-block; text-align: center; margin-bottom: 12px;">
+            📄 Descargar certificado PDF
+          </a>
+          <a href="${params.certificatePngUrl}" 
+             style="background: linear-gradient(90deg, #9B8FB0, #7B5EA9);
+             color: white; padding: 14px 28px; border-radius: 999px;
+             text-decoration: none; font-weight: 700; font-size: 16px;
+             display: inline-block; text-align: center;">
+            🖼️ Descargar imagen para redes sociales
+          </a>
+        </div>
+        <p style="color: #7B6F9A; font-size: 14px; line-height: 1.6;">
+          Comparte su historia en redes sociales y 
+          mantén viva su memoria para siempre.
+        </p>
+        <p style="color: #B8B0CC; font-size: 12px; text-align: center; margin-top: 32px;">
+          Ángeles en el Cielo · todaslasmascotasvanalcielo.com
+        </p>
+      </div>
+    `,
   });
 
   if (error) {

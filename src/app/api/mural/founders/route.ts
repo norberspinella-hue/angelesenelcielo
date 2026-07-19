@@ -13,8 +13,7 @@ export async function GET() {
     const { count, error } = await supabase
       .from('mural_slots')
       .select('id', { count: 'exact', head: true })
-      .eq('plan', 'corazon_eterno')
-      .eq('is_founder', true);
+      .eq('plan_type', 'recuerdo_eterno');
 
     if (error) {
       console.error('Error fetching founders count:', error);

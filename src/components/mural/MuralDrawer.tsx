@@ -19,7 +19,11 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData }: MuralDr
     name: '',
     date: '',
     message: '',
-    rightsConfirmed: false
+    rightsConfirmed: false,
+    species: 'perro',
+    breed: '',
+    birthDate: '',
+    location: ''
   });
 
   if (!isOpen) return null;
@@ -32,7 +36,16 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData }: MuralDr
     // Reset state on close
     setTimeout(() => {
       setStep(1);
-      setDraftData({ name: '', date: '', message: '', rightsConfirmed: false });
+      setDraftData({ 
+        name: '', 
+        date: '', 
+        message: '', 
+        rightsConfirmed: false,
+        species: 'perro',
+        breed: '',
+        birthDate: '',
+        location: ''
+      });
     }, 300);
     onClose();
   };
@@ -199,9 +212,9 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData }: MuralDr
               {step === 4 && (
                 <StepCheckoutSummary 
                   onBack={() => setStep(3)}
-                  onCheckout={() => alert('¡Redirigiendo a Stripe Checkout seguro!')}
                   draftData={draftData}
                   selectedPlan={selectedPlan}
+                  selectedSlot={selectedSlot}
                 />
               )}
             </div>

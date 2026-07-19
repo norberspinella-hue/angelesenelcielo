@@ -31,6 +31,60 @@ export function StepStory({ onNext, onBack, draftData, setDraftData }: StepStory
 
           <div className="h-[1px] bg-gray-100 my-2" />
 
+          {/* Resumen de mascota con foto de Step 2 */}
+          {(draftData.thumbnailUrl || draftData.photoUrl) && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              padding: '14px 18px',
+              background: 'rgba(245,240,255,0.60)',
+              borderRadius: 16,
+              marginBottom: 20,
+              border: '1px solid rgba(180,150,220,0.25)',
+            }}>
+              <div style={{
+                width: 52,
+                height: 52,
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '3px solid rgba(236,111,163,0.40)',
+                flexShrink: 0,
+              }}>
+                <img
+                  src={draftData.thumbnailUrl || draftData.photoUrl}
+                  alt={draftData.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+              <div>
+                <p style={{
+                  fontWeight: 700,
+                  color: '#4A3F6B',
+                  margin: 0,
+                  fontSize: 16,
+                  fontFamily: 'Georgia, serif',
+                }}>
+                  {draftData.name}
+                </p>
+                {draftData.petDate && (
+                  <p style={{
+                    color: '#9B8FB0',
+                    margin: 0,
+                    fontSize: 12,
+                    fontFamily: 'sans-serif',
+                  }}>
+                    🌈 {new Date(draftData.petDate).toLocaleDateString('es-ES', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric'
+                    })}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="flex-1 flex flex-col">
             <label className="block text-sm font-bold text-[#1E2A78] mb-1">Dedicatoria (opcional)</label>
             <textarea 
@@ -63,14 +117,30 @@ export function StepStory({ onNext, onBack, draftData, setDraftData }: StepStory
             style={{ backgroundImage: 'url("/images/mural%20preview/previewrecuerdo.svg")', backgroundSize: 'cover', backgroundPosition: 'center' }}
           >
             <div className="w-24 h-24 rounded-full bg-white mb-4 border-4 border-[#C9A961] shadow-lg flex items-center justify-center overflow-hidden">
-              <span className="text-4xl text-gray-300">🐾</span>
+              {draftData.thumbnailUrl || draftData.photoUrl ? (
+                <img
+                  src={draftData.thumbnailUrl || draftData.photoUrl}
+                  alt={draftData.name}
+                  style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'cover' 
+                  }}
+                />
+              ) : (
+                <span className="text-4xl text-gray-300">🐾</span>
+              )}
             </div>
             
             <h3 className="font-serif font-bold text-xl text-[#1E2A78] text-center mb-1">
               {draftData.name || 'Nombre'}
             </h3>
             <p className="text-xs text-[#706A95] mb-4 text-center">
-              {draftData.date || 'DD/MM/AAAA'}
+              {draftData.petDate 
+                ? new Date(draftData.petDate).toLocaleDateString('es-ES', {
+                    day: 'numeric', month: 'long', year: 'numeric'
+                  })
+                : ''}
             </p>
             
             <div className="bg-white/60 backdrop-blur-sm p-4 rounded-xl w-full text-center italic text-sm text-[#1E2A78]">

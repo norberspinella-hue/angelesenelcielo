@@ -1,131 +1,245 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
-import Stripe from 'stripe';
-import { stripe } from '@/lib/stripe';
-import { createCertificateOrder } from '@/lib/certificates';
-import { createAdminClient } from '@/lib/supabase/server';
-import { FOUNDER_CONFIG } from '@/lib/founderConfig';
+import { NextRequest, NextResponse } from 'next/server'
+import Stripe from 'stripe'
+import { createAdminClient } from '@/lib/supabase/server'
+import crypto from 'crypto'
+import { resend } from '@/lib/resend'
 
-// Desactivar el parseo automático de body de Next.js para poder validar la firma de Stripe
-export const dynamic = 'force-dynamic';
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2026-04-22.dahlia' as any,
+})
 
 export async function POST(req: NextRequest) {
-  const body = await req.text();
-  const signature = headers().get('stripe-signature') as string;
+  const body = await req.text()
+  const signature = req.headers.get('stripe-signature')!
 
-  let event: Stripe.Event;
+  let event: Stripe.Event
 
   try {
-    if (!signature || !webhookSecret) {
-      throw new Error('Falta stripe-signature o STRIPE_WEBHOOK_SECRET');
-    }
-    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-    console.error(`❌ Falló la verificación de firma del Webhook:`, errorMessage);
+    event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    )
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err)
     return NextResponse.json(
-      { error: `Fallo de verificación de firma: ${errorMessage}` },
+      { error: 'Webhook signature verification failed' },
       { status: 400 }
-    );
+    )
   }
 
-  console.log(`🔔 Evento de Stripe recibido: ${event.type}`);
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object as Stripe.Checkout.Session
+    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location } = session.metadata!
 
-  // Eventos a escuchar:
-  // Dependiendo de cómo configures Stripe (Checkout Sessions o Payment Intents directos),
-  // el evento principal suele ser 'checkout.session.completed' o 'payment_intent.succeeded'.
-  // Daremos soporte a ambos para mayor robustez:
-  
-  if (event.type === 'checkout.session.completed' || event.type === 'payment_intent.succeeded') {
-    let metadata: Stripe.Metadata = {};
-    let userEmail: string | null = null;
-    let orderId: string | null = null;
-
-    if (event.type === 'checkout.session.completed') {
-      const session = event.data.object as Stripe.Checkout.Session;
-      metadata = session.metadata || {};
-      userEmail = session.customer_details?.email || session.customer_email || null;
-      // Usamos el ID de la sesión como identificador alternativo si no viene en metadata
-      orderId = metadata.orderId || `AEC-S${session.id.slice(-8).toUpperCase()}`;
-    } else {
-      const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      metadata = paymentIntent.metadata || {};
-      userEmail = paymentIntent.receipt_email || null;
-      orderId = metadata.orderId || `AEC-P${paymentIntent.id.slice(-8).toUpperCase()}`;
+    const planMapping: Record<string, string> = {
+      'huellita': 'recuerdo_inicial',
+      'estrella_brillante': 'estrella_anual',
+      'corazon_eterno': 'recuerdo_eterno',
     }
+    const planDb = planMapping[plan] ?? 'recuerdo_inicial'
 
-    // Extraemos la información del angelito
-    const petName = metadata.petName;
-    const plan = metadata.plan; // 'fundador' | 'eterno' | 'estrella' | 'inicial'
-    const founderNumberRaw = metadata.founderNumber;
-    const slotCode = metadata.slotCode || '';
-    const petPhotoUrl = metadata.petPhotoUrl;
-    const profileUrl = metadata.profileUrl || '';
+    console.log('Pago completado:', {
+      plan,
+      planDb,
+      slotId,
+      petName,
+      email,
+      sessionId: session.id,
+      amount: session.amount_total,
+    })
 
-    // Si viene la información de email del cliente dentro de la metadata, le damos prioridad
-    if (metadata.userEmail) {
-      userEmail = metadata.userEmail;
-    }
+    // Crear cliente admin de Supabase
+    const supabase = createAdminClient()
 
-    // Validación de datos mínimos requeridos
-    if (orderId && userEmail && petName && plan && petPhotoUrl) {
-      try {
-        let finalFounderNumber = founderNumberRaw ? parseInt(founderNumberRaw, 10) : undefined;
-        let finalPlan = plan;
+    // Generar order_id único
+    const orderId = `AEC-${Date.now()}`
 
-        if (plan === 'corazon_eterno' && slotCode) {
-          const supabase = createAdminClient();
-          const { count } = await supabase
-            .from('mural_slots')
-            .select('id', { count: 'exact', head: true })
-            .eq('plan', 'corazon_eterno')
-            .eq('is_founder', true);
+    // Generar upload_token único para el certificado
+    const uploadToken = crypto.randomUUID()
 
-          const currentCount = count || 0;
-          const isFounder = currentCount < FOUNDER_CONFIG.maxFounders;
+    try {
+      // 1. Guardar en tabla memorials
+      const { data: memorial, error: memorialError } = await (supabase
+        .from('memorials') as any)
+        .insert({
+          stripe_session_id: session.id,
+          stripe_payment_intent_id: session.payment_intent as string,
+          payment_status: 'paid',
+          price_paid: (session.amount_total ?? 0) / 100, // Convertir de céntimos a euros
+          plan_type: planDb,
+          email: email, // En la BD la columna se llama email, no user_email
+          pet_name: petName,
+          species: (species || 'otro') as any,
+          breed: breed || '',
+          birth_date: birthDate || null,
+          location: location || '',
+          photo_url: photoUrl || '', // de los metadatos de Stripe
+          death_date: petDate || new Date().toISOString().split('T')[0],
+          slots_count: plan === 'corazon_eterno' ? 9 : plan === 'estrella_brillante' ? 4 : 1,
+          profile_slug: `${petName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`,
+          visibility: 'public',
+          publication_status: 'published',
+          moderation_status: 'approved',
+        })
+        .select()
+        .single()
 
-          if (isFounder) {
-            finalFounderNumber = currentCount + 1;
-            finalPlan = 'fundador';
+      if (memorialError) {
+        console.error('Error guardando memorial:', memorialError)
+      } else {
+        console.log('Memorial guardado:', memorial.id)
+      }
+
+      // 2. Registrar/actualizar los slots en mural_slots
+      if (slotId && slotId !== 'auto') {
+        const [xStr, yStr] = slotId.split(',')
+        const xVal = parseInt(xStr)
+        const yVal = parseInt(yStr)
+
+        if (!isNaN(xVal) && !isNaN(yVal)) {
+          const size = plan === 'corazon_eterno' ? 3 : plan === 'estrella_brillante' ? 2 : 1
+          const slotsToUpsert = []
+
+          for (let dx = 0; dx < size; dx++) {
+            for (let dy = 0; dy < size; dy++) {
+              slotsToUpsert.push({
+                x: xVal + dx,
+                y: yVal + dy,
+                status: 'occupied', // En BD el enum es 'occupied' (no 'ocupado')
+                memorial_id: memorial?.id || null,
+                plan_type: planDb,
+                thumbnail_url: thumbnailUrl || '',
+              })
+            }
           }
 
-          // @ts-expect-error: These columns will be added to DB manually, TS might not know them yet
-          await supabase.from('mural_slots').update({
-            is_founder: isFounder,
-            founder_number: isFounder ? finalFounderNumber : null,
-          }).eq('id', slotCode);
-        }
-        
-        // Crear orden de certificado
-        await createCertificateOrder({
-          orderId,
-          userEmail,
-          petName,
-          plan: finalPlan,
-          founderNumber: finalFounderNumber !== undefined && isNaN(finalFounderNumber) ? undefined : finalFounderNumber,
-          slotCode,
-          petPhotoUrl,
-          profileUrl,
-        });
+          const { error: slotError } = await (supabase
+            .from('mural_slots') as any)
+            .upsert(slotsToUpsert, { onConflict: 'x,y' })
 
-        console.log(`✅ Orden de certificado procesada con éxito para pedido: ${orderId}`);
-      } catch (err: unknown) {
-        const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-        console.error(`❌ Error al procesar la orden del certificado para pedido ${orderId}:`, err);
-        return NextResponse.json(
-          { error: `Error al procesar la orden: ${errorMessage}` },
-          { status: 500 }
-        );
+          if (slotError) {
+            console.error('Error actualizando slots:', slotError)
+          } else {
+            console.log(`Slots de tamaño ${size}x${size} registrados/actualizados en (${xVal}, ${yVal})`)
+          }
+        }
       }
-    } else {
-      console.warn(
-        `⚠️ Recibido pago exitoso pero faltan campos requeridos en la metadata para crear el certificado.`,
-        { orderId, userEmail, petName, plan, petPhotoUrl }
-      );
+
+      // 3. Crear registro en certificates
+      const { error: certError } = await (supabase
+        .from('certificates') as any)
+        .insert({
+          order_id: orderId,
+          user_email: email,
+          pet_name: petName,
+          plan: planDb,
+          upload_token: uploadToken,
+          status: 'pending',
+          pet_photo_url: photoUrl || '', // Campo obligatorio en la BD
+        })
+
+      if (certError) {
+        console.error('Error creando certificado:', certError)
+      } else {
+        console.log('Certificado pendiente creado:', orderId)
+
+        // Enviar emails transaccionales
+        try {
+          // EMAIL 1 -> USUARIO (confirmación de compra)
+          await resend.emails.send({
+            from: process.env.RESEND_FROM_EMAIL!,
+            to: email,
+            subject: '✨ Su recuerdo ya brilla en el cielo',
+            html: `
+              <div style="font-family: Georgia, serif; max-width: 600px; 
+              margin: 0 auto; padding: 40px 20px; 
+              background: linear-gradient(160deg, #ffe8f0, #f5e8ff);">
+                <h1 style="color: #4A3F6B; font-size: 28px;">
+                  Su recuerdo ya brilla en el cielo ✨
+                </h1>
+                <p style="color: #7B6F9A; font-size: 16px; line-height: 1.6;">
+                  Gracias por darle un lugar eterno a <strong>${petName}</strong> 
+                  en el mural global.
+                </p>
+                <p style="color: #7B6F9A; font-size: 16px; line-height: 1.6;">
+                  Plan elegido: <strong>${plan}</strong>
+                </p>
+                <p style="color: #7B6F9A; font-size: 16px; line-height: 1.6;">
+                  Tu certificado estará listo en 24-72h y te lo 
+                  enviaremos a este email.
+                </p>
+                <div style="margin: 32px 0; text-align: center;">
+                  <a href="${process.env.NEXT_PUBLIC_URL}/mural-global" 
+                     style="background: linear-gradient(90deg, #ff82ad, #ec5f96);
+                     color: white; padding: 14px 28px; border-radius: 999px;
+                     text-decoration: none; font-weight: 700; font-size: 16px;">
+                    Ver en el mural ✦
+                  </a>
+                </div>
+                <p style="color: #B8B0CC; font-size: 12px; text-align: center;">
+                  Ángeles en el Cielo · todaslasmascotasvanalcielo.com
+                </p>
+              </div>
+            `,
+          })
+          console.log('Email de confirmación enviado al usuario:', email)
+
+          // EMAIL 2 -> ADMIN (notificación nuevo ángel)
+          await resend.emails.send({
+            from: process.env.RESEND_FROM_EMAIL!,
+            to: process.env.ADMIN_EMAIL || 'admin@todaslasmascotasvanalcielo.com',
+            subject: `🐾 Nuevo ángel: ${petName} (${plan})`,
+            html: `
+              <div style="font-family: sans-serif; max-width: 600px; 
+              margin: 0 auto; padding: 40px 20px;">
+                <h2 style="color: #4A3F6B;">Nuevo ángel registrado</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; 
+                    font-weight: 700;">Mascota</td>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                    ${petName}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; 
+                    font-weight: 700;">Plan</td>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                    ${plan}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; 
+                    font-weight: 700;">Email</td>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                    ${email}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; 
+                    font-weight: 700;">Slot</td>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                    ${slotId}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; font-weight: 700;">Sesión Stripe</td>
+                    <td style="padding: 8px;">${session.id}</td>
+                  </tr>
+                </table>
+                <p style="color: #9B8FB0; font-size: 13px; margin-top: 24px;">
+                  Pendiente: crear y subir certificado en 24-72h
+                </p>
+              </div>
+            `,
+          })
+          console.log('Email de notificación enviado al administrador')
+        } catch (emailErr) {
+          console.error('Error enviando emails a través de Resend:', emailErr)
+        }
+      }
+
+    } catch (err) {
+      console.error('Error procesando webhook:', err)
     }
   }
 
-  return NextResponse.json({ received: true });
+  return NextResponse.json({ received: true })
 }

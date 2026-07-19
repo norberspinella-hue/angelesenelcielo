@@ -1,0 +1,79 @@
+﻿
+{"step_index":5298,"source":"MODEL","type":"RUN_COMMAND","status":"DONE","created_at":"2026-07-19T12:21:41Z","content":
+"Created At: 2026-07-19T12:21:41Z\nCompleted At: 2026-07-19T12:22:40Z\n\n\t\t\t\tThe command completed 
+successfully.\n\t\t\t\tOutput:\n\t\t\t\t<truncated 1 lines>\n+            isMainSlot: isMain,\n+          });\n+       
+ });\n+        setRealSlotsMap(realSlots);\n+      }\n+    };\n+    \n+    loadOccupiedSlots();\n+  }, []);\n \n   // 
+Observe container resizing\n   useEffect(() => {\n@@ -112,7 +653,7 @@ export const MuralCanvas = 
+forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel\n       vY: -Math.random() * 0.5 - 0.5,\n       life: 
+Math.random() * 400,\n       maxLife: 300 + Math.random() * 200,\n-      size: Math.random() * 15 + 25, // 25px to 
+40px\n+      size: Math.random() * 30 + 50, // 50px to 80px (TamaÃ±o aumentado 100%)\n       img: i % 2 === 0 ? img1 : 
+img2,\n       wobbleOffset: Math.random() * Math.PI * 2,\n       wobbleSpeed: 0.02 + Math.random() * 0.02\n@@ -182,22 
++723,24 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel\n       
+premiumGradStroke.addColorStop(0, 'rgba(255, 208, 170, 0.65)'); \n       premiumGradStroke.addColorStop(1, 'rgba(255, 
+182, 186, 0.65)'); \n \n-      // Marco exterior coral pulsante\n+      // Marco exterior etÃ©reo oro incandescente 
+pulsante (TamaÃ±o x2)\n       const time = Date.now() / 1000;\n       const pulse = 0.5 + 0.5 * Math.sin(time * 
+1.2);\n-      ctx.shadowBlur = 20 + pulse * 15;\n-      ctx.shadowColor = 'rgba(255, 192, 163, 0.8)';\n-      
+ctx.strokeStyle = `rgba(255, 255, 255, ${0.80 + pulse * 0.20})`;\n-      ctx.lineWidth = 3;\n-      rr(px, py, pw, ph, 
+12);\n+      \n+      // 1. Halo exterior amplio y difuminado (Ã¡mbar/naranja cÃ¡lido)\n+      ctx.shadowBlur = 56 + 
+pulse * 20;\n+      ctx.shadowColor = 'rgba(244, 162, 89, 0.65)';\n+      ctx.strokeStyle = `rgba(254, 248, 231, 
+${0.60 + pulse * 0.30})`;\n+      ctx.lineWidth = 6;\n+      rr(px, py, pw, ph, 24);\n       ctx.stroke();\n \n-      
+// Marco interior fino blanco con resplandor coral\n-      ctx.shadowBlur = 8;\n-      ctx.shadowColor = 'rgba(255, 
+192, 163, 0.8)';\n-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.90)';\n-      ctx.lineWidth = 1;\n-      rr(px + 5, 
+py + 5, pw - 10, ph - 10, 10);\n+      // 2. Halo interior intenso y cercano (dorado brillante)\n+      ctx.shadowBlur 
+= 20 + pulse * 8;\n+      ctx.shadowColor = 'rgba(255, 209, 102, 0.9)';\n+      ctx.strokeStyle = 'rgba(255, 255, 250, 
+0.95)';\n+      ctx.lineWidth = 4;\n+      rr(px, py, pw, ph, 24);\n       ctx.stroke();\n       \n       // Reset 
+shadow for slots\n@@ -209,6 +752,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ 
+onSel\n           const sx = viewport.x + col * slotSize;\n           const sy = viewport.y + row * slotSize;\n        
+   const key = `${col},${row}`;\n+          const realSlot = realSlotsMap.get(key);\n           const seeded = 
+seedMap.get(key);\n           const isSelected = selectedSlot?.col === col && selectedSlot?.row === row;\n           
+const isPremium = col >= PZ.x && col < PZ.x + PZ.w && row >= PZ.y && row < PZ.y + PZ.h;\n@@ -221,6 +765,70 @@ export 
+const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel\n             rr(sx, sy, cell, cell, 
+radius);\n             ctx.fill();\n             ctx.stroke();\n+          } else if (realSlot) {\n+            const 
+thumbnailUrl = realSlot.thumbnail_url;\n+            if (thumbnailUrl && !(globalThis as 
+any)._loggedPhotos?.has(thumbnailUrl)) {\n+              (globalThis as any)._loggedPhotos = (globalThis as 
+any)._loggedPhotos || new Set();\n+              (globalThis as any)._loggedPhotos.add(thumbnailUrl);\n+              
+console.log('Dibujando foto:', thumbnailUrl);\n+            }\n+            let imageDrawn = false;\n+\n+            
+const planSize = \n+              realSlot.plan_type === 'recuerdo_eterno' ? 3 :\n+              realSlot.plan_type 
+=== 'estrella_anual' ? 2 : 1\n+\n+            // Solo dibujar la foto en el slot principal del bloque\n+            
+const isMainSlot = realSlot.isMainSlot\n+\n+            if (thumbnailUrl && isMainSlot) {\n+              const img = 
+loadImage(thumbnailUrl, () => {\n+                requestAnimationFrame(render)\n+              })\n+              if 
+(img) {\n+                const fullSize = slotSize * planSize  // tamaÃ±o total sin gap\n+                
+ctx.save()\n+                ctx.beginPath()\n+                const radius = Math.max(2, fullSize * 0.08)\n+          
+      ctx.moveTo(sx + radius, sy)\n+                ctx.lineTo(sx + fullSize - radius, sy)\n+                
+ctx.arcTo(sx + fullSize, sy, sx + fullSize, sy + radius, radius)\n+                ctx.lineTo(sx + fullSize, sy + 
+fullSize - radius)\n+                ctx.arcTo(sx + fullSize, sy + fullSize, sx + fullSize - radius, sy + fullSize, 
+radius)\n+                ctx.lineTo(sx + radius, sy + fullSize)\n+                ctx.arcTo(sx, sy + fullSize, sx, sy 
++ fullSize - radius, radius)\n+                ctx.lineTo(sx, sy + radius)\n+                ctx.arcTo(sx, sy, sx + 
+radius, sy, radius)\n+                ctx.closePath()\n+                ctx.clip()\n+                
+ctx.drawImage(img, sx, sy, fullSize, fullSize)\n+                ctx.restore()\n+                imageDrawn = true\n+  
+            }\n+            } else if (thumbnailUrl && !isMainSlot) {\n+              // Slots secundarios del bloque 
+â€” no dibujar nada\n+              // (la foto del slot principal ya los cubre)\n+              imageDrawn = true // 
+marcar como dibujado para no pintar color\n+            }\n+\n+            if (!imageDrawn) {\n+              // 
+Dibujar slot ocupado real con color segÃºn plan si no se ha cargado la imagen\n+              if (realSlot.plan_type 
+=== 'recuerdo_eterno') {\n+                ctx.fillStyle = 'rgba(201,169,97,0.85)'; // dorado\n+              } else 
+if (realSlot.plan_type === 'estrella_anual') {\n+                ctx.fillStyle = 'rgba(180,140,220,0.85)'; // lila\n+  
+            } else {\n+                ctx.fillStyle = 'rgba(236,111,163,0.85)'; // rosa\n+              }\n+          
+    rr(sx, sy, cell, cell, radius);\n+              ctx.fill();\n+            }\n+\n+            if (slotSize > 4) 
+{\n+              ctx.strokeStyle = realSlot.plan_type === 'recuerdo_eterno' ? 'rgba(255,215,0,0.4)' : 
+'rgba(255,255,255,0.2)';\n+              ctx.lineWidth = 0.5;\n+              ctx.stroke();\n+            }\n          
+ } else if (isPremium) {\n             // AnimaciÃ³n de pulso\n             const phase = (col * 7 + row * 13) % 
+(Math.PI * 2);\n@@ -331,13 +939,13 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ 
+onSel\n     rafId = requestAnimationFrame(render);\n     \n     return () => cancelAnimationFrame(rafId);\n-  }, 
+[viewport, seedMap, selectedSlot, showPremiumBadge]);\n+  }, [viewport, seedMap, selectedSlot, showPremiumBadge, 
+realSlotsMap]);\n \n   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {\n     if (pointerDownPos) {\n 
+      const dx = Math.abs(e.clientX - pointerDownPos.x);\n       const dy = Math.abs(e.clientY - pointerDownPos.y);\n- 
+     if (dx > 5 || dy > 5) {\n+      if (dx > 15 || dy > 15) {\n         return; // It was a drag, ignore click\n      
+ }\n     }\n@@ -349,6 +957,19 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ onSel\n    
+ const coord = screenToGrid(mx, my, viewport);\n     if (coord) {\n       const { col, row } = coord;\n+      const 
+key = `${col},${row}`;\n+      const realSlot = realSlotsMap.get(key);\n+\n+      if (realSlot) {\n+        
+setSelectedPet({\n+          memorial_id: realSlot.memorial_id,\n+          plan_type: realSlot.plan_type,\n+          
+thumbnail_url: realSlot.thumbnail_url,\n+        });\n+        setShowPetProfile(true);\n+        return; // NO abrir 
+drawer de compra\n+      }\n+\n       const inPremiumZone = \n         col >= PZ.x && col < PZ.x + PZ.w && \n         
+row >= PZ.y && row < PZ.y + PZ.h;\n@@ -415,6 +1036,19 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, 
+MuralCanvasProps>(({ onSel\n           50% { transform: translate(-50%, -50%) translateY(-10px); }\n         }\n       
+`}</style>\n+\n+\n+      {showPetProfile && selectedPet && (\n+        <PetProfileCard \n+          
+memorialId={selectedPet.memorial_id}\n+          planType={selectedPet.plan_type}\n+          
+thumbnailUrl={selectedPet.thumbnail_url}\n+          onClose={() => {\n+            setShowPetProfile(false);\n+       
+     setSelectedPet(null);\n+          }}\n+        />\n+      )}\n     </div>\n   );\n });\n\n"}
+
+

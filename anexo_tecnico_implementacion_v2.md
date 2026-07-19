@@ -115,7 +115,7 @@ STRIPE_PRICE_RECUERDO_ETERNO=
 
 # Resend
 RESEND_API_KEY=
-RESEND_FROM_EMAIL=hola@todaslasmascotasvanalcielo.com
+RESEND_FROM_EMAIL=hello@todaslasmascotasvanalcielo.com
 
 # Google Cloud Vision
 GOOGLE_VISION_API_KEY=
@@ -128,7 +128,7 @@ NEXT_PUBLIC_APP_URL=https://todaslasmascotasvanalcielo.com
 
 # Emails operativos
 ADMIN_EMAIL=admin@todaslasmascotasvanalcielo.com           # recibe reportes moderación + alertas
-SUPPORT_EMAIL=hola@todaslasmascotasvanalcielo.com          # contacto público (footer, emails)
+SUPPORT_EMAIL=hello@todaslasmascotasvanalcielo.com          # contacto público (footer, emails)
 PRIVACY_EMAIL=privacidad@todaslasmascotasvanalcielo.com    # ejercicio derechos RGPD
 ```
 
@@ -138,7 +138,7 @@ El proyecto necesita **al menos 3 buzones operativos** configurados en el provee
 
 | Buzón | Función | Dónde aparece |
 |---|---|---|
-| `hola@todaslasmascotasvanalcielo.com` | Remitente de TODOS los emails transaccionales (Resend) + soporte usuario | Resend `from`, footer, "Contacto" |
+| `hello@todaslasmascotasvanalcielo.com` | Remitente de TODOS los emails transaccionales (Resend) + soporte usuario | Resend `from`, footer, "Contacto" |
 | `admin@todaslasmascotasvanalcielo.com` | Recibe alertas moderación, errores webhooks, reportes admin | Solo interno (no se muestra al usuario) |
 | `privacidad@todaslasmascotasvanalcielo.com` | Solicitudes RGPD (ejercicio derechos manuales) | `/privacidad` y `/aviso-legal` |
 
@@ -1207,7 +1207,7 @@ import ConfirmationEmail from '@/emails/templates/ConfirmationEmail';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 await resend.emails.send({
-  from: 'Ángeles en el Cielo <hola@todaslasmascotasvanalcielo.com>',
+  from: 'Ángeles en el Cielo <hello@todaslasmascotasvanalcielo.com>',
   to: memorial.email,
   subject: `${memorial.petName} ya tiene su lugar en el Cielo`,
   react: ConfirmationEmail({ memorial }),
