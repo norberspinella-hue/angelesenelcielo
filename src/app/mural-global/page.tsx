@@ -17,6 +17,19 @@ export default function MuralGlobalPage() {
   const canvasRef = useRef<MuralCanvasRef>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  const [stats, setStats] = useState({
+    occupied: 0,
+    free: 1000000,
+    founders: 0,
+  })
+
+  useEffect(() => {
+    fetch('/api/mural/stats')
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(err => console.error('Error fetching mural stats:', err))
+  }, [])
+
   // Estados del buscador
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<any[]>([])
@@ -81,6 +94,33 @@ export default function MuralGlobalPage() {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const highlight = params.get('highlight')
+    const zoom = params.get('zoom')
+    
+    if (highlight && zoom) {
+      const [x, y] = highlight.split(',').map(Number)
+      setTimeout(() => {
+        canvasRef.current?.zoomToSlot(x, y)
+        const findAndHighlight = async () => {
+          const supabase = createClient()
+          const { data } = await (supabase
+            .from('mural_slots') as any)
+            .select('memorial_id')
+            .eq('x', x)
+            .eq('y', y)
+            .single()
+          if (data?.memorial_id) {
+            setHighlightedMemorialId(data.memorial_id)
+            setTimeout(() => setHighlightedMemorialId(null), 4000)
+          }
+        }
+        findAndHighlight()
+      }, 1000)
+    }
+  }, [])
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -186,10 +226,10 @@ export default function MuralGlobalPage() {
                 <Image src="/images/icons/plans/icon-plan-inicial.svg" alt="Ocupados" width={40} height={40} />
                 Ocupados
               </span>
-              <span className="font-bold text-[#1E2A78]">50.000</span>
+              <span className="font-bold text-[#1E2A78]">{stats.occupied.toLocaleString('es-ES')}</span>
             </div>
             <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-[#1E2A78]" style={{ width: '5%' }}></div>
+              <div className="h-full bg-[#1E2A78]" style={{ width: `${Math.min(100, Math.max(0.5, (stats.occupied / 1000000) * 100))}%` }}></div>
             </div>
             
             <div className="flex justify-between items-center text-[17.5px] mt-2">
@@ -197,7 +237,7 @@ export default function MuralGlobalPage() {
                 <Image src="/images/icons/plans/icon-plan-estrella.svg" alt="Libres" width={40} height={40} />
                 Libres
               </span>
-              <span className="font-bold text-[#C9A961]">950.000</span>
+              <span className="font-bold text-[#C9A961]">{stats.free.toLocaleString('es-ES')}</span>
             </div>
             
             <div className="flex justify-between items-center text-[17.5px] mt-2">
@@ -205,7 +245,7 @@ export default function MuralGlobalPage() {
                 <Image src="/images/icons/plans/icon-plan-eterno.svg" alt="Fundadores" width={40} height={40} />
                 Ángeles fundadores
               </span>
-              <span className="font-bold text-[#1E2A78]">48.210</span>
+              <span className="font-bold text-[#1E2A78]">{stats.founders.toLocaleString('es-ES')}</span>
             </div>
             
             <p className="text-[#706A95] text-[15px] mt-4 leading-relaxed">

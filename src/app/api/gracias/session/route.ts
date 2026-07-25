@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
       breed: session.metadata?.breed || '',
       birthDate: session.metadata?.birthDate || '',
       location: session.metadata?.location || '',
+      slotId: session.metadata?.slotId || '',
     })
   } catch (error) {
     return NextResponse.json(

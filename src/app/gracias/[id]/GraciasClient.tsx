@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface GraciasClientProps {
   sessionId: string
 }
 
 export default function GraciasClient({ sessionId }: GraciasClientProps) {
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [step, setStep] = useState(1) // 1: step 2 loading, 2: step 3 loading, 3: completed
   const [petName, setPetName] = useState('Tu ángel')
@@ -15,6 +17,7 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
   const [birthDate, setBirthDate] = useState<string>('')
   const [plan, setPlan] = useState('')
   const [petPhotoUrl, setPetPhotoUrl] = useState<string | null>(null)
+  const [slotId, setSlotId] = useState<string>('')
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return ''
@@ -37,6 +40,7 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
           setBirthDate(data.birthDate || '')
           setPetDate(data.petDate || '')
           setPlan(data.plan)
+          setSlotId(data.slotId || '')
           if (data.photoUrl) {
             setPetPhotoUrl(data.photoUrl)
           } else if (data.thumbnailUrl) {
@@ -275,12 +279,31 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
           {/* Botones de acción (Aparecen al completar la carga) */}
           {!loading && (
             <div className="flex flex-wrap gap-4 mt-8 w-full z-20">
-              <Link 
-                href="/mural-global" 
-                className="px-8 py-4 rounded-full bg-gradient-to-r from-[#ff82ad] to-[#ec5f96] text-white font-bold text-base shadow-[0_8px_24px_rgba(236,95,150,0.35)] hover:opacity-95 transition-opacity"
+              <button
+                onClick={() => {
+                  if (slotId) {
+                    const [x, y] = slotId.split(',').map(Number)
+                    router.push(
+                      `/mural-global?highlight=${x},${y}&zoom=true`
+                    )
+                  } else {
+                    router.push('/mural-global')
+                  }
+                }}
+                style={{
+                  padding: '14px 28px',
+                  borderRadius: 999,
+                  border: 'none',
+                  background: 'linear-gradient(90deg, #ff82ad, #ec5f96)',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: 16,
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 24px rgba(236,95,150,0.35)',
+                }}
               >
                 Ver en el mural ✦
-              </Link>
+              </button>
               
               <Link 
                 href="/" 
