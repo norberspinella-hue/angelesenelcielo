@@ -10,15 +10,15 @@ export async function GET() {
   const supabase = createClient(supabaseUrl, supabaseKey);
   
   const { count: occupied } = await (supabase
-    .from('mural_slots') as any)
+    .from('memorials') as any)
     .select('id', { count: 'exact', head: true })
-    .eq('status', 'occupied')
+    .eq('payment_status', 'paid')
 
   const { count: founders } = await (supabase
-    .from('mural_slots') as any)
+    .from('memorials') as any)
     .select('id', { count: 'exact', head: true })
+    .eq('payment_status', 'paid')
     .eq('plan_type', 'recuerdo_eterno')
-    .eq('status', 'occupied')
 
   const total = 1000000
   const free = total - (occupied || 0)
