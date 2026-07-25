@@ -17,8 +17,8 @@ export function Footer() {
       <div className="flex flex-wrap justify-center gap-6 text-sm text-[#706A95]">
         <Link href="/aviso-legal" className="hover:text-[#6F5FA8]">Aviso Legal</Link>
         <Link href="/privacidad" className="hover:text-[#6F5FA8]">Privacidad</Link>
+        <Link href="/terminos" className="hover:text-[#6F5FA8]">Términos</Link>
         <Link href="/cookies" className="hover:text-[#6F5FA8]">Cookies</Link>
-        <Link href="/condiciones-contratacion" className="hover:text-[#6F5FA8]">Condiciones</Link>
       </div>
       
       <div className="mt-8 text-xs text-[#706A95]">
