@@ -61,8 +61,8 @@ export default function MuralGlobalPage() {
 
     if (slots && slots[0]) {
       const { x, y } = slots[0]
-      // Centrar el mural en esas coordenadas llamando a la referencia expuesta
-      canvasRef.current?.centerOnSlot(x, y)
+      // Centrar el mural en esas coordenadas llamando a la referencia expuesta con zoom suave
+      canvasRef.current?.zoomToSlot(x, y)
       setHighlightedMemorialId(memorialId)
       setTimeout(() => setHighlightedMemorialId(null), 3000)
     }

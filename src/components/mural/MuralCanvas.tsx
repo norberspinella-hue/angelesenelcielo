@@ -44,7 +44,7 @@ interface PetProfileCardProps {
 }
 
 function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProfileCardProps) {
-  const [petData, setPetData] = useState<{ pet_name: string; photo_url: string; plan_type: string } | null>(null);
+  const [petData, setPetData] = useState<{ pet_name: string; photo_url: string; plan_type: string; profile_slug?: string | null; slots_count?: number | null; birth_date?: string | null; death_date?: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         setLoading(true);
         const { data, error } = await supabase
           .from('memorials')
-          .select('pet_name, photo_url, plan_type')
+          .select('pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date')
           .eq('id', memorialId)
           .single();
         
@@ -77,6 +77,24 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const nombre = petData?.pet_name || 'Ángel';
   const foto = petData?.photo_url || thumbnailUrl || '/images/placeholders/first.webp';
   const plan = petData?.plan_type || planType;
+
+  const formatDate = (dateStr?: string | null) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleDateString('es-ES', { 
+      day: 'numeric', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+  };
+
+  const birthStr = formatDate(petData?.birth_date);
+  const deathStr = formatDate(petData?.death_date);
+
+  const slotsCount = petData?.slots_count ||
+    (planType === 'recuerdo_eterno' ? 9 : 
+     planType === 'estrella_anual' ? 4 : 1);
 
   // Render plan badge conditionally
   let planBadgeSrc = '';
@@ -106,32 +124,65 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           style={{
             background: 'linear-gradient(180deg, #D5B2F1 0%, #EAA8C3 60%, #F5D3C8 100%)',
             height: '374px',
+            position: 'relative',
           }}
         >
           {/* Fondo superior (previewrecuerdo.svg) */}
           <div 
-            className="absolute top-0 left-0 w-full h-[262px] z-[1]"
+            className="absolute top-0 left-0 w-full h-[220px] z-[1]"
             style={{
-              background: 'url("/images/mural-preview/previewrecuerdo.svg") no-repeat center top / cover',
+              background: 'url("/images/mural-preview/previewrecuerdo.svg") no-repeat center bottom / cover',
             }}
           />
 
           {/* Fondo inferior (bannerdogs.png) */}
           <div 
-            className="absolute bottom-0 left-0 w-full h-[112px] z-[1]"
+            className="absolute left-0 w-full h-[154px] z-[1]"
             style={{
               background: 'url("/images/mural-preview/bannerdogs.png") no-repeat center bottom / 100% 100%',
+              top: '220px',
             }}
           />
 
-          {/* Contenido (con z-index para situarse encima de los fondos absolutos) */}
-          <div className="relative z-10 flex flex-col items-center p-[32px_20px_24px] box-border w-full h-full">
+          {/* Línea divisoria absoluta superpuesta sobre las dos imágenes */}
+          <div style={{
+            position: 'absolute',
+            top: 220,
+            left: 0,
+            right: 0,
+            height: 38,
+            display: 'flex',
+            alignItems: 'center',
+            transform: 'translateY(-50%)',
+            zIndex: 20,
+            padding: '0 20px',
+          }}>
+            <div style={{ flex: 1, height: 2, background: 'rgba(236,111,163,0.40)' }} />
+            <div style={{
+              width: 38, height: 38,
+              borderRadius: '50%',
+              background: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 18,
+              boxShadow: '0 2px 10px rgba(236,111,163,0.35)',
+              flexShrink: 0,
+              zIndex: 21,
+              position: 'relative',
+            }}>
+              🩷
+            </div>
+            <div style={{ flex: 1, height: 2, background: 'rgba(236,111,163,0.40)' }} />
+          </div>
+
+          <div className="relative z-10 flex flex-col items-center p-[18px_20px_24px] box-border w-full h-full">
             
-            {/* Foto circular 130x130px con halo y medalla */}
-            <div className="relative w-[130px] h-[130px] mb-3 mt-3">
+            {/* Foto circular 100x100px con halo y medalla */}
+            <div className="relative w-[100px] h-[100px] mb-3 mt-3">
               {/* Halo dorado 3D inclinado */}
               <div 
-                className="absolute top-[-40px] left-[50%] translate-x-[-50%] w-[88px] h-[34px] border-[3.5px] border-[#FFF59D] z-[1]"
+                className="absolute top-[-30px] left-[50%] translate-x-[-50%] w-[68px] h-[26px] border-[3.5px] border-[#FFF59D] z-[1]"
                 style={{
                   transform: 'translateX(-50%) rotateX(45deg)',
                   boxShadow: '0 0 20px #FFF59D, 0 0 8px #FFD54F, inset 0 0 12px #FFF59D',
@@ -151,52 +202,66 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 )}
               </div>
 
-              {/* Medalla del plan ampliada 100% (88px) manteniendo el centro */}
+              {/* Medalla del plan */}
               {planBadgeSrc && (
                 <img 
-                  className="absolute bottom-[-32px] right-[-32px] w-[88px] h-[88px] z-[5]" 
+                  className="absolute bottom-[-20px] right-[-20px] w-[68px] h-[68px] z-[5]" 
                   src={planBadgeSrc} 
                   alt="Medalla Plan" 
                 />
               )}
             </div>
 
-            {/* Nombre (Georgia italic bold) */}
+            {/* Nombre (Georgia bold) */}
             <h3 
-              className="font-serif font-bold text-[32px] text-[#4A3F6B] italic m-0 mb-1"
+              className="font-serif font-bold text-[32px] text-[#4A3F6B] m-0 mb-1"
             >
               {nombre}
             </h3>
 
+            {/* Fechas */}
+            {(birthStr || deathStr) && (
+              <p 
+                className="text-[12px] text-[#7B6F9A] font-semibold m-0 mb-0 text-center whitespace-nowrap"
+                style={{ marginTop: '54px' }}
+              >
+                {birthStr && deathStr ? `${birthStr} — ${deathStr}` : birthStr || deathStr}
+              </p>
+            )}
+
             {/* Tagline */}
-            <p className="text-[14px] text-[#7B6F9A] font-medium m-0 mb-3">
+            <p 
+              className="text-[14px] text-[#7B6F9A] font-medium m-0 mb-3"
+              style={{ marginTop: (birthStr || deathStr) ? '10px' : '72px' }}
+            >
               Siempre en nuestros corazones
             </p>
 
-            {/* Divisor rosa posicionado de forma absoluta sobre la unión de los fondos */}
-            <div 
-              className="absolute left-[20px] w-[calc(100%-40px)] flex items-center gap-[10px] z-10 m-0"
-              style={{
-                top: '262px',
-                transform: 'translateY(-50%)',
-              }}
-            >
-              <div className="h-[1px] bg-[rgba(236,111,163,0.35)] flex-1" />
-              <span className="text-[#EC6F9B] text-[11px]">🩷</span>
-              <div className="h-[1px] bg-[rgba(236,111,163,0.35)] flex-1" />
-            </div>
 
             {/* Botón luces posicionado de forma absoluta en la parte inferior */}
-            <Link 
-              href={`/gracias/${memorialId}`}
-              onClick={onClose}
-              className="absolute left-1/2 -translate-x-1/2 bg-white/55 border border-[rgba(244,114,182,0.3)] rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] flex items-center gap-[6px] shadow-[0_4px_15px_rgba(244,114,182,0.08)] backdrop-blur-[4px] hover:bg-white/70 transition-colors z-10 whitespace-nowrap"
-              style={{
-                bottom: '24px',
-              }}
-            >
-              Ver Recuerdo Completo 🐾
-            </Link>
+            {petData?.profile_slug ? (
+              <Link 
+                href={`/memorial/${petData.profile_slug}`}
+                onClick={onClose}
+                className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] hover:bg-white/40 transition-colors z-10 whitespace-nowrap"
+                style={{
+                  bottom: '24px',
+                }}
+              >
+                {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
+              </Link>
+            ) : (
+              <div 
+                className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] z-10 whitespace-nowrap"
+                style={{
+                  bottom: '24px',
+                  cursor: 'default',
+                  opacity: 0.7
+                }}
+              >
+                {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
+              </div>
+            )}
           </div>
         </div>
 
@@ -204,7 +269,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         <div 
           className="w-full rounded-[24px] border border-[rgba(255,255,255,0.65)] shadow-[0_12px_40px_rgba(30,10,50,0.15)] p-[24px_20px] flex flex-col items-center relative overflow-hidden"
           style={{
-            background: 'linear-gradient(180deg, rgba(253, 244, 245, 0.75) 0%, rgba(243, 222, 233, 0.75) 100%)',
+            background: 'linear-gradient(180deg, rgba(255, 230, 235, 0.85) 0%, rgba(250, 200, 215, 0.85) 100%)',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
           }}
@@ -216,17 +281,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           >
             ✕
           </button>
-
-          {/* SVG corazón alado morado */}
-          <div className="flex items-center gap-[6px] mb-2">
-            <svg width="56" height="28" viewBox="0 0 56 28" fill="none">
-              <path d="M18 14C12 8.5 5.5 8.5 1 10.5c2 4.5 6 6.5 14 6.5" stroke="#C084FC" strokeWidth="2.2" strokeLinecap="round"/>
-              <path d="M17 11.5c-4.5-4-9-4-12-2.5 1.5 3 4.5 4.5 10.5 4.5" stroke="#C084FC" strokeWidth="1.8" strokeLinecap="round"/>
-              <path d="M38 14C44 8.5 50.5 8.5 55 10.5c-2 4.5-6 6.5-14 6.5" stroke="#C084FC" strokeWidth="2.2" strokeLinecap="round" style={{ transformOrigin: '28px 14px' }}/>
-              <path d="M39 11.5c4.5-4 9-4 12-2.5-1.5 3-4.5 4.5-10.5 4.5" stroke="#C084FC" strokeWidth="1.8" strokeLinecap="round" style={{ transformOrigin: '28px 14px' }}/>
-              <path d="M28 23.5S20 17.5 20 12.5a4 4 0 0 1 8 0 4 4 0 0 1 8 0c0 5-8 11-8 11z" fill="#7C3AED"/>
-            </svg>
-          </div>
 
           <h4 className="font-serif font-bold text-[18px] text-[#4A3F6B] m-0 mb-[6px] text-center">
             Haz que su recuerdo siga brillando
@@ -243,7 +297,10 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               onClick={() => {
                 if (typeof window !== 'undefined') {
-                  window.open(`https://api.whatsapp.com/send?text=Mira%20el%20recuerdo%20de%20${encodeURIComponent(nombre)}%20en%20el%20mural%20de%20las%20mascotas%20${encodeURIComponent(window.location.origin)}/gracias/${memorialId}`, '_blank');
+                  const shareUrl = petData?.profile_slug
+                    ? `${window.location.origin}/memorial/${petData.profile_slug}`
+                    : window.location.origin;
+                  window.open(`https://api.whatsapp.com/send?text=Mira%20el%20recuerdo%20de%20${encodeURIComponent(nombre)}%20en%20el%20mural%20de%20las%20mascotas%20${encodeURIComponent(shareUrl)}`, '_blank');
                 }
               }}
               className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:translate-y-[-2px]"
@@ -258,6 +315,13 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
             {/* Instagram */}
             <div 
+              onClick={() => {
+                const shareUrl = petData?.profile_slug
+                  ? `${window.location.origin}/memorial/${petData.profile_slug}`
+                  : window.location.origin;
+                navigator.clipboard.writeText(shareUrl)
+                alert('Enlace copiado. ¡Compártelo en Instagram!')
+              }}
               className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:translate-y-[-2px]"
             >
               <div 
@@ -275,11 +339,36 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <span className="text-[11px] text-[#4A3F6B] font-medium font-sans">Instagram</span>
             </div>
 
+            {/* TikTok */}
+            <div 
+              onClick={() => {
+                const shareUrl = petData?.profile_slug
+                  ? `${window.location.origin}/memorial/${petData.profile_slug}`
+                  : window.location.origin;
+                navigator.clipboard.writeText(shareUrl)
+                alert('¡Enlace copiado! Pégalo en TikTok para compartir el recuerdo de tu mascota 🐾')
+                window.open('https://www.tiktok.com', '_blank')
+              }}
+              className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:translate-y-[-2px]"
+            >
+              <div 
+                className="w-[50px] h-[50px] rounded-full flex items-center justify-center text-white bg-[#000000] shadow-[0_8px_20px_rgba(0,0,0,0.25)]"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.2 8.2 0 0 0 4.79 1.52V6.78a4.85 4.85 0 0 1-1.03-.09z"/>
+                </svg>
+              </div>
+              <span className="text-[10px] text-[#9B8FB0] font-medium font-sans">TikTok</span>
+            </div>
+
             {/* Facebook */}
             <div 
               onClick={() => {
                 if (typeof window !== 'undefined') {
-                  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}/gracias/${memorialId}`, '_blank');
+                  const shareUrl = petData?.profile_slug
+                    ? `${window.location.origin}/memorial/${petData.profile_slug}`
+                    : window.location.origin;
+                  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
                 }
               }}
               className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:translate-y-[-2px]"
@@ -296,7 +385,10 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               onClick={() => {
                 if (typeof window !== 'undefined') {
-                  navigator.clipboard.writeText(`${window.location.origin}/gracias/${memorialId}`);
+                  const shareUrl = petData?.profile_slug
+                    ? `${window.location.origin}/memorial/${petData.profile_slug}`
+                    : window.location.origin;
+                  navigator.clipboard.writeText(shareUrl);
                   alert('Enlace copiado al portapapeles');
                 }
               }}
@@ -336,6 +428,7 @@ export interface MuralCanvasRef {
   zoomOut: () => void;
   centerPremium: () => void;
   centerOnSlot: (x: number, y: number) => void;
+  zoomToSlot: (x: number, y: number) => void;
 }
 
 export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ 
@@ -385,6 +478,33 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
         x: viewport.width / 2 - x * slotSize,
         y: viewport.height / 2 - y * slotSize,
       }))
+    },
+    zoomToSlot: (x: number, y: number) => {
+      const targetZoom = 2.5
+      const startZoom = viewport.zoom
+      const startX = viewport.x
+      const startY = viewport.y
+      const endX = viewport.width / 2 - x * BASE_SLOT * targetZoom
+      const endY = viewport.height / 2 - y * BASE_SLOT * targetZoom
+      const duration = 600
+      const start = performance.now()
+
+      const animate = (now: number) => {
+        const elapsed = now - start
+        const progress = Math.min(elapsed / duration, 1)
+        const ease = 1 - Math.pow(1 - progress, 3)
+
+        setViewport(prev => ({
+          ...prev,
+          zoom: startZoom + (targetZoom - startZoom) * ease,
+          x: startX + (endX - startX) * ease,
+          y: startY + (endY - startY) * ease,
+        }))
+
+        if (progress < 1) requestAnimationFrame(animate)
+      }
+
+      requestAnimationFrame(animate)
     }
   }));
 
