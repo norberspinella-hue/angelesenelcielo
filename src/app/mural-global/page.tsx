@@ -28,7 +28,7 @@ function WelcomePopup({ onClose }: { onClose: () => void }) {
       <div 
         style={{
           position: 'relative',
-          width: 'min(480px, 90vw)',
+          width: 'min(600px, 90vw)',
           borderRadius: 24,
           overflow: 'hidden',
           boxShadow: '0 20px 60px rgba(100,70,150,0.30)',
