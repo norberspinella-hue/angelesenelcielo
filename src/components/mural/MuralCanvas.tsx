@@ -44,8 +44,9 @@ interface PetProfileCardProps {
 }
 
 function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProfileCardProps) {
-  const [petData, setPetData] = useState<{ pet_name: string; photo_url: string; plan_type: string; profile_slug?: string | null; slots_count?: number | null; birth_date?: string | null; death_date?: string | null } | null>(null);
+  const [petData, setPetData] = useState<{ pet_name: string; photo_url: string; plan_type: string; profile_slug?: string | null; slots_count?: number | null; birth_date?: string | null; death_date?: string | null; dedication?: string | null } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isFlipped, setIsFlipped] = useState(false);
 
   useEffect(() => {
     const fetchPetData = async () => {
@@ -53,7 +54,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         setLoading(true);
         const { data, error } = await supabase
           .from('memorials')
-          .select('pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date')
+          .select('pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication')
           .eq('id', memorialId)
           .single();
         
@@ -118,150 +119,278 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
     >
       <div className="w-full max-w-[360px] flex flex-col gap-4 max-h-[90vh] overflow-y-auto scrollbar-none">
         
-        {/* TARJETA 1 — EL RECUERDO */}
+        {/* CONTENEDOR 3D FLIP CARD */}
         <div 
-          className="w-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden relative"
+          onClick={() => setIsFlipped(!isFlipped)}
+          className="w-full relative select-none"
           style={{
-            background: 'linear-gradient(180deg, #D5B2F1 0%, #EAA8C3 60%, #F5D3C8 100%)',
+            perspective: '1000px',
             height: '374px',
-            position: 'relative',
+            cursor: 'pointer',
           }}
         >
-          {/* Fondo superior (previewrecuerdo.svg) */}
+          {/* DIV INTERIOR QUE ROTA */}
           <div 
-            className="absolute top-0 left-0 w-full h-[220px] z-[1]"
             style={{
-              background: 'url("/images/mural-preview/previewrecuerdo.svg") no-repeat center bottom / cover',
-            }}
-          />
-
-          {/* Fondo inferior (bannerdogs.png) */}
-          <div 
-            className="absolute left-0 w-full h-[154px] z-[1]"
-            style={{
-              background: 'url("/images/mural-preview/bannerdogs.png") no-repeat center bottom / 100% 100%',
-              top: '220px',
-            }}
-          />
-
-          {/* Línea divisoria absoluta superpuesta sobre las dos imágenes */}
-          <div style={{
-            position: 'absolute',
-            top: 220,
-            left: 0,
-            right: 0,
-            height: 38,
-            display: 'flex',
-            alignItems: 'center',
-            transform: 'translateY(-50%)',
-            zIndex: 20,
-            padding: '0 20px',
-          }}>
-            <div style={{ flex: 1, height: 2, background: 'rgba(236,111,163,0.40)' }} />
-            <div style={{
-              width: 38, height: 38,
-              borderRadius: '50%',
-              background: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 18,
-              boxShadow: '0 2px 10px rgba(236,111,163,0.35)',
-              flexShrink: 0,
-              zIndex: 21,
+              width: '100%',
+              height: '100%',
               position: 'relative',
-            }}>
-              🩷
-            </div>
-            <div style={{ flex: 1, height: 2, background: 'rgba(236,111,163,0.40)' }} />
-          </div>
-
-          <div className="relative z-10 flex flex-col items-center p-[18px_20px_24px] box-border w-full h-full">
-            
-            {/* Foto circular 100x100px con halo y medalla */}
-            <div className="relative w-[100px] h-[100px] mb-3 mt-3">
-              {/* Halo dorado 3D inclinado */}
+              transformStyle: 'preserve-3d',
+              transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: isFlipped ? 'rotateY(180deg)' : 'none',
+            }}
+          >
+            {/* CARA FRONTAL — EL RECUERDO */}
+            <div 
+              className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
+              style={{
+                background: 'linear-gradient(180deg, #D5B2F1 0%, #EAA8C3 60%, #F5D3C8 100%)',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+              }}
+            >
+              {/* Fondo superior (previewrecuerdo.svg) */}
               <div 
-                className="absolute top-[-30px] left-[50%] translate-x-[-50%] w-[68px] h-[26px] border-[3.5px] border-[#FFF59D] z-[1]"
+                className="absolute top-0 left-0 w-full h-[220px] z-[1]"
                 style={{
-                  transform: 'translateX(-50%) rotateX(45deg)',
-                  boxShadow: '0 0 20px #FFF59D, 0 0 8px #FFD54F, inset 0 0 12px #FFF59D',
-                  background: 'rgba(255, 245, 157, 0.12)',
-                  borderRadius: '50%',
+                  background: 'url("/images/mural-preview/previewrecuerdo.svg") no-repeat center bottom / cover',
                 }}
               />
-              
-              {/* Contenedor de la foto */}
-              <div className="w-full h-full rounded-full overflow-hidden border-[4.5px] border-[#FFE082] shadow-[0_4px_15px_rgba(255,213,79,0.25)] bg-white relative z-[2]">
-                {loading ? (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                    <div className="w-8 h-8 border-4 border-[#FFE082] border-t-transparent rounded-full animate-spin" />
+
+              {/* Fondo inferior (bannerdogs.png) */}
+              <div 
+                className="absolute left-0 w-full h-[154px] z-[1]"
+                style={{
+                  background: 'url("/images/mural-preview/bannerdogs.png") no-repeat center bottom / 100% 100%',
+                  top: '220px',
+                }}
+              />
+
+              {/* Línea divisoria absoluta superpuesta sobre las dos imágenes */}
+              <div style={{
+                position: 'absolute',
+                top: 220,
+                left: 0,
+                right: 0,
+                height: 38,
+                display: 'flex',
+                alignItems: 'center',
+                transform: 'translateY(-50%)',
+                zIndex: 20,
+                padding: '0 20px',
+              }}>
+                <div style={{ flex: 1, height: 2, background: 'rgba(236,111,163,0.40)' }} />
+                <div style={{
+                  width: 38, height: 38,
+                  borderRadius: '50%',
+                  background: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 18,
+                  boxShadow: '0 2px 10px rgba(236,111,163,0.35)',
+                  flexShrink: 0,
+                  zIndex: 21,
+                  position: 'relative',
+                }}>
+                  🩷
+                </div>
+                <div style={{ flex: 1, height: 2, background: 'rgba(236,111,163,0.40)' }} />
+              </div>
+
+              <div className="relative z-10 flex flex-col items-center p-[18px_20px_24px] box-border w-full h-full">
+                
+                {/* Foto circular 100x100px con halo y medalla */}
+                <div className="relative w-[100px] h-[100px] mb-3 mt-3">
+                  {/* Halo dorado 3D inclinado */}
+                  <div 
+                    className="absolute top-[-30px] left-[50%] translate-x-[-50%] w-[68px] h-[26px] border-[3.5px] border-[#FFF59D] z-[1]"
+                    style={{
+                      transform: 'translateX(-50%) rotateX(45deg)',
+                      boxShadow: '0 0 20px #FFF59D, 0 0 8px #FFD54F, inset 0 0 12px #FFF59D',
+                      background: 'rgba(255, 245, 157, 0.12)',
+                      borderRadius: '50%',
+                    }}
+                  />
+                  
+                  {/* Contenedor de la foto */}
+                  <div className="w-full h-full rounded-full overflow-hidden border-[4.5px] border-[#FFE082] shadow-[0_4px_15px_rgba(255,213,79,0.25)] bg-white relative z-[2]">
+                    {loading ? (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                        <div className="w-8 h-8 border-4 border-[#FFE082] border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    ) : (
+                      <img src={foto} alt={nombre} className="w-full h-full object-cover" />
+                    )}
                   </div>
+
+                  {/* Medalla del plan */}
+                  {planBadgeSrc && (
+                    <img 
+                      className="absolute bottom-[-20px] right-[-20px] w-[68px] h-[68px] z-[5]" 
+                      src={planBadgeSrc} 
+                      alt="Medalla Plan" 
+                    />
+                  )}
+                </div>
+
+                {/* Nombre (Georgia bold) */}
+                <h3 
+                  className="font-serif font-bold text-[32px] text-[#4A3F6B] m-0 mb-1"
+                >
+                  {nombre}
+                </h3>
+
+                {/* Fechas */}
+                {(birthStr || deathStr) && (
+                  <p 
+                    className="text-[12px] text-[#7B6F9A] font-semibold m-0 mb-0 text-center whitespace-nowrap"
+                    style={{ marginTop: '54px' }}
+                  >
+                    {birthStr && deathStr ? `${birthStr} — ${deathStr}` : birthStr || deathStr}
+                  </p>
+                )}
+
+                {/* Tagline */}
+                <p 
+                  className="text-[14px] text-[#7B6F9A] font-medium m-0 mb-3"
+                  style={{ marginTop: (birthStr || deathStr) ? '10px' : '72px' }}
+                >
+                  Siempre en nuestros corazones
+                </p>
+
+                {/* Hint de interactividad al pie frontal */}
+                <span 
+                  style={{
+                    position: 'absolute',
+                    bottom: '76px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    fontSize: '11px',
+                    color: 'rgba(155, 143, 176, 0.60)',
+                    pointerEvents: 'none',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Toca para ver su historia 🐾
+                </span>
+
+                {/* Botón luces posicionado de forma absoluta en la parte inferior */}
+                {petData?.profile_slug ? (
+                  <Link 
+                    href={`/memorial/${petData.profile_slug}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClose();
+                    }}
+                    className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] hover:bg-white/40 transition-colors z-10 whitespace-nowrap"
+                    style={{
+                      bottom: '24px',
+                    }}
+                  >
+                    {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
+                  </Link>
                 ) : (
-                  <img src={foto} alt={nombre} className="w-full h-full object-cover" />
+                  <div 
+                    className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] z-10 whitespace-nowrap"
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      bottom: '24px',
+                      cursor: 'default',
+                      opacity: 0.7
+                    }}
+                  >
+                    {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
+                  </div>
                 )}
               </div>
-
-              {/* Medalla del plan */}
-              {planBadgeSrc && (
-                <img 
-                  className="absolute bottom-[-20px] right-[-20px] w-[68px] h-[68px] z-[5]" 
-                  src={planBadgeSrc} 
-                  alt="Medalla Plan" 
-                />
-              )}
             </div>
 
-            {/* Nombre (Georgia bold) */}
-            <h3 
-              className="font-serif font-bold text-[32px] text-[#4A3F6B] m-0 mb-1"
+            {/* CARA TRASERA — REVERSO */}
+            <div 
+              className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
+              style={{
+                background: 'linear-gradient(160deg, #f5e8ff 0%, #ffe8f0 60%, #ffe8d8 100%)',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                transform: 'rotateY(180deg)',
+                boxSizing: 'border-box',
+                padding: '32px 24px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+              }}
             >
-              {nombre}
-            </h3>
+              {/* Icono corazón con alas inline */}
+              <svg width="48" height="48" viewBox="0 0 48 24" fill="none" style={{ marginBottom: '12px' }}>
+                <path d="M16 12C12 7 6 7 2 9C4 13 8 15 16 15" stroke="#EC6F9B" strokeWidth="1.5" strokeLinecap="round"/>
+                <path d="M32 12C36 7 42 7 46 9C44 13 40 15 32 15" stroke="#EC6F9B" strokeWidth="1.5" strokeLinecap="round"/>
+                <path d="M16 9.5C16 7.4 17.4 6 19.5 6c1.7 0 2.4.8 3.5 2.1C24.1 6.8 24.8 6 26.5 6 28.6 6 30 7.4 30 9.5c0 3.8-2.4 6.8-6.5 10.5L20 21.3" stroke="#EC6F9B" strokeWidth="1.5" fill="rgba(236,111,163,0.15)"/>
+              </svg>
 
-            {/* Fechas */}
-            {(birthStr || deathStr) && (
-              <p 
-                className="text-[12px] text-[#7B6F9A] font-semibold m-0 mb-0 text-center whitespace-nowrap"
-                style={{ marginTop: '54px' }}
-              >
-                {birthStr && deathStr ? `${birthStr} — ${deathStr}` : birthStr || deathStr}
-              </p>
-            )}
+              {/* Título */}
+              <h3 style={{
+                fontFamily: 'Georgia, serif',
+                fontStyle: 'italic',
+                fontSize: '18px',
+                fontWeight: 700,
+                color: '#4A3F6B',
+                marginBottom: '16px',
+                margin: 0,
+              }}>
+                Historia de amor
+              </h3>
 
-            {/* Tagline */}
-            <p 
-              className="text-[14px] text-[#7B6F9A] font-medium m-0 mb-3"
-              style={{ marginTop: (birthStr || deathStr) ? '10px' : '72px' }}
-            >
-              Siempre en nuestros corazones
-            </p>
-
-
-            {/* Botón luces posicionado de forma absoluta en la parte inferior */}
-            {petData?.profile_slug ? (
-              <Link 
-                href={`/memorial/${petData.profile_slug}`}
-                onClick={onClose}
-                className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] hover:bg-white/40 transition-colors z-10 whitespace-nowrap"
-                style={{
-                  bottom: '24px',
-                }}
-              >
-                {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
-              </Link>
-            ) : (
+              {/* Dedicatoria */}
               <div 
-                className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] z-10 whitespace-nowrap"
                 style={{
-                  bottom: '24px',
-                  cursor: 'default',
-                  opacity: 0.7
+                  fontSize: '14px',
+                  color: '#7B6F9A',
+                  lineHeight: 1.7,
+                  fontFamily: 'Georgia, serif',
+                  fontStyle: 'italic',
+                  borderLeft: '3px solid rgba(236,111,163,0.40)',
+                  paddingLeft: '16px',
+                  textAlign: 'left',
+                  maxHeight: '160px',
+                  overflowY: 'auto',
+                  width: '100%',
+                  boxSizing: 'border-box',
+                }}
+                className="scrollbar-none"
+              >
+                {petData?.dedication || 'Sin dedicatoria'}
+              </div>
+
+              {/* Icono pezuña rosa al pie */}
+              <img 
+                src="/images/icons/plans/pawrosa.svg" 
+                alt="Huella Rosa" 
+                style={{
+                  width: '28px',
+                  marginTop: '16px',
+                  opacity: 0.70,
+                }}
+              />
+
+              {/* Hint de interactividad al pie trasero */}
+              <span 
+                style={{
+                  position: 'absolute',
+                  bottom: '12px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: '11px',
+                  color: 'rgba(155, 143, 176, 0.60)',
+                  pointerEvents: 'none',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
-              </div>
-            )}
+                Toca para volver
+              </span>
+            </div>
           </div>
         </div>
 
