@@ -55,7 +55,6 @@ export function PricingSection() {
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>4 bloques en el mural (2x2)</li>
               <li>Destaca más visualmente</li>
-              <li>Perfil público enriquecido</li>
               <li>Recordatorio especial de aniversario</li>
               <li>Certificado Estrella</li>
             </ul>
