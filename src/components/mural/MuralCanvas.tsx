@@ -349,17 +349,19 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 fontStyle: 'italic',
                 marginTop: 12,
                 textAlign: 'center',
-                margin: 0
+                margin: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
               }}>
                 — Siempre en nuestro corazón
+                <img 
+                  src="/images/icons/plans/pawrosa.svg"
+                  alt=""
+                  style={{ width: '16px', height: '16px', opacity: 0.70 }}
+                />
               </p>
-
-              {/* Icono pezuña rosa al pie */}
-              <img 
-                src="/images/icons/plans/pawrosa.svg"
-                alt=""
-                style={{ width: '28px', marginTop: '16px', opacity: 0.70 }}
-              />
             </div>
           </div>
         </div>
