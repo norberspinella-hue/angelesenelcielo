@@ -271,7 +271,11 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
               </p>
 
               {/* Corazón */}
-              <span style={{ fontSize: 20 }}>❤️</span>
+              <img 
+                src="/images/icons/plans/icon-plan-eterno.svg"
+                alt=""
+                style={{ width: 28, height: 28, objectFit: 'contain' }}
+              />
             </div>
 
           </div>
