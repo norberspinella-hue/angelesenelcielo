@@ -29,6 +29,7 @@ export function PricingSection() {
               <li>1 bloque en el mural (1x1)</li>
               <li>Sube su foto más bonita</li>
               <li>Escribe su historia y dedicatoria</li>
+              <li>Certificado Huellita</li>
             </ul>
             
             <Link href="/mural-global" className="btn-inicial-heaven w-full mt-4 text-center">
