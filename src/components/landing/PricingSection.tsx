@@ -53,9 +53,10 @@ export function PricingSection() {
             
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>4 bloques en el mural (2x2)</li>
-              <li>Destaca más visualmente</li>
-              <li>Recordatorio especial de aniversario</li>
+              <li>La foto de tu peque se verá más en el mural</li>
+              <li>Brillo durante la semana de su aniversario</li>
               <li>Certificado Estrella</li>
+              <li>Perfil completo en una página propia <span className="text-xs opacity-75 italic">(disponible muy pronto)</span></li>
             </ul>
             
             <Link href="/mural-global" className="btn-estrella-heaven w-full mt-4 text-center">
