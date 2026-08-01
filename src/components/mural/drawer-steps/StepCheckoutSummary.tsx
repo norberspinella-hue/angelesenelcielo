@@ -155,12 +155,9 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
             fontSize: 12,
             color: '#7B6F9A',
             fontFamily: 'sans-serif',
+            fontWeight: 700,
             lineHeight: 1.6,
             margin: 0,
-            display: 'flex',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: 4,
           }}>
             Este espacio es muy popular. En el caso de que 
             otro ángel lo reserve justo antes que tú, 
@@ -169,7 +166,13 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
             <img 
               src="/images/icons/plans/pawrosa.svg"
               alt=""
-              style={{ width: 14, height: 14, display: 'inline' }}
+              style={{ 
+                width: 14, 
+                height: 14, 
+                display: 'inline',
+                verticalAlign: 'middle',
+                marginLeft: 2,
+              }}
             />
           </p>
         </div>
