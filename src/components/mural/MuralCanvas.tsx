@@ -369,43 +369,70 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         </div>
 
         {/* HINT DE GIRO */}
-        {!isFlipped ? (
-          <div 
-            onClick={() => setIsFlipped(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              marginTop: 8,
-              fontSize: 11,
-              color: 'rgba(155,143,176,0.80)',
-              fontFamily: 'sans-serif',
-              cursor: 'pointer',
-            }}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          width: '100%',
+          marginTop: 6,
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            fontSize: 11,
+            color: 'rgba(100,80,140,0.80)',
+            fontFamily: 'sans-serif',
+            cursor: 'pointer',
+            background: 'rgba(255,255,255,0.60)',
+            padding: '5px 12px',
+            borderRadius: 999,
+          }}
+          onClick={() => setIsFlipped(!isFlipped)}
           >
-            <span style={{ fontSize: 14 }}>↩️</span>
-            <span>Toca la tarjeta para ver su historia</span>
+            {!isFlipped ? (
+              <>
+                <div style={{
+                  width: 22, height: 22,
+                  borderRadius: '50%',
+                  background: '#C9B8FF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" 
+                       fill="none" stroke="white" strokeWidth="2.5"
+                       strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 14L4 9l5-5"/>
+                    <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>
+                  </svg>
+                </div>
+                <span>Ver su historia</span>
+              </>
+            ) : (
+              <>
+                <div style={{
+                  width: 22, height: 22,
+                  borderRadius: '50%',
+                  background: '#C9B8FF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24"
+                       fill="none" stroke="white" strokeWidth="2.5"
+                       strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 10L20 15l-5 5"/>
+                    <path d="M20 15H9.5a5.5 5.5 0 0 1 0-11H13"/>
+                  </svg>
+                </div>
+                <span>Volver</span>
+              </>
+            )}
           </div>
-        ) : (
-          <div 
-            onClick={() => setIsFlipped(false)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              marginTop: 8,
-              fontSize: 11,
-              color: 'rgba(155,143,176,0.80)',
-              fontFamily: 'sans-serif',
-              cursor: 'pointer',
-            }}
-          >
-            <span style={{ fontSize: 14 }}>↩️</span>
-            <span>Toca para volver</span>
-          </div>
-        )}
+        </div>
 
         {/* TARJETA 2 — COMPARTIR */}
         <div 
