@@ -304,7 +304,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <img 
                 src="/images/icons/Logoheart.svg"
                 alt=""
-                style={{ width: 64, height: 64, marginBottom: 12 }}
+                style={{ width: 128, height: 128, marginBottom: 12 }}
               />
 
               {/* Título */}
