@@ -300,9 +300,9 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 textAlign: 'center',
               }}
             >
-              {/* Icono Badgefundadores.svg */}
+              {/* Icono Logoheart.svg */}
               <img 
-                src="/images/icons/Badgefundadores.svg"
+                src="/images/icons/Logoheart.svg"
                 alt=""
                 style={{ width: 64, height: 64, marginBottom: 12 }}
               />
@@ -340,17 +340,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               >
                 {petData?.dedication || 'Sin dedicatoria'}
               </div>
-
-              {/* Icono pezuña rosa al pie */}
-              <img 
-                src="/images/icons/plans/pawrosa.svg" 
-                alt="Huella Rosa" 
-                style={{
-                  width: '28px',
-                  marginTop: '16px',
-                  opacity: 0.70,
-                }}
-              />
 
               {/* Texto Siempre en nuestro corazón */}
               <p style={{
