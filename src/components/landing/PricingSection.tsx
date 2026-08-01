@@ -81,7 +81,6 @@ export function PricingSection() {
             <ul className="plan-list flex-1 text-[#9A7D63]">
               <li>9 bloques en el mural (3x3)</li>
               <li>Tamaño máximo para siempre y más visible que el resto</li>
-              <li>Perfil público destacado</li>
               <li>Certificado Especial Aniversario</li>
               <li>Certificado Corazón Eterno</li>
             </ul>
