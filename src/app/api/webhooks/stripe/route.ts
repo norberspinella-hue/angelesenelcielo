@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
-    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location } = session.metadata!
+    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication } = session.metadata!
 
     const planMapping: Record<string, string> = {
       'huellita': 'recuerdo_inicial',
@@ -81,6 +81,7 @@ export async function POST(req: NextRequest) {
           visibility: 'public',
           publication_status: 'published',
           moderation_status: 'approved',
+          dedication: dedication || '',
         })
         .select()
         .single()

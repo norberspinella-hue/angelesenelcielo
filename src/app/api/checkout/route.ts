@@ -13,7 +13,7 @@ const PRICE_IDS: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location } = await req.json()
+    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication } = await req.json()
 
     const priceId = PRICE_IDS[plan]
     if (!priceId) {
@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
         breed: (breed || '').slice(0, 100),
         birthDate: birthDate || '',
         location: (location || '').slice(0, 100),
+        dedication: (dedication || '').slice(0, 490),
       },
     })
 

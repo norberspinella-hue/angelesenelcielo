@@ -48,6 +48,7 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
           breed: draftData.breed ?? '',
           birthDate: draftData.birthDate ?? '',
           location: draftData.location ?? '',
+          dedication: (draftData.message || '').slice(0, 490),
         }),
       })
 
