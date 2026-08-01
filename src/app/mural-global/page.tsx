@@ -10,12 +10,91 @@ import { ParticlesBackground } from '@/components/mural/ParticlesBackground';
 import { createClient } from '@/lib/supabase/client';
 
 
+function WelcomePopup({ onClose }: { onClose: () => void }) {
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      zIndex: 9999,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'rgba(40,20,80,0.55)',
+      backdropFilter: 'blur(4px)',
+      animation: 'fadeIn 0.5s ease',
+    }}
+    onClick={onClose}
+    >
+      <div 
+        style={{
+          position: 'relative',
+          width: 'min(480px, 90vw)',
+          borderRadius: 24,
+          overflow: 'hidden',
+          boxShadow: '0 20px 60px rgba(100,70,150,0.30)',
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Imagen del popup */}
+        <img
+          src="/images/mural/mural_de_angeles_popup.webp"
+          alt="Bienvenido al Mural de Ángeles"
+          style={{
+            width: '100%',
+            height: 'auto',
+            display: 'block',
+          }}
+        />
+
+        {/* Botón cerrar X */}
+        <button
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            border: 'none',
+            background: 'rgba(255,255,255,0.85)',
+            color: '#4A3F6B',
+            fontSize: 16,
+            fontWeight: 700,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+            zIndex: 10,
+          }}
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function MuralGlobalPage() {
   const [selectedSlot, setSelectedSlot] = useState<{ col: number; row: number } | null>(null);
   const [slotData, setSlotData] = useState<any | null>(null);
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const canvasRef = useRef<MuralCanvasRef>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false)
+
+  useEffect(() => {
+    const hasSeenWelcome = localStorage.getItem('mural-welcome-seen')
+    if (!hasSeenWelcome) {
+      setTimeout(() => setShowWelcome(true), 500)
+    }
+  }, [])
+
+  const handleCloseWelcome = () => {
+    setShowWelcome(false)
+    localStorage.setItem('mural-welcome-seen', 'true')
+  }
 
   const [stats, setStats] = useState({
     occupied: 0,
@@ -371,6 +450,10 @@ export default function MuralGlobalPage() {
         selectedSlot={selectedSlot}
         slotData={slotData}
       />
+
+      {showWelcome && (
+        <WelcomePopup onClose={handleCloseWelcome} />
+      )}
     </main>
   );
 }
