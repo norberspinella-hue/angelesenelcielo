@@ -73,7 +73,7 @@ export function PricingSection() {
           
           <div className="relative z-10 flex flex-col h-full flex-1">
             <h3 className="plan-title text-[#8A6033]">Corazón Eterno</h3>
-            <p className="microcopy mt-2 text-[#9A7D63]">El homenaje máximo, sin renovaciones</p>
+            <p className="microcopy mt-2 text-[#9A7D63]">El homenaje máximo, se verá más que los demás</p>
             <div className="plan-price text-[#8A6033]">9,99€</div>
             <span className="plan-meta text-sm text-[#9A7D63]">Para siempre</span>
             
