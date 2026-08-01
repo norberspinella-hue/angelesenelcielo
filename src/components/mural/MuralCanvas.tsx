@@ -259,50 +259,27 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   Siempre en nuestros corazones
                 </p>
 
-                {/* Hint de interactividad al pie frontal */}
-                <span 
-                  style={{
-                    position: 'absolute',
-                    bottom: '76px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    fontSize: '11px',
-                    color: 'rgba(155, 143, 176, 0.60)',
-                    pointerEvents: 'none',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  Toca para ver su historia 🐾
-                </span>
-
-                {/* Botón luces posicionado de forma absoluta en la parte inferior */}
-                {petData?.profile_slug ? (
-                  <Link 
-                    href={`/memorial/${petData.profile_slug}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onClose();
-                    }}
-                    className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] hover:bg-white/40 transition-colors z-10 whitespace-nowrap"
-                    style={{
-                      bottom: '24px',
-                    }}
-                  >
-                    {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
-                  </Link>
-                ) : (
-                  <div 
-                    className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] z-10 whitespace-nowrap"
-                    onClick={(e) => e.stopPropagation()}
-                    style={{
-                      bottom: '24px',
-                      cursor: 'default',
-                      opacity: 0.7
-                    }}
-                  >
-                    {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
-                  </div>
-                )}
+                {/* Botón luces posicionado de forma absoluta en la parte inferior (estático) */}
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  bottom: '24px',
+                  background: 'rgba(255,255,255,0.90)',
+                  border: '1.5px solid rgba(236,111,163,0.35)',
+                  borderRadius: 999,
+                  padding: '9px 22px',
+                  color: '#4A3F6B',
+                  fontWeight: 700,
+                  fontSize: 13,
+                  fontFamily: 'sans-serif',
+                  cursor: 'default',
+                  display: 'inline-block',
+                  zIndex: 10,
+                  whiteSpace: 'nowrap',
+                }}>
+                  🐾 {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
+                </div>
               </div>
             </div>
 
@@ -323,12 +300,12 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 textAlign: 'center',
               }}
             >
-              {/* Icono corazón con alas inline */}
-              <svg width="48" height="48" viewBox="0 0 48 24" fill="none" style={{ marginBottom: '12px' }}>
-                <path d="M16 12C12 7 6 7 2 9C4 13 8 15 16 15" stroke="#EC6F9B" strokeWidth="1.5" strokeLinecap="round"/>
-                <path d="M32 12C36 7 42 7 46 9C44 13 40 15 32 15" stroke="#EC6F9B" strokeWidth="1.5" strokeLinecap="round"/>
-                <path d="M16 9.5C16 7.4 17.4 6 19.5 6c1.7 0 2.4.8 3.5 2.1C24.1 6.8 24.8 6 26.5 6 28.6 6 30 7.4 30 9.5c0 3.8-2.4 6.8-6.5 10.5L20 21.3" stroke="#EC6F9B" strokeWidth="1.5" fill="rgba(236,111,163,0.15)"/>
-              </svg>
+              {/* Icono Badgefundadores.svg */}
+              <img 
+                src="/images/icons/Badgefundadores.svg"
+                alt=""
+                style={{ width: 64, height: 64, marginBottom: 12 }}
+              />
 
               {/* Título */}
               <h3 style={{
@@ -375,24 +352,60 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 }}
               />
 
-              {/* Hint de interactividad al pie trasero */}
-              <span 
-                style={{
-                  position: 'absolute',
-                  bottom: '12px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  fontSize: '11px',
-                  color: 'rgba(155, 143, 176, 0.60)',
-                  pointerEvents: 'none',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Toca para volver
-              </span>
+              {/* Texto Siempre en nuestro corazón */}
+              <p style={{
+                fontSize: 12,
+                color: 'rgba(155,143,176,0.80)',
+                fontFamily: 'Georgia, serif',
+                fontStyle: 'italic',
+                marginTop: 12,
+                textAlign: 'center',
+                margin: 0
+              }}>
+                — Siempre en nuestro corazón 🐾
+              </p>
             </div>
           </div>
         </div>
+
+        {/* HINT DE GIRO */}
+        {!isFlipped ? (
+          <div 
+            onClick={() => setIsFlipped(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              marginTop: 8,
+              fontSize: 11,
+              color: 'rgba(155,143,176,0.80)',
+              fontFamily: 'sans-serif',
+              cursor: 'pointer',
+            }}
+          >
+            <span style={{ fontSize: 14 }}>↩️</span>
+            <span>Toca la tarjeta para ver su historia</span>
+          </div>
+        ) : (
+          <div 
+            onClick={() => setIsFlipped(false)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              marginTop: 8,
+              fontSize: 11,
+              color: 'rgba(155,143,176,0.80)',
+              fontFamily: 'sans-serif',
+              cursor: 'pointer',
+            }}
+          >
+            <span style={{ fontSize: 14 }}>↩️</span>
+            <span>Toca para volver</span>
+          </div>
+        )}
 
         {/* TARJETA 2 — COMPARTIR */}
         <div 
