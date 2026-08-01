@@ -6,7 +6,7 @@ export function MuralPreview() {
   const founders = Array.from({ length: 8 }).map((_, i) => ({ id: i, name: 'Próximamente' }));
 
   return (
-    <div className="mural-preview-card rounded-t-[24px] shadow-sm relative text-left">
+    <div className="mural-preview-card rounded-[24px] shadow-sm relative text-left">
       {/* Imagen de fondo */}
       <Image
         src="/images/mural preview/mural-preview.webp"

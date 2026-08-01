@@ -508,9 +508,8 @@ p,
 .mural-preview-card {
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
-  margin-bottom: 0 !important;
-  border-radius: 24px 24px 0 0 !important;
-  border-bottom: none !important;
+  margin-bottom: 72px !important;
+  border-radius: 24px !important;
   overflow: hidden;
 }
 

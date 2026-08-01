@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { Header } from '@/components/landing/Header';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { OfferStrip } from '@/components/landing/OfferStrip';
-import { StatsStrip } from '@/components/landing/StatsStrip';
 import { ValueProposition } from '@/components/landing/ValueProposition';
 import { PricingSection } from '@/components/landing/PricingSection';
 import { Testimonials } from '@/components/landing/Testimonials';
@@ -29,7 +28,6 @@ export default function AngelesEnElCieloLanding() {
             <p className="text-[#706A95] mb-8">Cada foto guarda una historia. Cada historia deja una huella.</p>
             <div className="mx-auto flex flex-col items-center w-full">
               <MuralPreview />
-              <StatsStrip />
             </div>
           </section>
  
