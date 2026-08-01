@@ -27,7 +27,6 @@ export function PricingSection() {
             
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>1 bloque en el mural (1x1)</li>
-              <li>Perfil público</li>
               <li>Sube su foto más bonita</li>
               <li>Escribe su historia y dedicatoria</li>
             </ul>
