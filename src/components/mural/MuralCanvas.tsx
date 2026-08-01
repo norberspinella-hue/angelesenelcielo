@@ -260,25 +260,15 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 </p>
 
                 {/* Botón luces posicionado de forma absoluta en la parte inferior (estático) */}
-                <div style={{
-                  position: 'absolute',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  bottom: '24px',
-                  background: 'rgba(255,255,255,0.90)',
-                  border: '1.5px solid rgba(236,111,163,0.35)',
-                  borderRadius: 999,
-                  padding: '9px 22px',
-                  color: '#4A3F6B',
-                  fontWeight: 700,
-                  fontSize: 13,
-                  fontFamily: 'sans-serif',
-                  cursor: 'default',
-                  display: 'inline-block',
-                  zIndex: 10,
-                  whiteSpace: 'nowrap',
-                }}>
-                  🐾 {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
+                <div 
+                  className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] z-10 whitespace-nowrap"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    bottom: '24px',
+                    cursor: 'default',
+                  }}
+                >
+                  {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
                 </div>
               </div>
             </div>
