@@ -58,6 +58,71 @@ export async function POST(req: NextRequest) {
     // Generar upload_token único para el certificado
     const uploadToken = crypto.randomUUID()
 
+    // Determinar slot final asignado (Lógica de validación de slot ocupado)
+    let finalX: number | null = null
+    let finalY: number | null = null
+    let slotAssignedStr = ''
+
+    if (slotId && slotId !== 'auto') {
+      const [xStr, yStr] = slotId.split(',')
+      const xVal = parseInt(xStr)
+      const yVal = parseInt(yStr)
+
+      if (!isNaN(xVal) && !isNaN(yVal)) {
+        finalX = xVal
+        finalY = yVal
+
+        // 1. Verificar si el slot principal ya está ocupado
+        const { data: existingSlot } = await (supabase
+          .from('mural_slots') as any)
+          .select('status')
+          .eq('x', xVal)
+          .eq('y', yVal)
+          .single()
+
+        if (existingSlot?.status === 'occupied') {
+          console.log(`Slot (${xVal}, ${yVal}) ocupado, buscando alternativo...`)
+          
+          const findNearestFreeSlot = async (
+            cx: number, cy: number
+          ): Promise<{x: number, y: number} | null> => {
+            for (let radius = 1; radius <= 20; radius++) {
+              for (let dx = -radius; dx <= radius; dx++) {
+                for (let dy = -radius; dy <= radius; dy++) {
+                  if (Math.abs(dx) !== radius && 
+                      Math.abs(dy) !== radius) continue
+                  const nx = cx + dx
+                  const ny = cy + dy
+                  if (nx < 0 || ny < 0) continue
+                  
+                  const { data } = await (supabase
+                    .from('mural_slots') as any)
+                    .select('status')
+                    .eq('x', nx)
+                    .eq('y', ny)
+                    .single()
+                  
+                  if (!data || data.status !== 'occupied') {
+                    return { x: nx, y: ny }
+                  }
+                }
+              }
+            }
+            return null
+          }
+
+          const nearest = await findNearestFreeSlot(xVal, yVal)
+          if (nearest) {
+            finalX = nearest.x
+            finalY = nearest.y
+            console.log(`Slot alternativo asignado: (${finalX}, ${finalY})`)
+          }
+        }
+
+        slotAssignedStr = `${finalX},${finalY}`
+      }
+    }
+
     try {
       // 1. Guardar en tabla memorials
       const { data: memorial, error: memorialError } = await (supabase
@@ -82,6 +147,7 @@ export async function POST(req: NextRequest) {
           publication_status: 'published',
           moderation_status: 'approved',
           dedication: dedication || '',
+          slot_assigned: slotAssignedStr,
         })
         .select()
         .single()
@@ -93,37 +159,31 @@ export async function POST(req: NextRequest) {
       }
 
       // 2. Registrar/actualizar los slots en mural_slots
-      if (slotId && slotId !== 'auto') {
-        const [xStr, yStr] = slotId.split(',')
-        const xVal = parseInt(xStr)
-        const yVal = parseInt(yStr)
+      if (finalX !== null && finalY !== null) {
+        const size = plan === 'corazon_eterno' ? 3 : plan === 'estrella_brillante' ? 2 : 1
+        const slotsToUpsert = []
 
-        if (!isNaN(xVal) && !isNaN(yVal)) {
-          const size = plan === 'corazon_eterno' ? 3 : plan === 'estrella_brillante' ? 2 : 1
-          const slotsToUpsert = []
-
-          for (let dx = 0; dx < size; dx++) {
-            for (let dy = 0; dy < size; dy++) {
-              slotsToUpsert.push({
-                x: xVal + dx,
-                y: yVal + dy,
-                status: 'occupied', // En BD el enum es 'occupied' (no 'ocupado')
-                memorial_id: memorial?.id || null,
-                plan_type: planDb,
-                thumbnail_url: thumbnailUrl || '',
-              })
-            }
+        for (let dx = 0; dx < size; dx++) {
+          for (let dy = 0; dy < size; dy++) {
+            slotsToUpsert.push({
+              x: finalX + dx,
+              y: finalY + dy,
+              status: 'occupied', // En BD el enum es 'occupied' (no 'ocupado')
+              memorial_id: memorial?.id || null,
+              plan_type: planDb,
+              thumbnail_url: thumbnailUrl || '',
+            })
           }
+        }
 
-          const { error: slotError } = await (supabase
-            .from('mural_slots') as any)
-            .upsert(slotsToUpsert, { onConflict: 'x,y' })
+        const { error: slotError } = await (supabase
+          .from('mural_slots') as any)
+          .upsert(slotsToUpsert, { onConflict: 'x,y' })
 
-          if (slotError) {
-            console.error('Error actualizando slots:', slotError)
-          } else {
-            console.log(`Slots de tamaño ${size}x${size} registrados/actualizados en (${xVal}, ${yVal})`)
-          }
+        if (slotError) {
+          console.error('Error actualizando slots:', slotError)
+        } else {
+          console.log(`Slots de tamaño ${size}x${size} registrados/actualizados en (${finalX}, ${finalY})`)
         }
       }
 
