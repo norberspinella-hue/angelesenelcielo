@@ -144,6 +144,35 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
       </div>
 
       <div className="pt-4 border-t border-gray-100 flex flex-col gap-3">
+        <div style={{
+          background: 'rgba(255,248,230,0.90)',
+          border: '1.5px solid rgba(255,200,60,0.40)',
+          borderRadius: 12,
+          padding: '12px 16px',
+          marginBottom: 16,
+        }}>
+          <p style={{
+            fontSize: 12,
+            color: '#7B6F9A',
+            fontFamily: 'sans-serif',
+            lineHeight: 1.6,
+            margin: 0,
+            display: 'flex',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 4,
+          }}>
+            Este espacio es muy popular. En el caso de que 
+            otro ángel lo reserve justo antes que tú, 
+            colocaremos a tu mascota en el espacio más 
+            cercano disponible con el mismo amor.{' '}
+            <img 
+              src="/images/icons/plans/pawrosa.svg"
+              alt=""
+              style={{ width: 14, height: 14, display: 'inline' }}
+            />
+          </p>
+        </div>
         <button 
           onClick={handleCheckout}
           disabled={loading || !email}
