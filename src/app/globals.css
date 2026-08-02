@@ -880,7 +880,7 @@ p,
 .bridge-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(20, 10, 40, 0.35);
+  background: rgba(20, 10, 40, 0.26);
 }
 .bridge-content {
   position: relative;
