@@ -1,6 +1,6 @@
 export function Testimonials() {
   return (
-    <section className="pt-[62px] pb-16 text-center">
+    <section className="pt-[31px] pb-16 text-center">
       <div className="max-w-[800px] mx-auto px-6">
         <div className="text-4xl text-[#C9A961] mb-6">&quot;</div>
         <p className="text-2xl font-serif text-[#1E2A78] italic leading-relaxed">

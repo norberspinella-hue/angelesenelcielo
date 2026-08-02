@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export function RainbowBridge() {
   return (
-    <section className="bridge-section px-6 pt-[62px] pb-[62px]">
+    <section className="bridge-section px-6 pt-[62px] pb-[31px]">
       <div className="bridge-card relative w-full max-w-[1200px] h-[400px] mx-auto rounded-[24px] overflow-hidden">
         <Image
           src="/images/bridge/rainbow-bridge.webp"
