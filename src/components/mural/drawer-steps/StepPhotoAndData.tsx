@@ -342,7 +342,7 @@ export function StepPhotoAndData({ onNext, onBack, draftData, setDraftData, sele
 
         {/* Columna Derecha: Preview */}
         <div className="flex-1 flex flex-col">
-          <label className="block text-sm font-bold text-[#1E2A78] mb-1">Preview de tu recuerdo</label>
+          <label className="block text-sm font-bold text-[#1E2A78] mb-1">previsualización de tu recuerdo</label>
           <div 
             className="flex-1 bg-[#F5E6D3] rounded-2xl p-4 flex flex-col items-center justify-center relative overflow-hidden border border-[#E5C88A]"
             style={{ backgroundImage: 'url("/images/mural%20preview/previewrecuerdo.svg")', backgroundSize: 'cover', backgroundPosition: 'center' }}
