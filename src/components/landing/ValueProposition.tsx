@@ -5,7 +5,7 @@ export function ValueProposition() {
     <section id="como-funciona" className="value-proposition-section">
       <div className="section-header text-center mb-12 px-6">
         <h2 className="section-title text-[#1E2A78]">Comparte la historia de tu peque</h2>
-        <p className="text-[#706A95] max-w-2xl mx-auto mt-4">
+        <p className="text-[#706A95] max-w-2xl mx-auto mt-4 section-subtitle">
           Honra la vida de tu angelito, manten vivo su recuerdo para siempre<br />en el mural más grande del mundo
         </p>
         <p className="text-[#1E2A78] font-semibold mt-4 text-lg">

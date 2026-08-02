@@ -100,6 +100,11 @@ h3,
   margin: 0;
 }
 
+.section-subtitle {
+  font-size: clamp(1rem, 2vw, 1.15rem) !important;
+  line-height: 1.6;
+}
+
 .card-title,
 .plan-title {
   font-size: clamp(1.45rem, 2vw, 2rem);
