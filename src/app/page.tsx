@@ -61,7 +61,13 @@ export default function AngelesEnElCieloLanding() {
           </section>
 
           {/* Nueva sección: Cómo funciona mural ángeles */}
-          <section className="w-full pt-12 pb-6">
+          <section className="w-full pt-16 pb-6 text-center">
+            <div className="mx-auto w-[min(1120px,calc(100%-32px))] mb-8">
+              <h2 className="section-title">Dale a tu peque un espacio en el Cielo de los Ángeles en 5 pasos sencillos</h2>
+              <p className="text-[#706A95] mt-4 max-w-2xl mx-auto text-sm md:text-base">
+                Preserva su historia en pocos minutos
+              </p>
+            </div>
             <div className="relative w-[min(1120px,calc(100%-32px))] aspect-[3/1] mx-auto rounded-[24px] overflow-hidden shadow-sm">
               <Image
                 src="/images/icons/plans/como_funciona_mural_angeles.webp"
