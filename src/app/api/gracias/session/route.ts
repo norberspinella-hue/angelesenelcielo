@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
+import { Resend } from 'resend'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia' as any,
 })
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get('sessionId')
@@ -208,6 +211,60 @@ export async function GET(req: NextRequest) {
             console.error('Error creando certificado en fallback:', certError)
           } else {
             console.log('Certificado pendiente creado en fallback:', orderId)
+          }
+
+          // Enviar notificaciones por email
+          try {
+            // EMAIL 1 → USUARIO
+            await resend.emails.send({
+              from: process.env.RESEND_FROM_EMAIL!,
+              to: email,
+              subject: `🐾 ${petName} ya brilla en el cielo`,
+              html: `
+                <div style="font-family: Georgia, serif; 
+                max-width: 600px; margin: 0 auto; padding: 40px 20px;
+                background: linear-gradient(160deg, #ffe8f0, #f5e8ff);">
+                  <h1 style="color: #4A3F6B; font-size: 24px;">
+                    🐾 ${petName} ya tiene su lugar en el cielo
+                  </h1>
+                  <p style="color: #7B6F9A; font-size: 16px; line-height: 1.6;">
+                    Su recuerdo brillará para siempre en el 
+                    Mural de Ángeles. ✨
+                  </p>
+                  <div style="margin: 32px 0; text-align: center;">
+                    <a href="${process.env.NEXT_PUBLIC_URL}/mural-global" 
+                       style="background: linear-gradient(90deg, #ff82ad, #ec5f96);
+                       color: white; padding: 14px 28px; border-radius: 999px;
+                       text-decoration: none; font-weight: 700; font-size: 16px;">
+                      Ver en el mural ✦
+                    </a>
+                  </div>
+                  <p style="color: #B8B0CC; font-size: 12px; text-align: center;">
+                    Ángeles en el Cielo · todaslasmascotasvanalcielo.com
+                  </p>
+                </div>
+              `,
+            })
+            console.log('Email de confirmación enviado al usuario (fallback):', email)
+
+            // EMAIL 2 → ADMIN
+            await resend.emails.send({
+              from: process.env.RESEND_FROM_EMAIL!,
+              to: process.env.ADMIN_EMAIL || 'admin@todaslasmascotasvanalcielo.com',
+              subject: `🐾 Nuevo ángel: ${petName} (${plan})`,
+              html: `
+                <div style="font-family: sans-serif; padding: 20px;">
+                  <h2>Nuevo ángel registrado (fallback)</h2>
+                  <p><strong>Mascota:</strong> ${petName}</p>
+                  <p><strong>Plan:</strong> ${plan}</p>
+                  <p><strong>Email:</strong> ${email}</p>
+                  <p><strong>Slot:</strong> ${slotAssignedStr}</p>
+                </div>
+              `,
+            })
+            console.log('Email de notificación enviado al administrador (fallback)')
+          } catch (emailErr) {
+            console.error('Error enviando emails en fallback a través de Resend:', emailErr)
           }
         }
       } catch (err) {
