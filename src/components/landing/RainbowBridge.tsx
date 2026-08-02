@@ -10,7 +10,7 @@ export function RainbowBridge() {
           fill
           style={{ objectFit: 'cover', objectPosition: 'center 40%' }}
         />
-        <div className="bridge-overlay absolute inset-0 bg-[rgba(20,10,40,0.35)]" />
+        <div className="bridge-overlay absolute inset-0 bg-[rgba(20,10,40,0.26)]" />
         <div className="bridge-content relative z-10 text-center text-white h-full flex flex-col justify-center items-center">
           <h2 className="font-title text-4xl md:text-5xl font-bold mb-4">Todos los que amamos cruzan el puente.</h2>
           <p className="text-lg opacity-90 max-w-2xl mx-auto px-4">Guarda un espacio en el cielo y forma parte del mural más grande de ángeles de 4 patas.</p>
