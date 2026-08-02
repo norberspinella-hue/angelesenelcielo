@@ -24,8 +24,8 @@ export default function AngelesEnElCieloLanding() {
           
           {/* Mini-mural preview section */}
           <section id="el-mural" className="pt-16 pb-0 text-center">
-            <h2 className="section-title mb-4">Mural de Ángeles en el Cielo</h2>
-            <p className="text-[#706A95] mb-8">Cada foto guarda una historia. Cada historia deja una huella.</p>
+            <h2 className="section-title">Mural de Ángeles en el Cielo</h2>
+            <p className="text-[#706A95] mt-4 mb-8">Cada foto guarda una historia. Cada historia deja una huella.</p>
             <div className="mx-auto flex flex-col items-center w-full">
               <MuralPreview />
             </div>
@@ -34,8 +34,8 @@ export default function AngelesEnElCieloLanding() {
           {/* Sección Banner Ángeles Fundadores */}
           <section className="w-full pt-16 pb-6 text-center">
             <div className="mx-auto w-[min(1120px,calc(100%-32px))] mb-8">
-              <h2 className="section-title mb-6">Se uno de los primeros 1000 Ángelitos en el Cielo</h2>
-              <div className="text-[#706A95] space-y-1.5 text-sm md:text-base max-w-2xl mx-auto">
+              <h2 className="section-title">Se uno de los primeros 1000 Ángelitos en el Cielo</h2>
+              <div className="text-[#706A95] space-y-1.5 text-sm md:text-base max-w-2xl mx-auto mt-4">
                 <p>Tu peque siempre estará en el centro del mural, siempre será visible.</p>
                 <p>Además recibirás el certificado de Ángelito Fundador.</p>
               </div>
