@@ -52,6 +52,25 @@ export async function POST(req: NextRequest) {
     // Crear cliente admin de Supabase
     const supabase = createAdminClient()
 
+    const isBlockFree = async (
+      startX: number,
+      startY: number, 
+      size: number
+    ): Promise<boolean> => {
+      const { data } = await (supabase
+        .from('mural_slots') as any)
+        .select('status')
+        .gte('x', startX)
+        .lt('x', startX + size)
+        .gte('y', startY)
+        .lt('y', startY + size)
+      
+      if (data && data.some((s: any) => s.status === 'occupied')) {
+        return false
+      }
+      return true
+    }
+
     // Generar order_id único
     const orderId = `AEC-${Date.now()}`
 
@@ -72,50 +91,42 @@ export async function POST(req: NextRequest) {
         finalX = xVal
         finalY = yVal
 
-        // 1. Verificar si el slot principal ya está ocupado
-        const { data: existingSlot } = await (supabase
-          .from('mural_slots') as any)
-          .select('status')
-          .eq('x', xVal)
-          .eq('y', yVal)
-          .single()
+        const planSize = planDb === 'recuerdo_eterno' ? 3 :
+                         planDb === 'estrella_anual' ? 2 : 1
 
-        if (existingSlot?.status === 'occupied') {
-          console.log(`Slot (${xVal}, ${yVal}) ocupado, buscando alternativo...`)
+        // Verificar si el bloque completo está libre
+        const blockFree = await isBlockFree(xVal, yVal, planSize)
+
+        if (!blockFree) {
+          console.log(`Bloque (${xVal}, ${yVal}) de tamaño ${planSize}x${planSize} ocupado, buscando alternativo...`)
           
-          const findNearestFreeSlot = async (
-            cx: number, cy: number
-          ): Promise<{x: number, y: number} | null> => {
-            for (let radius = 1; radius <= 20; radius++) {
-              for (let dx = -radius; dx <= radius; dx++) {
-                for (let dy = -radius; dy <= radius; dy++) {
-                  if (Math.abs(dx) !== radius && 
-                      Math.abs(dy) !== radius) continue
-                  const nx = cx + dx
-                  const ny = cy + dy
-                  if (nx < 0 || ny < 0) continue
-                  
-                  const { data } = await (supabase
-                    .from('mural_slots') as any)
-                    .select('status')
-                    .eq('x', nx)
-                    .eq('y', ny)
-                    .single()
-                  
-                  if (!data || data.status !== 'occupied') {
-                    return { x: nx, y: ny }
-                  }
+          let found = false
+          for (let radius = 1; radius <= 50 && !found; radius++) {
+            const candidates = []
+            for (let dx = -radius; dx <= radius; dx++) {
+              for (let dy = -radius; dy <= radius; dy++) {
+                if (Math.abs(dx) === radius || Math.abs(dy) === radius) {
+                  candidates.push({ 
+                    x: xVal + dx, 
+                    y: yVal + dy,
+                    dist: Math.sqrt(dx*dx + dy*dy)
+                  })
                 }
               }
             }
-            return null
-          }
-
-          const nearest = await findNearestFreeSlot(xVal, yVal)
-          if (nearest) {
-            finalX = nearest.x
-            finalY = nearest.y
-            console.log(`Slot alternativo asignado: (${finalX}, ${finalY})`)
+            candidates.sort((a, b) => a.dist - b.dist)
+            
+            for (const candidate of candidates) {
+              if (candidate.x < 0 || candidate.y < 0) continue
+              const free = await isBlockFree(candidate.x, candidate.y, planSize)
+              if (free) {
+                finalX = candidate.x
+                finalY = candidate.y
+                found = true
+                console.log(`Bloque alternativo asignado: (${finalX}, ${finalY}) de tamaño ${planSize}x${planSize}`)
+                break
+              }
+            }
           }
         }
 

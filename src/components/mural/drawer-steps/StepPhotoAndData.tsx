@@ -364,10 +364,15 @@ export function StepPhotoAndData({ onNext, onBack, draftData, setDraftData, sele
               {draftData.name || 'Nombre'}
             </h3>
             <p className="text-xs text-[#706A95] mb-4 text-center">
-              {petDate ? (() => {
-                const parts = petDate.split('-');
-                return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : petDate;
-              })() : 'DD/MM/AAAA'}
+              {(() => {
+                const formatDate = (dateStr: string) => {
+                  const parts = dateStr.split('-');
+                  return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateStr;
+                };
+                const formattedBirth = birthDate ? formatDate(birthDate) : '';
+                const formattedDeath = petDate ? formatDate(petDate) : 'DD/MM/AAAA';
+                return formattedBirth ? `${formattedBirth} - ${formattedDeath}` : formattedDeath;
+              })()}
             </p>
           </div>
         </div>

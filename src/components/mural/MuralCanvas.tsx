@@ -149,6 +149,35 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 WebkitBackfaceVisibility: 'hidden',
               }}
             >
+              {/* Botón X de cerrar */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+                style={{
+                  position: 'absolute',
+                  top: 12,
+                  right: 12,
+                  width: 28,
+                  height: 28,
+                  borderRadius: '50%',
+                  border: 'none',
+                  background: 'rgba(255,255,255,0.85)',
+                  color: '#4A3F6B',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+                  zIndex: 30,
+                }}
+              >
+                ✕
+              </button>
+
               {/* Fondo superior (previewrecuerdo.svg) */}
               <div 
                 className="absolute top-0 left-0 w-full h-[220px] z-[1]"
@@ -271,6 +300,45 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
                 </div>
               </div>
+
+              {/* Icono girar lila */}
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFlipped(!isFlipped);
+                }}
+                style={{
+                  position: 'absolute',
+                  bottom: 12,
+                  right: 12,
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  background: '#C9B8FF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  zIndex: 30,
+                  boxShadow: '0 2px 8px rgba(100,70,150,0.25)',
+                }}
+              >
+                {!isFlipped ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" 
+                       fill="none" stroke="white" strokeWidth="2.5"
+                       strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 14L4 9l5-5"/>
+                    <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>
+                  </svg>
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 24 24"
+                       fill="none" stroke="white" strokeWidth="2.5"
+                       strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 10L20 15l-5 5"/>
+                    <path d="M20 15H9.5a5.5 5.5 0 0 1 0-11H13"/>
+                  </svg>
+                )}
+              </div>
             </div>
 
             {/* CARA TRASERA — REVERSO */}
@@ -352,73 +420,46 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   style={{ width: '16px', height: '16px', opacity: 0.70 }}
                 />
               </p>
-            </div>
-          </div>
-        </div>
 
-        {/* HINT DE GIRO */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          width: '100%',
-          marginTop: 6,
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            fontSize: 11,
-            color: 'rgba(100,80,140,0.80)',
-            fontFamily: 'sans-serif',
-            cursor: 'pointer',
-            background: 'rgba(255,255,255,0.60)',
-            padding: '5px 12px',
-            borderRadius: 999,
-          }}
-          onClick={() => setIsFlipped(!isFlipped)}
-          >
-            {!isFlipped ? (
-              <>
-                <div style={{
-                  width: 22, height: 22,
+              {/* Icono girar lila */}
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsFlipped(!isFlipped);
+                }}
+                style={{
+                  position: 'absolute',
+                  bottom: 12,
+                  right: 12,
+                  width: 32,
+                  height: 32,
                   borderRadius: '50%',
                   background: '#C9B8FF',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" 
+                  cursor: 'pointer',
+                  zIndex: 30,
+                  boxShadow: '0 2px 8px rgba(100,70,150,0.25)',
+                }}
+              >
+                {!isFlipped ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" 
                        fill="none" stroke="white" strokeWidth="2.5"
                        strokeLinecap="round" strokeLinejoin="round">
                     <path d="M9 14L4 9l5-5"/>
                     <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>
                   </svg>
-                </div>
-                <span>Ver su historia</span>
-              </>
-            ) : (
-              <>
-                <div style={{
-                  width: 22, height: 22,
-                  borderRadius: '50%',
-                  background: '#C9B8FF',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24"
+                ) : (
+                  <svg width="14" height="14" viewBox="0 0 24 24"
                        fill="none" stroke="white" strokeWidth="2.5"
                        strokeLinecap="round" strokeLinejoin="round">
                     <path d="M15 10L20 15l-5 5"/>
                     <path d="M20 15H9.5a5.5 5.5 0 0 1 0-11H13"/>
                   </svg>
-                </div>
-                <span>Volver</span>
-              </>
-            )}
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -431,13 +472,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             WebkitBackdropFilter: 'blur(10px)',
           }}
         >
-          {/* Botón cerrar */}
-          <button 
-            onClick={onClose}
-            className="absolute top-3 right-3 w-6 h-6 rounded-full border-none bg-black/5 text-[#706A95] font-bold text-[12px] flex items-center justify-center cursor-pointer hover:bg-black/10 transition-colors"
-          >
-            ✕
-          </button>
+
 
           <h4 className="font-serif font-bold text-[18px] text-[#4A3F6B] m-0 mb-[6px] text-center">
             Haz que su recuerdo siga brillando
@@ -574,7 +609,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 }
 
 interface MuralCanvasProps {
-  onSelectSlot?: (col: number, row: number) => void;
+  onSelectSlot?: (slot: { col: number; row: number; isPremiumSlot: boolean }) => void;
   selectedSlot?: { col: number; row: number } | null;
   onZoomChange?: (zoom: number) => void;
   highlightedMemorialId?: string | null;
@@ -894,41 +929,72 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
             ctx.stroke();
           } else if (realSlot) {
             const thumbnailUrl = realSlot.thumbnail_url;
-            if (thumbnailUrl && !(globalThis as any)._loggedPhotos?.has(thumbnailUrl)) {
-              (globalThis as any)._loggedPhotos = (globalThis as any)._loggedPhotos || new Set();
-              (globalThis as any)._loggedPhotos.add(thumbnailUrl);
-              console.log('Dibujando foto:', thumbnailUrl);
-            }
-            let imageDrawn = false;
-
-            const planSize = 
-              realSlot.plan_type === 'recuerdo_eterno' ? 3 :
-              realSlot.plan_type === 'estrella_anual' ? 2 : 1;
-
             const isMainSlot = realSlot.isMainSlot;
 
-            if (thumbnailUrl && isMainSlot) {
-              const img = loadImage(thumbnailUrl, () => {
-                requestAnimationFrame(render);
-              });
-              if (img) {
-                const fullSize = slotSize * planSize;
-                ctx.save();
-                ctx.beginPath();
-                const radius = Math.max(2, fullSize * 0.08);
-                ctx.moveTo(sx + radius, sy);
-                ctx.lineTo(sx + fullSize - radius, sy);
-                ctx.arcTo(sx + fullSize, sy, sx + fullSize, sy + radius, radius);
-                ctx.lineTo(sx + fullSize, sy + fullSize - radius);
-                ctx.arcTo(sx + fullSize, sy + fullSize, sx + fullSize - radius, sy + fullSize, radius);
-                ctx.lineTo(sx + radius, sy + fullSize);
-                ctx.arcTo(sx, sy + fullSize, sx, sy + fullSize - radius, radius);
-                ctx.lineTo(sx, sy + radius);
-                ctx.arcTo(sx, sy, sx + radius, sy, radius);
-                ctx.closePath();
-                ctx.clip();
-                ctx.drawImage(img, sx, sy, fullSize, fullSize);
-                ctx.restore();
+            if (thumbnailUrl && !isMainSlot) {
+              // slot cubierto por la foto del principal
+              // no hacer nada en absoluto
+            } else {
+              if (thumbnailUrl && !(globalThis as any)._loggedPhotos?.has(thumbnailUrl)) {
+                (globalThis as any)._loggedPhotos = (globalThis as any)._loggedPhotos || new Set();
+                (globalThis as any)._loggedPhotos.add(thumbnailUrl);
+                console.log('Dibujando foto:', thumbnailUrl);
+              }
+              let imageDrawn = false;
+
+              const planSize = 
+                realSlot.plan_type === 'recuerdo_eterno' ? 3 :
+                realSlot.plan_type === 'estrella_anual' ? 2 : 1;
+
+              if (thumbnailUrl && isMainSlot) {
+                const img = loadImage(thumbnailUrl, () => {
+                  requestAnimationFrame(render);
+                });
+                if (img) {
+                  const fullSize = slotSize * planSize;
+                  ctx.save();
+                  ctx.beginPath();
+                  const radius = Math.max(2, fullSize * 0.08);
+                  ctx.moveTo(sx + radius, sy);
+                  ctx.lineTo(sx + fullSize - radius, sy);
+                  ctx.arcTo(sx + fullSize, sy, sx + fullSize, sy + radius, radius);
+                  ctx.lineTo(sx + fullSize, sy + fullSize - radius);
+                  ctx.arcTo(sx + fullSize, sy + fullSize, sx + fullSize - radius, sy + fullSize, radius);
+                  ctx.lineTo(sx + radius, sy + fullSize);
+                  ctx.arcTo(sx, sy + fullSize, sx, sy + fullSize - radius, radius);
+                  ctx.lineTo(sx, sy + radius);
+                  ctx.arcTo(sx, sy, sx + radius, sy, radius);
+                  ctx.closePath();
+                  ctx.clip();
+                  ctx.drawImage(img, sx, sy, fullSize, fullSize);
+                  ctx.restore();
+
+                  const isHighlighted = realSlot?.memorial_id === highlightedMemorialId;
+                  if (isHighlighted) {
+                    ctx.save();
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = 'rgba(255,220,60,0.95)';
+                    ctx.strokeStyle = 'rgba(255,220,60,1)';
+                    ctx.lineWidth = 3;
+                    rr(sx, sy, fullSize, fullSize, radius);
+                    ctx.stroke();
+                    ctx.restore();
+                  }
+
+                  imageDrawn = true;
+                }
+              }
+
+              if (!imageDrawn) {
+                if (realSlot.plan_type === 'recuerdo_eterno') {
+                  ctx.fillStyle = 'rgba(201,169,97,0.85)';
+                } else if (realSlot.plan_type === 'estrella_anual') {
+                  ctx.fillStyle = 'rgba(180,140,220,0.85)';
+                } else {
+                  ctx.fillStyle = 'rgba(236,111,163,0.85)';
+                }
+                rr(sx, sy, cell, cell, radius);
+                ctx.fill();
 
                 const isHighlighted = realSlot?.memorial_id === highlightedMemorialId;
                 if (isHighlighted) {
@@ -937,48 +1003,26 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
                   ctx.shadowColor = 'rgba(255,220,60,0.95)';
                   ctx.strokeStyle = 'rgba(255,220,60,1)';
                   ctx.lineWidth = 3;
-                  rr(sx, sy, fullSize, fullSize, radius);
+                  rr(sx, sy, cell, cell, radius);
                   ctx.stroke();
                   ctx.restore();
                 }
-
-                imageDrawn = true;
               }
-            } else if (thumbnailUrl && !isMainSlot) {
-              imageDrawn = true;
-            }
 
-            if (!imageDrawn) {
-              if (realSlot.plan_type === 'recuerdo_eterno') {
-                ctx.fillStyle = 'rgba(201,169,97,0.85)';
-              } else if (realSlot.plan_type === 'estrella_anual') {
-                ctx.fillStyle = 'rgba(180,140,220,0.85)';
-              } else {
-                ctx.fillStyle = 'rgba(236,111,163,0.85)';
-              }
-              rr(sx, sy, cell, cell, radius);
-              ctx.fill();
-
-              const isHighlighted = realSlot?.memorial_id === highlightedMemorialId;
-              if (isHighlighted) {
-                ctx.save();
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = 'rgba(255,220,60,0.95)';
-                ctx.strokeStyle = 'rgba(255,220,60,1)';
-                ctx.lineWidth = 3;
-                rr(sx, sy, cell, cell, radius);
+              if (slotSize > 4) {
+                if (thumbnailUrl && isMainSlot) {
+                  const fullSize = slotSize * planSize;
+                  const radius = Math.max(2, fullSize * 0.08);
+                  rr(sx, sy, fullSize, fullSize, radius);
+                } else {
+                  rr(sx, sy, cell, cell, radius);
+                }
+                ctx.strokeStyle = realSlot.plan_type === 'recuerdo_eterno' ? 'rgba(255,215,0,0.4)' : 'rgba(255,255,255,0.2)';
+                ctx.lineWidth = 0.5;
                 ctx.stroke();
-                ctx.restore();
               }
-            }
-
-            if (slotSize > 4) {
-              ctx.strokeStyle = realSlot.plan_type === 'recuerdo_eterno' ? 'rgba(255,215,0,0.4)' : 'rgba(255,255,255,0.2)';
-              ctx.lineWidth = 0.5;
-              ctx.stroke();
             }
           } else if (isPremium) {
-            // Animación de pulso
             const phase = (col * 7 + row * 13) % (Math.PI * 2);
             const glowIntensity = 0.6 + 0.4 * Math.sin(Date.now() / 1500 + phase);
             
@@ -997,6 +1041,30 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
             
             ctx.shadowBlur = 0;
           } else if (seeded) {
+            // Verificar si está dentro del bloque de una mascota real
+            const isInsideRealBlock = (() => {
+              let inside = false;
+              realSlotsMap.forEach((v, k) => {
+                if (inside || !v.isMainSlot) return;
+                const planSize = v.plan_type === 'recuerdo_eterno' ? 3 :
+                                 v.plan_type === 'estrella_anual' ? 2 : 1;
+                const [mx, my] = k.split(',').map(Number);
+                if (col >= mx && col < mx + planSize &&
+                    row >= my && row < my + planSize) {
+                  inside = true;
+                }
+              });
+              return inside;
+            })();
+
+            if (seeded) {
+              console.log('Seeded slot:', col, row, 'isInsideRealBlock:', isInsideRealBlock);
+            }
+
+            if (isInsideRealBlock) {
+              continue;
+            }
+
             // Animación de pulso (glow) basada en fase
             const phase = (col * 7 + row * 13) % (Math.PI * 2);
             const glowIntensity = 0.6 + 0.4 * Math.sin(Date.now() / 1500 + phase);
@@ -1126,8 +1194,9 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
         setShowPremiumBadge(true);
       }
 
+      const isPremiumSlot = col >= 483 && col < 517 && row >= 485 && row < 515;
       if (onSelectSlot) {
-        onSelectSlot(col, row);
+        onSelectSlot({ col, row, isPremiumSlot });
       }
     }
   };

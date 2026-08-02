@@ -28,7 +28,7 @@ function WelcomePopup({ onClose }: { onClose: () => void }) {
       <div 
         style={{
           position: 'relative',
-          width: 'min(600px, 90vw)',
+          width: 'min(750px, 90vw)',
           borderRadius: 24,
           overflow: 'hidden',
           boxShadow: '0 20px 60px rgba(100,70,150,0.30)',
@@ -82,7 +82,8 @@ export default function MuralGlobalPage() {
   const [zoomLevel, setZoomLevel] = useState<number>(1);
   const canvasRef = useRef<MuralCanvasRef>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(false)
+  const [showWelcome, setShowWelcome] = useState(false);
+  const [isFounderSlot, setIsFounderSlot] = useState(false);
 
   useEffect(() => {
     const hasSeenWelcome = localStorage.getItem('mural-welcome-seen')
@@ -213,8 +214,10 @@ export default function MuralGlobalPage() {
     }
   };
 
-  const handleSelectSlot = async (col: number, row: number) => {
+  const handleSelectSlot = async (slot: { col: number; row: number; isPremiumSlot: boolean }) => {
+    const { col, row } = slot;
     setSelectedSlot({ col, row });
+    setIsFounderSlot(slot.isPremiumSlot || false);
     setSlotData(null); 
     
     try {
@@ -424,17 +427,7 @@ export default function MuralGlobalPage() {
         </div>
       </div>
 
-      {/* Leyenda (Inferior Centro) */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto hidden md:block">
-        <div className="bg-white/80 backdrop-blur-md px-6 py-2.5 rounded-full shadow-md border border-white flex items-center gap-6 text-xs font-semibold text-[#706A95]">
-          <div className="flex items-center gap-1.5"><Image src="/images/icons/plans/icon-plan-estrella.svg" alt="Libre" width={20} height={20} /> Libre</div>
-          <div className="flex items-center gap-1.5"><Image src="/images/icons/plans/icon-plan-inicial.svg" alt="Ocupado" width={20} height={20} /> Ocupado</div>
-          <div className="flex items-center gap-1.5"><Image src="/images/icons/plans/icon-plan-eterno.svg" alt="En reserva" width={20} height={20} /> En reserva</div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-sm border-2 border-[#C9A961] bg-[#FBEF8A]"></div> Tu selección
-          </div>
-        </div>
-      </div>
+
 
       {/* Zoom Controls */}
       <MuralControls 
@@ -449,6 +442,7 @@ export default function MuralGlobalPage() {
         onClose={() => setSelectedSlot(null)}
         selectedSlot={selectedSlot}
         slotData={slotData}
+        isFounderSlot={isFounderSlot}
       />
 
       {showWelcome && (

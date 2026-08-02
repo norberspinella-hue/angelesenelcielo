@@ -1,9 +1,30 @@
+'use client'
+
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+
+interface PetPreview {
+  id: string
+  pet_name: string
+  photo_url: string
+  profile_slug: string
+}
 
 export function MuralPreview() {
-  // Placeholders for now. En el futuro conectaremos a Supabase.
-  const latestAdded = Array.from({ length: 8 }).map((_, i) => ({ id: i, name: 'Próximamente' }));
-  const founders = Array.from({ length: 8 }).map((_, i) => ({ id: i, name: 'Próximamente' }));
+  const [latest, setLatest] = useState<PetPreview[]>([])
+  const [founders, setFounders] = useState<PetPreview[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/mural/preview')
+      .then(res => res.json())
+      .then(data => {
+        setLatest(data.latest || [])
+        setFounders(data.founders || [])
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
 
   return (
     <div className="mural-preview-card rounded-[24px] shadow-sm relative text-left">
@@ -22,43 +43,124 @@ export function MuralPreview() {
 
       {/* Content wrapper */}
       <div className="relative z-10 p-8 flex flex-col md:flex-row gap-8 items-stretch w-full">
-      {/* Left Column */}
-      <div className="mural-preview-left flex-1">
-        <h3 className="text-[#1E2A78] font-bold text-xl mb-6">Últimos añadidos</h3>
-        <div className="grid grid-cols-4 gap-4">
-          {latestAdded.map((pet) => (
-            <div key={`latest-${pet.id}`} className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-gray-200 border-2 border-white shadow-sm flex-shrink-0" />
-              <span className="text-xs text-[#706A95] text-center font-medium leading-tight">{pet.name}</span>
-            </div>
-          ))}
+        {/* Left Column */}
+        <div className="mural-preview-left flex-1">
+          <h3 className="text-[#1E2A78] font-bold text-xl mb-6">Últimos añadidos</h3>
+          <div className="grid grid-cols-4 gap-4">
+            {loading ? (
+              Array.from({ length: 8 }).map((_, i) => (
+                <div key={`loading-latest-${i}`} className="flex flex-col items-center gap-2">
+                  <div style={{
+                    width: 84, height: 84,
+                    borderRadius: '50%',
+                    background: 'rgba(180,150,220,0.20)',
+                    border: '2px solid rgba(255,255,255,0.60)',
+                  }} />
+                  <span className="text-[10px] text-[#706A95]/50 text-center font-medium leading-tight">Cargando...</span>
+                </div>
+              ))
+            ) : latest.length > 0 ? (
+              latest.map(pet => (
+                <div key={pet.id} className="flex flex-col items-center gap-2">
+                  <div style={{
+                    position: 'relative',
+                    width: 84, height: 84,
+                  }}>
+                    <img
+                      src={pet.photo_url || '/images/placeholders/first.webp'}
+                      alt={pet.pet_name}
+                      style={{
+                        width: 84, height: 84,
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        border: '2px solid rgba(255,255,255,0.90)',
+                        boxShadow: '0 2px 8px rgba(100,70,150,0.20)',
+                      }}
+                    />
+                  </div>
+                  <span className="text-[15px] text-[#706A95] text-center font-medium leading-tight max-w-[84px] truncate">
+                    {pet.pet_name}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p style={{ fontSize: 12, color: '#706A95', fontFamily: 'sans-serif', gridColumn: 'span 4' }}>
+                Sé el primero en añadir tu mascota 🐾
+              </p>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Divider */}
-      <div className="hidden md:block w-px bg-[#C9A961]/20 my-2" />
-      <div className="md:hidden h-px w-full bg-[#C9A961]/20 my-2" />
+        {/* Divider */}
+        <div className="hidden md:block w-px bg-[#C9A961]/20 my-2" />
+        <div className="md:hidden h-px w-full bg-[#C9A961]/20 my-2" />
 
-      {/* Right Column */}
-      <div className="mural-preview-right flex-1">
-        <h3 className="text-[#1E2A78] font-bold text-xl mb-6 flex items-center gap-2 flex-wrap">
-          <span>Fundadores <span className="text-[#C9A961] text-base">★</span></span>
-          <span className="text-[#706A95] text-xs font-normal">
-            (1000 primeros ángeles de 4 patas)
-          </span>
-        </h3>
-        <div className="grid grid-cols-4 gap-4">
-          {founders.map((pet) => (
-            <div key={`founder-${pet.id}`} className="flex flex-col items-center gap-2 relative">
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-gray-200 border-2 border-[#C9A961] shadow-sm flex-shrink-0" />
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#C9A961] rounded-full flex items-center justify-center text-[8px] text-white font-bold border border-white">★</div>
-              </div>
-              <span className="text-xs text-[#706A95] text-center font-medium leading-tight">{pet.name}</span>
-            </div>
-          ))}
+        {/* Right Column */}
+        <div className="mural-preview-right flex-1">
+          <h3 className="text-[#1E2A78] font-bold text-xl mb-6 flex items-center gap-2 flex-wrap">
+            <span>Fundadores <span className="text-[#C9A961] text-base">★</span></span>
+            <span className="text-[#706A95] text-[15px] font-normal">
+              (1000 primeros ángeles de 4 patas)
+            </span>
+          </h3>
+          <div className="grid grid-cols-4 gap-4">
+            {loading ? (
+              Array.from({ length: 8 }).map((_, i) => (
+                <div key={`loading-founder-${i}`} className="flex flex-col items-center gap-2">
+                  <div style={{
+                    width: 84, height: 84,
+                    borderRadius: '50%',
+                    background: 'rgba(180,150,220,0.20)',
+                    border: '2px solid rgba(255,255,255,0.60)',
+                  }} />
+                  <span className="text-[10px] text-[#706A95]/50 text-center font-medium leading-tight">Cargando...</span>
+                </div>
+              ))
+            ) : founders.length > 0 ? (
+              founders.map(pet => (
+                <div key={pet.id} className="flex flex-col items-center gap-2">
+                  <div style={{
+                    position: 'relative',
+                    width: 84, height: 84,
+                  }}>
+                    <img
+                      src={pet.photo_url || '/images/placeholders/first.webp'}
+                      alt={pet.pet_name}
+                      style={{
+                        width: 84, height: 84,
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        border: '2px solid rgba(255,255,255,0.90)',
+                        boxShadow: '0 2px 8px rgba(100,70,150,0.20)',
+                      }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: -2, right: -2,
+                      width: 16, height: 16,
+                      borderRadius: '50%',
+                      background: '#F5C842',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 8,
+                      color: 'white',
+                      fontWeight: 700,
+                      border: '1.5px solid white',
+                    }}>★</div>
+                  </div>
+                  <span className="text-[15px] text-[#706A95] text-center font-medium leading-tight max-w-[84px] truncate">
+                    {pet.pet_name}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p style={{ fontSize: 12, color: '#706A95', fontFamily: 'sans-serif', gridColumn: 'span 4' }}>
+                Próximamente 🐾
+              </p>
+            )}
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

@@ -10,9 +10,10 @@ interface MuralDrawerProps {
   onClose: () => void;
   selectedSlot: { col: number; row: number } | null;
   slotData: any | null;
+  isFounderSlot: boolean;
 }
 
-export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData }: MuralDrawerProps) {
+export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounderSlot }: MuralDrawerProps) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [selectedPlan, setSelectedPlan] = useState<string>('corazon_eterno');
   const [draftData, setDraftData] = useState<any>({
@@ -190,6 +191,7 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData }: MuralDr
                   selectedPlan={selectedPlan}
                   setSelectedPlan={setSelectedPlan}
                   preSelectedSlot={selectedSlot}
+                  isFounderSlot={isFounderSlot}
                 />
               )}
               {step === 2 && (

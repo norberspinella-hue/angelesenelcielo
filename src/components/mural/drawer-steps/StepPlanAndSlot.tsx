@@ -5,9 +5,10 @@ interface StepPlanAndSlotProps {
   selectedPlan: string;
   setSelectedPlan: (plan: string) => void;
   preSelectedSlot: { col: number; row: number } | null;
+  isFounderSlot: boolean;
 }
 
-export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSelectedSlot }: StepPlanAndSlotProps) {
+export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSelectedSlot, isFounderSlot }: StepPlanAndSlotProps) {
   const plans = [
     {
       id: 'huellita',
@@ -38,6 +39,12 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
   const [founderInfo, setFounderInfo] = useState<{ count: number; maxFounders: number; available: boolean } | null>(null);
 
   useEffect(() => {
+    if (isFounderSlot) {
+      setSelectedPlan('corazon_eterno');
+    }
+  }, [isFounderSlot, setSelectedPlan]);
+
+  useEffect(() => {
     fetch('/api/mural/founders')
       .then(res => res.json())
       .then(data => {
@@ -56,31 +63,51 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       </div>
 
       <div className="flex flex-col gap-4 mb-8 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-        {plans.map((plan) => (
-          <div 
-            key={plan.id}
-            onClick={() => setSelectedPlan(plan.id)}
-            className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
-              selectedPlan === plan.id 
-                ? 'border-[#C9A961] bg-[#FFF8F4] shadow-md' 
-                : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm'
-            }`}
-          >
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-bold text-[#1E2A78]">{plan.title}</h3>
-              <div className="text-right">
-                <span className="font-bold text-[#1E2A78]">{plan.price}</span>
-                <span className="text-xs text-[#706A95] ml-1">{plan.duration}</span>
-              </div>
+        {isFounderSlot && (
+          <div className="p-4 bg-gradient-to-r from-[#FFF9E6] via-[#FFEBB3] to-[#FFF1CC] rounded-2xl border-2 border-[#D4AF37] shadow-[0_4px_12px_rgba(212,175,55,0.15)] flex items-center gap-4 animate-in fade-in zoom-in-95 duration-300">
+            <div className="w-12 h-12 bg-white/80 rounded-full flex items-center justify-center shadow-md shrink-0 border border-[#D4AF37]/30">
+              <img src="/images/icons/plans/icon-plan-eterno.svg" alt="Corazón Eterno" className="w-8 h-8 object-contain" />
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-semibold text-[#C9A961] bg-[#C9A961]/10 px-2 py-1 rounded-md">
-                {plan.icon}
-              </span>
-              <span className="text-xs text-[#706A95]">{plan.slots} incluidos</span>
+            <div>
+              <h4 className="font-bold text-[#8A6D1C] text-sm font-serif">Espacio de Ángel Fundador</h4>
+              <p className="text-xs text-[#9B7D3B] mt-0.5 leading-relaxed">Este espacio está en la zona premium reservada para los Ángeles Fundadores, por lo que requiere obligatoriamente el plan Corazón Eterno.</p>
             </div>
           </div>
-        ))}
+        )}
+
+        {plans.map((plan) => {
+          const isDisabled = isFounderSlot && (plan.id === 'huellita' || plan.id === 'estrella_brillante');
+          return (
+            <div 
+              key={plan.id}
+              onClick={() => {
+                if (!isDisabled) {
+                  setSelectedPlan(plan.id);
+                }
+              }}
+              style={isDisabled ? { opacity: 0.4, pointerEvents: 'none' } : undefined}
+              className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                selectedPlan === plan.id 
+                  ? 'border-[#C9A961] bg-[#FFF8F4] shadow-md' 
+                  : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm'
+              }`}
+            >
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-bold text-[#1E2A78]">{plan.title}</h3>
+                <div className="text-right">
+                  <span className="font-bold text-[#1E2A78]">{plan.price}</span>
+                  <span className="text-xs text-[#706A95] ml-1">{plan.duration}</span>
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-semibold text-[#C9A961] bg-[#C9A961]/10 px-2 py-1 rounded-md">
+                  {plan.icon}
+                </span>
+                <span className="text-xs text-[#706A95]">{plan.slots} incluidos</span>
+              </div>
+            </div>
+          );
+        })}
 
         {selectedPlan === 'corazon_eterno' && founderInfo?.available && (
           <div className="mt-2 p-3 bg-gradient-to-r from-[#FFF8E7] to-[#FCE7BA] rounded-xl border border-[#E5C88A] shadow-sm flex items-center gap-3">

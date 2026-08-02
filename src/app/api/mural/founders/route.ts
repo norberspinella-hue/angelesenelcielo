@@ -12,10 +12,10 @@ export async function GET() {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { count, error } = await (supabase
-      .from('mural_slots') as any)
+      .from('memorials') as any)
       .select('id', { count: 'exact', head: true })
-      .eq('plan_type', 'recuerdo_eterno')
-      .eq('status', 'occupied');
+      .eq('payment_status', 'paid')
+      .eq('plan_type', 'recuerdo_eterno');
 
     if (error) {
       console.error('Error fetching founders count:', error);

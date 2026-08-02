@@ -21,9 +21,16 @@ export function Footer() {
         <Link href="/cookies" className="hover:text-[#6F5FA8]">Cookies</Link>
       </div>
       
-      <div className="mt-8 text-xs text-[#706A95]">
-        © {new Date().getFullYear()} Ángeles en el Cielo. Todos los derechos reservados.
-      </div>
+      <p style={{
+        fontSize: 12,
+        color: 'rgba(155,143,176,0.70)',
+        fontFamily: 'sans-serif',
+        textAlign: 'center',
+        marginTop: 16,
+      }}>
+        © 2026 Ángeles en el Cielo. 
+        Todos los derechos reservados.
+      </p>
     </footer>
   );
 }

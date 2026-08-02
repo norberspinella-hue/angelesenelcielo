@@ -8,6 +8,9 @@ export function ValueProposition() {
         <p className="text-[#706A95] max-w-2xl mx-auto">
           Honra la vida de tu angelito, manten vivo su recuerdo para siempre<br />en el mural más grande del mundo
         </p>
+        <p className="text-[#1E2A78] font-semibold mt-4 text-lg">
+          Explica al mundo como era tu peque:
+        </p>
       </div>
       
       <div className="grid md:grid-cols-4 gap-6 max-w-[1200px] mx-auto px-6">
