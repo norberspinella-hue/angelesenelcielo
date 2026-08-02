@@ -60,6 +60,20 @@ export default function AngelesEnElCieloLanding() {
             </p>
           </section>
 
+          {/* Nueva sección: Cómo funciona mural ángeles */}
+          <section className="w-full pt-12 pb-6">
+            <div className="relative w-[min(1120px,calc(100%-32px))] aspect-[3/1] mx-auto rounded-[24px] overflow-hidden shadow-sm">
+              <Image
+                src="/images/icons/plans/como_funciona_mural_angeles.webp"
+                alt="Cómo funciona el mural de ángeles"
+                fill
+                sizes="(max-width: 1120px) 100vw, 1120px"
+                style={{ objectFit: 'cover' }}
+                priority
+              />
+            </div>
+          </section>
+
           <ValueProposition />
           
           <PricingSection />
