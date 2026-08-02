@@ -32,18 +32,17 @@ export default function AngelesEnElCieloLanding() {
           </section>
 
           {/* Sección Banner Ángeles Fundadores */}
-          <section className="px-6 pt-12 pb-6">
+          <section className="w-full pt-12 pb-6">
             <a 
               href="/mural-global"
-              className="block relative w-full max-w-[1200px] aspect-[3/1] mx-auto rounded-[24px] overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+              className="block relative w-[min(1120px,calc(100%-32px))] aspect-[3/1] mx-auto rounded-[24px] overflow-hidden shadow-sm"
             >
               <Image
                 src="/images/icons/plans/angeles_fundadores_banner_1200x400.webp"
                 alt="Ángeles Fundadores Banner"
                 fill
-                sizes="(max-width: 1200px) 100vw, 1200px"
+                sizes="(max-width: 1120px) 100vw, 1120px"
                 style={{ objectFit: 'cover' }}
-                className="group-hover:scale-[1.02] transition-transform duration-500"
                 priority
               />
             </a>
