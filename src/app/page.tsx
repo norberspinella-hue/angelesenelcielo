@@ -38,7 +38,6 @@ export default function AngelesEnElCieloLanding() {
               <div className="text-[#706A95] space-y-1.5 text-sm md:text-base max-w-2xl mx-auto">
                 <p>Tu peque siempre estará en el centro del mural, siempre será visible.</p>
                 <p>Además recibirás el certificado de Ángelito Fundador.</p>
-                <p className="font-semibold text-[#1E2A78]">Elige la opción de Corazón Eterno y el espacio en zona Ángeles Fundadores.</p>
               </div>
             </div>
 
@@ -55,6 +54,10 @@ export default function AngelesEnElCieloLanding() {
                 priority
               />
             </a>
+
+            <p className="font-semibold text-[#1E2A78] mt-6 text-sm md:text-base">
+              Elige la opción de Corazón Eterno y el espacio en zona Ángeles Fundadores.
+            </p>
           </section>
 
           <ValueProposition />
