@@ -45,6 +45,7 @@ interface PetProfileCardProps {
 
 function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProfileCardProps) {
   const [petData, setPetData] = useState<{ pet_name: string; photo_url: string; plan_type: string; profile_slug?: string | null; slots_count?: number | null; birth_date?: string | null; death_date?: string | null; dedication?: string | null } | null>(null);
+  const [slotData, setSlotData] = useState<{ x: number; y: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -63,6 +64,19 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         } else if (data) {
           setPetData(data);
         }
+
+        const { data: slot } = await supabase
+          .from('mural_slots')
+          .select('x, y')
+          .eq('memorial_id', memorialId)
+          .order('x', { ascending: true })
+          .order('y', { ascending: true })
+          .limit(1)
+          .single();
+
+        if (slot) {
+          setSlotData(slot as { x: number; y: number });
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -78,6 +92,12 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const nombre = petData?.pet_name || 'Ángel';
   const foto = petData?.photo_url || thumbnailUrl || '/images/placeholders/first.webp';
   const plan = petData?.plan_type || planType;
+
+  const shareUrl = typeof window !== 'undefined'
+    ? slotData
+      ? `${window.location.origin}/mural-global?highlight=${slotData.x},${slotData.y}&zoom=true`
+      : `${window.location.origin}/mural-global`
+    : '';
 
   const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return '';
@@ -489,10 +509,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               onClick={() => {
                 if (typeof window !== 'undefined') {
-                  const shareUrl = petData?.profile_slug
-                    ? `${window.location.origin}/memorial/${petData.profile_slug}`
-                    : window.location.origin;
-                  window.open(`https://api.whatsapp.com/send?text=Mira%20el%20recuerdo%20de%20${encodeURIComponent(nombre)}%20en%20el%20mural%20de%20las%20mascotas%20${encodeURIComponent(shareUrl)}`, '_blank');
+                  window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`Visita el recuerdo de ${petData?.pet_name || 'Ángel'} en el Mural de Ángeles ✨ ${shareUrl}`)}`, '_blank');
                 }
               }}
               className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:translate-y-[-2px]"
@@ -508,11 +525,10 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             {/* Instagram */}
             <div 
               onClick={() => {
-                const shareUrl = petData?.profile_slug
-                  ? `${window.location.origin}/memorial/${petData.profile_slug}`
-                  : window.location.origin;
-                navigator.clipboard.writeText(shareUrl)
-                alert('Enlace copiado. ¡Compártelo en Instagram!')
+                if (typeof window !== 'undefined') {
+                  navigator.clipboard.writeText(shareUrl);
+                  alert('Enlace copiado. ¡Compártelo en Instagram!');
+                }
               }}
               className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:translate-y-[-2px]"
             >
@@ -534,12 +550,11 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             {/* TikTok */}
             <div 
               onClick={() => {
-                const shareUrl = petData?.profile_slug
-                  ? `${window.location.origin}/memorial/${petData.profile_slug}`
-                  : window.location.origin;
-                navigator.clipboard.writeText(shareUrl)
-                alert('¡Enlace copiado! Pégalo en TikTok para compartir el recuerdo de tu mascota 🐾')
-                window.open('https://www.tiktok.com', '_blank')
+                if (typeof window !== 'undefined') {
+                  navigator.clipboard.writeText(shareUrl);
+                  alert('¡Enlace copiado! Pégalo en TikTok para compartir el recuerdo de tu mascota 🐾');
+                  window.open('https://www.tiktok.com', '_blank');
+                }
               }}
               className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:translate-y-[-2px]"
             >
@@ -557,9 +572,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               onClick={() => {
                 if (typeof window !== 'undefined') {
-                  const shareUrl = petData?.profile_slug
-                    ? `${window.location.origin}/memorial/${petData.profile_slug}`
-                    : window.location.origin;
                   window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
                 }
               }}
@@ -577,9 +589,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               onClick={() => {
                 if (typeof window !== 'undefined') {
-                  const shareUrl = petData?.profile_slug
-                    ? `${window.location.origin}/memorial/${petData.profile_slug}`
-                    : window.location.origin;
                   navigator.clipboard.writeText(shareUrl);
                   alert('Enlace copiado al portapapeles');
                 }
