@@ -224,35 +224,188 @@ export async function POST(req: NextRequest) {
             to: email,
             subject: '✨ Su recuerdo ya brilla en el cielo',
             html: `
-              <div style="font-family: Georgia, serif; max-width: 600px; 
-              margin: 0 auto; padding: 40px 20px; 
-              background: linear-gradient(160deg, #ffe8f0, #f5e8ff);">
-                <h1 style="color: #4A3F6B; font-size: 28px;">
-                  Su recuerdo ya brilla en el cielo ✨
-                </h1>
-                <p style="color: #7B6F9A; font-size: 16px; line-height: 1.6;">
-                  Gracias por darle un lugar eterno a <strong>${petName}</strong> 
-                  en el mural global.
-                </p>
-                <p style="color: #7B6F9A; font-size: 16px; line-height: 1.6;">
-                  Plan elegido: <strong>${plan}</strong>
-                </p>
-                <p style="color: #7B6F9A; font-size: 16px; line-height: 1.6;">
-                  Tu certificado estará listo en 24-72h y te lo 
-                  enviaremos a este email.
-                </p>
-                <div style="margin: 32px 0; text-align: center;">
-                  <a href="${process.env.NEXT_PUBLIC_URL}/mural-global" 
-                     style="background: linear-gradient(90deg, #ff82ad, #ec5f96);
-                     color: white; padding: 14px 28px; border-radius: 999px;
-                     text-decoration: none; font-weight: 700; font-size: 16px;">
-                    Ver en el mural ✦
-                  </a>
-                </div>
-                <p style="color: #B8B0CC; font-size: 12px; text-align: center;">
-                  Ángeles en el Cielo · todaslasmascotasvanalcielo.com
-                </p>
-              </div>
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#e8e0f0;font-family:Arial,Helvetica,sans-serif;">
+
+<!-- Preheader oculto -->
+<div style="display:none;max-height:0;overflow:hidden;">
+  Gracias por crear un lugar eterno para tu angelito en el Mural de Ángeles.
+</div>
+
+<!-- Contenedor -->
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#e8e0f0;padding:24px 0;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#FFF8F7;border-radius:16px;overflow:hidden;">
+
+  <!-- HEADER IMAGEN -->
+  <!-- Fallback local: /images/email/header-email.jpg -->
+  <tr>
+    <td bgcolor="#1E2A78" style="padding:0;">
+      <img src="https://todaslasmascotasvanalcielo.com/images/email/header-email.jpg" 
+           alt="Todas las mascotas van al cielo - Ángeles en el Cielo"
+           width="600" height="200"
+           style="display:block;max-width:100%;height:auto;">
+    </td>
+  </tr>
+
+  <!-- CUERPO -->
+  <tr>
+    <td style="padding:40px 36px;background:#FFFFFF;">
+
+      <!-- Saludo -->
+      <p style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#706A95;margin:0 0 8px 0;">
+        Hola,
+      </p>
+      <h1 style="font-family:Georgia,'Times New Roman',serif;font-size:26px;color:#25335F;line-height:1.3;margin:0 0 16px 0;">
+        Tu ángel ya forma parte<br>del cielo ✨
+      </h1>
+      <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#706A95;line-height:1.7;margin:0 0 12px 0;">
+        Gracias por crear un lugar eterno para <strong style="color:#25335F;">tu angelito</strong>. 
+        Su recuerdo ya ha sido recibido y formará parte del Mural de Ángeles.
+      </p>
+      <p style="font-family:Georgia,'Times New Roman',serif;font-size:15px;color:#7B5EA9;line-height:1.7;font-style:italic;margin:0 0 32px 0;">
+        Sabemos que no es solo una compra.<br>
+        Es una forma preciosa de decir: sigues conmigo.
+      </p>
+
+      <!-- Resumen de compra -->
+      <table width="100%" cellpadding="0" cellspacing="0" 
+             style="background:#FFF8F7;border:1px solid #F3DCE7;border-radius:18px;margin:0 0 28px 0;">
+        <tr>
+          <td style="padding:24px;">
+            <p style="font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#25335F;font-weight:700;margin:0 0 16px 0;">
+              Resumen de tu recuerdo
+            </p>
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#706A95;border-bottom:1px solid #F3DCE7;">
+                  Mascota
+                </td>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#25335F;font-weight:700;text-align:right;border-bottom:1px solid #F3DCE7;">
+                  ${petName}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#706A95;border-bottom:1px solid #F3DCE7;">
+                  Plan
+                </td>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#25335F;font-weight:700;text-align:right;border-bottom:1px solid #F3DCE7;">
+                  ${plan === 'huellita' ? 'Huellita' : plan === 'estrella_brillante' ? 'Estrella Brillante' : 'Corazón Eterno'}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#706A95;border-bottom:1px solid #F3DCE7;">
+                  Luces en el cielo
+                </td>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#25335F;font-weight:700;text-align:right;border-bottom:1px solid #F3DCE7;">
+                  ${plan === 'corazon_eterno' ? '9' : plan === 'estrella_brillante' ? '4' : '1'} luces ✨
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#706A95;border-bottom:1px solid #F3DCE7;">
+                  Fecha
+                </td>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#25335F;font-weight:700;text-align:right;border-bottom:1px solid #F3DCE7;">
+                  ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#706A95;">
+                  Importe
+                </td>
+                <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#25335F;font-weight:700;text-align:right;">
+                  ${plan === 'corazon_eterno' ? '9,99 €' : plan === 'estrella_brillante' ? '4,99 €' : '1,99 €'}
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Bloque emocional -->
+      <table width="100%" cellpadding="0" cellspacing="0"
+             style="background:#F7E8FF;border-radius:18px;margin:0 0 28px 0;">
+        <tr>
+          <td style="padding:24px;text-align:center;">
+            <p style="font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#7B5EA9;font-style:italic;font-weight:700;margin:0 0 8px 0;">
+              Tu angelito de 4 patas ya tiene su espacio<br>en el cielo de las mascotas.
+            </p>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#9B8FB0;line-height:1.6;margin:0;">
+              Cada vez que alguien visite el mural,<br>su recuerdo seguirá brillando. ✨
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Bloque certificado -->
+      <table width="100%" cellpadding="0" cellspacing="0"
+             style="background:#FFF8F7;border:1px solid #F3DCE7;border-radius:18px;margin:0 0 28px 0;">
+        <tr>
+          <td style="padding:20px 24px;">
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#706A95;line-height:1.6;margin:0;">
+              🎁 <strong style="color:#25335F;">Tu certificado memorial</strong> se enviará 
+              en 48-72h al email del registro. 
+              Incluye versión PDF para imprimir y PNG para compartir en redes sociales.
+            </p>
+          </td>
+        </tr>
+      </table>
+
+      <!-- CTA principal -->
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px 0;">
+        <tr>
+          <td align="center">
+            <a href="${process.env.NEXT_PUBLIC_URL}/mural-global"
+               style="display:inline-block;background:#F65F8F;color:#FFFFFF;padding:16px 40px;border-radius:999px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:700;text-decoration:none;letter-spacing:0.5px;">
+              Ver su recuerdo ✦
+            </a>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Bloque ayuda -->
+      <p style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#706A95;text-align:center;line-height:1.6;margin:24px 0 0 0;">
+        Si necesitas modificar algún dato del recuerdo,<br>
+        responde a este email o contáctanos en 
+        <a href="mailto:hello@todaslasmascotasvanalcielo.com" 
+           style="color:#7B5EA9;text-decoration:none;">
+          hello@todaslasmascotasvanalcielo.com
+        </a>
+      </p>
+
+    </td>
+  </tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td bgcolor="#1E2A78" style="padding:28px 36px;text-align:center;">
+      <p style="font-family:Georgia,'Times New Roman',serif;font-size:14px;color:#C9A961;font-weight:700;margin:0 0 6px 0;">
+        Todas las mascotas van al cielo
+      </p>
+      <p style="font-family:Arial,Helvetica,sans-serif;font-size:11px;color:rgba(255,255,255,0.50);line-height:1.6;margin:0 0 12px 0;">
+        Este email confirma tu compra y la creación de tu recuerdo en Ángeles en el Cielo.
+      </p>
+      <p style="margin:0;font-size:11px;">
+        <a href="${process.env.NEXT_PUBLIC_URL}/aviso-legal" 
+           style="color:rgba(201,169,97,0.70);text-decoration:none;margin:0 8px;">Aviso legal</a>
+        <span style="color:rgba(255,255,255,0.20);">·</span>
+        <a href="${process.env.NEXT_PUBLIC_URL}/privacidad" 
+           style="color:rgba(201,169,97,0.70);text-decoration:none;margin:0 8px;">Privacidad</a>
+        <span style="color:rgba(255,255,255,0.20);">·</span>
+        <a href="mailto:hello@todaslasmascotasvanalcielo.com" 
+           style="color:rgba(201,169,97,0.70);text-decoration:none;margin:0 8px;">Contacto</a>
+      </p>
+    </td>
+  </tr>
+
+</table>
+</td></tr>
+</table>
+
+</body>
+</html>
             `,
           })
           console.log('Email de confirmación enviado al usuario:', email)
