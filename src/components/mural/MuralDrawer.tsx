@@ -102,7 +102,7 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounder
               {/* Icono decorativo (corazón con huella/aureola) */}
               <div className="flex justify-center mb-[18px] opacity-90 drop-shadow-md">
                 <img 
-                  src="/images/icons/logoheart.svg" 
+                  src="/images/icons/Logoheart.svg" 
                   alt="Corazón de Ángeles" 
                   className="h-[100px] w-auto object-contain"
                 />
