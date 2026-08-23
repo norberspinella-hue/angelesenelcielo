@@ -935,11 +935,6 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
               // slot cubierto por la foto del principal
               // no hacer nada en absoluto
             } else {
-              if (thumbnailUrl && !(globalThis as any)._loggedPhotos?.has(thumbnailUrl)) {
-                (globalThis as any)._loggedPhotos = (globalThis as any)._loggedPhotos || new Set();
-                (globalThis as any)._loggedPhotos.add(thumbnailUrl);
-                console.log('Dibujando foto:', thumbnailUrl);
-              }
               let imageDrawn = false;
 
               const planSize = 
@@ -1057,9 +1052,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
               return inside;
             })();
 
-            if (seeded) {
-              console.log('Seeded slot:', col, row, 'isInsideRealBlock:', isInsideRealBlock);
-            }
+
 
             if (isInsideRealBlock) {
               continue;
