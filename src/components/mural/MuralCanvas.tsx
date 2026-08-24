@@ -224,7 +224,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <div 
                 style={{
                   position: 'absolute',
-                  top: '84px',
+                  top: '89px',
                   left: 0,
                   right: 0,
                   textAlign: 'center',
@@ -243,9 +243,9 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: '280px',
-                    height: '90px',
-                    background: 'radial-gradient(ellipse at center, rgba(255, 252, 230, 0.95) 0%, rgba(255, 238, 175, 0.65) 45%, rgba(255, 225, 130, 0) 75%)',
+                    width: '270px',
+                    height: '85px',
+                    background: 'radial-gradient(ellipse at center, rgba(255, 252, 230, 0.80) 0%, rgba(255, 238, 175, 0.50) 45%, rgba(255, 225, 130, 0) 75%)',
                     filter: 'blur(10px)',
                     pointerEvents: 'none',
                     zIndex: 1,
@@ -268,18 +268,18 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   fill="none"
                 >
                   {/* Destello arriba centro */}
-                  <path d="M160 5 L162 17 L174 19 L162 21 L160 33 L158 21 L146 19 L158 17 Z" fill="#FFE58F" opacity="0.9" />
+                  <path d="M160 5 L162 17 L174 19 L162 21 L160 33 L158 21 L146 19 L158 17 Z" fill="#FFE58F" opacity="0.75" />
                   {/* Destello izquierda */}
-                  <path d="M35 50 L36.5 58 L45 59.5 L36.5 61 L35 70 L33.5 61 L25 59.5 L33.5 58 Z" fill="#FFE58F" opacity="0.85" />
+                  <path d="M35 50 L36.5 58 L45 59.5 L36.5 61 L35 70 L33.5 61 L25 59.5 L33.5 58 Z" fill="#FFE58F" opacity="0.70" />
                   {/* Destello derecha */}
-                  <path d="M285 50 L286.5 58 L295 59.5 L286.5 61 L285 70 L283.5 61 L275 59.5 L283.5 58 Z" fill="#FFE58F" opacity="0.85" />
+                  <path d="M285 50 L286.5 58 L295 59.5 L286.5 61 L285 70 L283.5 61 L275 59.5 L283.5 58 Z" fill="#FFE58F" opacity="0.70" />
                   {/* Destello abajo */}
-                  <path d="M160 80 L161.5 87 L169 88.5 L161.5 90 L160 97 L158.5 90 L151 88.5 L158.5 87 Z" fill="#FFE58F" opacity="0.85" />
+                  <path d="M160 80 L161.5 87 L169 88.5 L161.5 90 L160 97 L158.5 90 L151 88.5 L158.5 87 Z" fill="#FFE58F" opacity="0.70" />
                   {/* Chispas pequeñas */}
-                  <circle cx="55" cy="28" r="1.5" fill="#FFE58F" opacity="0.75" />
-                  <circle cx="265" cy="30" r="1.5" fill="#FFE58F" opacity="0.75" />
-                  <circle cx="75" cy="85" r="1.5" fill="#FFE58F" opacity="0.75" />
-                  <circle cx="245" cy="82" r="1.5" fill="#FFE58F" opacity="0.75" />
+                  <circle cx="55" cy="28" r="1.5" fill="#FFE58F" opacity="0.60" />
+                  <circle cx="265" cy="30" r="1.5" fill="#FFE58F" opacity="0.60" />
+                  <circle cx="75" cy="85" r="1.5" fill="#FFE58F" opacity="0.60" />
+                  <circle cx="245" cy="82" r="1.5" fill="#FFE58F" opacity="0.60" />
                 </svg>
 
                 {/* 3. Nombre de la Mascota */}
@@ -295,7 +295,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text',
                     WebkitTextStroke: '0.6px rgba(160, 105, 15, 0.65)',
-                    filter: 'drop-shadow(0 0 12px rgba(255, 235, 140, 0.95)) drop-shadow(0 2px 4px rgba(90, 55, 10, 0.45))',
+                    filter: 'drop-shadow(0 0 10px rgba(255, 235, 140, 0.75)) drop-shadow(0 2px 4px rgba(90, 55, 10, 0.40))',
                     margin: 0,
                     zIndex: 2,
                   }}
