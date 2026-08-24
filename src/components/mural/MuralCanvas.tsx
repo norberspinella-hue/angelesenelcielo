@@ -220,31 +220,89 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 ✕
               </button>
 
-              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA — ORO CELESTIAL METÁLICO CON RESPLANDOR */}
-              <h3 
+              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA — ORO CELESTIAL CON HALO Y DESTELLOS */}
+              <div 
                 style={{
                   position: 'absolute',
-                  top: '88px',
+                  top: '84px',
                   left: 0,
                   right: 0,
                   textAlign: 'center',
-                  fontFamily: "'Great Vibes', 'Alex Brush', cursive",
-                  fontSize: '56px',
-                  fontWeight: 400,
-                  lineHeight: 1.1,
-                  background: 'linear-gradient(135deg, #FFF8DB 0%, #F5D77F 22%, #D4AF37 45%, #FFF0A8 60%, #AA771C 82%, #8A5E12 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  filter: 'drop-shadow(0 0 12px rgba(255, 235, 150, 0.95)) drop-shadow(0 0 24px rgba(212, 175, 55, 0.65)) drop-shadow(0 2px 4px rgba(70, 45, 10, 0.45))',
-                  margin: 0,
-                  padding: '0 20px',
                   zIndex: 10,
                   userSelect: 'none',
+                  padding: '0 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                {petData?.pet_name || 'Ángel'}
-              </h3>
+                {/* 1. Halo difuso de luz cálida celestial detrás del nombre */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '280px',
+                    height: '90px',
+                    background: 'radial-gradient(ellipse at center, rgba(255, 252, 230, 0.95) 0%, rgba(255, 238, 175, 0.65) 45%, rgba(255, 225, 130, 0) 75%)',
+                    filter: 'blur(10px)',
+                    pointerEvents: 'none',
+                    zIndex: 1,
+                  }} 
+                />
+
+                {/* 2. Destellos dorados alrededor del nombre */}
+                <svg
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: '320px',
+                    height: '110px',
+                    pointerEvents: 'none',
+                    zIndex: 3,
+                  }}
+                  viewBox="0 0 320 110"
+                  fill="none"
+                >
+                  {/* Destello arriba centro */}
+                  <path d="M160 5 L162 17 L174 19 L162 21 L160 33 L158 21 L146 19 L158 17 Z" fill="#FFE58F" opacity="0.9" />
+                  {/* Destello izquierda */}
+                  <path d="M35 50 L36.5 58 L45 59.5 L36.5 61 L35 70 L33.5 61 L25 59.5 L33.5 58 Z" fill="#FFE58F" opacity="0.85" />
+                  {/* Destello derecha */}
+                  <path d="M285 50 L286.5 58 L295 59.5 L286.5 61 L285 70 L283.5 61 L275 59.5 L283.5 58 Z" fill="#FFE58F" opacity="0.85" />
+                  {/* Destello abajo */}
+                  <path d="M160 80 L161.5 87 L169 88.5 L161.5 90 L160 97 L158.5 90 L151 88.5 L158.5 87 Z" fill="#FFE58F" opacity="0.85" />
+                  {/* Chispas pequeñas */}
+                  <circle cx="55" cy="28" r="1.5" fill="#FFE58F" opacity="0.75" />
+                  <circle cx="265" cy="30" r="1.5" fill="#FFE58F" opacity="0.75" />
+                  <circle cx="75" cy="85" r="1.5" fill="#FFE58F" opacity="0.75" />
+                  <circle cx="245" cy="82" r="1.5" fill="#FFE58F" opacity="0.75" />
+                </svg>
+
+                {/* 3. Nombre de la Mascota */}
+                <h3 
+                  style={{
+                    position: 'relative',
+                    fontFamily: "'Great Vibes', 'Allura', 'Alex Brush', cursive",
+                    fontSize: '56px',
+                    fontWeight: 400,
+                    lineHeight: 1.1,
+                    background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF3C4 15%, #E6BF50 42%, #C49326 72%, #7D5106 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    WebkitTextStroke: '0.6px rgba(160, 105, 15, 0.65)',
+                    filter: 'drop-shadow(0 0 12px rgba(255, 235, 140, 0.95)) drop-shadow(0 2px 4px rgba(90, 55, 10, 0.45))',
+                    margin: 0,
+                    zIndex: 2,
+                  }}
+                >
+                  {petData?.pet_name || 'Ángel'}
+                </h3>
+              </div>
 
               {/* ELEMENTO 2: HALO DORADO */}
               <div 
