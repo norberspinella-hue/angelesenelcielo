@@ -224,7 +224,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <h3 
                 style={{
                   position: 'absolute',
-                  top: '85px',
+                  top: '95px',
                   left: 0,
                   right: 0,
                   textAlign: 'center',
@@ -245,7 +245,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <div 
                 style={{
                   position: 'absolute',
-                  top: '138px',
+                  top: '158px',
                   left: '50%',
                   transform: 'translateX(-50%) rotateX(45deg)',
                   width: '120px',
@@ -258,11 +258,26 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 }}
               />
 
+              {/* CORAZÓN ROSA */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  top: '168px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  fontSize: '18px',
+                  zIndex: 8,
+                  pointerEvents: 'none',
+                }}
+              >
+                🩷
+              </div>
+
               {/* ELEMENTO 3: FOTO CIRCULAR */}
               <div 
                 style={{
                   position: 'absolute',
-                  top: '155px',
+                  top: '175px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   width: '180px',
