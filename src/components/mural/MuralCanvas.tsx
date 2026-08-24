@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import { createPortal } from 'react-dom';
 import { useMuralViewport } from '@/hooks/useMuralViewport';
 import { getVisibleRange, getSlotSize, screenToGrid, PREMIUM_ZONE, PREMIUM_ZONE as PZ, BASE_SLOT } from '@/lib/mural/gridMath';
 import { generateSeedSlots } from '@/lib/mural/mockSeed';
@@ -48,6 +49,11 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const [slotData, setSlotData] = useState<{ x: number; y: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const fetchPetData = async () => {
@@ -132,12 +138,24 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
     }
   };
 
-  return (
+  if (!mounted || typeof document === 'undefined') return null;
+
+  return createPortal(
     <div 
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm pointer-events-auto p-4"
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-auto p-4"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: 99999,
+      }}
     >
-      <div className="w-full max-w-[360px] flex flex-col gap-4 max-h-[90vh] overflow-y-auto scrollbar-none">
+      <div className="w-full max-w-[360px] flex flex-col gap-4 max-h-[90vh] overflow-y-auto scrollbar-none py-6">
         
         {/* CONTENEDOR 3D FLIP CARD */}
         <div 
@@ -657,7 +675,8 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
