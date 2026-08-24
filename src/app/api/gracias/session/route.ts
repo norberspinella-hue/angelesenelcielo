@@ -354,7 +354,7 @@ export async function GET(req: NextRequest) {
       <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px 0;">
         <tr>
           <td align="center">
-            <a href="${process.env.NEXT_PUBLIC_URL}/mural-global"
+            <a href="${process.env.NEXT_PUBLIC_URL}/mural-global?highlight=${finalX},${finalY}&zoom=true"
                style="display:inline-block;background:#F65F8F;color:#FFFFFF;padding:16px 40px;border-radius:999px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:700;text-decoration:none;letter-spacing:0.5px;">
               Ver su recuerdo ✦
             </a>
