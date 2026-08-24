@@ -164,12 +164,14 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
               style={{
-                background: 'linear-gradient(180deg, #D5B2F1 0%, #EAA8C3 60%, #F5D3C8 100%)',
+                background: "url('/images/mural-preview/petprofilecardpreview.webp') no-repeat center center / cover",
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
+                position: 'relative',
+                overflow: 'hidden',
               }}
             >
-              {/* Botón X de cerrar */}
+              {/* 1. Botón X de cerrar */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -198,89 +200,85 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 ✕
               </button>
 
-              {/* Fondo completo */}
-              <div 
-                className="absolute top-0 left-0 w-full h-full z-[1]"
+              {/* 2. NOMBRE DE LA MASCOTA (dinámico) */}
+              <h3 
                 style={{
-                  background: 'url("/images/mural-preview/petprofilecardpreview.webp") no-repeat center center / cover',
+                  position: 'absolute',
+                  top: '52px',
+                  left: 0,
+                  right: 0,
+                  textAlign: 'center',
+                  fontFamily: 'Georgia, serif',
+                  fontStyle: 'italic',
+                  fontSize: '38px',
+                  fontWeight: 700,
+                  color: '#C9A961',
+                  textShadow: '0 2px 8px rgba(180,130,40,0.30)',
+                  margin: 0,
+                  zIndex: 10,
                 }}
-              />
+              >
+                {nombre}
+              </h3>
 
-              <div className="relative z-10 flex flex-col items-center p-[18px_20px_24px] box-border w-full h-full">
-                
-                {/* Foto circular 100x100px con halo y medalla */}
-                <div className="relative w-[100px] h-[100px] mb-3 mt-3">
-                  {/* Halo dorado 3D inclinado */}
-                  <div 
-                    className="absolute top-[-30px] left-[50%] translate-x-[-50%] w-[68px] h-[26px] border-[3.5px] border-[#FFF59D] z-[1]"
-                    style={{
-                      transform: 'translateX(-50%) rotateX(45deg)',
-                      boxShadow: '0 0 20px #FFF59D, 0 0 8px #FFD54F, inset 0 0 12px #FFF59D',
-                      background: 'rgba(255, 245, 157, 0.12)',
-                      borderRadius: '50%',
-                    }}
-                  />
-                  
-                  {/* Contenedor de la foto */}
-                  <div className="w-full h-full rounded-full overflow-hidden border-[4.5px] border-[#FFE082] shadow-[0_4px_15px_rgba(255,213,79,0.25)] bg-white relative z-[2]">
-                    {loading ? (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                        <div className="w-8 h-8 border-4 border-[#FFE082] border-t-transparent rounded-full animate-spin" />
-                      </div>
-                    ) : (
-                      <img src={foto} alt={nombre} className="w-full h-full object-cover" />
-                    )}
-                  </div>
-
-                  {/* Medalla del plan */}
-                  {planBadgeSrc && (
-                    <img 
-                      className="absolute bottom-[-20px] right-[-20px] w-[68px] h-[68px] z-[5]" 
-                      src={planBadgeSrc} 
-                      alt="Medalla Plan" 
-                    />
-                  )}
-                </div>
-
-                {/* Nombre (Georgia bold) */}
-                <h3 
-                  className="font-serif font-bold text-[32px] text-[#4A3F6B] m-0 mb-1"
-                >
-                  {nombre}
-                </h3>
-
-                {/* Fechas */}
-                {(birthStr || deathStr) && (
-                  <p 
-                    className="text-[12px] text-[#7B6F9A] font-semibold m-0 mb-0 text-center whitespace-nowrap"
-                    style={{ marginTop: '54px' }}
-                  >
-                    {birthStr && deathStr ? `${birthStr} — ${deathStr}` : birthStr || deathStr}
-                  </p>
-                )}
-
-                {/* Tagline */}
-                <p 
-                  className="text-[14px] text-[#7B6F9A] font-medium m-0 mb-3"
-                  style={{ marginTop: (birthStr || deathStr) ? '10px' : '72px' }}
-                >
-                  Siempre en nuestros corazones
-                </p>
-
-                {/* Botón luces posicionado de forma absoluta en la parte inferior (estático) */}
-                <div 
-                  className="absolute left-1/2 -translate-x-1/2 bg-white/25 border-[1.5px] border-white/80 rounded-full p-[8px_24px] text-[#4A3F6B] font-bold text-[13px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] backdrop-blur-[4px] z-10 whitespace-nowrap"
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    bottom: '24px',
-                    cursor: 'default',
-                  }}
-                >
-                  {slotsCount} {slotsCount === 1 ? 'luz' : 'luces'} en el cielo
-                </div>
+              {/* 3. CORAZÓN DORADO pequeño debajo del nombre */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  top: '102px',
+                  left: 0,
+                  right: 0,
+                  textAlign: 'center',
+                  fontSize: '18px',
+                  zIndex: 10,
+                  pointerEvents: 'none',
+                }}
+              >
+                💛
               </div>
 
-              {/* Icono girar lila */}
+              {/* 4. FOTO CIRCULAR DE LA MASCOTA (dinámica) */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  top: '130px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '180px',
+                  height: '180px',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  border: '3px solid rgba(201,169,97,0.60)',
+                  zIndex: 10,
+                  backgroundColor: 'white',
+                }}
+              >
+                {loading ? (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                    <div className="w-8 h-8 border-4 border-[#C9A961] border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : (
+                  <img src={foto} alt={nombre} className="w-full h-full object-cover" />
+                )}
+              </div>
+
+              {/* 5. MEDALLA DEL PLAN */}
+              {planBadgeSrc && (
+                <img 
+                  style={{
+                    position: 'absolute',
+                    top: '290px',
+                    right: 'calc(50% - 90px - 10px)',
+                    width: '44px',
+                    height: '44px',
+                    zIndex: 15,
+                  }}
+                  src={planBadgeSrc} 
+                  alt="Medalla Plan" 
+                />
+              )}
+
+              {/* 6. Botón girar lila */}
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -310,7 +308,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>
                   </svg>
                 ) : (
-                  <svg width="14" height="14" viewBox="0 0 24 24"
+                  <svg width="14" height="14" viewBox="0 0 24 24" 
                        fill="none" stroke="white" strokeWidth="2.5"
                        strokeLinecap="round" strokeLinejoin="round">
                     <path d="M15 10L20 15l-5 5"/>

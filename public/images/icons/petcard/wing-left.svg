@@ -1,0 +1,11 @@
+<svg viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M55 20C45 8 25 4 5 10C15 16 30 18 55 20Z" 
+        fill="white" fill-opacity="0.90" 
+        stroke="#C9A961" stroke-width="1"/>
+  <path d="M50 24C40 14 22 10 4 16C13 21 28 23 50 24Z" 
+        fill="white" fill-opacity="0.75" 
+        stroke="#C9A961" stroke-width="0.8"/>
+  <path d="M44 28C35 20 20 17 5 22C13 26 26 27 44 28Z" 
+        fill="white" fill-opacity="0.60" 
+        stroke="#C9A961" stroke-width="0.6"/>
+</svg>
