@@ -163,7 +163,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           className="w-full relative select-none"
           style={{
             perspective: '1000px',
-            height: '500px',
+            height: '470px',
             cursor: 'pointer',
           }}
         >
@@ -182,7 +182,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
               style={{
-                background: "url('/images/mural-preview/petprofilecardpreview.webp') no-repeat center center / cover",
+                background: "url('/images/mural-preview/petprofilecardpreview.webp') no-repeat center center / 100% 100%",
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
                 position: 'relative',
@@ -222,7 +222,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <h3 
                 style={{
                   position: 'absolute',
-                  top: '78px',
+                  top: '80px',
                   left: 0,
                   right: 0,
                   textAlign: 'center',
@@ -239,27 +239,11 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 {nombre}
               </h3>
 
-              {/* 3. CORAZÓN DORADO pequeño debajo del nombre */}
+              {/* 3. FOTO CIRCULAR DE LA MASCOTA CON AUREOLA */}
               <div 
                 style={{
                   position: 'absolute',
-                  top: '116px',
-                  left: 0,
-                  right: 0,
-                  textAlign: 'center',
-                  fontSize: '14px',
-                  zIndex: 10,
-                  pointerEvents: 'none',
-                }}
-              >
-                💛
-              </div>
-
-              {/* 4. FOTO CIRCULAR DE LA MASCOTA CON AUREOLA */}
-              <div 
-                style={{
-                  position: 'absolute',
-                  top: '138px',
+                  top: '140px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   width: '155px',
@@ -309,7 +293,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 </div>
               </div>
 
-              {/* 5. MEDALLA DEL PLAN */}
+              {/* 4. MEDALLA DEL PLAN */}
               {planBadgeSrc && (
                 <img 
                   style={{
@@ -325,65 +309,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 />
               )}
 
-              {/* 6. FRASE EMOTIVA */}
-              <p
-                style={{
-                  position: 'absolute',
-                  top: '308px',
-                  left: 0,
-                  right: 0,
-                  textAlign: 'center',
-                  fontFamily: 'Georgia, serif',
-                  fontSize: '13.5px',
-                  fontWeight: 600,
-                  color: '#3E3264',
-                  lineHeight: '1.35',
-                  padding: '0 28px',
-                  margin: 0,
-                  zIndex: 10,
-                }}
-              >
-                “Siempre serás mi lugar favorito en el mundo.”
-              </p>
-
-              {/* 7. CORAZÓN LILA */}
-              <div 
-                style={{
-                  position: 'absolute',
-                  top: '350px',
-                  left: 0,
-                  right: 0,
-                  textAlign: 'center',
-                  fontSize: '14px',
-                  zIndex: 10,
-                  pointerEvents: 'none',
-                }}
-              >
-                💜
-              </div>
-
-              {/* 8. CIERRE INFERIOR ENTRE LAS ALITAS */}
-              <p
-                style={{
-                  position: 'absolute',
-                  top: '430px',
-                  left: 0,
-                  right: 0,
-                  textAlign: 'center',
-                  fontFamily: 'Georgia, serif',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  color: '#4A3F6B',
-                  lineHeight: '1.25',
-                  padding: '0 62px',
-                  margin: 0,
-                  zIndex: 10,
-                }}
-              >
-                En el Mural Global de Ángeles en el Cielo
-              </p>
-
-              {/* 9. Botón girar lila */}
+              {/* 5. Botón girar lila */}
               <div
                 onClick={(e) => {
                   e.stopPropagation();
