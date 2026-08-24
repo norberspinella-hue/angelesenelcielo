@@ -124,12 +124,12 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
      planType === 'estrella_anual' ? 4 : 1);
 
   // Render plan badge conditionally
-  let planBadgeSrc = '';
-  if (plan === 'recuerdo_eterno') {
-    planBadgeSrc = '/images/icons/plans/icon-plan-eterno.svg';
-  } else if (plan === 'estrella_anual') {
-    planBadgeSrc = '/images/icons/plans/icon-plan-estrella.svg';
-  }
+  const planBadgeSrc = 
+    petData?.plan_type === 'recuerdo_eterno' 
+      ? '/images/icons/plans/icon-plan-eterno.svg'
+      : petData?.plan_type === 'estrella_anual'
+      ? '/images/icons/plans/icon-plan-estrella.svg'
+      : '/images/icons/plans/icon-plan-inicial.svg';
 
   // Handle closing modal
   const handleOverlayClick = (e: React.MouseEvent) => {
@@ -258,20 +258,21 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 }}
               />
 
-              {/* CORAZÓN ROSA */}
-              <div 
-                style={{
-                  position: 'absolute',
-                  top: '168px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  fontSize: '18px',
-                  zIndex: 8,
-                  pointerEvents: 'none',
-                }}
-              >
-                🩷
-              </div>
+              {/* ICONO DEL PLAN */}
+              {planBadgeSrc && (
+                <img
+                  src={planBadgeSrc}
+                  alt="Plan"
+                  style={{
+                    position: 'absolute',
+                    top: 310,
+                    left: 258,
+                    width: 36,
+                    height: 36,
+                    zIndex: 8,
+                  }}
+                />
+              )}
 
               {/* ELEMENTO 3: FOTO CIRCULAR */}
               <div 
