@@ -265,10 +265,10 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   alt="Plan"
                   style={{
                     position: 'absolute',
-                    top: 325,
-                    left: 207,
-                    width: 36,
-                    height: 36,
+                    top: 307,
+                    left: 189,
+                    width: 72,
+                    height: 72,
                     zIndex: 8,
                   }}
                 />
