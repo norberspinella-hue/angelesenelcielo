@@ -220,20 +220,23 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 ✕
               </button>
 
-              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA — ORO CELESTIAL Y LUZ RADIANTE */}
+              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA — ORO CELESTIAL METÁLICO CON RESPLANDOR */}
               <h3 
                 style={{
                   position: 'absolute',
-                  top: '92px',
+                  top: '88px',
                   left: 0,
                   right: 0,
                   textAlign: 'center',
-                  fontFamily: 'Georgia, serif',
-                  fontStyle: 'italic',
-                  fontSize: '38px',
-                  fontWeight: 700,
-                  color: '#C9A961',
-                  textShadow: '0 0 16px rgba(255, 245, 180, 0.9), 0 2px 10px rgba(180, 130, 40, 0.45), 0 1px 2px rgba(60, 40, 10, 0.3)',
+                  fontFamily: "'Great Vibes', 'Alex Brush', cursive",
+                  fontSize: '56px',
+                  fontWeight: 400,
+                  lineHeight: 1.1,
+                  background: 'linear-gradient(135deg, #FFF8DB 0%, #F5D77F 22%, #D4AF37 45%, #FFF0A8 60%, #AA771C 82%, #8A5E12 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  filter: 'drop-shadow(0 0 12px rgba(255, 235, 150, 0.95)) drop-shadow(0 0 24px rgba(212, 175, 55, 0.65)) drop-shadow(0 2px 4px rgba(70, 45, 10, 0.45))',
                   margin: 0,
                   padding: '0 20px',
                   zIndex: 10,
