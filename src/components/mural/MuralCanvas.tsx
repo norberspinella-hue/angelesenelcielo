@@ -145,7 +145,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           className="w-full relative select-none"
           style={{
             perspective: '1000px',
-            height: '374px',
+            height: '500px',
             cursor: 'pointer',
           }}
         >
@@ -198,54 +198,13 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 ✕
               </button>
 
-              {/* Fondo superior (previewrecuerdo.svg) */}
+              {/* Fondo completo */}
               <div 
-                className="absolute top-0 left-0 w-full h-[220px] z-[1]"
+                className="absolute top-0 left-0 w-full h-full z-[1]"
                 style={{
-                  background: 'url("/images/mural-preview/previewrecuerdo.svg") no-repeat center bottom / cover',
+                  background: 'url("/images/mural-preview/petprofilecardpreview.webp") no-repeat center center / cover',
                 }}
               />
-
-              {/* Fondo inferior (bannerdogs.png) */}
-              <div 
-                className="absolute left-0 w-full h-[154px] z-[1]"
-                style={{
-                  background: 'url("/images/mural-preview/bannerdogs.png") no-repeat center bottom / 100% 100%',
-                  top: '220px',
-                }}
-              />
-
-              {/* Línea divisoria absoluta superpuesta sobre las dos imágenes */}
-              <div style={{
-                position: 'absolute',
-                top: 220,
-                left: 0,
-                right: 0,
-                height: 38,
-                display: 'flex',
-                alignItems: 'center',
-                transform: 'translateY(-50%)',
-                zIndex: 20,
-                padding: '0 20px',
-              }}>
-                <div style={{ flex: 1, height: 2, background: 'rgba(236,111,163,0.40)' }} />
-                <div style={{
-                  width: 38, height: 38,
-                  borderRadius: '50%',
-                  background: 'white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 18,
-                  boxShadow: '0 2px 10px rgba(236,111,163,0.35)',
-                  flexShrink: 0,
-                  zIndex: 21,
-                  position: 'relative',
-                }}>
-                  🩷
-                </div>
-                <div style={{ flex: 1, height: 2, background: 'rgba(236,111,163,0.40)' }} />
-              </div>
 
               <div className="relative z-10 flex flex-col items-center p-[18px_20px_24px] box-border w-full h-full">
                 
