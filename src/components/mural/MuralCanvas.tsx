@@ -228,17 +228,19 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   left: 0,
                   right: 0,
                   textAlign: 'center',
-                  fontFamily: "'Great Vibes', cursive",
+                  fontFamily: "'Great Vibes', 'Alex Brush', cursive",
                   fontSize: 52,
                   fontWeight: 400,
                   background: 'linear-gradient(135deg, #FDE2EA 0%, #E8A888 30%, #D47FA6 65%, #9B5DE5 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
-                  filter: 'drop-shadow(0 0 10px rgba(186,104,200,0.75))',
+                  filter: 'drop-shadow(0 0 10px rgba(186,104,200,0.75)) drop-shadow(0 2px 6px rgba(155,93,229,0.35))',
                   zIndex: 10,
                   lineHeight: 1.2,
                   margin: 0,
+                  padding: '0 16px',
+                  userSelect: 'none',
                 }}
               >
                 {petData?.pet_name || 'Ángel'}
