@@ -163,7 +163,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           className="w-full relative select-none"
           style={{
             perspective: '1000px',
-            height: '470px',
+            height: '500px',
             cursor: 'pointer',
           }}
         >
@@ -182,7 +182,9 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
               style={{
-                background: "url('/images/mural-preview/petprofilecardpreview.webp') no-repeat center center / 100% 100%",
+                backgroundImage: "url('/images/mural-preview/petprofilecardpreview.webp')",
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
                 position: 'relative',
@@ -218,98 +220,84 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 ✕
               </button>
 
-              {/* 2. NOMBRE DE LA MASCOTA (dinámico) */}
+              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA */}
               <h3 
                 style={{
                   position: 'absolute',
-                  top: '80px',
+                  top: '85px',
                   left: 0,
                   right: 0,
                   textAlign: 'center',
                   fontFamily: 'Georgia, serif',
                   fontStyle: 'italic',
-                  fontSize: '34px',
+                  fontSize: '38px',
                   fontWeight: 700,
                   color: '#C9A961',
-                  textShadow: '0 2px 8px rgba(180,130,40,0.30)',
+                  textShadow: '0 2px 12px rgba(180,130,40,0.35)',
                   margin: 0,
                   zIndex: 10,
                 }}
               >
-                {nombre}
+                {petData?.pet_name || 'Ángel'}
               </h3>
 
-              {/* 3. FOTO CIRCULAR DE LA MASCOTA CON AUREOLA */}
+              {/* ELEMENTO 2: HALO DORADO */}
               <div 
                 style={{
                   position: 'absolute',
-                  top: '140px',
+                  top: '138px',
+                  left: '50%',
+                  transform: 'translateX(-50%) rotateX(45deg)',
+                  width: '120px',
+                  height: '24px',
+                  border: '3px solid #F5C842',
+                  borderRadius: '50%',
+                  boxShadow: '0 0 14px rgba(245,200,66,0.80)',
+                  zIndex: 6,
+                  pointerEvents: 'none',
+                }}
+              />
+
+              {/* ELEMENTO 3: FOTO CIRCULAR */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  top: '155px',
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  width: '155px',
-                  height: '155px',
-                  zIndex: 10,
+                  width: '180px',
+                  height: '180px',
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  border: '3px solid rgba(201,169,97,0.70)',
+                  boxShadow: '0 0 24px rgba(201,169,97,0.35)',
+                  backgroundColor: 'white',
+                  zIndex: 5,
                 }}
               >
-                {/* Halo dorado 3D flotando arriba */}
-                <div 
-                  style={{
-                    position: 'absolute',
-                    top: '-20px',
-                    left: '50%',
-                    transform: 'translateX(-50%) rotateX(45deg)',
-                    width: '78px',
-                    height: '26px',
-                    border: '3px solid #FFF59D',
-                    borderRadius: '50%',
-                    boxShadow: '0 0 16px #FFF59D, 0 0 8px #FFD54F, inset 0 0 10px #FFF59D',
-                    background: 'rgba(255, 245, 157, 0.15)',
-                    zIndex: 12,
-                    pointerEvents: 'none',
-                  }}
-                />
-
-                {/* Contenedor circular con borde */}
-                <div 
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '50%',
-                    overflow: 'hidden',
-                    border: '3px solid rgba(201,169,97,0.70)',
-                    backgroundColor: 'white',
-                    boxShadow: '0 4px 20px rgba(180,130,40,0.18)',
-                    position: 'relative',
-                    zIndex: 2,
-                  }}
-                >
-                  {loading ? (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                      <div className="w-8 h-8 border-4 border-[#C9A961] border-t-transparent rounded-full animate-spin" />
-                    </div>
-                  ) : (
-                    <img src={foto} alt={nombre} className="w-full h-full object-cover" />
-                  )}
-                </div>
+                {loading ? (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                    <div 
+                      style={{
+                        border: '4px solid #C9A961',
+                        borderTopColor: 'transparent',
+                        borderRadius: '50%',
+                        width: '32px',
+                        height: '32px',
+                        animation: 'spin 0.8s linear infinite',
+                      }} 
+                    />
+                  </div>
+                ) : (
+                  <img 
+                    src={petData?.photo_url || thumbnailUrl || '/images/placeholders/first.webp'} 
+                    alt={petData?.pet_name || 'Ángel'} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  />
+                )}
               </div>
 
-              {/* 4. MEDALLA DEL PLAN */}
-              {planBadgeSrc && (
-                <img 
-                  style={{
-                    position: 'absolute',
-                    top: '265px',
-                    right: 'calc(50% - 77px - 10px)',
-                    width: '42px',
-                    height: '42px',
-                    zIndex: 15,
-                  }}
-                  src={planBadgeSrc} 
-                  alt="Medalla Plan" 
-                />
-              )}
-
-              {/* 5. Botón girar lila */}
+              {/* Botón girar flip */}
               <div
                 onClick={(e) => {
                   e.stopPropagation();
