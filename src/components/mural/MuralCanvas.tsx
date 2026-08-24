@@ -220,60 +220,31 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 ✕
               </button>
 
-              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA CON RELIEVE 3D, CONTORNO Y GLOW */}
-              <div 
+              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA */}
+              <h3 
                 style={{
                   position: 'absolute',
-                  top: 90,
+                  top: 95,
                   left: 0,
                   right: 0,
                   textAlign: 'center',
+                  fontFamily: "'Dancing Script', 'Satisfy', 'Alex Brush', cursive",
+                  fontSize: 48,
+                  fontWeight: 700,
+                  lineHeight: 1.15,
+                  background: 'linear-gradient(180deg, #FFFFFF 0%, #FFB5C5 20%, #E879F9 45%, #9333EA 75%, #3B0764 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  filter: 'drop-shadow(0 0 10px rgba(217, 70, 239, 0.85)) drop-shadow(0 3px 8px rgba(45, 10, 70, 0.65))',
                   zIndex: 10,
+                  margin: 0,
+                  padding: '0 20px',
                   userSelect: 'none',
-                  padding: '0 16px',
                 }}
               >
-                {/* Capa Trasera: Contorno Amatista + Grosor + Halo Celestial */}
-                <span
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    right: 0,
-                    textAlign: 'center',
-                    fontFamily: "'Great Vibes', 'Alex Brush', cursive",
-                    fontSize: 54,
-                    fontWeight: 700,
-                    lineHeight: 1.1,
-                    color: '#3B0764',
-                    WebkitTextStroke: '4.5px #3B0764',
-                    filter: 'drop-shadow(0 0 14px rgba(192, 132, 252, 0.95)) drop-shadow(0 0 28px rgba(168, 85, 247, 0.7)) drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4))',
-                    zIndex: 1,
-                  }}
-                  aria-hidden="true"
-                >
-                  {petData?.pet_name || 'Ángel'}
-                </span>
-
-                {/* Capa Frontal: Degradado Metálico Oro Rosa a Amatista con Brillo Especular */}
-                <span
-                  style={{
-                    position: 'relative',
-                    fontFamily: "'Great Vibes', 'Alex Brush', cursive",
-                    fontSize: 54,
-                    fontWeight: 700,
-                    lineHeight: 1.1,
-                    background: 'linear-gradient(180deg, #FFF9FA 0%, #FFCAD4 18%, #F472B6 42%, #C084FC 72%, #7E22CE 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    WebkitTextStroke: '0.6px rgba(255, 255, 255, 0.75)',
-                    display: 'inline-block',
-                    zIndex: 2,
-                  }}
-                >
-                  {petData?.pet_name || 'Ángel'}
-                </span>
-              </div>
+                {petData?.pet_name || 'Ángel'}
+              </h3>
 
               {/* ELEMENTO 2: HALO DORADO */}
               <div 
