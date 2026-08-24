@@ -204,13 +204,13 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <h3 
                 style={{
                   position: 'absolute',
-                  top: '52px',
+                  top: '78px',
                   left: 0,
                   right: 0,
                   textAlign: 'center',
                   fontFamily: 'Georgia, serif',
                   fontStyle: 'italic',
-                  fontSize: '38px',
+                  fontSize: '34px',
                   fontWeight: 700,
                   color: '#C9A961',
                   textShadow: '0 2px 8px rgba(180,130,40,0.30)',
@@ -225,11 +225,11 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <div 
                 style={{
                   position: 'absolute',
-                  top: '102px',
+                  top: '116px',
                   left: 0,
                   right: 0,
                   textAlign: 'center',
-                  fontSize: '18px',
+                  fontSize: '14px',
                   zIndex: 10,
                   pointerEvents: 'none',
                 }}
@@ -237,29 +237,58 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 💛
               </div>
 
-              {/* 4. FOTO CIRCULAR DE LA MASCOTA (dinámica) */}
+              {/* 4. FOTO CIRCULAR DE LA MASCOTA CON AUREOLA */}
               <div 
                 style={{
                   position: 'absolute',
-                  top: '130px',
+                  top: '138px',
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  width: '180px',
-                  height: '180px',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                  border: '3px solid rgba(201,169,97,0.60)',
+                  width: '155px',
+                  height: '155px',
                   zIndex: 10,
-                  backgroundColor: 'white',
                 }}
               >
-                {loading ? (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                    <div className="w-8 h-8 border-4 border-[#C9A961] border-t-transparent rounded-full animate-spin" />
-                  </div>
-                ) : (
-                  <img src={foto} alt={nombre} className="w-full h-full object-cover" />
-                )}
+                {/* Halo dorado 3D flotando arriba */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: '-20px',
+                    left: '50%',
+                    transform: 'translateX(-50%) rotateX(45deg)',
+                    width: '78px',
+                    height: '26px',
+                    border: '3px solid #FFF59D',
+                    borderRadius: '50%',
+                    boxShadow: '0 0 16px #FFF59D, 0 0 8px #FFD54F, inset 0 0 10px #FFF59D',
+                    background: 'rgba(255, 245, 157, 0.15)',
+                    zIndex: 12,
+                    pointerEvents: 'none',
+                  }}
+                />
+
+                {/* Contenedor circular con borde */}
+                <div 
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    border: '3px solid rgba(201,169,97,0.70)',
+                    backgroundColor: 'white',
+                    boxShadow: '0 4px 20px rgba(180,130,40,0.18)',
+                    position: 'relative',
+                    zIndex: 2,
+                  }}
+                >
+                  {loading ? (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                      <div className="w-8 h-8 border-4 border-[#C9A961] border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  ) : (
+                    <img src={foto} alt={nombre} className="w-full h-full object-cover" />
+                  )}
+                </div>
               </div>
 
               {/* 5. MEDALLA DEL PLAN */}
@@ -267,10 +296,10 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 <img 
                   style={{
                     position: 'absolute',
-                    top: '290px',
-                    right: 'calc(50% - 90px - 10px)',
-                    width: '44px',
-                    height: '44px',
+                    top: '265px',
+                    right: 'calc(50% - 77px - 10px)',
+                    width: '42px',
+                    height: '42px',
                     zIndex: 15,
                   }}
                   src={planBadgeSrc} 
@@ -278,7 +307,65 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 />
               )}
 
-              {/* 6. Botón girar lila */}
+              {/* 6. FRASE EMOTIVA */}
+              <p
+                style={{
+                  position: 'absolute',
+                  top: '308px',
+                  left: 0,
+                  right: 0,
+                  textAlign: 'center',
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '13.5px',
+                  fontWeight: 600,
+                  color: '#3E3264',
+                  lineHeight: '1.35',
+                  padding: '0 28px',
+                  margin: 0,
+                  zIndex: 10,
+                }}
+              >
+                “Siempre serás mi lugar favorito en el mundo.”
+              </p>
+
+              {/* 7. CORAZÓN LILA */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  top: '350px',
+                  left: 0,
+                  right: 0,
+                  textAlign: 'center',
+                  fontSize: '14px',
+                  zIndex: 10,
+                  pointerEvents: 'none',
+                }}
+              >
+                💜
+              </div>
+
+              {/* 8. CIERRE INFERIOR ENTRE LAS ALITAS */}
+              <p
+                style={{
+                  position: 'absolute',
+                  top: '430px',
+                  left: 0,
+                  right: 0,
+                  textAlign: 'center',
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  color: '#4A3F6B',
+                  lineHeight: '1.25',
+                  padding: '0 62px',
+                  margin: 0,
+                  zIndex: 10,
+                }}
+              >
+                En el Mural Global de Ángeles en el Cielo
+              </p>
+
+              {/* 9. Botón girar lila */}
               <div
                 onClick={(e) => {
                   e.stopPropagation();
