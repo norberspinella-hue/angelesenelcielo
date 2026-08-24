@@ -224,18 +224,21 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <h3 
                 style={{
                   position: 'absolute',
-                  top: '95px',
+                  top: 95,
                   left: 0,
                   right: 0,
                   textAlign: 'center',
-                  fontFamily: 'Georgia, serif',
-                  fontStyle: 'italic',
-                  fontSize: '38px',
-                  fontWeight: 700,
-                  color: '#C9A961',
-                  textShadow: '0 2px 12px rgba(180,130,40,0.35)',
-                  margin: 0,
+                  fontFamily: "'Great Vibes', cursive",
+                  fontSize: 52,
+                  fontWeight: 400,
+                  background: 'linear-gradient(135deg, #FDE2EA 0%, #E8A888 30%, #D47FA6 65%, #9B5DE5 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  filter: 'drop-shadow(0 0 10px rgba(186,104,200,0.75))',
                   zIndex: 10,
+                  lineHeight: 1.2,
+                  margin: 0,
                 }}
               >
                 {petData?.pet_name || 'Ángel'}
