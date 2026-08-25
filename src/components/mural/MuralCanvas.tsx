@@ -266,6 +266,22 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 </svg>
               </div>
 
+              {/* RESPLANDOR CENTRAL DE CONTRALUZ (AURA BLANCA-DORADA) */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  top: '40px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '300px',
+                  height: '130px',
+                  background: 'radial-gradient(ellipse at center, rgba(255, 253, 240, 0.85) 0%, rgba(255, 245, 215, 0.50) 45%, rgba(255, 240, 195, 0) 80%)',
+                  filter: 'blur(12px)',
+                  pointerEvents: 'none',
+                  zIndex: 2,
+                }} 
+              />
+
               {/* ELEMENTO 1: NOMBRE DE LA MASCOTA */}
               <h3 
                 style={{
@@ -280,6 +296,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   lineHeight: 1.2,
                   zIndex: 10,
                   color: '#C29028',
+                  filter: 'drop-shadow(0 1px 1px rgba(255,255,255,0.70)) drop-shadow(0 2px 4px rgba(110,70,15,0.30))',
                   padding: '0 16px',
                   margin: 0,
                 }}
