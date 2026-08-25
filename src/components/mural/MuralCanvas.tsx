@@ -182,7 +182,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
               style={{
-                backgroundImage: "url('/images/mural-preview/petprofilecardpreview.webp')",
+                backgroundImage: "url('/images/mural-preview/profilecard-front.webp')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backfaceVisibility: 'hidden',
@@ -484,7 +484,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
               style={{
-                background: "url('/images/mural-preview/petprofilecardback.webp') no-repeat center center / cover",
+                background: "url('/images/mural-preview/profilecard-back.webp') no-repeat center center / cover",
                 backgroundColor: '#f5e8ff',
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
