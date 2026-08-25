@@ -304,22 +304,86 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 </h3>
               </div>
 
-              {/* ELEMENTO 2: HALO DORADO */}
+              {/* ELEMENTO 2: HALO CELESTIAL FINO Y RADIANTE */}
               <div 
                 style={{
                   position: 'absolute',
-                  top: '158px',
+                  top: '142px',
                   left: '50%',
-                  transform: 'translateX(-50%) rotateX(45deg)',
-                  width: '120px',
-                  height: '24px',
-                  border: '3px solid #F5C842',
-                  borderRadius: '50%',
-                  boxShadow: '0 0 14px rgba(245,200,66,0.80)',
-                  zIndex: 6,
+                  transform: 'translateX(-50%)',
+                  width: '190px',
+                  height: '60px',
+                  zIndex: 7,
                   pointerEvents: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
-              />
+              >
+                <svg 
+                  width="100%" 
+                  height="100%" 
+                  viewBox="0 0 220 70" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ overflow: 'visible' }}
+                >
+                  <defs>
+                    <filter id="haloCelestialGlow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur1" />
+                      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2" />
+                      <feMerge>
+                        <feMergeNode in="blur1" />
+                        <feMergeNode in="blur2" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                    <linearGradient id="haloGoldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#FFA000" stopOpacity="0.85" />
+                      <stop offset="20%" stopColor="#FFD54F" stopOpacity="0.95" />
+                      <stop offset="50%" stopColor="#FFF9C4" stopOpacity="1" />
+                      <stop offset="80%" stopColor="#FFD54F" stopOpacity="0.95" />
+                      <stop offset="100%" stopColor="#FFA000" stopOpacity="0.85" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* 1. Aura difusa dorada exterior */}
+                  <ellipse 
+                    cx="110" 
+                    cy="35" 
+                    rx="95" 
+                    ry="24" 
+                    stroke="#FFD54F" 
+                    strokeWidth="8" 
+                    opacity="0.35" 
+                    filter="url(#haloCelestialGlow)" 
+                  />
+
+                  {/* 2. Cuerpo del anillo dorado fino */}
+                  <ellipse 
+                    cx="110" 
+                    cy="35" 
+                    rx="95" 
+                    ry="24" 
+                    stroke="url(#haloGoldGradient)" 
+                    strokeWidth="2.8" 
+                    opacity="0.95" 
+                    filter="drop-shadow(0 0 5px #FFD54F)" 
+                  />
+
+                  {/* 3. Filamento incandescente blanco puro en el núcleo */}
+                  <ellipse 
+                    cx="110" 
+                    cy="35" 
+                    rx="95" 
+                    ry="24" 
+                    stroke="#FFFFFF" 
+                    strokeWidth="1.2" 
+                    opacity="0.98" 
+                    filter="drop-shadow(0 0 2px #FFFFFF)" 
+                  />
+                </svg>
+              </div>
 
               {/* ICONO DEL PLAN */}
               {planBadgeSrc && (
