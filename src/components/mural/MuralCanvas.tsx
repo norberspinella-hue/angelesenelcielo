@@ -53,6 +53,10 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
   useEffect(() => {
     setMounted(true);
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap';
+    document.head.appendChild(link);
   }, []);
 
   useEffect(() => {
@@ -220,89 +224,30 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 ✕
               </button>
 
-              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA — ORO CELESTIAL CON HALO Y DESTELLOS */}
-              <div 
+              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA */}
+              <h3 
                 style={{
                   position: 'absolute',
-                  top: '89px',
+                  top: 95,
                   left: 0,
                   right: 0,
                   textAlign: 'center',
+                  fontFamily: "'Pinyon Script', cursive",
+                  fontSize: 58,
+                  fontWeight: 400,
+                  lineHeight: 1.2,
                   zIndex: 10,
-                  userSelect: 'none',
+                  background: 'linear-gradient(180deg, #FBEBB5 0%, #EED38A 20%, #D4A43D 45%, #C29028 65%, #9E6B15 85%, #7D4E08 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  filter: 'drop-shadow(0 0 12px rgba(234,195,80,0.70)) drop-shadow(0 2px 4px rgba(125,78,8,0.40))',
                   padding: '0 16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  margin: 0,
                 }}
               >
-                {/* 1. Halo difuso de luz cálida celestial detrás del nombre */}
-                <div 
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '270px',
-                    height: '85px',
-                    background: 'radial-gradient(ellipse at center, rgba(255, 252, 230, 0.80) 0%, rgba(255, 238, 175, 0.50) 45%, rgba(255, 225, 130, 0) 75%)',
-                    filter: 'blur(10px)',
-                    pointerEvents: 'none',
-                    zIndex: 1,
-                  }} 
-                />
-
-                {/* 2. Destellos dorados alrededor del nombre */}
-                <svg
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: '320px',
-                    height: '110px',
-                    pointerEvents: 'none',
-                    zIndex: 3,
-                  }}
-                  viewBox="0 0 320 110"
-                  fill="none"
-                >
-                  {/* Destello arriba centro */}
-                  <path d="M160 5 L162 17 L174 19 L162 21 L160 33 L158 21 L146 19 L158 17 Z" fill="#FFE58F" opacity="0.75" />
-                  {/* Destello izquierda */}
-                  <path d="M35 50 L36.5 58 L45 59.5 L36.5 61 L35 70 L33.5 61 L25 59.5 L33.5 58 Z" fill="#FFE58F" opacity="0.70" />
-                  {/* Destello derecha */}
-                  <path d="M285 50 L286.5 58 L295 59.5 L286.5 61 L285 70 L283.5 61 L275 59.5 L283.5 58 Z" fill="#FFE58F" opacity="0.70" />
-                  {/* Destello abajo */}
-                  <path d="M160 80 L161.5 87 L169 88.5 L161.5 90 L160 97 L158.5 90 L151 88.5 L158.5 87 Z" fill="#FFE58F" opacity="0.70" />
-                  {/* Chispas pequeñas */}
-                  <circle cx="55" cy="28" r="1.5" fill="#FFE58F" opacity="0.60" />
-                  <circle cx="265" cy="30" r="1.5" fill="#FFE58F" opacity="0.60" />
-                  <circle cx="75" cy="85" r="1.5" fill="#FFE58F" opacity="0.60" />
-                  <circle cx="245" cy="82" r="1.5" fill="#FFE58F" opacity="0.60" />
-                </svg>
-
-                {/* 3. Nombre de la Mascota */}
-                <h3 
-                  style={{
-                    position: 'relative',
-                    fontFamily: "'Great Vibes', 'Allura', 'Alex Brush', cursive",
-                    fontSize: '56px',
-                    fontWeight: 400,
-                    lineHeight: 1.1,
-                    background: 'linear-gradient(180deg, #FFFFFF 0%, #FFF3C4 15%, #E6BF50 42%, #C49326 72%, #7D5106 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    WebkitTextStroke: '0.6px rgba(160, 105, 15, 0.65)',
-                    filter: 'drop-shadow(0 0 10px rgba(255, 235, 140, 0.75)) drop-shadow(0 2px 4px rgba(90, 55, 10, 0.40))',
-                    margin: 0,
-                    zIndex: 2,
-                  }}
-                >
-                  {petData?.pet_name || 'Ángel'}
-                </h3>
-              </div>
+                {petData?.pet_name || 'Ángel'}
+              </h3>
 
               {/* ELEMENTO 2: HALO CELESTIAL FINO Y RADIANTE */}
               <div 
