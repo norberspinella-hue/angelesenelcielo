@@ -45,27 +45,11 @@ interface PetProfileCardProps {
 }
 
 function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProfileCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
   const [petData, setPetData] = useState<{ pet_name: string; photo_url: string; plan_type: string; profile_slug?: string | null; slots_count?: number | null; birth_date?: string | null; death_date?: string | null; dedication?: string | null } | null>(null);
   const [slotData, setSlotData] = useState<{ x: number; y: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
   const [mounted, setMounted] = useState(false);
-
-  const handleDownload = async () => {
-    if (!cardRef.current) return;
-    const html2canvas = (await import('html2canvas')).default;
-    const canvas = await html2canvas(cardRef.current, {
-      useCORS: true,
-      allowTaint: true,
-      scale: 2,
-      backgroundColor: null,
-    });
-    const link = document.createElement('a');
-    link.download = `${petData?.pet_name || 'angelito'}-recuerdo.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-  };
 
   useEffect(() => {
     setMounted(true);
@@ -196,7 +180,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           >
             {/* CARA FRONTAL — EL RECUERDO */}
             <div 
-              ref={cardRef}
               className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
               style={{
                 backgroundImage: "url('/images/mural-preview/petprofilecardpreview.webp')",
@@ -638,31 +621,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           <p className="text-[12px] text-[#7B6F9A] m-0 mb-5 text-center leading-[1.4] font-sans">
             Comparte a {nombre} y ayuda a que su luz llegue a más personas. ✨
           </p>
-
-          {/* Botón de descarga */}
-          <button
-            onClick={handleDownload}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              background: 'linear-gradient(90deg, #C9A961, #E8C878)',
-              border: 'none',
-              borderRadius: 999,
-              padding: '10px 24px',
-              color: 'white',
-              fontWeight: 700,
-              fontSize: 13,
-              cursor: 'pointer',
-              marginBottom: 16,
-              fontFamily: 'sans-serif',
-              boxShadow: '0 4px 12px rgba(201,169,97,0.35)',
-              width: '100%',
-            }}
-          >
-            ⬇️ Descargar recuerdo
-          </button>
 
           {/* Botones sociales */}
           <div className="flex gap-5 w-full justify-center">
