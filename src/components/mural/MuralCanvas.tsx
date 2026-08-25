@@ -237,11 +237,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   fontWeight: 400,
                   lineHeight: 1.2,
                   zIndex: 10,
-                  background: 'linear-gradient(180deg, #FBEBB5 0%, #EED38A 20%, #D4A43D 45%, #C29028 65%, #9E6B15 85%, #7D4E08 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  filter: 'drop-shadow(0 0 12px rgba(234,195,80,0.70)) drop-shadow(0 2px 4px rgba(125,78,8,0.40))',
+                  color: '#C29028',
                   padding: '0 16px',
                   margin: 0,
                 }}
