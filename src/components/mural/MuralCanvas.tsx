@@ -490,11 +490,11 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 WebkitBackfaceVisibility: 'hidden',
                 transform: 'rotateY(180deg)',
                 boxSizing: 'border-box',
-                padding: '32px 24px',
+                padding: '20px 24px 32px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
+                justifyContent: 'flex-start',
                 textAlign: 'center',
               }}
             >
