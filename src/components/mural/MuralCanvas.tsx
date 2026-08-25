@@ -224,35 +224,37 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 ✕
               </button>
 
-              {/* CABECERA: MI ANGELITO */}
+              {/* CABECERA: MI ANGELITO CURVADO EN ARCO */}
               <div 
                 style={{
                   position: 'absolute',
-                  top: '46px',
+                  top: '36px',
                   left: 0,
                   right: 0,
-                  textAlign: 'center',
                   zIndex: 10,
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '4px',
+                  pointerEvents: 'none',
                 }}
               >
-                <span 
-                  style={{
-                    fontFamily: 'Georgia, serif',
-                    fontSize: '15px',
-                    fontWeight: 700,
-                    letterSpacing: '2.5px',
-                    textTransform: 'uppercase',
-                    color: '#4A3F6B',
-                  }}
-                >
-                  MI ANGELITO
-                </span>
-                <span style={{ fontSize: '13px', lineHeight: 1 }}>💛</span>
+                <svg width="260" height="38" viewBox="0 0 260 38" fill="none" style={{ overflow: 'visible' }}>
+                  <path id="archTextPath" d="M 20,32 Q 130,8 240,32" fill="none" />
+                  <text 
+                    fill="#4A3F6B" 
+                    fontFamily="Georgia, serif" 
+                    fontSize="14.5" 
+                    fontWeight="700" 
+                    letterSpacing="3" 
+                    textAnchor="middle"
+                  >
+                    <textPath href="#archTextPath" startOffset="50%">
+                      MI ANGELITO
+                    </textPath>
+                  </text>
+                </svg>
+                <span style={{ fontSize: '13px', lineHeight: 1, marginTop: '-2px' }}>💛</span>
               </div>
 
               {/* ELEMENTO 1: NOMBRE DE LA MASCOTA */}
