@@ -247,7 +247,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     fontWeight: 700,
                     letterSpacing: '2.5px',
                     textTransform: 'uppercase',
-                    color: '#49247B',
+                    color: '#4A3F6B',
                   }}
                 >
                   MI ANGELITO
@@ -434,7 +434,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     fontFamily: 'Georgia, serif',
                     fontStyle: 'italic',
                     fontSize: '12.5px',
-                    color: '#49247B',
+                    color: '#4A3F6B',
                     margin: 0,
                     lineHeight: 1.35,
                   }}
@@ -450,7 +450,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     fontFamily: 'Georgia, serif',
                     fontStyle: 'italic',
                     fontSize: '11.5px',
-                    color: '#49247B',
+                    color: '#4A3F6B',
                     opacity: 0.9,
                     marginTop: '2px',
                   }}
