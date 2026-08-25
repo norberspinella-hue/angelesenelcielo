@@ -224,6 +224,37 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 ✕
               </button>
 
+              {/* CABECERA: MI ANGELITO */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  top: '46px',
+                  left: 0,
+                  right: 0,
+                  textAlign: 'center',
+                  zIndex: 10,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                }}
+              >
+                <span 
+                  style={{
+                    fontFamily: 'Georgia, serif',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    letterSpacing: '2.5px',
+                    textTransform: 'uppercase',
+                    color: '#49247B',
+                  }}
+                >
+                  MI ANGELITO
+                </span>
+                <span style={{ fontSize: '13px', lineHeight: 1 }}>💛</span>
+              </div>
+
               {/* ELEMENTO 1: NOMBRE DE LA MASCOTA */}
               <h3 
                 style={{
@@ -379,6 +410,55 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                   />
                 )}
+              </div>
+
+              {/* CIERRE INFERIOR */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  bottom: '22px',
+                  left: 0,
+                  right: 0,
+                  textAlign: 'center',
+                  zIndex: 10,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  padding: '0 20px',
+                }}
+              >
+                <p 
+                  style={{
+                    fontFamily: 'Georgia, serif',
+                    fontStyle: 'italic',
+                    fontSize: '12.5px',
+                    color: '#49247B',
+                    margin: 0,
+                    lineHeight: 1.35,
+                  }}
+                >
+                  “Siempre serás mi lugar favorito en el mundo.”
+                </p>
+                <div 
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    fontFamily: 'Georgia, serif',
+                    fontStyle: 'italic',
+                    fontSize: '11.5px',
+                    color: '#49247B',
+                    opacity: 0.9,
+                    marginTop: '2px',
+                  }}
+                >
+                  <span>🪽</span>
+                  <span>Ángeles en el Cielo</span>
+                  <span>🪽</span>
+                </div>
               </div>
 
               {/* Botón girar flip */}
