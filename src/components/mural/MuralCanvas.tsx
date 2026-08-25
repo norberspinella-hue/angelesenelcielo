@@ -308,11 +308,11 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <div 
                 style={{
                   position: 'absolute',
-                  top: '152px',
+                  top: '155px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   width: '121px',
-                  height: '38px',
+                  height: '32px',
                   zIndex: 7,
                   pointerEvents: 'none',
                   display: 'flex',
