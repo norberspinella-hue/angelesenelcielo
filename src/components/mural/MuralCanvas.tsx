@@ -308,7 +308,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <div 
                 style={{
                   position: 'absolute',
-                  top: '308px',
+                  top: '148px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   width: '142px',
@@ -392,7 +392,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   alt="Plan"
                   style={{
                     position: 'absolute',
-                    top: 457,
+                    top: 307,
                     left: 189,
                     width: 72,
                     height: 72,
@@ -405,7 +405,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <div 
                 style={{
                   position: 'absolute',
-                  top: '325px',
+                  top: '175px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   width: '180px',
