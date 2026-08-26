@@ -487,7 +487,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 <p 
                   style={{
                     fontFamily: 'Georgia, serif',
-                    fontStyle: 'italic',
+                    fontStyle: 'normal',
                     fontWeight: 700,
                     fontSize: '16px',
                     color: '#4A3F6B',
