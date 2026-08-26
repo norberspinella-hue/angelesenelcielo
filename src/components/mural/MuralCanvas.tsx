@@ -147,28 +147,47 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   return createPortal(
     <div 
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/60 backdrop-blur-sm pointer-events-auto p-4"
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        width: '100vw',
-        height: '100vh',
+        inset: 0,
         zIndex: 99999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'rgba(0,0,0,0.50)',
+        backdropFilter: 'blur(4px)',
+        WebkitBackdropFilter: 'blur(4px)',
+        padding: 20,
+        overflowY: 'auto',
+        overscrollBehavior: 'contain',
       }}
     >
-      <div className="w-full max-w-[360px] flex flex-col gap-4 max-h-[90vh] overflow-y-auto scrollbar-none py-6">
+      <div 
+        style={{
+          width: 360,
+          minWidth: 360,
+          maxWidth: 360,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          alignItems: 'center',
+        }}
+      >
         
         {/* CONTENEDOR 3D FLIP CARD */}
         <div 
           onClick={() => setIsFlipped(!isFlipped)}
-          className="w-full relative select-none"
           style={{
+            width: 360,
+            minWidth: 360,
+            maxWidth: 360,
+            height: 500,
+            minHeight: 500,
+            position: 'relative',
+            flexShrink: 0,
             perspective: '1000px',
-            height: '500px',
             cursor: 'pointer',
+            userSelect: 'none',
           }}
         >
           {/* DIV INTERIOR QUE ROTA */}
@@ -184,15 +203,20 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           >
             {/* CARA FRONTAL — EL RECUERDO */}
             <div 
-              className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
+              className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col absolute top-0 left-0"
               style={{
+                width: 360,
+                minWidth: 360,
+                height: 500,
+                minHeight: 500,
+                position: 'relative',
+                overflow: 'hidden',
+                flexShrink: 0,
                 backgroundImage: "url('/images/mural-preview/profilecard-front.webp')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
-                position: 'relative',
-                overflow: 'hidden',
               }}
             >
               {/* 1. Botón X de cerrar */}
@@ -559,8 +583,15 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
             {/* CARA TRASERA — REVERSO */}
             <div 
-              className="w-full h-full rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col overflow-hidden absolute top-0 left-0"
+              className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col absolute top-0 left-0"
               style={{
+                width: 360,
+                minWidth: 360,
+                height: 500,
+                minHeight: 500,
+                position: 'relative',
+                overflow: 'hidden',
+                flexShrink: 0,
                 background: "url('/images/mural-preview/profilecard-back.webp') no-repeat center center / cover",
                 backgroundColor: '#f5e8ff',
                 backfaceVisibility: 'hidden',
@@ -682,8 +713,13 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
         {/* TARJETA 2 — COMPARTIR */}
         <div 
-          className="w-full rounded-[24px] border border-[rgba(255,255,255,0.65)] shadow-[0_12px_40px_rgba(30,10,50,0.15)] p-[24px_20px] flex flex-col items-center relative overflow-hidden"
+          className="rounded-[24px] border border-[rgba(255,255,255,0.65)] shadow-[0_12px_40px_rgba(30,10,50,0.15)] p-[24px_20px] flex flex-col items-center overflow-hidden"
           style={{
+            width: 360,
+            minWidth: 360,
+            maxWidth: 360,
+            position: 'relative',
+            flexShrink: 0,
             background: 'linear-gradient(180deg, rgba(255, 230, 235, 0.85) 0%, rgba(250, 200, 215, 0.85) 100%)',
             backdropFilter: 'blur(10px)',
             WebkitBackdropFilter: 'blur(10px)',
