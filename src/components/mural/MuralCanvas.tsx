@@ -242,9 +242,9 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 <svg width="260" height="38" viewBox="0 0 260 38" fill="none" style={{ overflow: 'visible' }}>
                   <path id="archTextPath" d="M 20,32 Q 130,8 240,32" fill="none" />
                   <text 
-                    fill="#4A3F6B" 
+                    fill="#584582" 
                     fontFamily="Georgia, serif" 
-                    fontSize="18" 
+                    fontSize="21" 
                     fontWeight="700" 
                     letterSpacing="3" 
                     textAnchor="middle"
@@ -489,8 +489,8 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     fontFamily: 'Georgia, serif',
                     fontStyle: 'normal',
                     fontWeight: 700,
-                    fontSize: '16px',
-                    color: '#4A3F6B',
+                    fontSize: '18.5px',
+                    color: '#584582',
                     margin: '0 0 12px 0',
                     lineHeight: 1.35,
                     fontSynthesis: 'none',
@@ -507,8 +507,8 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     fontFamily: 'Georgia, serif',
                     fontStyle: 'normal',
                     fontWeight: 700,
-                    fontSize: '14px',
-                    color: '#4A3F6B',
+                    fontSize: '16px',
+                    color: '#584582',
                     opacity: 0.9,
                     marginTop: '2px',
                   }}
