@@ -480,7 +480,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     lineHeight: 1.35,
                   }}
                 >
-                  “Siempre serás mi lugar favorito en el mundo.”
+                  {petData?.dedication || 'Siempre en nuestros corazones'}
                 </p>
                 <div 
                   style={{
@@ -489,7 +489,8 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     justifyContent: 'center',
                     gap: '6px',
                     fontFamily: 'Georgia, serif',
-                    fontStyle: 'italic',
+                    fontStyle: 'normal',
+                    fontWeight: 700,
                     fontSize: '11.5px',
                     color: '#4A3F6B',
                     opacity: 0.9,
