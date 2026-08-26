@@ -276,7 +276,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <h3 
                 style={{
                   position: 'absolute',
-                  top: '75px',
+                  top: '60px',
                   left: 0,
                   right: 0,
                   textAlign: 'center',
@@ -345,8 +345,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 0 14px rgba(245,200,66,0.80), inset 0 0 10px rgba(255,230,100,0.30)',
-                  borderRadius: '50%',
                 }}
               >
                 <svg 
@@ -490,9 +488,10 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   style={{
                     fontFamily: 'Georgia, serif',
                     fontStyle: 'italic',
+                    fontWeight: 700,
                     fontSize: '16px',
                     color: '#4A3F6B',
-                    margin: 0,
+                    margin: '0 0 12px 0',
                     lineHeight: 1.35,
                   }}
                 >
