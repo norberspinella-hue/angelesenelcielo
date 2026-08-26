@@ -244,7 +244,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   <text 
                     fill="#4A3F6B" 
                     fontFamily="Georgia, serif" 
-                    fontSize="14.5" 
+                    fontSize="18" 
                     fontWeight="700" 
                     letterSpacing="3" 
                     textAnchor="middle"
@@ -304,7 +304,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   right: 0,
                   textAlign: 'center',
                   fontFamily: "'Pinyon Script', cursive",
-                  fontSize: 58,
+                  fontSize: 72,
                   fontWeight: 400,
                   lineHeight: 1.2,
                   zIndex: 10,
@@ -474,13 +474,13 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   style={{
                     fontFamily: 'Georgia, serif',
                     fontStyle: 'italic',
-                    fontSize: '12.5px',
+                    fontSize: '16px',
                     color: '#4A3F6B',
                     margin: 0,
                     lineHeight: 1.35,
                   }}
                 >
-                  {petData?.dedication || 'Siempre en nuestros corazones'}
+                  “Siempre serás mi lugar favorito en el mundo.”
                 </p>
                 <div 
                   style={{
@@ -491,7 +491,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     fontFamily: 'Georgia, serif',
                     fontStyle: 'normal',
                     fontWeight: 700,
-                    fontSize: '11.5px',
+                    fontSize: '14px',
                     color: '#4A3F6B',
                     opacity: 0.9,
                     marginTop: '2px',
