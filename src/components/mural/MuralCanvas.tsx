@@ -938,284 +938,56 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             zIndex: -1,
             borderRadius: 24,
             overflow: 'hidden',
-            backgroundImage: "url('/images/mural-preview/profilecard-front.webp')",
+            backgroundImage: "url('/images/mural-preview/petprofilecardpreview.webp')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            paddingTop: 85,
+            boxSizing: 'border-box',
           }}
         >
-          {/* CABECERA: MI ANGELITO CURVADO EN ARCO */}
-          <div 
-            style={{
-              position: 'absolute',
-              top: '36px',
-              left: 0,
-              right: 0,
-              zIndex: 10,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'none',
-            }}
-          >
-            <svg width="260" height="38" viewBox="0 0 260 38" fill="none" style={{ overflow: 'visible' }}>
-              <path id="archTextPathCapture" d="M 20,32 Q 130,8 240,32" fill="none" />
-              <text 
-                fill="#584582" 
-                fontFamily="Georgia, serif" 
-                fontSize="21" 
-                fontWeight="700" 
-                letterSpacing="3" 
-                textAnchor="middle"
-              >
-                <textPath href="#archTextPathCapture" startOffset="50%">
-                  MI ANGELITO
-                </textPath>
-              </text>
-            </svg>
-          </div>
-
-          {/* RESPLANDOR CONTRALUZ */}
-          <div 
-            style={{
-              position: 'absolute',
-              top: '40px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '300px',
-              height: '130px',
-              background: 'radial-gradient(ellipse at center, rgba(255, 253, 240, 0.85) 0%, rgba(255, 245, 215, 0.50) 45%, rgba(255, 240, 195, 0) 80%)',
-              filter: 'blur(12px)',
-              pointerEvents: 'none',
-              zIndex: 2,
-            }} 
-          />
-
-          {/* NOMBRE DE LA MASCOTA */}
-          <h3 
-            style={{
-              position: 'absolute',
-              top: '60px',
-              left: 0,
-              right: 0,
-              textAlign: 'center',
-              fontFamily: "'Pinyon Script', cursive",
-              fontSize: 72,
-              fontWeight: 400,
-              lineHeight: 1.2,
-              zIndex: 10,
-              color: '#C29028',
-              filter: 'drop-shadow(0 1px 1px rgba(255,255,255,0.70)) drop-shadow(0 2px 4px rgba(110,70,15,0.30))',
-              padding: '0 16px',
-              margin: 0,
-            }}
-          >
+          {/* NOMBRE */}
+          <div style={{
+            fontFamily: "'Great Vibes', cursive",
+            fontSize: 52,
+            fontWeight: 400,
+            color: '#C9A961',
+            textAlign: 'center',
+            lineHeight: 1.2,
+            marginBottom: 8,
+            width: '100%',
+          }}>
             {petData?.pet_name || 'Ángel'}
-          </h3>
-
-          {/* CORAZÓN DORADO 3D */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '130px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 10,
-              pointerEvents: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <svg 
-              width="15" 
-              height="15" 
-              viewBox="0 0 24 24" 
-              style={{
-                filter: 'drop-shadow(0 1.5px 2px rgba(100,60,10,0.45)) drop-shadow(0 0 4px rgba(255,245,200,0.60))',
-              }}
-            >
-              <defs>
-                <radialGradient id="heartGold3DCapture" cx="38%" cy="32%" r="68%" fx="35%" fy="28%">
-                  <stop offset="0%" stopColor="#FFFBE6" />
-                  <stop offset="30%" stopColor="#F5D06A" />
-                  <stop offset="70%" stopColor="#C29028" />
-                  <stop offset="100%" stopColor="#7D4E08" />
-                </radialGradient>
-              </defs>
-              <path 
-                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" 
-                fill="url(#heartGold3DCapture)" 
-              />
-            </svg>
           </div>
 
-          {/* HALO CELESTIAL FINO Y RADIANTE */}
-          <div 
-            style={{
-              position: 'absolute',
-              top: '155px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '121px',
-              height: '32px',
-              zIndex: 7,
-              pointerEvents: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <svg 
-              width="100%" 
-              height="100%" 
-              viewBox="0 0 220 70" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg"
-              style={{ overflow: 'visible' }}
-            >
-              <defs>
-                <filter id="haloCelestialGlowCapture" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1" />
-                  <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur2" />
-                  <feMerge>
-                    <feMergeNode in="blur1" />
-                    <feMergeNode in="blur2" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-                <linearGradient id="haloGoldGradientCapture" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#FFA000" stopOpacity="1.0" />
-                  <stop offset="20%" stopColor="#FFD54F" stopOpacity="1.0" />
-                  <stop offset="50%" stopColor="#FFF9C4" stopOpacity="1.0" />
-                  <stop offset="80%" stopColor="#FFD54F" stopOpacity="1.0" />
-                  <stop offset="100%" stopColor="#FFA000" stopOpacity="1.0" />
-                </linearGradient>
-              </defs>
-              <ellipse 
-                cx="110" 
-                cy="35" 
-                rx="95" 
-                ry="24" 
-                stroke="#FFD54F" 
-                strokeWidth="8" 
-                opacity="0.85" 
-                filter="url(#haloCelestialGlowCapture)" 
-              />
-              <ellipse 
-                cx="110" 
-                cy="35" 
-                rx="95" 
-                ry="24" 
-                stroke="url(#haloGoldGradientCapture)" 
-                strokeWidth="4.2" 
-                opacity="1.0" 
-                filter="drop-shadow(0 0 5px #FFD54F)" 
-              />
-              <ellipse 
-                cx="110" 
-                cy="35" 
-                rx="95" 
-                ry="24" 
-                stroke="#FFFFFF" 
-                strokeWidth="2.4" 
-                opacity="0.98" 
-                filter="drop-shadow(0 0 3px #FFFFFF)" 
-              />
-            </svg>
-          </div>
-
-          {/* ICONO DEL PLAN */}
-          {planBadgeSrc && (
-            <img
-              src={planBadgeSrc}
-              alt="Plan"
-              crossOrigin="anonymous"
-              style={{
-                position: 'absolute',
-                top: 322,
-                left: 189,
-                width: 72,
-                height: 72,
-                zIndex: 8,
-              }}
-            />
-          )}
+          {/* ESPACIO para el halo */}
+          <div style={{ height: 20 }} />
 
           {/* FOTO CIRCULAR */}
-          <div 
-            style={{
-              position: 'absolute',
-              top: '190px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: '180px',
-              height: '180px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              border: '3px solid rgba(201,169,97,0.70)',
-              boxShadow: '0 0 24px rgba(201,169,97,0.35)',
-              backgroundColor: 'white',
-              zIndex: 5,
-            }}
-          >
-            <img 
-              src={petData?.photo_url || thumbnailUrl || '/images/placeholders/first.webp'} 
-              alt={petData?.pet_name || 'Ángel'} 
+          <div style={{
+            width: 180,
+            height: 180,
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '3px solid rgba(201,169,97,0.70)',
+            boxShadow: '0 0 24px rgba(201,169,97,0.35)',
+            flexShrink: 0,
+          }}>
+            <img
+              src={petData?.photo_url || thumbnailUrl || ''}
+              alt={petData?.pet_name || ''}
               crossOrigin="anonymous"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
             />
           </div>
 
-          {/* CIERRE INFERIOR */}
-          <div 
-            style={{
-              position: 'absolute',
-              bottom: '18px',
-              left: 0,
-              right: 0,
-              textAlign: 'center',
-              zIndex: 10,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px',
-              padding: '0 20px',
-            }}
-          >
-            <p 
-              style={{
-                fontFamily: 'Georgia, serif',
-                fontStyle: 'normal',
-                fontWeight: 700,
-                fontSize: '18.5px',
-                color: '#584582',
-                margin: '0 0 12px 0',
-                lineHeight: 1.35,
-                fontSynthesis: 'none',
-              }}
-            >
-              Siempre serás mi<br />lugar favorito en el mundo
-            </p>
-            <div 
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                fontFamily: 'Georgia, serif',
-                fontStyle: 'normal',
-                fontWeight: 700,
-                fontSize: '16px',
-                color: '#584582',
-                opacity: 0.9,
-                marginTop: '2px',
-              }}
-            >
-              <span>Ángeles en el Cielo</span>
-            </div>
-          </div>
         </div>
 
         {/* DIV OCULTO CARA TRASERA */}
