@@ -50,6 +50,26 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const [loading, setLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const frontCardRef = useRef<HTMLDivElement>(null);
+  const backCardRef = useRef<HTMLDivElement>(null);
+
+  const handleDownload = async (
+    ref: React.RefObject<HTMLDivElement | null>,
+    filename: string
+  ) => {
+    if (!ref.current) return;
+    const html2canvas = (await import('html2canvas')).default;
+    const canvas = await html2canvas(ref.current, {
+      useCORS: true,
+      allowTaint: true,
+      scale: 2,
+      backgroundColor: null,
+    });
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -201,6 +221,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           >
             {/* CARA FRONTAL — EL RECUERDO */}
             <div 
+              ref={frontCardRef}
               className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col"
               style={{
                 position: 'absolute',
@@ -580,6 +601,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
             {/* CARA TRASERA — REVERSO */}
             <div 
+              ref={backCardRef}
               className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col"
               style={{
                 position: 'absolute',
@@ -731,6 +753,60 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             Comparte a {nombre} y ayuda a que su luz llegue a más personas. ✨
           </p>
 
+          {/* Botones de descarga */}
+          <div style={{ display: 'flex', gap: 8, width: '100%', marginBottom: 16 }}>
+            <button
+              onClick={() => handleDownload(
+                frontCardRef, 
+                `${petData?.pet_name || 'angelito'}-recuerdo.png`
+              )}
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                background: 'linear-gradient(90deg, #C9A961, #E8C878)',
+                border: 'none',
+                borderRadius: 999,
+                padding: '10px 16px',
+                color: 'white',
+                fontWeight: 700,
+                fontSize: 12,
+                cursor: 'pointer',
+                fontFamily: 'sans-serif',
+                boxShadow: '0 4px 12px rgba(201,169,97,0.35)',
+              }}
+            >
+              ⬇️ Recuerdo
+            </button>
+            <button
+              onClick={() => handleDownload(
+                backCardRef,
+                `${petData?.pet_name || 'angelito'}-historia.png`
+              )}
+              style={{
+                flex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 6,
+                background: 'linear-gradient(90deg, #9B5DE5, #C9B8FF)',
+                border: 'none',
+                borderRadius: 999,
+                padding: '10px 16px',
+                color: 'white',
+                fontWeight: 700,
+                fontSize: 12,
+                cursor: 'pointer',
+                fontFamily: 'sans-serif',
+                boxShadow: '0 4px 12px rgba(155,93,229,0.35)',
+              }}
+            >
+              ⬇️ Historia
+            </button>
+          </div>
+
           {/* Botones sociales */}
           <div className="flex gap-5 w-full justify-center">
             
@@ -738,7 +814,8 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             <div 
               onClick={() => {
                 if (typeof window !== 'undefined') {
-                  window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`Visita el recuerdo de ${petData?.pet_name || 'Ángel'} en el Mural de Ángeles ✨ ${shareUrl}`)}`, '_blank');
+                  const text = `${petData?.pet_name || 'Ángel'} siempre estará en nuestros corazones 🐾\nVisita su recuerdo eterno en el Mural de Ángeles:\n${shareUrl}`;
+                  window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
                 }
               }}
               className="flex flex-col items-center gap-2 cursor-pointer transition-transform hover:translate-y-[-2px]"
