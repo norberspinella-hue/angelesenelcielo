@@ -378,8 +378,8 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 >
                   <defs>
                     <filter id="haloCelestialGlow" x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur1" />
-                      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2" />
+                      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1" />
+                      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur2" />
                       <feMerge>
                         <feMergeNode in="blur1" />
                         <feMergeNode in="blur2" />
@@ -387,11 +387,11 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                       </feMerge>
                     </filter>
                     <linearGradient id="haloGoldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#FFA000" stopOpacity="0.85" />
-                      <stop offset="20%" stopColor="#FFD54F" stopOpacity="0.95" />
-                      <stop offset="50%" stopColor="#FFF9C4" stopOpacity="1" />
-                      <stop offset="80%" stopColor="#FFD54F" stopOpacity="0.95" />
-                      <stop offset="100%" stopColor="#FFA000" stopOpacity="0.85" />
+                      <stop offset="0%" stopColor="#FFA000" stopOpacity="1.0" />
+                      <stop offset="20%" stopColor="#FFD54F" stopOpacity="1.0" />
+                      <stop offset="50%" stopColor="#FFF9C4" stopOpacity="1.0" />
+                      <stop offset="80%" stopColor="#FFD54F" stopOpacity="1.0" />
+                      <stop offset="100%" stopColor="#FFA000" stopOpacity="1.0" />
                     </linearGradient>
                   </defs>
 
@@ -403,19 +403,19 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     ry="24" 
                     stroke="#FFD54F" 
                     strokeWidth="8" 
-                    opacity="0.35" 
+                    opacity="0.85" 
                     filter="url(#haloCelestialGlow)" 
                   />
 
-                  {/* 2. Cuerpo del anillo dorado fino */}
+                  {/* 2. Cuerpo del anillo dorado */}
                   <ellipse 
                     cx="110" 
                     cy="35" 
                     rx="95" 
                     ry="24" 
                     stroke="url(#haloGoldGradient)" 
-                    strokeWidth="2.8" 
-                    opacity="0.95" 
+                    strokeWidth="4.2" 
+                    opacity="1.0" 
                     filter="drop-shadow(0 0 5px #FFD54F)" 
                   />
 
@@ -426,9 +426,9 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     rx="95" 
                     ry="24" 
                     stroke="#FFFFFF" 
-                    strokeWidth="1.2" 
+                    strokeWidth="2.4" 
                     opacity="0.98" 
-                    filter="drop-shadow(0 0 2px #FFFFFF)" 
+                    filter="drop-shadow(0 0 3px #FFFFFF)" 
                   />
                 </svg>
               </div>
