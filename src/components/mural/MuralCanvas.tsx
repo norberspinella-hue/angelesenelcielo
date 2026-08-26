@@ -178,40 +178,37 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         <div 
           onClick={() => setIsFlipped(!isFlipped)}
           style={{
-            width: 360,
-            minWidth: 360,
-            maxWidth: 360,
-            height: 500,
-            minHeight: 500,
             position: 'relative',
-            flexShrink: 0,
+            width: 360,
+            height: 500,
             perspective: '1000px',
             cursor: 'pointer',
             userSelect: 'none',
+            flexShrink: 0,
           }}
         >
           {/* DIV INTERIOR QUE ROTA */}
           <div 
             style={{
-              width: '100%',
-              height: '100%',
               position: 'relative',
+              width: 360,
+              height: 500,
               transformStyle: 'preserve-3d',
               transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
-              transform: isFlipped ? 'rotateY(180deg)' : 'none',
+              transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+              flexShrink: 0,
             }}
           >
             {/* CARA FRONTAL — EL RECUERDO */}
             <div 
-              className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col absolute top-0 left-0"
+              className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col"
               style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
                 width: 360,
-                minWidth: 360,
                 height: 500,
-                minHeight: 500,
-                position: 'relative',
                 overflow: 'hidden',
-                flexShrink: 0,
                 backgroundImage: "url('/images/mural-preview/profilecard-front.webp')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -583,15 +580,14 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
             {/* CARA TRASERA — REVERSO */}
             <div 
-              className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col absolute top-0 left-0"
+              className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col"
               style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
                 width: 360,
-                minWidth: 360,
                 height: 500,
-                minHeight: 500,
-                position: 'relative',
                 overflow: 'hidden',
-                flexShrink: 0,
                 background: "url('/images/mural-preview/profilecard-back.webp') no-repeat center center / cover",
                 backgroundColor: '#f5e8ff',
                 backfaceVisibility: 'hidden',
