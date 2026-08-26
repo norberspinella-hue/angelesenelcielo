@@ -493,6 +493,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     color: '#4A3F6B',
                     margin: '0 0 12px 0',
                     lineHeight: 1.35,
+                    fontSynthesis: 'none',
                   }}
                 >
                   Siempre serás mi<br />lugar favorito en el mundo
