@@ -353,7 +353,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   margin: 0,
                 }}
               >
-                {petData?.pet_name || 'Ángel'}
+                {loading ? '' : (petData?.pet_name || '')}
               </h3>
 
               {/* CORAZÓN DORADO 3D */}
