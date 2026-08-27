@@ -52,14 +52,21 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const [mounted, setMounted] = useState(false);
   const frontFaceRef = useRef<HTMLDivElement>(null);
   const backFaceRef = useRef<HTMLDivElement>(null);
+  const frontCaptureRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadFront = async () => {
-    const url = `${window.location.origin}/api/og?id=${memorialId}&side=front`;
-    const response = await fetch(url);
-    const blob = await response.blob();
+    if (!frontCaptureRef.current) return;
+    const html2canvas = (await import('html2canvas')).default;
+    const canvas = await html2canvas(frontCaptureRef.current, {
+      useCORS: true,
+      allowTaint: true,
+      scale: 2,
+      backgroundColor: null,
+      logging: false,
+    });
     const link = document.createElement('a');
     link.download = `${petData?.pet_name || 'angelito'}-recuerdo.png`;
-    link.href = URL.createObjectURL(blob);
+    link.href = canvas.toDataURL('image/png');
     link.click();
   };
 
@@ -928,6 +935,137 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             </div>
 
           </div>
+        </div>
+
+        {/* DIV OCULTO CARA FRONTAL PARA CAPTURA HTML2CANVAS */}
+        <div
+          ref={frontCaptureRef}
+          style={{
+            position: 'fixed',
+            top: '-9999px',
+            left: '-9999px',
+            width: 360,
+            height: 500,
+            zIndex: -1,
+            borderRadius: 24,
+            overflow: 'hidden',
+            backgroundImage: "url('https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/assets/profilecard-front.webp')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundColor: '#C8A8E8',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            padding: '24px 24px 20px',
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* MI ANGELITO */}
+          <p style={{
+            fontFamily: 'Georgia, serif',
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: 3,
+            color: '#584582',
+            textAlign: 'center',
+            width: '100%',
+            marginBottom: 4,
+            textTransform: 'uppercase',
+          }}>
+            MI ANGELITO
+          </p>
+
+          {/* NOMBRE */}
+          <p style={{
+            fontFamily: "'Pinyon Script', cursive",
+            fontSize: 52,
+            fontWeight: 400,
+            color: '#C29028',
+            textAlign: 'center',
+            lineHeight: 1.2,
+            marginBottom: 8,
+            width: '100%',
+          }}>
+            {loading ? '' : (petData?.pet_name || '')}
+          </p>
+
+          {/* CORAZÓN DORADO SVG */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+            marginBottom: 8,
+          }}>
+            <svg width="20" height="18" viewBox="0 0 24 21" fill="none">
+              <path d="M12 20S2 13 2 7a5 5 0 0 1 10 0 5 5 0 0 1 10 0c0 6-10 13-10 13Z"
+                    fill="url(#hgFront)"/>
+              <defs>
+                <radialGradient id="hgFront" cx="50%" cy="30%">
+                  <stop offset="0%" stopColor="#FFFBE6"/>
+                  <stop offset="33%" stopColor="#F5D06A"/>
+                  <stop offset="66%" stopColor="#C29028"/>
+                  <stop offset="100%" stopColor="#7D4E08"/>
+                </radialGradient>
+              </defs>
+            </svg>
+          </div>
+
+          {/* HALO DORADO */}
+          <div style={{
+            width: 121,
+            height: 32,
+            border: '3px solid #F5C842',
+            borderRadius: '50%',
+            boxShadow: '0 0 14px rgba(245,200,66,0.80)',
+            marginBottom: -16,
+            zIndex: 2,
+          }} />
+
+          {/* FOTO CIRCULAR */}
+          <div style={{
+            width: 180,
+            height: 180,
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: '3px solid rgba(201,169,97,0.70)',
+            boxShadow: '0 0 24px rgba(201,169,97,0.35)',
+            flexShrink: 0,
+            marginBottom: 16,
+          }}>
+            <img
+              src={petData?.photo_url || thumbnailUrl || ''}
+              alt={petData?.pet_name || ''}
+              crossOrigin="anonymous"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
+
+          {/* FRASE */}
+          <p style={{
+            fontFamily: 'Georgia, serif',
+            fontSize: 15,
+            fontWeight: 700,
+            color: '#584582',
+            textAlign: 'center',
+            lineHeight: 1.35,
+            margin: '0 0 8px 0',
+            padding: '0 16px',
+          }}>
+            Siempre serás mi<br/>lugar favorito en el mundo
+          </p>
+
+          {/* PIE */}
+          <p style={{
+            fontFamily: 'Georgia, serif',
+            fontSize: 14,
+            fontWeight: 700,
+            color: '#584582',
+            textAlign: 'center',
+            margin: 0,
+          }}>
+            Ángeles en el Cielo
+          </p>
         </div>
 
       </div>
