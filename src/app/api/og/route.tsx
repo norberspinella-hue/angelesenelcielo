@@ -122,120 +122,152 @@ export async function GET(req: NextRequest) {
     (
       <div
         style={{
-          width: '1080px',
-          height: '1080px',
+          width: '360px',
+          height: '500px',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'linear-gradient(160deg, #C8A8E8 0%, #D8B8E8 30%, #E8C8D8 55%, #F0D0C0 80%, #C8A8D8 100%)',
-          fontFamily: 'Georgia, serif',
           position: 'relative',
-          padding: '60px',
-          textAlign: 'center',
+          overflow: 'hidden',
+          backgroundColor: '#f5e8ff',
         }}
       >
-        {/* Cabecera superior */}
+        {/* 1. Fondo */}
+        <img
+          src="https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/assets/profilecard-front.webp"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '360px',
+            height: '500px',
+            objectFit: 'cover',
+          }}
+        />
+
+        {/* 2. MI ANGELITO */}
         <div
           style={{
-            fontSize: '30px',
+            position: 'absolute',
+            top: '45px',
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            fontFamily: 'Georgia, serif',
+            fontSize: '21px',
             fontWeight: 700,
-            letterSpacing: '6px',
-            color: '#4A3F6B',
-            textTransform: 'uppercase',
-            marginBottom: '16px',
+            color: '#584582',
+            letterSpacing: '3px',
           }}
         >
           MI ANGELITO
         </div>
 
-        {/* Nombre de la mascota */}
+        {/* 3. Nombre mascota */}
         <div
           style={{
-            fontSize: '84px',
+            position: 'absolute',
+            top: '105px',
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            fontFamily: "'Pinyon Script', cursive",
+            fontSize: '52px',
             color: '#C29028',
-            fontWeight: 700,
-            marginBottom: '28px',
-            textShadow: '0 2px 8px rgba(110, 70, 15, 0.25)',
           }}
         >
           {petName}
         </div>
 
-        {/* Foto circular con halo dorado */}
-        {photoUrl ? (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-              marginBottom: '40px',
-            }}
-          >
-            <img
-              src={photoUrl}
-              width={340}
-              height={340}
-              style={{
-                borderRadius: '50%',
-                border: '6px solid rgba(201, 169, 97, 0.90)',
-                objectFit: 'cover',
-                boxShadow: '0 12px 40px rgba(100, 70, 150, 0.25)',
-              }}
-            />
-          </div>
-        ) : (
-          <div
-            style={{
-              width: '340px',
-              height: '340px',
-              borderRadius: '50%',
-              background: '#f5e8ff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '80px',
-              border: '6px solid rgba(201, 169, 97, 0.90)',
-              marginBottom: '40px',
-            }}
-          >
-            🐾
-          </div>
-        )}
-
-        {/* Frase fija */}
+        {/* 4. Halo dorado elipse */}
         <div
           style={{
-            fontSize: '32px',
-            color: '#4A3F6B',
-            fontWeight: 700,
-            marginBottom: '24px',
-            maxWidth: '800px',
-            lineHeight: 1.4,
+            position: 'absolute',
+            top: '162px',
+            left: '119px',
+            width: '121px',
+            height: '32px',
+            borderRadius: '50%',
+            border: '3px solid #F5C842',
+            display: 'flex',
           }}
-        >
-          "Siempre serás mi lugar favorito en el mundo."
-        </div>
+        />
 
-        {/* Logo Ángeles en el Cielo */}
+        {/* 5. Foto circular de la mascota */}
         <div
           style={{
-            fontSize: '26px',
-            color: 'rgba(74, 63, 107, 0.90)',
-            fontWeight: 700,
+            position: 'absolute',
+            top: '190px',
+            left: '90px',
+            width: '180px',
+            height: '180px',
+            borderRadius: '90px',
+            border: '3px solid rgba(201, 169, 97, 0.70)',
+            overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            justifyContent: 'center',
+            backgroundColor: '#ffffff',
           }}
         >
-          🐾 Mural de Ángeles en el Cielo
+          {photoUrl ? (
+            <img
+              src={photoUrl}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '90px',
+              }}
+            />
+          ) : (
+            <div style={{ fontSize: '50px' }}>🐾</div>
+          )}
+        </div>
+
+        {/* 6. Frase */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '400px',
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            textAlign: 'center',
+            fontFamily: 'Georgia, serif',
+            fontSize: '15px',
+            fontWeight: 700,
+            color: '#584582',
+            padding: '0 20px',
+          }}
+        >
+          Siempre serás mi lugar favorito en el mundo
+        </div>
+
+        {/* 7. Pie */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '455px',
+            left: 0,
+            right: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            fontFamily: 'Georgia, serif',
+            fontSize: '14px',
+            fontWeight: 700,
+            color: '#584582',
+          }}
+        >
+          Ángeles en el Cielo
         </div>
       </div>
     ),
     {
-      width: 1080,
-      height: 1080,
+      width: 360,
+      height: 500,
     }
   )
 }

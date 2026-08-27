@@ -54,33 +54,12 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const backFaceRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadFront = async () => {
-    if (!frontFaceRef.current) return;
-    
-    // Mostrar temporalmente la cara frontal sin transform
-    const el = frontFaceRef.current;
-    const originalTransform = el.style.transform;
-    const originalVisibility = el.style.visibility;
-    el.style.transform = 'none';
-    el.style.visibility = 'visible';
-    el.style.backfaceVisibility = 'visible';
-    
-    const html2canvas = (await import('html2canvas')).default;
-    const canvas = await html2canvas(el, {
-      useCORS: true,
-      allowTaint: true,
-      scale: 2,
-      backgroundColor: null,
-      logging: false,
-    });
-    
-    // Restaurar
-    el.style.transform = originalTransform;
-    el.style.visibility = originalVisibility;
-    el.style.backfaceVisibility = 'hidden';
-    
+    const url = `${window.location.origin}/api/og?id=${memorialId}&side=front`;
+    const response = await fetch(url);
+    const blob = await response.blob();
     const link = document.createElement('a');
     link.download = `${petData?.pet_name || 'angelito'}-recuerdo.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.href = URL.createObjectURL(blob);
     link.click();
   };
 
