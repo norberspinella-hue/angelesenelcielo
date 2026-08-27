@@ -945,9 +945,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             zIndex: -1,
             borderRadius: 24,
             overflow: 'hidden',
-            backgroundImage: `url('/images/mural-preview/petprofilecardpreview-v2.webp?v=${Date.now()}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -956,6 +953,22 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             boxSizing: 'border-box',
           }}
         >
+          {/* Imagen de fondo como <img> */}
+          <img
+            src={`/images/mural-preview/petprofilecardpreview-v2.webp?v=${Date.now()}`}
+            alt=""
+            crossOrigin="anonymous"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              zIndex: 0,
+            }}
+          />
+
           {/* NOMBRE */}
           <div style={{
             fontFamily: "'Pinyon Script', cursive",
@@ -966,12 +979,14 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             lineHeight: 1.2,
             marginBottom: 8,
             width: '100%',
+            position: 'relative',
+            zIndex: 1,
           }}>
             {petData?.pet_name || 'Ángel'}
           </div>
 
           {/* ESPACIO para el halo */}
-          <div style={{ height: 20 }} />
+          <div style={{ height: 20, position: 'relative', zIndex: 1 }} />
 
           {/* FOTO CIRCULAR */}
           <div style={{
@@ -982,6 +997,8 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             border: '3px solid rgba(201,169,97,0.70)',
             boxShadow: '0 0 24px rgba(201,169,97,0.35)',
             flexShrink: 0,
+            position: 'relative',
+            zIndex: 1,
           }}>
             <img
               src={petData?.photo_url || thumbnailUrl || ''}
