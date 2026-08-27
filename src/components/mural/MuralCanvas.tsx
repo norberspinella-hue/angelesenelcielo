@@ -956,7 +956,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         >
           {/* 1. FONDO */}
           <img
-            src="/images/mural-preview/profilecard-front.webp"
+            src="https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/assets/profilecard-front.webp"
             crossOrigin="anonymous"
             style={{
               position: 'absolute',
