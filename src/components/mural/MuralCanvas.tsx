@@ -951,7 +951,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         >
           {/* NOMBRE */}
           <div style={{
-            fontFamily: "'Great Vibes', cursive",
+            fontFamily: "'Pinyon Script', cursive",
             fontSize: 52,
             fontWeight: 400,
             color: '#C9A961',
