@@ -50,98 +50,52 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const [loading, setLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const backCaptureRef = useRef<HTMLDivElement>(null);
+  const flipContainerRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadFront = async () => {
-    const canvas = document.createElement('canvas')
-    canvas.width = 360
-    canvas.height = 500
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    // 1. Cargar imagen de fondo
-    const bg = new Image()
-    bg.crossOrigin = 'anonymous'
-    bg.src = 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/assets/profilecard-front.webp'
-    
-    await new Promise(resolve => { bg.onload = resolve })
-    ctx.drawImage(bg, 0, 0, 360, 500)
-
-    // 2. MI ANGELITO
-    ctx.font = 'bold 11px Arial'
-    ctx.fillStyle = '#584582'
-    ctx.letterSpacing = '3px'
-    ctx.textAlign = 'center'
-    ctx.fillText('MI ANGELITO', 180, 45)
-
-    // 3. NOMBRE MASCOTA
-    ctx.font = '52px "Pinyon Script", cursive'
-    ctx.fillStyle = '#C29028'
-    ctx.shadowColor = 'rgba(255,255,255,0.70)'
-    ctx.shadowBlur = 4
-    ctx.fillText(petData?.pet_name || '', 180, 105)
-    ctx.shadowBlur = 0
-
-    // 4. HALO DORADO (elipse)
-    ctx.beginPath()
-    ctx.ellipse(180, 162, 60, 16, 0, 0, Math.PI * 2)
-    ctx.strokeStyle = '#F5C842'
-    ctx.lineWidth = 3
-    ctx.shadowColor = 'rgba(245,200,66,0.80)'
-    ctx.shadowBlur = 10
-    ctx.stroke()
-    ctx.shadowBlur = 0
-
-    // 5. FOTO CIRCULAR
-    if (petData?.photo_url || thumbnailUrl) {
-      const photo = new Image()
-      photo.crossOrigin = 'anonymous'
-      photo.src = petData?.photo_url || thumbnailUrl || ''
-      await new Promise(resolve => { photo.onload = resolve })
-      
-      ctx.save()
-      ctx.beginPath()
-      ctx.arc(180, 280, 90, 0, Math.PI * 2)
-      ctx.clip()
-      ctx.drawImage(photo, 90, 190, 180, 180)
-      ctx.restore()
-      
-      // Borde dorado
-      ctx.beginPath()
-      ctx.arc(180, 280, 90, 0, Math.PI * 2)
-      ctx.strokeStyle = 'rgba(201,169,97,0.70)'
-      ctx.lineWidth = 3
-      ctx.stroke()
+    const wasFlipped = isFlipped;
+    if (wasFlipped) {
+      setIsFlipped(false);
+      await new Promise(r => setTimeout(r, 300));
     }
-
-    // 6. FRASE
-    ctx.font = 'bold 15px Georgia'
-    ctx.fillStyle = '#584582'
-    ctx.textAlign = 'center'
-    ctx.fillText('Siempre serás mi lugar favorito', 180, 400)
-    ctx.fillText('en el mundo', 180, 420)
-
-    // 7. PIE
-    ctx.font = 'bold 14px Georgia'
-    ctx.fillText('Ángeles en el Cielo', 180, 460)
-
-    // Descargar
-    const link = document.createElement('a')
-    link.download = `${petData?.pet_name || 'angelito'}-recuerdo.png`
-    link.href = canvas.toDataURL('image/png')
-    link.click()
-  };
-
-  const handleDownloadBack = async () => {
-    if (!backCaptureRef.current) return;
+    
+    if (!flipContainerRef.current) return;
     const html2canvas = (await import('html2canvas')).default;
-    const canvas = await html2canvas(backCaptureRef.current, {
+    const canvas = await html2canvas(flipContainerRef.current, {
       useCORS: true,
       allowTaint: true,
       scale: 2,
       backgroundColor: null,
       logging: false,
     });
+    
+    if (wasFlipped) setIsFlipped(true);
+    
+    const link = document.createElement('a');
+    link.download = `${petData?.pet_name || 'angelito'}-recuerdo.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
+  const handleDownloadBack = async () => {
+    const wasFlipped = isFlipped;
+    if (!wasFlipped) {
+      setIsFlipped(true);
+      await new Promise(r => setTimeout(r, 300));
+    }
+    
+    if (!flipContainerRef.current) return;
+    const html2canvas = (await import('html2canvas')).default;
+    const canvas = await html2canvas(flipContainerRef.current, {
+      useCORS: true,
+      allowTaint: true,
+      scale: 2,
+      backgroundColor: null,
+      logging: false,
+    });
+    
+    if (!wasFlipped) setIsFlipped(false);
+    
     const link = document.createElement('a');
     link.download = `${petData?.pet_name || 'angelito'}-historia.png`;
     link.href = canvas.toDataURL('image/png');
@@ -286,6 +240,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         >
           {/* DIV INTERIOR QUE ROTA */}
           <div 
+            ref={flipContainerRef}
             style={{
               position: 'relative',
               width: 360,
@@ -985,96 +940,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             </div>
 
           </div>
-        </div>
-
-        {/* DIV OCULTO CARA TRASERA */}
-        <div 
-          ref={backCaptureRef}
-          style={{
-            position: 'fixed',
-            top: '-9999px',
-            left: '-9999px',
-            width: 360,
-            height: 500,
-            zIndex: -1,
-            borderRadius: 24,
-            overflow: 'hidden',
-            backgroundImage: "url('/images/mural-preview/profilecard-back.webp')",
-            backgroundColor: '#f5e8ff',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            padding: '20px 24px 32px',
-            boxSizing: 'border-box',
-            textAlign: 'center',
-          }}
-        >
-          {/* Icono Logoheart.svg */}
-          <img 
-            src="/images/icons/Logoheart.svg"
-            alt=""
-            crossOrigin="anonymous"
-            style={{ width: 128, height: 128, marginBottom: 12 }}
-          />
-
-          {/* Título */}
-          <h3 style={{
-            fontFamily: 'Georgia, serif',
-            fontStyle: 'italic',
-            fontSize: '18px',
-            fontWeight: 700,
-            color: '#4A3F6B',
-            marginBottom: '16px',
-            margin: 0,
-          }}>
-            Historia de amor
-          </h3>
-
-          {/* Dedicatoria */}
-          <div 
-            style={{
-              fontSize: '14px',
-              color: '#7B6F9A',
-              lineHeight: 1.7,
-              fontFamily: 'Georgia, serif',
-              fontStyle: 'italic',
-              borderLeft: '3px solid rgba(236,111,163,0.40)',
-              paddingLeft: '16px',
-              textAlign: 'left',
-              maxHeight: '160px',
-              overflowY: 'auto',
-              width: '100%',
-              boxSizing: 'border-box',
-            }}
-          >
-            {petData?.dedication || 'Sin dedicatoria'}
-          </div>
-
-          {/* Texto Siempre en nuestro corazón */}
-          <p style={{
-            fontSize: 12,
-            color: 'rgba(155,143,176,0.80)',
-            fontFamily: 'Georgia, serif',
-            fontStyle: 'italic',
-            marginTop: 12,
-            textAlign: 'center',
-            margin: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-          }}>
-            — Siempre en nuestro corazón
-            <img 
-              src="/images/icons/plans/pawrosa.svg"
-              alt=""
-              crossOrigin="anonymous"
-              style={{ width: '16px', height: '16px', opacity: 0.70 }}
-            />
-          </p>
         </div>
 
       </div>
