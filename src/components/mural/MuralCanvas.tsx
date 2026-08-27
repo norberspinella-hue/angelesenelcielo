@@ -62,6 +62,13 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
       scale: 2,
       backgroundColor: null,
       logging: false,
+      imageTimeout: 0,
+      onclone: (clonedDoc) => {
+        const images = clonedDoc.querySelectorAll('img');
+        images.forEach(img => {
+          img.crossOrigin = 'anonymous';
+        });
+      },
     });
     const link = document.createElement('a');
     link.download = `${petData?.pet_name || 'angelito'}-recuerdo.png`;
@@ -938,7 +945,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             zIndex: -1,
             borderRadius: 24,
             overflow: 'hidden',
-            backgroundImage: "url('/images/mural-preview/petprofilecardpreview.webp')",
+            backgroundImage: `url('/images/mural-preview/petprofilecardpreview.webp?v=${Date.now()}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             display: 'flex',
