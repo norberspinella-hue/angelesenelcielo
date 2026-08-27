@@ -50,18 +50,22 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const [loading, setLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const flipContainerRef = useRef<HTMLDivElement>(null);
+  const frontFaceRef = useRef<HTMLDivElement>(null);
+  const backFaceRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadFront = async () => {
-    const wasFlipped = isFlipped;
-    if (wasFlipped) {
-      setIsFlipped(false);
-      await new Promise(r => setTimeout(r, 300));
-    }
+    if (!frontFaceRef.current) return;
     
-    if (!flipContainerRef.current) return;
+    // Mostrar temporalmente la cara frontal sin transform
+    const el = frontFaceRef.current;
+    const originalTransform = el.style.transform;
+    const originalVisibility = el.style.visibility;
+    el.style.transform = 'none';
+    el.style.visibility = 'visible';
+    el.style.backfaceVisibility = 'visible';
+    
     const html2canvas = (await import('html2canvas')).default;
-    const canvas = await html2canvas(flipContainerRef.current, {
+    const canvas = await html2canvas(el, {
       useCORS: true,
       allowTaint: true,
       scale: 2,
@@ -69,7 +73,10 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
       logging: false,
     });
     
-    if (wasFlipped) setIsFlipped(true);
+    // Restaurar
+    el.style.transform = originalTransform;
+    el.style.visibility = originalVisibility;
+    el.style.backfaceVisibility = 'hidden';
     
     const link = document.createElement('a');
     link.download = `${petData?.pet_name || 'angelito'}-recuerdo.png`;
@@ -78,15 +85,15 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   };
 
   const handleDownloadBack = async () => {
-    const wasFlipped = isFlipped;
-    if (!wasFlipped) {
-      setIsFlipped(true);
-      await new Promise(r => setTimeout(r, 300));
-    }
+    if (!backFaceRef.current) return;
     
-    if (!flipContainerRef.current) return;
+    const el = backFaceRef.current;
+    const originalTransform = el.style.transform;
+    el.style.transform = 'none';
+    el.style.backfaceVisibility = 'visible';
+    
     const html2canvas = (await import('html2canvas')).default;
-    const canvas = await html2canvas(flipContainerRef.current, {
+    const canvas = await html2canvas(el, {
       useCORS: true,
       allowTaint: true,
       scale: 2,
@@ -94,7 +101,8 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
       logging: false,
     });
     
-    if (!wasFlipped) setIsFlipped(false);
+    el.style.transform = originalTransform;
+    el.style.backfaceVisibility = 'hidden';
     
     const link = document.createElement('a');
     link.download = `${petData?.pet_name || 'angelito'}-historia.png`;
@@ -240,7 +248,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         >
           {/* DIV INTERIOR QUE ROTA */}
           <div 
-            ref={flipContainerRef}
             style={{
               position: 'relative',
               width: 360,
@@ -253,6 +260,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           >
             {/* CARA FRONTAL — EL RECUERDO */}
             <div 
+              ref={frontFaceRef}
               className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col"
               style={{
                 position: 'absolute',
@@ -632,6 +640,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
             {/* CARA TRASERA — REVERSO */}
             <div 
+              ref={backFaceRef}
               className="rounded-[24px] border-[2.5px] border-white/95 shadow-[0_12px_40px_rgba(100,70,150,0.18)] flex flex-col"
               style={{
                 position: 'absolute',
