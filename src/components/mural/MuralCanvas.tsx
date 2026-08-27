@@ -955,7 +955,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         >
           {/* Imagen de fondo como <img> */}
           <img
-            src={`/images/mural-preview/petprofilecardpreview-v2.webp?v=${Date.now()}`}
+            src={`/images/mural-preview/profilecard-front.webp?v=${Date.now()}`}
             alt=""
             crossOrigin="anonymous"
             style={{
