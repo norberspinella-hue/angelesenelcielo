@@ -937,9 +937,9 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         <div 
           ref={frontCaptureRef}
           style={{
-            position: 'fixed',
-            top: '-9999px',
-            left: '-9999px',
+            position: 'absolute',
+            top: 0,
+            left: 0,
             width: 360,
             height: 500,
             zIndex: -1,
@@ -950,6 +950,8 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             alignItems: 'center',
             justifyContent: 'flex-start',
             boxSizing: 'border-box',
+            visibility: 'hidden',
+            pointerEvents: 'none',
           }}
         >
           {/* 1. FONDO */}
