@@ -945,7 +945,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             zIndex: -1,
             borderRadius: 24,
             overflow: 'hidden',
-            backgroundImage: `url('/images/mural-preview/petprofilecardpreview.webp?v=${Date.now()}')`,
+            backgroundImage: `url('/images/mural-preview/petprofilecardpreview-v2.webp?v=${Date.now()}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             display: 'flex',
