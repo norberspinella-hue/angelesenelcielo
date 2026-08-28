@@ -205,11 +205,19 @@ export default function MemorialClient({ slug }: { slug: string }) {
             <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-10 drop-shadow-xs" />
           </div>
 
-          {/* 3. TOP PILL BADGE: 🐾 Mi angelito (Fuente color lila) */}
-          <div className="mb-5 inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-white/60 border border-purple-200/70 shadow-xs backdrop-blur-xs">
-            <span className="text-xs font-bold text-[#6B21A8] tracking-wide flex items-center gap-1.5">
-              <span>🐾</span>
-              <span>Mi angelito</span>
+          {/* TOP PILL BADGE: Mi angelito (Exacto a la imagen) */}
+          <div 
+            className="mb-5 inline-flex items-center justify-center px-5 py-1.5 rounded-full shadow-xs backdrop-blur-xs select-none"
+            style={{
+              background: 'rgba(254, 237, 214, 0.85)',
+              border: '1px solid rgba(251, 191, 36, 0.40)',
+            }}
+          >
+            <span 
+              className="text-xs sm:text-[13px] font-bold text-[#5B21B6] tracking-wide"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              Mi angelito
             </span>
           </div>
 
