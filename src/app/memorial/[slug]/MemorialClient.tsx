@@ -369,16 +369,16 @@ export default function MemorialClient({ slug }: { slug: string }) {
             <div className="h-[1px] flex-1 bg-purple-300"></div>
           </div>
 
-          {/* BOTONES DE COMPARTIR (Exactos a la imagen de referencia con brillos y sombras 3D) */}
+          {/* BOTONES DE COMPARTIR (Exactos a la imagen de referencia con brillos, sombras 3D y tamaño 100% homogéneo) */}
           <div className="w-full flex flex-col items-center mb-3">
             <span className="text-xs font-bold text-[#581C87] tracking-wide mb-2.5">
               Compartir este recuerdo
             </span>
-            <div className="flex flex-wrap gap-2.5 items-center justify-center w-full">
+            <div className="grid grid-cols-3 gap-2 sm:gap-2.5 items-center w-full max-w-sm">
               {/* WhatsApp */}
               <button
                 onClick={() => handleShare('whatsapp')}
-                className="flex-1 min-w-[100px] max-w-[125px] py-2.5 px-4 rounded-full text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 select-none relative overflow-hidden"
+                className="w-full py-2.5 px-2 sm:px-3 rounded-full text-white text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 select-none relative overflow-hidden whitespace-nowrap shadow-sm"
                 style={{
                   background: 'radial-gradient(ellipse at 35% 0%, #4ADE80 0%, #22C55E 55%, #16A34A 100%)',
                   boxShadow: '0 4px 14px rgba(34, 197, 94, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.45)',
@@ -386,7 +386,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
                 }}
                 title="Compartir por WhatsApp"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
                   <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.112.551 4.095 1.517 5.823l-1.611 5.885 6.046-1.586c1.667.909 3.57 1.428 5.594 1.428 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z"/>
                 </svg>
                 <span>WhatsApp</span>
@@ -395,7 +395,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
               {/* Facebook */}
               <button
                 onClick={() => handleShare('facebook')}
-                className="flex-1 min-w-[100px] max-w-[125px] py-2.5 px-4 rounded-full text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 select-none relative overflow-hidden"
+                className="w-full py-2.5 px-2 sm:px-3 rounded-full text-white text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 select-none relative overflow-hidden whitespace-nowrap shadow-sm"
                 style={{
                   background: 'radial-gradient(ellipse at 35% 0%, #60A5FA 0%, #2563EB 55%, #1D4ED8 100%)',
                   boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.45)',
@@ -403,7 +403,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
                 }}
                 title="Compartir por Facebook"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
                 <span>Facebook</span>
@@ -412,7 +412,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
               {/* Copiar Enlace */}
               <button
                 onClick={() => handleShare('copy')}
-                className="flex-1 min-w-[110px] max-w-[135px] py-2.5 px-4 rounded-full text-[#7C3AED] text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 select-none"
+                className="w-full py-2.5 px-2 sm:px-3 rounded-full text-[#7C3AED] text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 select-none whitespace-nowrap shadow-sm"
                 style={{
                   background: 'rgba(237, 233, 254, 0.95)',
                   boxShadow: '0 4px 12px rgba(124, 58, 237, 0.10), inset 0 1px 2px rgba(255, 255, 255, 0.90)',
@@ -420,11 +420,11 @@ export default function MemorialClient({ slug }: { slug: string }) {
                 }}
                 title="Copiar enlace"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                 </svg>
-                <span>{copied ? '✓ ¡Copiado!' : 'Copiar enlace'}</span>
+                <span>{copied ? '✓ Copiado' : 'Copiar enlace'}</span>
               </button>
             </div>
           </div>
