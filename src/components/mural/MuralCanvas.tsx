@@ -56,17 +56,15 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const handleDownloadFront = async () => {
     if (!frontFaceRef.current) return;
     const { toPng } = await import('html-to-image');
-    
-    const el = frontFaceRef.current;
-    const originalTransform = el.style.transform;
-    const originalVisibility = el.style.visibility;
-    el.style.transform = 'none';
-    el.style.visibility = 'visible';
-    el.style.backfaceVisibility = 'visible';
 
-    const dataUrl = await toPng(el, {
+    const dataUrl = await toPng(frontFaceRef.current, {
       pixelRatio: 2,
       cacheBust: true,
+      style: {
+        transform: 'none',
+        visibility: 'visible',
+        backfaceVisibility: 'visible',
+      },
       filter: (node: HTMLElement) => {
         if (node?.getAttribute?.('data-download-ignore') === 'true') {
           return false;
@@ -74,10 +72,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         return true;
       },
     });
-
-    el.style.transform = originalTransform;
-    el.style.visibility = originalVisibility;
-    el.style.backfaceVisibility = 'hidden';
 
     const link = document.createElement('a');
     link.download = `${petData?.pet_name || 'angelito'}-recuerdo.png`;
@@ -88,15 +82,15 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const handleDownloadBack = async () => {
     if (!backFaceRef.current) return;
     const { toPng } = await import('html-to-image');
-    
-    const el = backFaceRef.current;
-    const originalTransform = el.style.transform;
-    el.style.transform = 'none';
-    el.style.backfaceVisibility = 'visible';
 
-    const dataUrl = await toPng(el, {
+    const dataUrl = await toPng(backFaceRef.current, {
       pixelRatio: 2,
       cacheBust: true,
+      style: {
+        transform: 'none',
+        visibility: 'visible',
+        backfaceVisibility: 'visible',
+      },
       filter: (node: HTMLElement) => {
         if (node?.getAttribute?.('data-download-ignore') === 'true') {
           return false;
@@ -104,9 +98,6 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         return true;
       },
     });
-
-    el.style.transform = originalTransform;
-    el.style.backfaceVisibility = 'hidden';
 
     const link = document.createElement('a');
     link.download = `${petData?.pet_name || 'angelito'}-historia.png`;
