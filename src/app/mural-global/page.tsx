@@ -84,6 +84,7 @@ export default function MuralGlobalPage() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [isFounderSlot, setIsFounderSlot] = useState(false);
+  const [showMobileInfo, setShowMobileInfo] = useState(false);
 
   useEffect(() => {
     const hasSeenWelcome = localStorage.getItem('mural-welcome-seen')
@@ -237,8 +238,9 @@ export default function MuralGlobalPage() {
   return (
     <main className="mural-page font-inter fixed inset-0 w-screen h-screen overflow-hidden">
 
+      {/* Canvas Wrapper (Full screen en móvil, adaptado en desktop) */}
       <div 
-        className="mural-canvas-wrapper absolute z-0 rounded-2xl overflow-hidden top-[90px] bottom-[80px] left-4 right-4 md:left-[412px] md:right-[80px]"
+        className="mural-canvas-wrapper absolute z-0 rounded-2xl overflow-hidden top-[66px] bottom-3 left-2 right-2 md:top-[90px] md:bottom-[80px] md:left-[412px] md:right-[80px]"
         id="mural-container"
         style={{
           backdropFilter: 'blur(1px)',
@@ -261,31 +263,43 @@ export default function MuralGlobalPage() {
 
       {/* Top Nav (Superior) */}
       <header 
-        className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between px-6 py-1 w-[min(1180px,calc(100%-32px))] rounded-full border border-white/90 shadow-sm pointer-events-auto"
+        className="absolute top-2.5 sm:top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between px-3 sm:px-6 py-1.5 sm:py-1 w-[min(1180px,calc(100%-16px))] sm:w-[min(1180px,calc(100%-32px))] rounded-full border border-white/90 shadow-sm pointer-events-auto select-none"
         style={{
           backdropFilter: 'blur(12px)',
-          background: 'rgba(255,255,255,0.75)'
+          background: 'rgba(255,255,255,0.85)'
         }}
       >
-        <div className="flex items-center gap-4">
-          <Image src="/images/icons/Logoheart.svg" alt="Ángeles en el Cielo Logo" width={56} height={56} className="h-[56px] -my-3 w-auto object-contain" />
-          <Link href="/" className="text-sm font-semibold text-[#706A95] hover:text-[#1E2A78] transition-colors">
-            ← Volver a la landing
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Image src="/images/icons/Logoheart.svg" alt="Logo" width={40} height={40} className="h-8 sm:h-[56px] -my-1 sm:-my-3 w-auto object-contain" />
+          <Link href="/" className="text-xs sm:text-sm font-semibold text-[#706A95] hover:text-[#1E2A78] transition-colors flex items-center gap-1">
+            <span>←</span>
+            <span className="hidden sm:inline">Volver a la landing</span>
+            <span className="sm:hidden">Landing</span>
           </Link>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* Botón Info en móvil */}
+          <button
+            onClick={() => setShowMobileInfo(true)}
+            className="md:hidden flex items-center gap-1 text-xs font-semibold text-[#7C3AED] bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full border border-purple-200"
+          >
+            <span>ℹ️</span>
+            <span>Info</span>
+          </button>
+
           <button 
             onClick={toggleFullscreen}
-            className="text-[#706A95] text-sm font-semibold hover:text-[#1E2A78]"
+            className="text-[#706A95] text-xs sm:text-sm font-semibold hover:text-[#1E2A78] whitespace-nowrap"
           >
-            {isFullscreen ? 'Salir de pantalla completa' : 'Pantalla completa'}
+            {isFullscreen ? 'Salir' : <span className="hidden sm:inline">Pantalla completa</span>}
+            {!isFullscreen && <span className="sm:hidden">⛶ Full</span>}
           </button>
         </div>
       </header>
 
-      {/* Left UI overlay */}
-      <div className="absolute top-24 left-4 md:left-8 z-40 flex flex-col gap-4 pointer-events-none w-[380px]">
+      {/* Left UI overlay — Desktop permanente */}
+      <div className="hidden md:flex flex-col gap-4 pointer-events-none w-[380px] absolute top-24 left-8 z-40">
         {/* Card superior izquierda */}
         <div 
           className="bg-white/90 backdrop-blur-md p-6 pb-20 rounded-3xl shadow-lg border border-white pointer-events-auto"
@@ -337,10 +351,78 @@ export default function MuralGlobalPage() {
         </div>
       </div>
 
-      {/* Buscador (Inferior Izquierda) */}
-      <div className="absolute bottom-8 left-4 md:left-8 z-40 pointer-events-auto w-[320px]">
+      {/* MODAL INFO PARA MÓVIL (Bottom Sheet desplegable) */}
+      {showMobileInfo && (
+        <div 
+          className="md:hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-xs animate-fadeIn"
+          onClick={() => setShowMobileInfo(false)}
+        >
+          <div 
+            className="w-full max-h-[85vh] overflow-y-auto bg-white rounded-t-3xl sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-white/60 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Botón cerrar */}
+            <button 
+              onClick={() => setShowMobileInfo(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-[#1E2A78] flex items-center justify-center font-bold text-sm transition-colors"
+            >
+              ✕
+            </button>
+
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-2xl">🩷</span>
+              <h2 className="font-playfair font-bold text-xl text-[#1E2A78]">Mural de Ángeles</h2>
+            </div>
+            <p className="text-[#706A95] text-sm mb-2 leading-relaxed">
+              Un millón de ángeles de 4 patas, un solo cielo.
+            </p>
+            <p className="text-[#1E2A78] text-xs mb-4 font-normal bg-purple-50 p-2.5 rounded-xl border border-purple-100">
+              🐾 Arrastra con el dedo para moverte. Pulsa en cualquier hueco libre para homenajear a tu mascota.
+            </p>
+            
+            <div className="flex flex-col gap-2.5">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-[#706A95] flex items-center gap-2">
+                  <Image src="/images/icons/plans/icon-plan-inicial.svg" alt="Ocupados" width={28} height={28} />
+                  Ocupados
+                </span>
+                <span className="font-bold text-[#1E2A78]">{stats.occupied.toLocaleString('es-ES')}</span>
+              </div>
+              <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-full bg-[#1E2A78]" style={{ width: `${Math.min(100, Math.max(0.5, (stats.occupied / 1000000) * 100))}%` }}></div>
+              </div>
+              
+              <div className="flex justify-between items-center text-sm mt-1">
+                <span className="text-[#706A95] flex items-center gap-2">
+                  <Image src="/images/icons/plans/icon-plan-estrella.svg" alt="Libres" width={28} height={28} />
+                  Libres
+                </span>
+                <span className="font-bold text-[#C9A961]">{stats.free.toLocaleString('es-ES')}</span>
+              </div>
+              
+              <div className="flex justify-between items-center text-sm mt-1">
+                <span className="text-[#706A95] flex items-center gap-2">
+                  <Image src="/images/icons/plans/icon-plan-eterno.svg" alt="Fundadores" width={28} height={28} />
+                  Ángeles fundadores
+                </span>
+                <span className="font-bold text-[#1E2A78]">{stats.founders.toLocaleString('es-ES')}</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowMobileInfo(false)}
+              className="w-full mt-5 py-2.5 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#EC4899] text-white font-bold text-xs shadow-md"
+            >
+              Explorar el Mural 🐾
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Buscador (Desktop e Inferior Móvil) */}
+      <div className="absolute bottom-4 left-2.5 sm:bottom-8 sm:left-8 z-40 pointer-events-auto w-[calc(100%-70px)] sm:w-[320px] max-w-[320px]">
         <div className="relative">
-          <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-3.5 sm:left-4 flex items-center pointer-events-none text-xs sm:text-base">
             🐾
           </div>
           <input 
@@ -348,7 +430,7 @@ export default function MuralGlobalPage() {
             placeholder="Buscar mascota..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/90 backdrop-blur-md border border-white shadow-lg rounded-full py-3 pl-12 pr-4 text-sm text-[#1E2A78] placeholder:text-[#706A95] outline-none focus:ring-2 focus:ring-[#C9A961]"
+            className="w-full bg-white/90 backdrop-blur-md border border-white shadow-lg rounded-full py-2 sm:py-3 pl-9 sm:pl-12 pr-3 sm:pr-4 text-xs sm:text-sm text-[#1E2A78] placeholder:text-[#706A95] outline-none focus:ring-2 focus:ring-[#C9A961]"
           />
 
           {/* Dropdown de resultados */}
