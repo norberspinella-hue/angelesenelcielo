@@ -149,15 +149,19 @@ export default function MemorialClient({ slug }: { slug: string }) {
         </Link>
 
         {/* LOGO CENTRAL Y TÍTULO */}
-        <div className="flex flex-col items-center text-center">
-          <div className="flex items-center gap-1.5 mb-0.5">
-            <Image src="/images/icons/Logoheart.svg" alt="Logo" width={22} height={22} className="w-5 h-5 object-contain" />
-            <h2 className="text-base sm:text-lg font-bold text-[#4A286D] tracking-tight font-serif italic" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Ángeles en el Cielo
-            </h2>
-          </div>
-          <p className="text-[10px] sm:text-[11px] text-[#A855F7] font-medium tracking-wide">
-            ✨ Todos los perros van al cielo ✨
+        <div className="flex flex-col items-center text-center -my-2">
+          <img 
+            src="/images/icons/Logoheart.svg" 
+            alt="Ángeles en el Cielo" 
+            className="h-[96px] sm:h-[112px] object-contain -my-4" 
+          />
+          <h2 className="text-base sm:text-lg font-bold text-[#4A286D] tracking-tight font-serif italic" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Ángeles en el Cielo
+          </h2>
+          <p className="text-[10px] sm:text-[11px] text-[#A855F7] font-medium tracking-wide flex items-center justify-center gap-1.5 mt-0.5">
+            <span className="text-[11px] text-pink-400 select-none">🩷</span>
+            <span>Todos los perros van al cielo</span>
+            <span className="text-[11px] text-pink-400 select-none">🩷</span>
           </p>
         </div>
 
