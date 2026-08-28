@@ -23,7 +23,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
   const [memorial, setMemorial] = useState<Memorial | null>(null)
   const [slotCoords, setSlotCoords] = useState<{ x: number; y: number } | null>(null)
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('sobre-mi')
+  const [copied, setCopied] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -63,405 +63,197 @@ export default function MemorialClient({ slug }: { slug: string }) {
   }
 
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return '—'
+    if (!dateStr) return null
     const date = new Date(dateStr)
-    return date.toLocaleDateString('es-ES', { 
-      day: 'numeric', 
-      month: 'long', 
-      year: 'numeric' 
-    })
+    return date.getFullYear()
   }
 
-  const getSpeciesEmoji = (species: string) => {
-    const emojis: Record<string, string> = {
-      perro: '🐶', gato: '🐱', conejo: '🐰',
-      pajaro: '🐦', caballo: '🐴', otro: '🐾'
-    }
-    return emojis[species] || '🐾'
-  }
+  const birthYear = memorial?.birth_date ? formatDate(memorial.birth_date) : null
+  const deathYear = memorial?.death_date ? formatDate(memorial.death_date) : null
 
-  const getPlanStyle = (plan: string) => {
-    switch (plan) {
-      case 'recuerdo_eterno':
-        return { bg: 'bg-amber-500/10 text-amber-700 border-amber-500/25', label: 'Eterno' }
-      case 'estrella_anual':
-        return { bg: 'bg-purple-500/10 text-purple-700 border-purple-500/25', label: 'Estrella' }
-      default:
-        return { bg: 'bg-pink-500/10 text-pink-700 border-pink-500/25', label: 'Huellita' }
-    }
-  }
+  const yearsText = birthYear && deathYear
+    ? `${birthYear} – ${deathYear}`
+    : deathYear
+      ? `${deathYear}`
+      : null
 
-  const shareUrl = typeof window !== 'undefined' 
-    ? window.location.href : ''
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
 
   const handleShare = (platform: string) => {
-    const text = `Recuerda a ${memorial?.pet_name} ✨ ${shareUrl}`
-    const urls: Record<string, string> = {
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(text)}`,
-      instagram: shareUrl,
-      copy: shareUrl,
-    }
-    if (platform === 'copy') {
+    const text = `${memorial?.pet_name || 'Mi Ángel'} siempre estará en nuestros corazones 🐾✨\nVisita su recuerdo en el Mural de Ángeles:\n${shareUrl}`
+    if (platform === 'whatsapp') {
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank')
+    } else if (platform === 'facebook') {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')
+    } else if (platform === 'copy') {
       navigator.clipboard.writeText(shareUrl)
-      alert('¡Enlace copiado!')
-      return
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
     }
-    window.open(urls[platform], '_blank')
   }
 
-  if (loading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-[#f5e8ff] to-[#ffe8f0] font-playfair text-2xl text-[#4A3F6B]">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-12 h-12 border-4 border-[#EC6F9B] border-t-transparent rounded-full animate-spin"></div>
-        <p className="animate-pulse">Cargando recuerdo... ✨</p>
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-[#f5e8ff] to-[#ffe8f0] font-sans text-2xl text-[#4A3F6B]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-12 h-12 border-4 border-[#EC6F9B] border-t-transparent rounded-full animate-spin"></div>
+          <p className="animate-pulse text-lg font-medium text-[#7B6F9A]">Cargando recuerdo... ✨</p>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
-  if (!memorial) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-[#f5e8ff] to-[#ffe8f0] font-playfair text-center p-8">
-      <div className="text-8xl mb-6">🐾</div>
-      <h1 className="text-[#4A3F6B] text-3xl font-bold mb-4">
-        Este recuerdo no existe
-      </h1>
-      <p className="text-[#7B6F9A] text-lg max-w-md mb-8">
-        El perfil que estás buscando no está disponible o está configurado como privado.
-      </p>
-      <Link href="/" className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#ff82ad] to-[#ec5f96] text-white font-bold shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
-        Volver al inicio
-      </Link>
-    </div>
-  )
+  if (!memorial) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-tr from-[#f5e8ff] to-[#ffe8f0] text-center p-8 font-sans">
+        <div className="text-7xl mb-4">🐾</div>
+        <h1 className="text-[#4A3F6B] text-2xl md:text-3xl font-bold mb-3">
+          Este recuerdo no existe
+        </h1>
+        <p className="text-[#7B6F9A] text-sm max-w-md mb-6">
+          El perfil que estás buscando no está disponible o está configurado como privado.
+        </p>
+        <Link href="/mural-global" className="px-6 py-3 rounded-full bg-gradient-to-r from-[#ff82ad] to-[#ec5f96] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all hover:scale-105">
+          Ir al Mural Global 🐾
+        </Link>
+      </div>
+    )
+  }
 
-  const birthYear = memorial.birth_date 
-    ? new Date(memorial.birth_date).getFullYear() : null
-  const deathYear = memorial.death_date 
-    ? new Date(memorial.death_date).getFullYear() : null
-
-  const planStyle = getPlanStyle(memorial.plan_type)
+  const muralUrl = slotCoords
+    ? `/mural-global?highlight=${slotCoords.x},${slotCoords.y}&zoom=true`
+    : `/mural-global`
 
   return (
-    <div className="min-h-screen bg-cover bg-center font-playfair flex flex-col" style={{ backgroundImage: 'url("/images/placeholders/bg-page-heaven-desktop.png")' }}>
-      
-      {/* NAV BAR */}
-      <nav className="flex items-center justify-between px-6 md:px-12 py-4 bg-white/70 backdrop-blur-md border-b border-purple-100/50 sticky top-0 z-40">
-        <Link href="/" className="flex items-center gap-2 font-bold text-[#1E2A78] text-lg md:text-xl">
-          <img src="/images/icons/Logoheart.svg" alt="Heart" className="w-8 h-8" />
+    <div 
+      className="min-h-screen flex flex-col bg-cover bg-center font-sans antialiased"
+      style={{ 
+        backgroundImage: 'linear-gradient(180deg, rgba(245,232,255,0.92) 0%, rgba(255,240,248,0.95) 100%), url("/images/mural-preview/profilecard-front.webp")',
+        backgroundAttachment: 'fixed',
+      }}
+    >
+      {/* Google Font Pinyon Script */}
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" />
+
+      {/* HEADER SIMPLE */}
+      <header className="w-full px-6 py-4 flex items-center justify-between max-w-5xl mx-auto">
+        <Link href="/" className="flex items-center gap-2 text-sm font-bold text-[#4A3F6B] hover:opacity-80 transition-opacity">
+          <Image src="/images/icons/Logoheart.svg" alt="Logo" width={32} height={32} className="w-8 h-8" />
           <span>Ángeles en el Cielo</span>
         </Link>
-        <Link href="/mural-global" className="px-5 py-2.5 rounded-full bg-gradient-to-r from-[#ff82ad] to-[#ec5f96] text-white font-bold text-sm shadow-md hover:shadow-lg transition-all hover:scale-[1.02]">
-          Crear memorial 🐾
+        <Link 
+          href="/mural-global"
+          className="text-xs font-bold text-[#EC6F9B] hover:text-[#C084FC] transition-colors flex items-center gap-1"
+        >
+          <span>Ver Mural Completo</span>
+          <span>→</span>
         </Link>
-      </nav>
+      </header>
 
-      {/* HERO SECTION */}
-      <div className="relative pt-12 pb-8 px-6 md:px-12 max-w-7xl mx-auto w-full flex-1">
-        
-        {/* Nubes y arcoíris decorativos de fondo en el hero */}
-        <div className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply" />
-
-        <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr_280px] gap-8 lg:gap-12 items-start relative z-10">
-
-          {/* COLUMNA 1: FOTO DEL MASCOTA */}
-          <div className="flex flex-col items-center justify-center">
-            <div className="relative w-64 h-64 md:w-72 md:h-72">
-              
-              {/* Halo dorado animado */}
-              <div 
-                className="absolute inset-[-12px] rounded-full animate-[pulse_3s_ease-in-out_infinite]"
-                style={{
-                  background: 'radial-gradient(circle, rgba(255,220,100,0.45) 0%, rgba(255,200,80,0.20) 50%, transparent 70%)',
-                }}
-              />
-              
-              {/* Círculo foto */}
-              <div className="w-full h-full rounded-full overflow-hidden border-6 border-white shadow-2xl relative bg-white flex items-center justify-center">
-                <img
-                  src={memorial.photo_url}
-                  alt={memorial.pet_name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              {/* Aureola flotante */}
-              <div className="absolute top-[-22px] left-1/2 -translate-x-1/2 text-4xl select-none animate-bounce">
-                😇
-              </div>
-            </div>
-
-            {/* Badge de Plan */}
-            <span className={`mt-6 px-4 py-1.5 rounded-full text-xs font-bold font-inter border ${planStyle.bg} tracking-wider uppercase`}>
-              Plan {planStyle.label}
-            </span>
-          </div>
-
-          {/* COLUMNA 2: DETALLES CENTRALES */}
-          <div className="flex flex-col items-center text-center lg:pt-6">
-            
-            {/* Nombre con tipografía cursiva/display */}
-            <h1 className="text-6xl md:text-8xl font-bold text-[#EC6F9B] italic mb-2 tracking-tight drop-shadow-sm leading-none">
-              {memorial.pet_name}
-            </h1>
-
-            {/* Rango de años */}
-            {birthYear && deathYear ? (
-              <p className="text-xl md:text-2xl text-[#7B6F9A] font-semibold mb-6 tracking-wide">
-                ✨ {birthYear} - {deathYear} ✨
-              </p>
-            ) : deathYear ? (
-              <p className="text-xl md:text-2xl text-[#7B6F9A] font-semibold mb-6 tracking-wide">
-                ✨ {deathYear} ✨
-              </p>
-            ) : null}
-
-            {/* Dedicatoria */}
-            <blockquote className="text-lg md:text-xl text-[#4A3F6B] leading-relaxed max-w-lg mb-4 italic font-normal">
-              "{memorial.dedication || 'Siempre en nuestro recuerdo, brillando en el cielo.'}"
-            </blockquote>
-
-            <p className="text-[#EC6F9B] font-semibold text-sm tracking-widest uppercase mb-8">
-              Siempre en nuestro corazón 🩵
-            </p>
-
-            {/* Botón CTA: Ver en el Mural */}
-            <Link 
-              href={slotCoords ? `/mural-global?highlight=${slotCoords.x},${slotCoords.y}&zoom=true` : '/mural-global'}
-              className="relative overflow-hidden px-8 py-4 rounded-full bg-gradient-to-r from-[#EC6F9B] via-[#C084FC] to-[#9333EA] text-white text-lg font-bold shadow-lg hover:shadow-xl transition-all hover:scale-[1.03] active:scale-95 flex items-center gap-3 group pointer-events-auto"
-            >
-              <span>✨ Ver en el Mural de Ángeles</span>
-              <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
-            </Link>
-          </div>
-
-          {/* COLUMNA 3: CARDS LATERALES (INFO + STATS) */}
-          <div className="flex flex-col gap-6 w-full max-w-[320px] mx-auto lg:mx-0">
-            
-            {/* Info list card */}
-            <div className="bg-white/80 backdrop-blur-md rounded-3xl p-5 border border-purple-100/50 shadow-lg">
-              {[
-                { icon: '🐾', label: 'Especie', value: `${getSpeciesEmoji(memorial.species)} ${memorial.species?.charAt(0).toUpperCase() + memorial.species?.slice(1)}` },
-                { icon: '📋', label: 'Raza', value: memorial.breed || 'Mestizo' },
-                { icon: '🎂', label: 'Nacimiento', value: formatDate(memorial.birth_date) },
-                { icon: '🌈', label: 'Partida', value: formatDate(memorial.death_date) },
-                { icon: '📍', label: 'Lugar', value: memorial.location || 'En el cielo' },
-              ].map((item, i) => (
-                <div 
-                  key={i} 
-                  className={`flex justify-between items-center py-2.5 font-inter text-xs ${i < 4 ? 'border-b border-purple-50/50' : ''}`}
-                >
-                  <span className="text-[#9B8FB0] flex items-center gap-1.5">
-                    <span>{item.icon}</span>
-                    <span>{item.label}</span>
-                  </span>
-                  <span className="text-[#4A3F6B] font-semibold truncate max-w-[150px]">
-                    {item.value}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Stats card */}
-            <div className="bg-white/80 backdrop-blur-md rounded-3xl p-5 border border-purple-100/50 shadow-lg grid grid-cols-2 gap-4 text-center">
-              {[
-                { icon: '✨', value: 'Eterno', label: 'Recuerdo' },
-                { icon: '⭐', value: '256', label: 'Mensajes' },
-                { icon: '🌈', value: '4', label: 'Fotos' },
-                { icon: '🩵', value: '13', label: 'Compartidos' },
-              ].map((stat, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <div className="text-2xl mb-1">{stat.icon}</div>
-                  <div className="text-xl font-bold text-[#EC6F9B] font-inter">
-                    {stat.value}
-                  </div>
-                  <div className="text-[10px] text-[#9B8FB0] font-inter uppercase tracking-wider">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* TABS CONTAINER */}
-      <div className="max-w-7xl mx-auto w-full px-6 md:px-12 mt-4 flex-1">
-        
-        {/* Tab Headers */}
-        <div className="flex border-b border-purple-100/60 overflow-x-auto gap-2 scrollbar-none">
-          {[
-            { id: 'sobre-mi', label: '🐾 Sobre mí' },
-            { id: 'galeria', label: '📷 Galería' },
-            { id: 'mensajes', label: '💬 Mensajes de amor' },
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`pb-3 px-6 font-inter text-sm font-semibold tracking-wide border-b-3 transition-all whitespace-nowrap ${
-                activeTab === tab.id 
-                  ? 'border-[#EC6F9B] text-[#EC6F9B]' 
-                  : 'border-transparent text-[#9B8FB0] hover:text-[#4A3F6B]'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* TAB CONTENTS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
+      {/* CONTENEDOR PRINCIPAL CENTRADO */}
+      <main className="flex-1 flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-lg bg-white/90 backdrop-blur-md rounded-3xl p-8 md:p-10 shadow-[0_20px_60px_rgba(140,100,180,0.18)] border border-white flex flex-col items-center text-center transition-all animate-fadeIn">
           
-          {/* Card 1: Sobre mí */}
-          <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 border border-purple-100/50 shadow-md flex flex-col justify-between min-h-[300px]">
-            <div>
-              <h3 className="text-[#EC6F9B] font-bold text-lg mb-4 flex items-center gap-2">
-                <span>🩵</span>
-                <span>Sobre mí</span>
-              </h3>
-              <p className="font-inter text-sm text-[#4A3F6B] leading-relaxed">
-                {memorial.dedication || 'Siempre fue un miembro incondicional de la familia. Nos llenó de felicidad con sus travesuras, paseos y lealtad. Este espacio está dedicado a preservar su amor en el firmamento.'}
-              </p>
-            </div>
-            
-            {/* Ilustración de mascota durmiendo */}
-            <div className="flex justify-center mt-6">
-              <img 
-                src="/images/placeholders/hero-illustration.svg" 
-                alt="Pet Sleeping on Cloud" 
-                className="h-28 object-contain opacity-80"
+          {/* FOTO CIRCULAR CON AUREOLA */}
+          <div className="relative mb-6">
+            {/* Halo dorado resplandeciente */}
+            <div 
+              className="absolute -inset-2.5 rounded-full"
+              style={{
+                background: 'radial-gradient(circle, rgba(245,200,66,0.60) 0%, rgba(245,200,66,0.15) 60%, transparent 75%)',
+                filter: 'blur(4px)',
+              }}
+            />
+
+            {/* Círculo foto */}
+            <div className="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden border-[3.5px] border-amber-300/80 shadow-lg relative z-10 bg-purple-50">
+              <img
+                src={memorial.photo_url || '/images/placeholders/first.webp'}
+                alt={memorial.pet_name}
+                className="w-full h-full object-cover"
               />
             </div>
-          </div>
 
-          {/* Card 2: Galería */}
-          <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 border border-purple-100/50 shadow-md min-h-[300px]">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-[#EC6F9B] font-bold text-lg flex items-center gap-2">
-                <span>🌈</span>
-                <span>Galería de recuerdos</span>
-              </h3>
-              <span className="font-inter text-xs text-[#9B8FB0] cursor-pointer hover:text-[#4A3F6B]">
-                Ver todas
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="aspect-square rounded-2xl overflow-hidden shadow-sm relative bg-[#F5E6D3] border border-white">
-                  <img
-                    src={memorial.photo_url}
-                    alt="Gallery"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              ))}
+            {/* Icono de aureola celestial */}
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-3xl select-none z-20 drop-shadow-sm">
+              😇
             </div>
           </div>
 
-          {/* Card 3: Mensajes */}
-          <div className="bg-white/80 backdrop-blur-md rounded-3xl p-6 border border-purple-100/50 shadow-md min-h-[300px] flex flex-col">
-            <h3 className="text-[#EC6F9B] font-bold text-lg mb-4 flex items-center gap-2">
-              <span>💬</span>
-              <span>Mensajes de amor</span>
-            </h3>
-            
-            <div className="flex-1 flex flex-col gap-3 overflow-y-auto pr-1 max-h-[220px] custom-scrollbar">
-              {[
-                { author: 'María Fernanda', msg: 'Toby siempre será nuestro ángel peludo. Gracias por tanto amor. 🩵', date: '20 de abril de 2024' },
-                { author: 'Alejandro G.', msg: 'Qué lindo recordar sus ojitos y su alegría. Dejó huellas profundas. 🐾', date: '19 de abril de 2024' },
-                { author: 'Laura y Max', msg: 'Gracias por enseñarnos tanto. Siempre contigo en el corazón. 🌈', date: '18 de abril de 2024' },
-              ].map((m, idx) => (
-                <div key={idx} className="bg-white/50 border border-purple-50 rounded-2xl p-3 flex flex-col gap-1">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="font-bold text-[#1E2A78] font-inter">{m.author}</span>
-                    <span className="text-[10px] text-[#9B8FB0] font-inter">{m.date}</span>
-                  </div>
-                  <p className="text-xs text-[#4A3F6B] font-inter leading-relaxed">
-                    {m.msg}
-                  </p>
-                </div>
-              ))}
-            </div>
+          {/* NOMBRE EN TIPOGRAFÍA CURSIVA PINYON SCRIPT */}
+          <h1 
+            className="text-5xl md:text-6xl text-[#EC6F9B] mb-2 font-normal"
+            style={{ fontFamily: "'Pinyon Script', cursive" }}
+          >
+            {memorial.pet_name}
+          </h1>
+
+          {/* SUBTÍTULO: AÑOS Y RAZA */}
+          <p className="text-xs md:text-sm text-[#7B6F9A] font-semibold mb-4 tracking-wide flex items-center justify-center gap-1.5 flex-wrap">
+            <span>✨</span>
+            {yearsText && <span>{yearsText}</span>}
+            {yearsText && (memorial.breed || memorial.species) && <span>·</span>}
+            {memorial.breed && <span>{memorial.breed}</span>}
+            {!memorial.breed && memorial.species && <span className="capitalize">{memorial.species}</span>}
+            <span>✨</span>
+          </p>
+
+          {/* DEDICATORIA */}
+          <div className="max-w-md mb-8">
+            <blockquote 
+              className="text-sm md:text-base text-[#4A3F6B] italic leading-relaxed font-serif"
+              style={{ fontFamily: 'Georgia, serif' }}
+            >
+              "{memorial.dedication || 'Siempre serás mi lugar favorito en el mundo y la luz que nunca se apagará.'}"
+            </blockquote>
           </div>
 
-        </div>
+          {/* BOTÓN CTA PRINCIPAL: VER EN EL MURAL */}
+          <Link
+            href={muralUrl}
+            className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#9333EA] via-[#C084FC] to-[#EC6F9B] text-white text-sm font-bold shadow-md hover:shadow-xl transition-all hover:scale-[1.03] active:scale-[0.98] flex items-center justify-center gap-2 mb-6"
+          >
+            <span>📍 Ver a {memorial.pet_name} en el Mural Global</span>
+            <span>✨</span>
+          </Link>
 
-        {/* SHARE BAR */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl p-8 border border-purple-100/50 shadow-lg grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr] gap-8 items-center mb-12">
-          <div>
-            <h3 className="text-[#EC6F9B] font-bold text-lg mb-2">
-              🩵 Comparte el recuerdo de {memorial.pet_name}
-            </h3>
-            <p className="font-inter text-xs text-[#7B6F9A] leading-relaxed">
-              Mantén vivo su legado compartiendo su historia con familiares y amigos que también lo amaron.
-            </p>
-          </div>
-
-          <div>
-            <span className="block font-inter text-[10px] uppercase tracking-wider text-[#9B8FB0] mb-2 font-bold">
-              Enlace de perfil público
+          {/* BOTONES SOCIALES SIMPLES */}
+          <div className="pt-5 border-t border-purple-100/60 w-full flex flex-col items-center">
+            <span className="text-[11px] font-bold text-[#9B8FB0] uppercase tracking-wider mb-3">
+              Compartir este recuerdo
             </span>
-            <div className="flex items-center gap-2 bg-[#F5F0FF]/80 border border-purple-100 rounded-xl px-4 py-3">
-              <span className="font-inter text-xs text-[#4A3F6B] flex-1 truncate select-all">
-                todaslasmascotasvanalcielo.com/memorial/{slug}
-              </span>
+            <div className="flex gap-3 items-center justify-center">
+              <button
+                onClick={() => handleShare('whatsapp')}
+                className="w-9 h-9 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
+                title="Compartir por WhatsApp"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.112.551 4.095 1.517 5.823l-1.611 5.885 6.046-1.586c1.667.909 3.57 1.428 5.594 1.428 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z"/></svg>
+              </button>
+              <button
+                onClick={() => handleShare('facebook')}
+                className="w-9 h-9 rounded-full bg-[#1877F2] text-white flex items-center justify-center shadow-sm hover:scale-110 transition-transform"
+                title="Compartir por Facebook"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </button>
               <button
                 onClick={() => handleShare('copy')}
-                className="text-[#706A95] hover:text-[#EC6F9B] text-base transition-colors"
+                className="px-3.5 py-1.5 rounded-full bg-purple-100 text-[#4A3F6B] text-xs font-semibold hover:bg-purple-200 transition-colors flex items-center gap-1.5"
                 title="Copiar enlace"
               >
-                📋
+                <span>{copied ? '✓ ¡Copiado!' : '🔗 Copiar'}</span>
               </button>
             </div>
           </div>
 
-          <div className="flex flex-col">
-            <span className="block font-inter text-[10px] uppercase tracking-wider text-[#9B8FB0] mb-3 font-bold">
-              Comparte en tus redes
-            </span>
-            <div className="flex gap-3">
-              {[
-                { icon: '💬', platform: 'whatsapp', bg: 'bg-[#25D366] hover:bg-[#20ba5a]' },
-                { icon: '📸', platform: 'instagram', bg: 'bg-[#E1306C] hover:bg-[#c9265f]' },
-                { icon: '🔗', platform: 'copy', bg: 'bg-[#7B5EA9] hover:bg-[#684d94]' },
-              ].map(btn => (
-                <button
-                  key={btn.platform}
-                  onClick={() => handleShare(btn.platform)}
-                  className={`w-11 h-11 rounded-full flex items-center justify-center text-white text-lg transition-transform hover:scale-105 active:scale-95 ${btn.bg} shadow-md`}
-                >
-                  {btn.icon}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
+      </main>
 
-      </div>
-
-      {/* FOOTER */}
-      <footer className="w-full text-center py-6 px-6 border-t border-purple-100/50 bg-white/60 mt-auto">
-        <p className="font-inter text-xs text-[#9B8FB0]">
-          🐾 Ángeles en el Cielo · Porque el amor no se despide, se transforma en huellas eternas. 🩵
-        </p>
+      {/* FOOTER DISCRETO */}
+      <footer className="w-full text-center py-4 px-4 text-[11px] text-[#9B8FB0]">
+        Mural de Ángeles en el Cielo · Recuerdos eternos con amor 🐾✨
       </footer>
-
-      <style jsx global>{`
-        @keyframes floatUp {
-          0% {
-            opacity: 1;
-            transform: translateY(0) scale(0.8) rotate(0deg);
-          }
-          100% {
-            opacity: 0;
-            transform: translateY(-80px) scale(1.2) rotate(15deg);
-          }
-        }
-        .animate-floatUp {
-          animation: floatUp 1s ease-out forwards;
-        }
-      `}</style>
     </div>
   )
 }
