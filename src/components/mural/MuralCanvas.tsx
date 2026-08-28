@@ -100,7 +100,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
     });
 
     const link = document.createElement('a');
-    link.download = `${petData?.pet_name || 'angelito'}-historia.png`;
+    link.download = `${petData?.pet_name || 'angelito'}-dedicatoria.png`;
     link.href = dataUrl;
     link.click();
   };
@@ -799,20 +799,26 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 6,
-                background: 'linear-gradient(90deg, #C9A961, #E8C878)',
-                border: 'none',
+                gap: 7,
+                background: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.40)',
                 borderRadius: 999,
-                padding: '10px 16px',
+                padding: '11px 16px',
                 color: 'white',
                 fontWeight: 700,
-                fontSize: 12,
+                fontSize: 13,
                 cursor: 'pointer',
                 fontFamily: 'sans-serif',
-                boxShadow: '0 4px 12px rgba(201,169,97,0.35)',
+                boxShadow: '0 4px 14px rgba(244, 114, 182, 0.40)',
+                transition: 'all 0.2s ease',
               }}
             >
-              ⬇️ Recuerdo
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Recuerdo
             </button>
             <button
               onClick={handleDownloadBack}
@@ -821,20 +827,26 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 6,
-                background: 'linear-gradient(90deg, #9B5DE5, #C9B8FF)',
-                border: 'none',
+                gap: 7,
+                background: 'linear-gradient(135deg, #C084FC 0%, #A855F7 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.40)',
                 borderRadius: 999,
-                padding: '10px 16px',
+                padding: '11px 16px',
                 color: 'white',
                 fontWeight: 700,
-                fontSize: 12,
+                fontSize: 13,
                 cursor: 'pointer',
                 fontFamily: 'sans-serif',
-                boxShadow: '0 4px 12px rgba(155,93,229,0.35)',
+                boxShadow: '0 4px 14px rgba(192, 132, 252, 0.40)',
+                transition: 'all 0.2s ease',
               }}
             >
-              ⬇️ Historia
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Dedicatoria
             </button>
           </div>
 
