@@ -175,16 +175,16 @@ export default function MemorialClient({ slug }: { slug: string }) {
         </Link>
       </header>
 
-      {/* CONTENEDOR PRINCIPAL: TARJETA TRANSLÚCIDA (50% TRANSLUCIDEZ) */}
+      {/* CONTENEDOR PRINCIPAL: TARJETA TRANSLÚCIDA CRISTAL */}
       <main className="flex-1 flex items-center justify-center">
         <div 
           className="w-full max-w-[460px] rounded-[40px] p-6 sm:p-8 flex flex-col items-center text-center transition-all animate-fadeIn relative z-10 overflow-hidden"
           style={{
-            background: 'rgba(255, 255, 255, 0.50)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.75)',
-            boxShadow: '0 25px 60px rgba(120, 70, 160, 0.18), 0 0 30px rgba(255, 255, 255, 0.45) inset',
+            background: 'rgba(255, 255, 255, 0.18)',
+            backdropFilter: 'blur(6px)',
+            WebkitBackdropFilter: 'blur(6px)',
+            border: '1.5px solid rgba(255, 255, 255, 0.65)',
+            boxShadow: '0 20px 50px rgba(120, 70, 160, 0.12), 0 0 25px rgba(255, 255, 255, 0.30) inset',
           }}
         >
           
@@ -206,7 +206,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
           </div>
 
           {/* 3. TOP PILL BADGE: 🐾 Mi angelito (Fuente color lila) */}
-          <div className="mb-5 inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-white/65 border border-purple-200/70 shadow-xs backdrop-blur-xs">
+          <div className="mb-5 inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-white/60 border border-purple-200/70 shadow-xs backdrop-blur-xs">
             <span className="text-xs font-bold text-[#6B21A8] tracking-wide flex items-center gap-1.5">
               <span>🐾</span>
               <span>Mi angelito</span>
@@ -417,15 +417,15 @@ export default function MemorialClient({ slug }: { slug: string }) {
         </div>
       </main>
 
-      {/* 8 (Footer). CÁPSULA TRANSLÚCIDA INFERIOR (50% Transparencia, sin comillas, sin estrellas) */}
+      {/* 8 (Footer). CÁPSULA TRANSLÚCIDA INFERIOR */}
       <footer className="w-full flex flex-col items-center justify-center mt-4 mb-2 px-4 select-none z-10">
         <div 
           className="px-6 py-2 rounded-full flex items-center justify-center gap-2 shadow-xs text-center"
           style={{
-            background: 'rgba(255, 255, 255, 0.50)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.70)',
+            background: 'rgba(255, 255, 255, 0.20)',
+            backdropFilter: 'blur(6px)',
+            WebkitBackdropFilter: 'blur(6px)',
+            border: '1px solid rgba(255, 255, 255, 0.60)',
           }}
         >
           <p className="text-xs sm:text-sm text-[#4A286D] italic font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
