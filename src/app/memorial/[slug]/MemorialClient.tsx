@@ -161,18 +161,8 @@ export default function MemorialClient({ slug }: { slug: string }) {
           </p>
         </div>
 
-        {/* BOTÓN VER MURAL COMPLETO */}
-        <Link 
-          href="/mural-global"
-          className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#6B21A8] hover:text-[#4A286D] bg-white/60 hover:bg-white/80 border border-white/80 shadow-xs transition-all flex items-center gap-1.5 backdrop-blur-xs"
-        >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-            <circle cx="9" cy="9" r="2"/>
-            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-          </svg>
-          <span className="hidden sm:inline">Ver Mural Completo</span>
-        </Link>
+        {/* Espacio invisible de balance para centrado simétrico */}
+        <div className="w-24 hidden sm:block pointer-events-none" />
       </header>
 
       {/* CONTENEDOR PRINCIPAL: TARJETA TRANSLÚCIDA CRISTAL */}
@@ -324,13 +314,15 @@ export default function MemorialClient({ slug }: { slug: string }) {
             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-pink-400"></div>
           </div>
 
-          {/* 6 & 7. METADATOS: FECHAS DE NACIMIENTO Y FALLECIMIENTO SIN ESTRELLITAS */}
-          <p className="text-xs sm:text-sm text-[#7E6B8F] font-semibold mb-2.5 tracking-wide flex items-center justify-center gap-2 flex-wrap">
-            {yearsText && <span>{yearsText}</span>}
-            {yearsText && (memorial.breed || memorial.species) && <span>·</span>}
-            {memorial.breed && <span>{memorial.breed}</span>}
-            {!memorial.breed && memorial.species && <span className="capitalize">{memorial.species}</span>}
-          </p>
+          {/* 2. METADATOS: FECHAS DE NACIMIENTO Y FALLECIMIENTO DEL DRAWER DE PAGO */}
+          {(yearsText || memorial.breed || memorial.species) && (
+            <p className="text-xs sm:text-sm text-[#7E6B8F] font-semibold mb-2.5 tracking-wide flex items-center justify-center gap-2 flex-wrap">
+              {yearsText && <span>{yearsText}</span>}
+              {yearsText && (memorial.breed || memorial.species) && <span>·</span>}
+              {memorial.breed && <span>{memorial.breed}</span>}
+              {!memorial.breed && memorial.species && <span className="capitalize">{memorial.species}</span>}
+            </p>
+          )}
 
           {/* 5. DEDICATORIA */}
           <div className="max-w-xs sm:max-w-sm mb-2 px-2">
@@ -369,9 +361,9 @@ export default function MemorialClient({ slug }: { slug: string }) {
             <div className="h-[1px] flex-1 bg-purple-300"></div>
           </div>
 
-          {/* BOTONES DE COMPARTIR (Exactos a la imagen de referencia con brillos, sombras 3D y tamaño 100% homogéneo) */}
+          {/* 3. BOTONES DE COMPARTIR (Título con color #7C3AED idéntico a la frase anterior) */}
           <div className="w-full flex flex-col items-center mb-3">
-            <span className="text-xs font-bold text-[#581C87] tracking-wide mb-2.5">
+            <span className="text-xs font-bold text-[#7C3AED] tracking-wide mb-2.5">
               Compartir este recuerdo
             </span>
             <div className="grid grid-cols-3 gap-2 sm:gap-2.5 items-center w-full max-w-sm">
@@ -429,8 +421,8 @@ export default function MemorialClient({ slug }: { slug: string }) {
             </div>
           </div>
 
-          {/* 8. NOTA DE PIE DE TARJETA (Texto modificado, sin plumas) */}
-          <p className="text-xs text-[#7C3AED] font-medium italic opacity-90 select-none">
+          {/* 4. NOTA DE PIE DE TARJETA (Texto modificado, SIN cursiva) */}
+          <p className="text-xs text-[#7C3AED] font-medium opacity-90 select-none">
             Gracias por darle a tu angelito un lugar en el cielo
           </p>
 
