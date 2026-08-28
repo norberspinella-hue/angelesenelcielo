@@ -192,20 +192,20 @@ export default function MemorialClient({ slug }: { slug: string }) {
           }}
         >
           
-          {/* 10. MARIPOSAS DENTRO DE LA TARJETA (20% más grandes y en espacios interiores) */}
-          <div className="absolute top-16 left-3.5 w-12 h-12 pointer-events-none opacity-90 select-none z-10">
+          {/* MARIPOSAS DENTRO DE LA TARJETA (+25% más grandes) */}
+          <div className="absolute top-14 left-3 w-[60px] h-[60px] pointer-events-none opacity-90 select-none z-10">
             <img src="/images/icons/butterfly1.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-15 drop-shadow-xs" />
           </div>
-          <div className="absolute top-14 right-3.5 w-11 h-11 pointer-events-none opacity-85 select-none z-10">
+          <div className="absolute top-12 right-3 w-[55px] h-[55px] pointer-events-none opacity-85 select-none z-10">
             <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain rotate-20 drop-shadow-xs" />
           </div>
-          <div className="absolute top-[280px] left-3 w-9 h-9 pointer-events-none opacity-80 select-none z-10">
+          <div className="absolute top-[275px] left-2.5 w-[45px] h-[45px] pointer-events-none opacity-80 select-none z-10">
             <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-25 drop-shadow-xs" />
           </div>
-          <div className="absolute top-[290px] right-3.5 w-9 h-9 pointer-events-none opacity-85 select-none z-10">
+          <div className="absolute top-[285px] right-3 w-[45px] h-[45px] pointer-events-none opacity-85 select-none z-10">
             <img src="/images/icons/butterfly1.svg" alt="Butterfly" className="w-full h-full object-contain rotate-15 drop-shadow-xs" />
           </div>
-          <div className="absolute bottom-28 right-4 w-10 h-10 pointer-events-none opacity-85 select-none z-10">
+          <div className="absolute bottom-28 right-3.5 w-[50px] h-[50px] pointer-events-none opacity-85 select-none z-10">
             <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-10 drop-shadow-xs" />
           </div>
 
