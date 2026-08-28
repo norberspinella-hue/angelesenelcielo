@@ -21,10 +21,9 @@ interface Memorial {
 
 export default function MemorialClient({ slug }: { slug: string }) {
   const [memorial, setMemorial] = useState<Memorial | null>(null)
+  const [slotCoords, setSlotCoords] = useState<{ x: number; y: number } | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('sobre-mi')
-  const [huellitasCount, setHuellitasCount] = useState(1248)
-  const [floatingPaws, setFloatingPaws] = useState<{ id: number; x: number; y: number }[]>([])
   const supabase = createClient()
 
   useEffect(() => {
@@ -45,9 +44,21 @@ export default function MemorialClient({ slug }: { slug: string }) {
     }
 
     setMemorial(data)
-    // Generar un conteo de huellitas semi-aleatorio basado en el ID para no empezar en cero
-    const seed = data.id.charCodeAt(0) + data.id.charCodeAt(1) || 1248
-    setHuellitasCount(Math.floor((seed * 3) % 1500) + 150)
+
+    // Cargar coordenadas en el mural
+    const { data: slot } = await supabase
+      .from('mural_slots')
+      .select('x, y')
+      .eq('memorial_id', data.id)
+      .order('x', { ascending: true })
+      .order('y', { ascending: true })
+      .limit(1)
+      .single()
+
+    if (slot) {
+      setSlotCoords(slot as { x: number; y: number })
+    }
+
     setLoading(false)
   }
 
@@ -96,20 +107,6 @@ export default function MemorialClient({ slug }: { slug: string }) {
       return
     }
     window.open(urls[platform], '_blank')
-  }
-
-  const handleDejarHuellita = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    const id = Date.now() + Math.random()
-
-    setFloatingPaws(prev => [...prev, { id, x, y }])
-    setHuellitasCount(prev => prev + 1)
-
-    setTimeout(() => {
-      setFloatingPaws(prev => prev.filter(p => p.id !== id))
-    }, 1000)
   }
 
   if (loading) return (
@@ -226,28 +223,14 @@ export default function MemorialClient({ slug }: { slug: string }) {
               Siempre en nuestro corazón 🩵
             </p>
 
-            {/* Botón interactivo "Dejar mi huellita" */}
-            <button 
-              onClick={handleDejarHuellita}
-              className="relative overflow-hidden px-8 py-4 rounded-full bg-gradient-to-r from-[#ff82ad] to-[#ec5f96] text-white text-lg font-bold shadow-lg hover:shadow-xl transition-all hover:scale-[1.03] active:scale-95 flex items-center gap-2 group pointer-events-auto"
+            {/* Botón CTA: Ver en el Mural */}
+            <Link 
+              href={slotCoords ? `/mural-global?highlight=${slotCoords.x},${slotCoords.y}&zoom=true` : '/mural-global'}
+              className="relative overflow-hidden px-8 py-4 rounded-full bg-gradient-to-r from-[#EC6F9B] via-[#C084FC] to-[#9333EA] text-white text-lg font-bold shadow-lg hover:shadow-xl transition-all hover:scale-[1.03] active:scale-95 flex items-center gap-3 group pointer-events-auto"
             >
-              <span>🐾 Dejar mi huellita</span>
-              <span className="opacity-80 group-hover:scale-110 transition-transform">🩵</span>
-
-              {/* Floating paws container */}
-              {floatingPaws.map(paw => (
-                <span 
-                  key={paw.id}
-                  className="absolute text-xl pointer-events-none animate-floatUp"
-                  style={{
-                    left: paw.x - 10,
-                    top: paw.y - 20,
-                  }}
-                >
-                  🐾
-                </span>
-              ))}
-            </button>
+              <span>✨ Ver en el Mural de Ángeles</span>
+              <span className="text-xl group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
           </div>
 
           {/* COLUMNA 3: CARDS LATERALES (INFO + STATS) */}
@@ -280,9 +263,9 @@ export default function MemorialClient({ slug }: { slug: string }) {
             {/* Stats card */}
             <div className="bg-white/80 backdrop-blur-md rounded-3xl p-5 border border-purple-100/50 shadow-lg grid grid-cols-2 gap-4 text-center">
               {[
-                { icon: '🐾', value: huellitasCount.toLocaleString(), label: 'Huellitas' },
+                { icon: '✨', value: 'Eterno', label: 'Recuerdo' },
                 { icon: '⭐', value: '256', label: 'Mensajes' },
-                { icon: '🌈', value: '64', label: 'Galería' },
+                { icon: '🌈', value: '4', label: 'Fotos' },
                 { icon: '🩵', value: '13', label: 'Compartidos' },
               ].map((stat, i) => (
                 <div key={i} className="flex flex-col items-center">
@@ -311,9 +294,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
           {[
             { id: 'sobre-mi', label: '🐾 Sobre mí' },
             { id: 'galeria', label: '📷 Galería' },
-            { id: 'huellitas', label: `🐾 Huellitas (${huellitasCount})` },
-            { id: 'mensajes', label: '💬 Mensajes (256)' },
-            { id: 'compartidos', label: '🩵 Compartidos (13)' },
+            { id: 'mensajes', label: '💬 Mensajes de amor' },
           ].map(tab => (
             <button
               key={tab.id}

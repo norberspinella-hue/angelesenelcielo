@@ -158,9 +158,11 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
   const plan = petData?.plan_type || planType;
 
   const shareUrl = typeof window !== 'undefined'
-    ? slotData
-      ? `${window.location.origin}/mural-global?highlight=${slotData.x},${slotData.y}&zoom=true`
-      : `${window.location.origin}/mural-global`
+    ? petData?.profile_slug
+      ? `${window.location.origin}/memorial/${petData.profile_slug}`
+      : slotData
+        ? `${window.location.origin}/mural-global?highlight=${slotData.x},${slotData.y}&zoom=true`
+        : `${window.location.origin}/mural-global`
     : '';
 
   const formatDate = (dateStr?: string | null) => {
