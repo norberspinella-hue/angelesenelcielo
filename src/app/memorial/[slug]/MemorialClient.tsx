@@ -126,7 +126,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
 
   return (
     <div 
-      className="min-h-screen flex flex-col bg-cover bg-center font-sans antialiased relative selection:bg-purple-200"
+      className="min-h-screen flex flex-col bg-cover bg-center font-sans antialiased relative selection:bg-purple-200 py-6 px-4"
       style={{ 
         backgroundImage: 'url("/images/memorial/bg-memorial-heaven.webp")',
         backgroundPosition: 'center top',
@@ -135,76 +135,102 @@ export default function MemorialClient({ slug }: { slug: string }) {
         backgroundAttachment: 'fixed',
       }}
     >
-      {/* Google Font Pinyon Script */}
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" />
+      {/* Fuentes Google: Playfair Display */}
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600;1,700&display=swap" />
 
-      {/* HEADER DISCRETO */}
-      <header className="w-full px-6 py-4 flex items-center justify-between max-w-5xl mx-auto z-10 opacity-85 hover:opacity-100 transition-opacity">
-        <Link href="/" className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#4A3F6B] hover:opacity-80 transition-opacity">
-          <Image src="/images/icons/Logoheart.svg" alt="Logo" width={28} height={28} className="w-7 h-7" />
-          <span>Ángeles en el Cielo</span>
+      {/* HEADER SUPERIOR CELESTIAL */}
+      <header className="w-full max-w-3xl mx-auto flex items-center justify-between py-2 px-2 mb-4 z-20">
+        <Link 
+          href="/mural-global" 
+          className="text-xs sm:text-sm font-semibold text-[#581C87] hover:text-[#7C3AED] transition-colors flex items-center gap-1.5 opacity-90"
+        >
+          <span>←</span>
+          <span>Volver al Mural</span>
         </Link>
+
+        {/* LOGO CENTRAL Y TÍTULO */}
+        <div className="flex flex-col items-center text-center">
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <Image src="/images/icons/Logoheart.svg" alt="Logo" width={22} height={22} className="w-5 h-5 object-contain" />
+            <h2 className="text-base sm:text-lg font-bold text-[#4A286D] tracking-tight font-serif italic" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Ángeles en el Cielo
+            </h2>
+          </div>
+          <p className="text-[10px] sm:text-[11px] text-[#A855F7] font-medium tracking-wide">
+            ✨ Todos los perros van al cielo ✨
+          </p>
+        </div>
+
+        {/* BOTÓN VER MURAL COMPLETO */}
         <Link 
           href="/mural-global"
-          className="text-xs font-bold text-[#7C3AED] hover:text-[#EC4899] transition-colors flex items-center gap-1"
+          className="px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#6B21A8] hover:text-[#4A286D] bg-white/60 hover:bg-white/80 border border-white/80 shadow-xs transition-all flex items-center gap-1.5 backdrop-blur-xs"
         >
-          <span>Ver Mural Completo</span>
-          <span>→</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+            <circle cx="9" cy="9" r="2"/>
+            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+          </svg>
+          <span className="hidden sm:inline">Ver Mural Completo</span>
         </Link>
       </header>
 
-      {/* CONTENEDOR PRINCIPAL CENTRADO */}
-      <main className="flex-1 flex items-center justify-center px-4 py-4 sm:py-6">
+      {/* CONTENEDOR PRINCIPAL: TARJETA TRANSLÚCIDA */}
+      <main className="flex-1 flex items-center justify-center">
         <div 
-          className="w-full max-w-[490px] rounded-[42px] p-6 sm:p-9 flex flex-col items-center text-center transition-all animate-fadeIn relative"
+          className="w-full max-w-[430px] rounded-[38px] p-6 sm:p-8 flex flex-col items-center text-center transition-all animate-fadeIn relative z-10"
           style={{
-            background: 'rgba(255, 255, 255, 0.55)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.85)',
-            boxShadow: '0 25px 70px rgba(130, 90, 170, 0.22), 0 0 35px rgba(255, 255, 255, 0.40) inset',
+            background: 'rgba(255, 255, 255, 0.48)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            border: '1.5px solid rgba(255, 255, 255, 0.90)',
+            boxShadow: '0 25px 60px rgba(120, 70, 160, 0.20), 0 0 30px rgba(255, 255, 255, 0.50) inset',
           }}
         >
           
-          {/* MARIPOSAS DECORATIVAS DISTRIBUIDAS (60% más grandes) */}
-          <div className="absolute -top-3 -left-8 w-12 h-12 pointer-events-none opacity-90 select-none">
-            <img src="/images/icons/butterfly1.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-15 drop-shadow-sm" />
+          {/* MARIPOSAS MÁGICAS REPARTIDAS ORGÁNICAMENTE */}
+          <div className="absolute top-12 -left-6 w-11 h-11 pointer-events-none opacity-90 select-none">
+            <img src="/images/icons/butterfly1.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-15 drop-shadow-xs" />
           </div>
-          <div className="absolute top-6 -right-8 w-11 h-11 pointer-events-none opacity-85 select-none">
-            <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain rotate-20 drop-shadow-sm" />
+          <div className="absolute top-10 -right-6 w-10 h-10 pointer-events-none opacity-85 select-none">
+            <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain rotate-20 drop-shadow-xs" />
           </div>
-          <div className="absolute top-44 -left-7 w-9 h-9 pointer-events-none opacity-80 select-none">
-            <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-25 drop-shadow-sm" />
+          <div className="absolute top-48 -left-5 w-8 h-8 pointer-events-none opacity-85 select-none">
+            <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-25 drop-shadow-xs" />
           </div>
-          <div className="absolute top-64 -right-7 w-11 h-11 pointer-events-none opacity-85 select-none">
-            <img src="/images/icons/butterfly1.svg" alt="Butterfly" className="w-full h-full object-contain rotate-12 drop-shadow-sm" />
+          <div className="absolute top-44 -right-5 w-8 h-8 pointer-events-none opacity-80 select-none">
+            <img src="/images/icons/butterfly1.svg" alt="Butterfly" className="w-full h-full object-contain rotate-15 drop-shadow-xs" />
+          </div>
+          <div className="absolute top-72 -right-6 w-10 h-10 pointer-events-none opacity-90 select-none">
+            <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-10 drop-shadow-xs" />
           </div>
 
-          {/* 1. TOP PILL BADGE: Mi angelito (con margen superior amplio) */}
-          <div className="mb-7 inline-flex items-center justify-center px-5 py-1.5 rounded-full bg-[#FEF3C7]/80 border border-[#F5C842]/40 shadow-xs">
-            <span className="text-xs font-bold text-[#854D0E] tracking-wide">
-              Mi angelito
+          {/* 1. TOP PILL BADGE: 🐾 Mi angelito */}
+          <div className="mb-6 inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-[#FEF3C7]/80 border border-[#FDE68A] shadow-xs">
+            <span className="text-xs font-bold text-[#92400E] tracking-wide flex items-center gap-1.5">
+              <span>🐾</span>
+              <span>Mi angelito</span>
             </span>
           </div>
 
-          {/* 2. MEDALLÓN CELESTIAL DE LA FOTO (Diámetro 200px) */}
+          {/* 2. MEDALLÓN CELESTIAL DE LA FOTO */}
           <div className="relative mb-4 flex items-center justify-center">
             
-            {/* HALO CELESTIAL EXACTO DE PETPROFILECARD (Inclinado y super brillante) */}
+            {/* HALO LUMINOSO DE LUZ DORADA FLOTANDO SOBRE LA CABEZA */}
             <div 
               style={{
                 position: 'absolute',
-                top: '-24px',
+                top: '-20px',
                 left: '50%',
-                transform: 'translateX(-50%) rotate(-6deg)',
-                width: '155px',
-                height: '42px',
+                transform: 'translateX(-50%) rotate(-4deg)',
+                width: '148px',
+                height: '40px',
                 zIndex: 25,
                 pointerEvents: 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                filter: 'drop-shadow(0 0 12px rgba(255, 213, 79, 0.95)) drop-shadow(0 0 5px #FFFFFF)',
+                filter: 'drop-shadow(0 0 10px rgba(255, 213, 79, 0.95)) drop-shadow(0 0 4px #FFFFFF)',
               }}
             >
               <svg 
@@ -216,48 +242,45 @@ export default function MemorialClient({ slug }: { slug: string }) {
                 style={{ overflow: 'visible' }}
               >
                 <defs>
-                  <filter id="memorialHaloGlow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1" />
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur2" />
+                  <filter id="haloGlowRefined" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur1" />
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2" />
                     <feMerge>
                       <feMergeNode in="blur1" />
                       <feMergeNode in="blur2" />
                       <feMergeNode in="SourceGraphic" />
                     </feMerge>
                   </filter>
-                  <linearGradient id="memorialHaloGold" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#FFA000" stopOpacity="1.0" />
-                    <stop offset="20%" stopColor="#FFD54F" stopOpacity="1.0" />
+                  <linearGradient id="haloGoldGradRefined" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#FFA000" stopOpacity="0.9" />
+                    <stop offset="25%" stopColor="#FFD54F" stopOpacity="1.0" />
                     <stop offset="50%" stopColor="#FFF9C4" stopOpacity="1.0" />
-                    <stop offset="80%" stopColor="#FFD54F" stopOpacity="1.0" />
-                    <stop offset="100%" stopColor="#FFA000" stopOpacity="1.0" />
+                    <stop offset="75%" stopColor="#FFD54F" stopOpacity="1.0" />
+                    <stop offset="100%" stopColor="#FFA000" stopOpacity="0.9" />
                   </linearGradient>
                 </defs>
-                {/* 1. Aura difusa dorada exterior */}
-                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFD54F" strokeWidth="8" opacity="0.90" filter="url(#memorialHaloGlow)" />
-                {/* 2. Cuerpo del anillo dorado */}
-                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="url(#memorialHaloGold)" strokeWidth="4.5" opacity="1.0" filter="drop-shadow(0 0 6px #FFD54F)" />
-                {/* 3. Filamento blanco puro en el núcleo */}
-                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFFFFF" strokeWidth="2.6" opacity="1.0" filter="drop-shadow(0 0 4px #FFFFFF)" />
+                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFD54F" strokeWidth="7" opacity="0.85" filter="url(#haloGlowRefined)" />
+                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="url(#haloGoldGradRefined)" strokeWidth="4" opacity="1.0" />
+                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFFFFF" strokeWidth="2.2" opacity="1.0" />
               </svg>
             </div>
 
             {/* AURA RESPLANDECIENTE SUAVE */}
             <div 
-              className="absolute -inset-4 rounded-full"
+              className="absolute -inset-3.5 rounded-full"
               style={{
-                background: 'radial-gradient(circle, rgba(245,200,66,0.45) 0%, rgba(216,180,254,0.30) 55%, transparent 75%)',
+                background: 'radial-gradient(circle, rgba(245,200,66,0.40) 0%, rgba(216,180,254,0.25) 55%, transparent 75%)',
                 filter: 'blur(8px)',
               }}
             />
 
-            {/* SPARKLES EN DISTINTAS ZONAS DEL MEDALLÓN */}
-            <span className="absolute -top-1 right-2 text-amber-300 text-lg z-20 select-none animate-pulse">✨</span>
+            {/* SPARKLES DESTELLANTES ALREDEDOR DEL MEDALLÓN */}
+            <span className="absolute -top-1 right-2 text-amber-300 text-base z-20 select-none animate-pulse">✨</span>
             <span className="absolute bottom-4 -left-3 text-amber-300 text-sm z-20 select-none animate-pulse">✨</span>
             <span className="absolute top-1/2 -right-3 text-amber-200 text-xs z-20 select-none">✦</span>
 
-            {/* CÍRCULO FOTO CON BORDE DORADO SATINADO (200px) */}
-            <div className="w-48 h-48 sm:w-52 sm:h-52 rounded-full overflow-hidden border-[4px] border-[#D4AF37] shadow-[0_10px_30px_rgba(180,140,80,0.30)] relative z-10 bg-purple-50">
+            {/* CÍRCULO FOTO CON BORDE DORADO SATINADO */}
+            <div className="w-44 h-44 sm:w-48 sm:h-48 rounded-full overflow-hidden border-[3.5px] border-[#D4AF37] shadow-[0_10px_25px_rgba(180,140,80,0.25)] relative z-10 bg-purple-50">
               <img
                 src={memorial.photo_url || '/images/placeholders/first.webp'}
                 alt={memorial.pet_name}
@@ -266,94 +289,90 @@ export default function MemorialClient({ slug }: { slug: string }) {
             </div>
           </div>
 
-          {/* 3. NOMBRE EN TIPOGRAFÍA CURSIVA PINYON SCRIPT (text-7xl/8xl) */}
+          {/* 3. NOMBRE EN TIPOGRAFÍA SERIF CURSIVA (Playfair Display Italic exacto a Imagen 1) */}
           <h1 
-            className="text-7xl sm:text-8xl mb-1 font-normal select-none leading-none tracking-tight"
+            className="text-5xl sm:text-6xl mb-1.5 font-bold select-none leading-tight font-serif italic tracking-wide"
             style={{ 
-              fontFamily: "'Pinyon Script', cursive",
-              background: 'linear-gradient(135deg, #6D28D9 0%, #9333EA 40%, #DB2777 100%)',
+              fontFamily: "'Playfair Display', Georgia, serif",
+              background: 'linear-gradient(135deg, #6B21A8 0%, #9333EA 50%, #C026D3 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              filter: 'drop-shadow(0 2px 5px rgba(109, 40, 217, 0.18))',
+              filter: 'drop-shadow(0 2px 4px rgba(107, 33, 168, 0.15))',
             }}
           >
             {memorial.pet_name}
           </h1>
 
           {/* MICRODIVISOR CON CORAZÓN */}
-          <div className="flex items-center justify-center gap-2 mb-3 w-28 opacity-60">
+          <div className="flex items-center justify-center gap-2 mb-2.5 w-24 opacity-60">
             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-pink-400"></div>
-            <span className="text-xs text-pink-400 select-none">🩷</span>
+            <span className="text-[11px] text-pink-400 select-none">🩷</span>
             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-pink-400"></div>
           </div>
 
           {/* 4. METADATOS: AÑOS Y RAZA */}
-          <p className="text-xs sm:text-sm text-[#7E6B8F] font-semibold mb-3 tracking-wide flex items-center justify-center gap-2 flex-wrap">
-            <span className="text-amber-400">✨</span>
+          <p className="text-xs text-[#7E6B8F] font-semibold mb-3 tracking-wide flex items-center justify-center gap-2 flex-wrap">
+            <span className="text-amber-400">✦</span>
             {yearsText && <span>{yearsText}</span>}
             {yearsText && (memorial.breed || memorial.species) && <span>·</span>}
             {memorial.breed && <span>{memorial.breed}</span>}
             {!memorial.breed && memorial.species && <span className="capitalize">{memorial.species}</span>}
-            <span className="text-amber-400">✨</span>
+            <span className="text-amber-400">✦</span>
           </p>
 
           {/* 5. DEDICATORIA EN CURSIVA SERIF */}
-          <div className="max-w-sm mb-2">
+          <div className="max-w-xs sm:max-w-sm mb-2 px-2">
             <blockquote 
-              className="text-sm md:text-base text-[#4A3F6B] italic leading-relaxed font-serif"
-              style={{ fontFamily: 'Georgia, serif' }}
+              className="text-xs sm:text-sm text-[#4A3F6B] italic leading-relaxed font-serif"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
               “{memorial.dedication || 'Siempre serás mi lugar favorito en el mundo.'}”
             </blockquote>
           </div>
 
           {/* AFIRMACIÓN CELESTIAL */}
-          <p className="text-xs text-[#A16207] font-medium mb-5 flex items-center justify-center gap-1.5">
+          <p className="text-[11px] text-[#A16207] font-medium mb-4 flex items-center justify-center gap-1.5">
             <span>✨</span>
             <span>Su luz ya forma parte del Mural de Ángeles.</span>
             <span>✨</span>
           </p>
 
-          {/* 6. BOTÓN CTA PRINCIPAL (Exacto a Imagen 1) */}
+          {/* 6. BOTÓN CTA PRINCIPAL (Exacto a Imagen de Referencia) */}
           <Link
             href={muralUrl}
-            className="w-full py-4 px-6 rounded-full text-white text-sm sm:text-base font-semibold flex items-center justify-center gap-2.5 transition-all hover:scale-[1.02] active:scale-[0.98] mb-5 select-none relative overflow-hidden group"
+            className="w-full py-3.5 px-5 rounded-full text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] mb-4 select-none relative overflow-hidden"
             style={{
               background: 'linear-gradient(90deg, #7C3AED 0%, #A855F7 35%, #EC4899 75%, #F43F5E 100%)',
-              boxShadow: '0 10px 30px rgba(236, 72, 153, 0.45), 0 0 25px rgba(139, 92, 246, 0.35)',
+              boxShadow: '0 10px 28px rgba(236, 72, 153, 0.40), 0 0 20px rgba(124, 58, 237, 0.30)',
               border: '1.5px solid rgba(255, 255, 255, 0.65)',
             }}
           >
-            {/* Destello sutil en esquina superior derecha */}
-            <span className="absolute top-0 right-3 w-12 h-6 bg-white/20 rounded-full blur-[3px] pointer-events-none transform rotate-12"></span>
-            <span className="text-[#FBBF24] text-base">✨</span>
+            <span className="text-[#FBBF24] text-sm">✨</span>
             <span className="tracking-wide">Ver a {memorial.pet_name} en el Mural de Ángeles</span>
-            <span className="text-lg font-normal opacity-90 ml-1">›</span>
+            <span className="text-base font-normal opacity-90 ml-1">›</span>
           </Link>
 
           {/* 7. DIVISOR ELEGANTE CON CORAZÓN */}
-          <div className="flex items-center justify-center gap-3 w-full max-w-xs mb-4 opacity-50">
+          <div className="flex items-center justify-center gap-3 w-full max-w-xs mb-3.5 opacity-50">
             <div className="h-[1px] flex-1 bg-purple-300"></div>
             <span className="text-xs text-purple-400 select-none">🤍</span>
             <div className="h-[1px] flex-1 bg-purple-300"></div>
           </div>
 
-          {/* 8. BOTONES DE COMPARTIR (Exactos a Imagen 2) */}
-          <div className="w-full flex flex-col items-center mb-5">
-            <span className="text-xs font-bold text-[#6B5B7B] tracking-wide mb-3">
+          {/* 8. BOTONES DE COMPARTIR (Cápsulas homogéneas) */}
+          <div className="w-full flex flex-col items-center mb-4">
+            <span className="text-xs font-bold text-[#581C87] tracking-wide mb-2.5">
               Compartir este recuerdo
             </span>
-            <div className="flex flex-wrap gap-2.5 items-center justify-center w-full">
+            <div className="flex flex-wrap gap-2 items-center justify-center w-full">
               {/* WhatsApp */}
               <button
                 onClick={() => handleShare('whatsapp')}
-                className="flex-1 min-w-[105px] max-w-[130px] py-2.5 px-4 rounded-full text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm hover:scale-105 active:scale-95 transition-all"
-                style={{
-                  background: '#22C55E',
-                }}
+                className="flex-1 min-w-[95px] max-w-[120px] py-2 px-3 rounded-full text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm hover:scale-105 active:scale-95 transition-all"
+                style={{ background: '#22C55E' }}
                 title="Compartir por WhatsApp"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.112.551 4.095 1.517 5.823l-1.611 5.885 6.046-1.586c1.667.909 3.57 1.428 5.594 1.428 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z"/>
                 </svg>
                 <span>WhatsApp</span>
@@ -362,13 +381,11 @@ export default function MemorialClient({ slug }: { slug: string }) {
               {/* Facebook */}
               <button
                 onClick={() => handleShare('facebook')}
-                className="flex-1 min-w-[105px] max-w-[130px] py-2.5 px-4 rounded-full text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm hover:scale-105 active:scale-95 transition-all"
-                style={{
-                  background: '#2563EB',
-                }}
+                className="flex-1 min-w-[95px] max-w-[120px] py-2 px-3 rounded-full text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm hover:scale-105 active:scale-95 transition-all"
+                style={{ background: '#2563EB' }}
                 title="Compartir por Facebook"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
                 <span>Facebook</span>
@@ -377,13 +394,11 @@ export default function MemorialClient({ slug }: { slug: string }) {
               {/* Copiar Enlace */}
               <button
                 onClick={() => handleShare('copy')}
-                className="flex-1 min-w-[115px] max-w-[140px] py-2.5 px-4 rounded-full text-[#7C3AED] text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm hover:scale-105 active:scale-95 transition-all"
-                style={{
-                  background: '#EDE9FE',
-                }}
+                className="flex-1 min-w-[105px] max-w-[130px] py-2 px-3 rounded-full text-[#7C3AED] text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm hover:scale-105 active:scale-95 transition-all"
+                style={{ background: '#EDE9FE' }}
                 title="Copiar enlace"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                 </svg>
@@ -393,29 +408,29 @@ export default function MemorialClient({ slug }: { slug: string }) {
           </div>
 
           {/* 9. NOTA DE PIE DE TARJETA */}
-          <p className="text-[11px] sm:text-xs text-[#9E8FA9] italic flex items-center justify-center gap-1.5 opacity-90 select-none">
+          <p className="text-[11px] text-[#8B7A98] italic flex items-center justify-center gap-1.5 opacity-90 select-none">
             <span>🪶</span>
-            <span>Siempre serás mi lugar favorito en el mundo</span>
+            <span>Gracias por mantener vivo su recuerdo</span>
             <span>🪶</span>
           </p>
 
         </div>
       </main>
 
-      {/* 10. FOOTER TRANSLÚCIDO TIPO CÁPSULA (Exacto a Imagen 3) */}
-      <footer className="w-full flex flex-col items-center justify-center pb-6 pt-2 px-4 select-none">
+      {/* 10. FOOTER TRANSLÚCIDO TIPO CÁPSULA (Exacto a Imagen 1) */}
+      <footer className="w-full flex flex-col items-center justify-center mt-4 mb-2 px-4 select-none z-10">
         <div 
           className="px-6 py-2 rounded-full flex items-center justify-center gap-2 shadow-xs text-center"
           style={{
-            background: 'rgba(255, 255, 255, 0.45)',
+            background: 'rgba(255, 255, 255, 0.40)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255, 255, 255, 0.65)',
+            border: '1px solid rgba(255, 255, 255, 0.70)',
           }}
         >
           <span className="text-amber-400 text-xs">✨</span>
-          <p className="text-xs sm:text-sm text-[#4C1D95] italic font-serif" style={{ fontFamily: 'Georgia, serif' }}>
-            Mural de Ángeles en el Cielo · Recuerdos eternos con amor
+          <p className="text-xs sm:text-sm text-[#4A286D] italic font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            “El amor nunca se va, solo se transforma en luz.”
           </p>
           <span className="text-amber-400 text-xs">✨</span>
         </div>
