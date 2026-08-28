@@ -126,9 +126,12 @@ export default function MemorialClient({ slug }: { slug: string }) {
 
   return (
     <div 
-      className="min-h-screen flex flex-col bg-cover bg-center font-sans antialiased"
+      className="min-h-screen flex flex-col bg-cover bg-center font-sans antialiased relative"
       style={{ 
-        backgroundImage: 'linear-gradient(180deg, rgba(245,232,255,0.92) 0%, rgba(255,240,248,0.95) 100%), url("/images/mural-preview/profilecard-front.webp")',
+        backgroundImage: 'url("/images/memorial/bg-memorial-heaven.webp")',
+        backgroundPosition: 'center top',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
         backgroundAttachment: 'fixed',
       }}
     >
