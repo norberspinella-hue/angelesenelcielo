@@ -62,20 +62,30 @@ export default function MemorialClient({ slug }: { slug: string }) {
     setLoading(false)
   }
 
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return null
-    const date = new Date(dateStr)
-    return isNaN(date.getTime()) ? null : date.getFullYear()
+    const trimmed = String(dateStr).trim()
+    if (!trimmed) return null
+    if (/^\d{4}$/.test(trimmed)) return trimmed
+    const date = new Date(trimmed)
+    if (!isNaN(date.getTime())) {
+      return date.getFullYear().toString()
+    }
+    const yearMatch = trimmed.match(/\b(19\d\d|20\d\d)\b/)
+    if (yearMatch) return yearMatch[1]
+    return trimmed
   }
 
-  const birthYear = memorial?.birth_date ? formatDate(memorial.birth_date) : null
-  const deathYear = memorial?.death_date ? formatDate(memorial.death_date) : null
+  const birthYear = formatDate(memorial?.birth_date)
+  const deathYear = formatDate(memorial?.death_date)
 
-  const yearsText = birthYear && deathYear
+  const datesText = birthYear && deathYear
     ? `${birthYear} – ${deathYear}`
     : deathYear
       ? `${deathYear}`
-      : null
+      : birthYear
+        ? `${birthYear}`
+        : null
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
 
@@ -318,13 +328,10 @@ export default function MemorialClient({ slug }: { slug: string }) {
             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-pink-400"></div>
           </div>
 
-          {/* 2. METADATOS: FECHAS DE NACIMIENTO Y FALLECIMIENTO DEL DRAWER DE PAGO */}
-          {(yearsText || memorial.breed || memorial.species) && (
-            <p className="text-xs sm:text-sm text-[#7E6B8F] font-semibold mb-2.5 tracking-wide flex items-center justify-center gap-2 flex-wrap">
-              {yearsText && <span>{yearsText}</span>}
-              {yearsText && (memorial.breed || memorial.species) && <span>·</span>}
-              {memorial.breed && <span>{memorial.breed}</span>}
-              {!memorial.breed && memorial.species && <span className="capitalize">{memorial.species}</span>}
+          {/* METADATOS: ÚNICAMENTE FECHAS DE NACIMIENTO Y FALLECIMIENTO DEL DRAWER DE PAGO (Sin perro ni raza) */}
+          {datesText && (
+            <p className="text-xs sm:text-sm text-[#7E6B8F] font-semibold mb-2.5 tracking-wide flex items-center justify-center">
+              <span>{datesText}</span>
             </p>
           )}
 
