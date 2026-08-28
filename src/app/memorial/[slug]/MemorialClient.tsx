@@ -179,16 +179,16 @@ export default function MemorialClient({ slug }: { slug: string }) {
         <div className="w-24 hidden sm:block pointer-events-none" />
       </header>
 
-      {/* CONTENEDOR PRINCIPAL: TARJETA TRANSLÚCIDA CRISTAL (+25% MÁS TRANSPARENTE) */}
+      {/* CONTENEDOR PRINCIPAL: TARJETA CRISTAL ULTRA TRANSLÚCIDA */}
       <main className="flex-1 flex items-center justify-center">
         <div 
           className="w-full max-w-[460px] rounded-[40px] p-6 sm:p-8 flex flex-col items-center text-center transition-all animate-fadeIn relative z-10 overflow-hidden"
           style={{
-            background: 'rgba(255, 255, 255, 0.13)',
-            backdropFilter: 'blur(4px)',
-            WebkitBackdropFilter: 'blur(4px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.65)',
-            boxShadow: '0 20px 50px rgba(120, 70, 160, 0.12), 0 0 25px rgba(255, 255, 255, 0.25) inset',
+            background: 'rgba(255, 255, 255, 0.06)',
+            backdropFilter: 'blur(1px)',
+            WebkitBackdropFilter: 'blur(1px)',
+            border: '1.5px solid rgba(255, 255, 255, 0.55)',
+            boxShadow: '0 20px 50px rgba(120, 70, 160, 0.08), 0 0 25px rgba(255, 255, 255, 0.20) inset',
           }}
         >
           
@@ -445,10 +445,10 @@ export default function MemorialClient({ slug }: { slug: string }) {
         <div 
           className="px-6 py-2 rounded-full flex items-center justify-center gap-2 shadow-xs text-center"
           style={{
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(4px)',
-            WebkitBackdropFilter: 'blur(4px)',
-            border: '1px solid rgba(255, 255, 255, 0.60)',
+            background: 'rgba(255, 255, 255, 0.08)',
+            backdropFilter: 'blur(1px)',
+            WebkitBackdropFilter: 'blur(1px)',
+            border: '1px solid rgba(255, 255, 255, 0.50)',
           }}
         >
           <p className="text-xs sm:text-sm text-[#4A286D] italic font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
