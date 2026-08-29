@@ -235,24 +235,26 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         inset: 0,
         zIndex: 99999,
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center',
         background: 'rgba(0,0,0,0.50)',
         backdropFilter: 'blur(4px)',
         WebkitBackdropFilter: 'blur(4px)',
-        padding: '16px 10px',
+        padding: '24px 10px 48px',
         overflowY: 'auto',
         overscrollBehavior: 'contain',
+        WebkitOverflowScrolling: 'touch',
       }}
     >
       <div 
         style={{
+          margin: 'auto 0',
           width: 'min(360px, calc(100vw - 20px))',
           maxWidth: 360,
           display: 'flex',
           flexDirection: 'column',
           gap: 16,
           alignItems: 'center',
+          flexShrink: 0,
         }}
       >
         
