@@ -66,25 +66,46 @@ export default function MemorialClient({ slug }: { slug: string }) {
     if (!dateStr) return null
     const trimmed = String(dateStr).trim()
     if (!trimmed) return null
+    
+    // Si solo tiene 4 dígitos (ej: "2019")
     if (/^\d{4}$/.test(trimmed)) return trimmed
+
+    // Si es formato estándar YYYY-MM-DD
+    const parts = trimmed.split(/[-/T]/)
+    if (parts.length >= 3 && parts[0].length === 4) {
+      const year = parseInt(parts[0], 10)
+      const month = parseInt(parts[1], 10) - 1
+      const day = parseInt(parts[2], 10)
+      const localDate = new Date(year, month, day)
+      if (!isNaN(localDate.getTime())) {
+        return localDate.toLocaleDateString('es-ES', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      }
+    }
+
     const date = new Date(trimmed)
     if (!isNaN(date.getTime())) {
-      return date.getFullYear().toString()
+      return date.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
     }
-    const yearMatch = trimmed.match(/\b(19\d\d|20\d\d)\b/)
-    if (yearMatch) return yearMatch[1]
     return trimmed
   }
 
-  const birthYear = formatDate(memorial?.birth_date)
-  const deathYear = formatDate(memorial?.death_date)
+  const birthDateFormatted = formatDate(memorial?.birth_date)
+  const deathDateFormatted = formatDate(memorial?.death_date)
 
-  const datesText = birthYear && deathYear
-    ? `${birthYear} – ${deathYear}`
-    : deathYear
-      ? `${deathYear}`
-      : birthYear
-        ? `${birthYear}`
+  const datesText = birthDateFormatted && deathDateFormatted
+    ? `${birthDateFormatted} – ${deathDateFormatted}`
+    : deathDateFormatted
+      ? `${deathDateFormatted}`
+      : birthDateFormatted
+        ? `${birthDateFormatted}`
         : null
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
