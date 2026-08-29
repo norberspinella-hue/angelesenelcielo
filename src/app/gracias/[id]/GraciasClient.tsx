@@ -282,7 +282,7 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
 
           {/* Botones de acción (Aparecen al completar la carga) */}
           {!loading && (
-            <div className="flex flex-wrap gap-4 mt-8 w-full z-20">
+            <div className="flex flex-wrap items-center gap-4 mt-8 w-full z-20">
               <button
                 onClick={() => {
                   if (slotId) {
@@ -294,24 +294,17 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
                     router.push('/mural-global')
                   }
                 }}
-                style={{
-                  padding: '14px 28px',
-                  borderRadius: 999,
-                  border: 'none',
-                  background: 'linear-gradient(90deg, #ff82ad, #ec5f96)',
-                  color: '#fff',
-                  fontWeight: 700,
-                  fontSize: 16,
-                  cursor: 'pointer',
-                  boxShadow: '0 8px 24px rgba(236,95,150,0.35)',
-                }}
+                className="heaven-cta-btn"
+                style={{ padding: '14px 32px' }}
               >
-                Ver en el mural ✦
+                <span className="cta-icon text-lg select-none">🤍</span>
+                <span className="font-semibold">Ver en el mural</span>
               </button>
               
               <Link 
                 href="/" 
-                className="px-8 py-4 rounded-full bg-white/80 border border-[#DCA257]/40 text-[#1E2A78] font-bold text-base hover:bg-white transition-colors"
+                className="btn-secondary-heaven !text-[#1E2A78] !font-medium"
+                style={{ minHeight: '52px', padding: '0 28px' }}
               >
                 Volver al inicio
               </Link>
