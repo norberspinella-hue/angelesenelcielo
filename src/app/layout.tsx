@@ -21,10 +21,10 @@ export const metadata: Metadata = {
   description: "Una experiencia memorial digital para mascotas fallecidas. Cada foto guarda una historia. Cada historia deja una huella.",
   icons: {
     icon: [
-      { url: '/images/icons/Logoheart.svg', type: 'image/svg+xml' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
     ],
-    shortcut: '/images/icons/Logoheart.svg',
-    apple: '/images/icons/Logoheart.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
   },
 };
 
