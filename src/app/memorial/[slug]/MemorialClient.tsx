@@ -149,40 +149,41 @@ export default function MemorialClient({ slug }: { slug: string }) {
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Playfair+Display:ital,wght@0,600;0,700;1,500;1,600;1,700&display=swap" />
 
       {/* HEADER SUPERIOR CELESTIAL */}
-      <header className="w-full max-w-3xl mx-auto flex items-center justify-between py-2 px-2 mb-4 z-20">
+      <header className="w-full max-w-3xl mx-auto flex items-center justify-between py-2 px-2 mb-3 sm:mb-4 z-20">
         <Link 
           href="/mural-global" 
-          className="text-xs sm:text-sm font-semibold text-[#581C87] hover:text-[#7C3AED] transition-colors flex items-center gap-1.5 opacity-90"
+          className="text-xs sm:text-sm font-semibold text-[#581C87] hover:text-[#7C3AED] transition-colors flex items-center gap-1 opacity-90 shrink-0"
         >
           <span>←</span>
-          <span>Volver al Mural</span>
+          <span className="hidden xs:inline sm:inline">Volver al Mural</span>
+          <span className="xs:hidden sm:hidden">Mural</span>
         </Link>
 
         {/* LOGO CENTRAL Y TÍTULO */}
-        <div className="flex flex-col items-center text-center -my-2">
+        <div className="flex flex-col items-center text-center -my-2 flex-1">
           <img 
             src="/images/icons/Logoheart.svg" 
             alt="Ángeles en el Cielo" 
-            className="h-[96px] sm:h-[112px] object-contain -my-4" 
+            className="h-[80px] sm:h-[112px] object-contain -my-3 sm:-my-4" 
           />
-          <h2 className="text-base sm:text-lg font-bold text-[#4A286D] tracking-tight font-serif italic" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h2 className="text-sm sm:text-lg font-bold text-[#4A286D] tracking-tight font-serif italic" style={{ fontFamily: "'Playfair Display', serif" }}>
             Ángeles en el Cielo
           </h2>
-          <p className="text-[10px] sm:text-[11px] text-[#A855F7] font-medium tracking-wide flex items-center justify-center gap-1.5 mt-0.5">
-            <span className="text-[11px] text-pink-400 select-none">🩷</span>
+          <p className="text-[9px] sm:text-[11px] text-[#A855F7] font-medium tracking-wide flex items-center justify-center gap-1 mt-0.5">
+            <span className="text-[10px] sm:text-[11px] text-pink-400 select-none">🩷</span>
             <span>Todos los perros van al cielo</span>
-            <span className="text-[11px] text-pink-400 select-none">🩷</span>
+            <span className="text-[10px] sm:text-[11px] text-pink-400 select-none">🩷</span>
           </p>
         </div>
 
         {/* Espacio invisible de balance para centrado simétrico */}
-        <div className="w-24 hidden sm:block pointer-events-none" />
+        <div className="w-12 sm:w-24 pointer-events-none shrink-0" />
       </header>
 
       {/* CONTENEDOR PRINCIPAL: TARJETA CRISTAL ULTRA TRANSLÚCIDA */}
       <main className="flex-1 flex items-center justify-center">
         <div 
-          className="w-full max-w-[460px] rounded-[40px] p-6 sm:p-8 flex flex-col items-center text-center transition-all animate-fadeIn relative z-10 overflow-hidden"
+          className="w-full max-w-[460px] rounded-[32px] sm:rounded-[40px] p-5 sm:p-8 flex flex-col items-center text-center transition-all animate-fadeIn relative z-10 overflow-hidden"
           style={{
             background: 'rgba(255, 255, 255, 0.06)',
             backdropFilter: 'blur(1px)',
@@ -192,26 +193,26 @@ export default function MemorialClient({ slug }: { slug: string }) {
           }}
         >
           
-          {/* MARIPOSAS DENTRO DE LA TARJETA (+25% más grandes) */}
-          <div className="absolute top-14 left-3 w-[60px] h-[60px] pointer-events-none opacity-90 select-none z-10">
+          {/* MARIPOSAS DENTRO DE LA TARJETA */}
+          <div className="absolute top-14 left-3 w-[50px] sm:w-[60px] h-[50px] sm:h-[60px] pointer-events-none opacity-90 select-none z-10">
             <img src="/images/icons/butterfly1.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-15 drop-shadow-xs" />
           </div>
-          <div className="absolute top-12 right-3 w-[55px] h-[55px] pointer-events-none opacity-85 select-none z-10">
+          <div className="absolute top-12 right-3 w-[45px] sm:w-[55px] h-[45px] sm:h-[55px] pointer-events-none opacity-85 select-none z-10">
             <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain rotate-20 drop-shadow-xs" />
           </div>
-          <div className="absolute top-[275px] left-2.5 w-[45px] h-[45px] pointer-events-none opacity-80 select-none z-10">
+          <div className="absolute top-[260px] sm:top-[275px] left-2.5 w-[38px] sm:w-[45px] h-[38px] sm:h-[45px] pointer-events-none opacity-80 select-none z-10">
             <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-25 drop-shadow-xs" />
           </div>
-          <div className="absolute top-[285px] right-3 w-[45px] h-[45px] pointer-events-none opacity-85 select-none z-10">
+          <div className="absolute top-[270px] sm:top-[285px] right-3 w-[38px] sm:w-[45px] h-[38px] sm:h-[45px] pointer-events-none opacity-85 select-none z-10">
             <img src="/images/icons/butterfly1.svg" alt="Butterfly" className="w-full h-full object-contain rotate-15 drop-shadow-xs" />
           </div>
-          <div className="absolute bottom-28 right-3.5 w-[50px] h-[50px] pointer-events-none opacity-85 select-none z-10">
+          <div className="absolute bottom-24 sm:bottom-28 right-3.5 w-[42px] sm:w-[50px] h-[42px] sm:h-[50px] pointer-events-none opacity-85 select-none z-10">
             <img src="/images/icons/butterfly2.svg" alt="Butterfly" className="w-full h-full object-contain -rotate-10 drop-shadow-xs" />
           </div>
 
-          {/* TOP PILL BADGE: Mi angelito (Exacto a la imagen) */}
+          {/* TOP PILL BADGE: Mi angelito */}
           <div 
-            className="mb-5 inline-flex items-center justify-center px-5 py-1.5 rounded-full shadow-xs backdrop-blur-xs select-none"
+            className="mb-4 sm:mb-5 inline-flex items-center justify-center px-4 sm:px-5 py-1 sm:py-1.5 rounded-full shadow-xs backdrop-blur-xs select-none"
             style={{
               background: 'rgba(254, 237, 214, 0.85)',
               border: '1px solid rgba(251, 191, 36, 0.40)',
@@ -225,7 +226,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
             </span>
           </div>
 
-          {/* 4. MEDALLÓN CELESTIAL DE LA FOTO (20% MÁS GRANDE) */}
+          {/* MEDALLÓN CELESTIAL DE LA FOTO */}
           <div className="relative mb-3 flex items-center justify-center">
             
             {/* HALO LUMINOSO DE LUZ DORADA */}
@@ -286,7 +287,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
               }}
             />
 
-            {/* 5. 3 PUNTOS CON RESPLANDOR BLANCO EN EL BORDE */}
+            {/* PUNTOS CON RESPLANDOR BLANCO EN EL BORDE */}
             <div className="absolute top-2 left-6 w-3 h-3 z-30 pointer-events-none">
               <div className="w-full h-full bg-white rounded-full shadow-[0_0_10px_3px_rgba(255,255,255,1),0_0_18px_6px_rgba(255,255,255,0.8)] animate-pulse" />
             </div>
@@ -297,8 +298,8 @@ export default function MemorialClient({ slug }: { slug: string }) {
               <div className="w-full h-full bg-white rounded-full shadow-[0_0_8px_2px_rgba(255,255,255,1),0_0_15px_5px_rgba(255,255,255,0.7)] animate-pulse" />
             </div>
 
-            {/* CÍRCULO FOTO (20% más grande: 215px) */}
-            <div className="w-52 h-52 sm:w-56 sm:h-56 rounded-full overflow-hidden border-[3.5px] border-[#D4AF37] shadow-[0_10px_30px_rgba(180,140,80,0.30)] relative z-10 bg-purple-50">
+            {/* CÍRCULO FOTO (Adaptable en pantallas móviles pequeñas) */}
+            <div className="w-48 h-48 sm:w-56 sm:h-56 rounded-full overflow-hidden border-[3.5px] border-[#D4AF37] shadow-[0_10px_30px_rgba(180,140,80,0.30)] relative z-10 bg-purple-50">
               <img
                 src={memorial.photo_url || '/images/placeholders/first.webp'}
                 alt={memorial.pet_name}
@@ -307,9 +308,9 @@ export default function MemorialClient({ slug }: { slug: string }) {
             </div>
           </div>
 
-          {/* 1. NOMBRE CON FUENTE RECUPERADA (Pinyon Script) */}
+          {/* NOMBRE CON FUENTE Pinyon Script (Escalable para nombres largos) */}
           <h1 
-            className="text-7xl sm:text-8xl mb-0.5 font-normal select-none leading-none tracking-tight"
+            className="text-6xl sm:text-8xl mb-0.5 font-normal select-none leading-none tracking-tight break-words max-w-full px-2"
             style={{ 
               fontFamily: "'Pinyon Script', cursive",
               background: 'linear-gradient(135deg, #6B21A8 0%, #9333EA 50%, #C026D3 100%)',
@@ -328,14 +329,14 @@ export default function MemorialClient({ slug }: { slug: string }) {
             <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-pink-400"></div>
           </div>
 
-          {/* METADATOS: ÚNICAMENTE FECHAS DE NACIMIENTO Y FALLECIMIENTO DEL DRAWER DE PAGO (Sin perro ni raza) */}
+          {/* METADATOS: FECHAS DE NACIMIENTO Y FALLECIMIENTO */}
           {datesText && (
             <p className="text-xs sm:text-sm text-[#7E6B8F] font-semibold mb-2.5 tracking-wide flex items-center justify-center">
               <span>{datesText}</span>
             </p>
           )}
 
-          {/* 5. DEDICATORIA */}
+          {/* DEDICATORIA */}
           <div className="max-w-xs sm:max-w-sm mb-2 px-2">
             <blockquote 
               className="text-xs sm:text-sm text-[#4A3F6B] italic leading-relaxed font-serif"
@@ -345,24 +346,24 @@ export default function MemorialClient({ slug }: { slug: string }) {
             </blockquote>
           </div>
 
-          {/* 9. SU LUZ YA FORMA PARTE DEL MURAL (Fuente color lila) */}
-          <p className="text-xs text-[#7C3AED] font-medium mb-4 flex items-center justify-center gap-1.5">
+          {/* SU LUZ YA FORMA PARTE DEL MURAL */}
+          <p className="text-[11px] sm:text-xs text-[#7C3AED] font-medium mb-3.5 sm:mb-4 flex items-center justify-center gap-1.5">
             <span>Su luz ya forma parte del Mural de Ángeles.</span>
           </p>
 
           {/* BOTÓN CTA PRINCIPAL */}
           <Link
             href={muralUrl}
-            className="w-full py-3.5 px-5 rounded-full text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] mb-3.5 select-none relative overflow-hidden"
+            className="w-full py-3 sm:py-3.5 px-4 sm:px-5 rounded-full text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] mb-3.5 select-none relative overflow-hidden"
             style={{
               background: 'linear-gradient(90deg, #7C3AED 0%, #A855F7 35%, #EC4899 75%, #F43F5E 100%)',
               boxShadow: '0 10px 28px rgba(236, 72, 153, 0.40), 0 0 20px rgba(124, 58, 237, 0.30)',
               border: '1.5px solid rgba(255, 255, 255, 0.65)',
             }}
           >
-            <span className="text-[#FBBF24] text-sm">✨</span>
-            <span className="tracking-wide">Ver a {memorial.pet_name} en el Mural de Ángeles</span>
-            <span className="text-base font-normal opacity-90 ml-1">›</span>
+            <span className="text-[#FBBF24] text-xs sm:text-sm">✨</span>
+            <span className="tracking-wide">Ver a {memorial.pet_name} en el Mural</span>
+            <span className="text-sm sm:text-base font-normal opacity-90 ml-0.5">›</span>
           </Link>
 
           {/* DIVISOR ELEGANTE CON CORAZÓN */}
@@ -372,16 +373,16 @@ export default function MemorialClient({ slug }: { slug: string }) {
             <div className="h-[1px] flex-1 bg-purple-300"></div>
           </div>
 
-          {/* 3. BOTONES DE COMPARTIR (Título con color #7C3AED idéntico a la frase anterior) */}
+          {/* BOTONES DE COMPARTIR */}
           <div className="w-full flex flex-col items-center mb-3">
-            <span className="text-xs font-bold text-[#7C3AED] tracking-wide mb-2.5">
+            <span className="text-xs font-bold text-[#7C3AED] tracking-wide mb-2 sm:mb-2.5">
               Compartir este recuerdo
             </span>
-            <div className="grid grid-cols-3 gap-2 sm:gap-2.5 items-center w-full max-w-sm">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 items-center w-full max-w-sm">
               {/* WhatsApp */}
               <button
                 onClick={() => handleShare('whatsapp')}
-                className="w-full py-2.5 px-2 sm:px-3 rounded-full text-white text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 select-none relative overflow-hidden whitespace-nowrap shadow-sm"
+                className="w-full py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-full text-white text-[10px] sm:text-xs font-bold flex items-center justify-center gap-1 sm:gap-1.5 transition-all hover:scale-105 active:scale-95 select-none relative overflow-hidden whitespace-nowrap shadow-sm"
                 style={{
                   background: 'radial-gradient(ellipse at 35% 0%, #4ADE80 0%, #22C55E 55%, #16A34A 100%)',
                   boxShadow: '0 4px 14px rgba(34, 197, 94, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.45)',
@@ -389,7 +390,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
                 }}
                 title="Compartir por WhatsApp"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
                   <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.112.551 4.095 1.517 5.823l-1.611 5.885 6.046-1.586c1.667.909 3.57 1.428 5.594 1.428 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z"/>
                 </svg>
                 <span>WhatsApp</span>
@@ -398,7 +399,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
               {/* Facebook */}
               <button
                 onClick={() => handleShare('facebook')}
-                className="w-full py-2.5 px-2 sm:px-3 rounded-full text-white text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 select-none relative overflow-hidden whitespace-nowrap shadow-sm"
+                className="w-full py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-full text-white text-[10px] sm:text-xs font-bold flex items-center justify-center gap-1 sm:gap-1.5 transition-all hover:scale-105 active:scale-95 select-none relative overflow-hidden whitespace-nowrap shadow-sm"
                 style={{
                   background: 'radial-gradient(ellipse at 35% 0%, #60A5FA 0%, #2563EB 55%, #1D4ED8 100%)',
                   boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35), inset 0 1.5px 2px rgba(255, 255, 255, 0.45)',
@@ -406,7 +407,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
                 }}
                 title="Compartir por Facebook"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
                 <span>Facebook</span>
@@ -415,7 +416,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
               {/* Copiar Enlace */}
               <button
                 onClick={() => handleShare('copy')}
-                className="w-full py-2.5 px-2 sm:px-3 rounded-full text-[#7C3AED] text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1.5 transition-all hover:scale-105 active:scale-95 select-none whitespace-nowrap shadow-sm"
+                className="w-full py-2 sm:py-2.5 px-1.5 sm:px-3 rounded-full text-[#7C3AED] text-[10px] sm:text-xs font-bold flex items-center justify-center gap-1 sm:gap-1.5 transition-all hover:scale-105 active:scale-95 select-none whitespace-nowrap shadow-sm"
                 style={{
                   background: 'rgba(237, 233, 254, 0.95)',
                   boxShadow: '0 4px 12px rgba(124, 58, 237, 0.10), inset 0 1px 2px rgba(255, 255, 255, 0.90)',
@@ -423,17 +424,17 @@ export default function MemorialClient({ slug }: { slug: string }) {
                 }}
                 title="Copiar enlace"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                 </svg>
-                <span>{copied ? '✓ Copiado' : 'Copiar enlace'}</span>
+                <span>{copied ? '✓ Copiado' : 'Copiar'}</span>
               </button>
             </div>
           </div>
 
-          {/* 4. NOTA DE PIE DE TARJETA (Texto modificado, SIN cursiva) */}
-          <p className="text-xs text-[#7C3AED] font-medium opacity-90 select-none">
+          {/* NOTA DE PIE DE TARJETA */}
+          <p className="text-[11px] sm:text-xs text-[#7C3AED] font-medium opacity-90 select-none">
             Gracias por darle a tu angelito un lugar en el cielo
           </p>
 
