@@ -19,9 +19,17 @@ export function Header() {
         <Link href="#como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
         <Link href="#planes" className="heaven-nav-link text-sm">Opciones</Link>
         <div className="flex items-center gap-1.5 cursor-default group" title="Tienda de recuerdos conmemorativos (Próximamente)">
-          <span className="heaven-nav-link text-sm opacity-75 group-hover:opacity-100 transition-opacity">Tienda</span>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-[#F472B6] to-[#EC4899] text-white shadow-xs tracking-wide select-none">
-            Pronto
+          <span className="heaven-nav-link text-sm opacity-80 group-hover:opacity-100 transition-opacity">Tienda</span>
+          <span 
+            className="text-[10px] font-bold px-2.5 py-0.5 rounded-full text-white tracking-wide select-none inline-flex items-center gap-1 -rotate-3 group-hover:rotate-0 transition-transform duration-200"
+            style={{
+              background: 'linear-gradient(135deg, #F472B6 0%, #EC4899 50%, #E11D48 100%)',
+              border: '1.5px solid rgba(255, 255, 255, 0.90)',
+              boxShadow: '0 2px 8px rgba(236, 72, 153, 0.35), inset 0 1px 1.5px rgba(255, 255, 255, 0.60)',
+            }}
+          >
+            <span className="text-[9px] select-none">✨</span>
+            <span>Muy pronto</span>
           </span>
         </div>
       </nav>
