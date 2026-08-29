@@ -213,15 +213,14 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         background: 'rgba(0,0,0,0.50)',
         backdropFilter: 'blur(4px)',
         WebkitBackdropFilter: 'blur(4px)',
-        padding: 20,
+        padding: '16px 10px',
         overflowY: 'auto',
         overscrollBehavior: 'contain',
       }}
     >
       <div 
         style={{
-          width: 360,
-          minWidth: 360,
+          width: 'min(360px, calc(100vw - 20px))',
           maxWidth: 360,
           display: 'flex',
           flexDirection: 'column',
@@ -237,6 +236,10 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
             position: 'relative',
             width: 360,
             height: 500,
+            maxWidth: '100%',
+            transform: 'scale(min(1, calc((100vw - 20px) / 360)))',
+            transformOrigin: 'top center',
+            marginBottom: 'calc((min(1, calc((100vw - 20px) / 360)) - 1) * 500px)',
             perspective: '1000px',
             cursor: 'pointer',
             userSelect: 'none',
@@ -770,11 +773,9 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
         {/* TARJETA 2 — COMPARTIR */}
         <div 
-          className="rounded-[24px] border border-[rgba(255,255,255,0.65)] shadow-[0_12px_40px_rgba(30,10,50,0.15)] p-[24px_20px] flex flex-col items-center overflow-hidden"
+          className="rounded-[24px] border border-[rgba(255,255,255,0.65)] shadow-[0_12px_40px_rgba(30,10,50,0.15)] p-4 sm:p-[24px_20px] flex flex-col items-center overflow-hidden w-full max-w-[360px]"
           style={{
-            width: 360,
-            minWidth: 360,
-            maxWidth: 360,
+            width: 'min(360px, calc(100vw - 20px))',
             position: 'relative',
             flexShrink: 0,
             background: 'linear-gradient(180deg, rgba(255, 230, 235, 0.85) 0%, rgba(250, 200, 215, 0.85) 100%)',
