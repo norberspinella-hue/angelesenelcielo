@@ -223,7 +223,13 @@ p,
   z-index: 5;
   width: min(1160px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 140px 0 150px;
+  padding: 100px 0 60px;
+}
+
+@media (min-width: 768px) {
+  .heaven-hero-content {
+    padding: 140px 0 150px;
+  }
 }
 
 .heaven-eyebrow {

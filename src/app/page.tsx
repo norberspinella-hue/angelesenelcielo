@@ -43,7 +43,7 @@ export default function AngelesEnElCieloLanding() {
 
             <a 
               href="/mural-global"
-              className="block relative w-[min(1120px,calc(100%-32px))] aspect-[16/9] sm:aspect-[3/1] min-h-[160px] mx-auto rounded-[24px] overflow-hidden shadow-sm"
+              className="block relative w-[min(1120px,calc(100%-32px))] aspect-[3/1] mx-auto rounded-[16px] sm:rounded-[24px] overflow-hidden shadow-sm"
             >
               <Image
                 src="/images/icons/plans/angeles_fundadores_banner_1200x400.webp"
@@ -68,7 +68,7 @@ export default function AngelesEnElCieloLanding() {
                 Preserva su historia en pocos minutos
               </p>
             </div>
-            <div className="relative w-[min(1120px,calc(100%-32px))] aspect-[16/9] sm:aspect-[3/1] min-h-[160px] mx-auto rounded-[24px] overflow-hidden shadow-sm">
+            <div className="relative w-[min(1120px,calc(100%-32px))] aspect-[3/1] mx-auto rounded-[16px] sm:rounded-[24px] overflow-hidden shadow-sm">
               <Image
                 src="/images/icons/plans/como_funciona_mural_angeles.webp"
                 alt="Cómo funciona el mural de ángeles"
