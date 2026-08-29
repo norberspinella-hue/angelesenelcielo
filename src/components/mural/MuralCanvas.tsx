@@ -255,6 +255,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               transformStyle: 'preserve-3d',
               transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
               transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+              willChange: 'transform',
               flexShrink: 0,
             }}
           >
@@ -274,6 +275,9 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 backgroundPosition: 'center',
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
+                transform: 'translateZ(0)',
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
               }}
             >
               {/* 1. Botón X de cerrar */}
@@ -371,6 +375,12 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   filter: 'drop-shadow(0 1px 1px rgba(255,255,255,0.70)) drop-shadow(0 2px 4px rgba(110,70,15,0.30))',
                   padding: '0 16px',
                   margin: 0,
+                  transform: 'translateZ(1px)',
+                  WebkitFontSmoothing: 'antialiased',
+                  MozOsxFontSmoothing: 'grayscale',
+                  textRendering: 'optimizeLegibility',
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
                 }}
               >
                 {loading ? '' : (petData?.pet_name || '')}
@@ -655,7 +665,9 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 backgroundColor: '#f5e8ff',
                 backfaceVisibility: 'hidden',
                 WebkitBackfaceVisibility: 'hidden',
-                transform: 'rotateY(180deg)',
+                transform: 'rotateY(180deg) translateZ(0)',
+                WebkitFontSmoothing: 'antialiased',
+                MozOsxFontSmoothing: 'grayscale',
                 boxSizing: 'border-box',
                 padding: '20px 24px 32px',
                 display: 'flex',
