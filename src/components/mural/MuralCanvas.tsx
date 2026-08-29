@@ -60,8 +60,14 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
     const dataUrl = await toPng(frontFaceRef.current, {
       pixelRatio: 2,
       cacheBust: true,
+      width: 360,
+      height: 500,
       style: {
         transform: 'none',
+        width: '360px',
+        height: '500px',
+        maxWidth: '360px',
+        minWidth: '360px',
         visibility: 'visible',
         backfaceVisibility: 'visible',
       },
@@ -86,8 +92,14 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
     const dataUrl = await toPng(backFaceRef.current, {
       pixelRatio: 2,
       cacheBust: true,
+      width: 360,
+      height: 500,
       style: {
         transform: 'none',
+        width: '360px',
+        height: '500px',
+        maxWidth: '360px',
+        minWidth: '360px',
         visibility: 'visible',
         backfaceVisibility: 'visible',
       },
@@ -615,9 +627,11 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     margin: '0 0 12px 0',
                     lineHeight: 1.35,
                     fontSynthesis: 'none',
+                    textAlign: 'center',
                   }}
                 >
-                  Siempre serás mi<br />lugar favorito en el mundo
+                  <span style={{ display: 'block', whiteSpace: 'nowrap' }}>Siempre serás mi</span>
+                  <span style={{ display: 'block', whiteSpace: 'nowrap' }}>lugar favorito en el mundo</span>
                 </p>
                 <div 
                   style={{
@@ -632,6 +646,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                     color: '#584582',
                     opacity: 0.9,
                     marginTop: '2px',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   <span>Ángeles en el Cielo</span>
