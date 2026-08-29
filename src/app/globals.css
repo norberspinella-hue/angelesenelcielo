@@ -133,18 +133,27 @@ p,
 
 .heaven-header {
   position: absolute;
-  top: 16px;
+  top: 12px;
   left: 0;
   right: 0;
   z-index: 80;
   margin: 0 auto;
-  width: min(1180px, calc(100% - 32px));
-  min-height: 78px;
+  width: min(1180px, calc(100% - 24px));
+  min-height: 60px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 248, 244, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.82);
+  background: rgba(255, 248, 244, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   box-shadow: 0 14px 40px rgba(112, 106, 149, 0.12);
   backdrop-filter: blur(18px);
+}
+
+@media (min-width: 768px) {
+  .heaven-header {
+    top: 16px;
+    width: min(1180px, calc(100% - 32px));
+    min-height: 78px;
+    background: rgba(255, 248, 244, 0.78);
+  }
 }
 
 .heaven-nav-link {
@@ -223,7 +232,7 @@ p,
   z-index: 5;
   width: min(1160px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 100px 0 60px;
+  padding: 135px 0 60px;
 }
 
 @media (min-width: 768px) {
