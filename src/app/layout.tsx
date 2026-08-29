@@ -19,6 +19,13 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Ángeles en el Cielo | Todas las mascotas van al cielo",
   description: "Una experiencia memorial digital para mascotas fallecidas. Cada foto guarda una historia. Cada historia deja una huella.",
+  icons: {
+    icon: [
+      { url: '/images/icons/Logoheart.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/images/icons/Logoheart.svg',
+    apple: '/images/icons/Logoheart.svg',
+  },
 };
 
 export default function RootLayout({
