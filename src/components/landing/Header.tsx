@@ -14,10 +14,16 @@ export function Header() {
           <span>el Cielo</span>
         </div>
       </div>
-      <nav className="hidden md:flex items-center gap-8">
+      <nav className="hidden md:flex items-center gap-7 lg:gap-8">
         <Link href="#el-mural" className="heaven-nav-link text-sm">El Mural</Link>
         <Link href="#como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
         <Link href="#planes" className="heaven-nav-link text-sm">Opciones</Link>
+        <div className="flex items-center gap-1.5 cursor-default group" title="Tienda de recuerdos conmemorativos (Próximamente)">
+          <span className="heaven-nav-link text-sm opacity-75 group-hover:opacity-100 transition-opacity">Tienda</span>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-[#F472B6] to-[#EC4899] text-white shadow-xs tracking-wide select-none">
+            Pronto
+          </span>
+        </div>
       </nav>
     </header>
   );
