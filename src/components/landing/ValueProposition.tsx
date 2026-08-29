@@ -3,17 +3,17 @@ import Image from 'next/image';
 export function ValueProposition() {
   return (
     <section id="como-funciona" className="value-proposition-section">
-      <div className="section-header text-center mb-12 px-6">
+      <div className="section-header text-center mb-8 sm:mb-12 px-4 sm:px-6">
         <h2 className="section-title text-[#1E2A78]">Comparte la historia de tu peque</h2>
         <p className="text-[#706A95] max-w-2xl mx-auto mt-4 section-subtitle">
-          Honra la vida de tu angelito, manten vivo su recuerdo para siempre<br />en el mural más grande del mundo
+          Honra la vida de tu angelito, manten vivo su recuerdo para siempre<br className="hidden sm:inline" /> en el mural más grande del mundo
         </p>
-        <p className="text-[#1E2A78] font-semibold mt-4 text-lg">
+        <p className="text-[#1E2A78] font-semibold mt-4 text-base sm:text-lg">
           Explica al mundo como era tu peque:
         </p>
       </div>
       
-      <div className="grid md:grid-cols-4 gap-6 max-w-[1200px] mx-auto px-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 max-w-[1200px] mx-auto px-4 sm:px-6">
         
         {/* Card 1 */}
         <div className="value-proposition-card relative overflow-hidden text-center transition-shadow hover:shadow-md group">
