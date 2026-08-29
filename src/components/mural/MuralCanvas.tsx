@@ -167,7 +167,26 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
   const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return '';
-    const date = new Date(dateStr);
+    const trimmed = String(dateStr).trim();
+    if (!trimmed) return '';
+    if (/^\d{4}$/.test(trimmed)) return trimmed;
+
+    const parts = trimmed.split(/[-/T]/);
+    if (parts.length >= 3 && parts[0].length === 4) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      const localDate = new Date(year, month, day);
+      if (!isNaN(localDate.getTime())) {
+        return localDate.toLocaleDateString('es-ES', { 
+          day: 'numeric', 
+          month: 'long', 
+          year: 'numeric' 
+        });
+      }
+    }
+
+    const date = new Date(trimmed);
     if (isNaN(date.getTime())) return '';
     return date.toLocaleDateString('es-ES', { 
       day: 'numeric', 
@@ -178,6 +197,14 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
 
   const birthStr = formatDate(petData?.birth_date);
   const deathStr = formatDate(petData?.death_date);
+
+  const datesStr = birthStr && deathStr 
+    ? `${birthStr} – ${deathStr}` 
+    : deathStr 
+      ? `${deathStr}` 
+      : birthStr 
+        ? `${birthStr}` 
+        : '';
 
   const slotsCount = petData?.slots_count ||
     (planType === 'recuerdo_eterno' ? 9 : 
@@ -681,7 +708,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <img 
                 src="/images/icons/Logoheart.svg"
                 alt=""
-                style={{ width: 128, height: 128, marginBottom: 12 }}
+                style={{ width: 108, height: 108, marginBottom: 8 }}
               />
 
               {/* Título */}
@@ -691,11 +718,26 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 fontSize: '18px',
                 fontWeight: 700,
                 color: '#4A3F6B',
-                marginBottom: '16px',
+                marginBottom: '4px',
                 margin: 0,
               }}>
                 Historia de amor
               </h3>
+
+              {/* Fechas en formato completo en español */}
+              {datesStr && (
+                <p style={{
+                  fontSize: '12px',
+                  color: '#8A7B9B',
+                  fontFamily: 'sans-serif',
+                  fontWeight: 600,
+                  margin: '0 0 10px 0',
+                  lineHeight: 1.4,
+                  textAlign: 'center',
+                }}>
+                  {datesStr}
+                </p>
+              )}
 
               {/* Dedicatoria */}
               <div 
@@ -708,7 +750,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                   borderLeft: '3px solid rgba(236,111,163,0.40)',
                   paddingLeft: '16px',
                   textAlign: 'left',
-                  maxHeight: '160px',
+                  maxHeight: '150px',
                   overflowY: 'auto',
                   width: '100%',
                   boxSizing: 'border-box',
