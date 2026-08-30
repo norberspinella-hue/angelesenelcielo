@@ -22,9 +22,10 @@ export function Header() {
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-7 lg:gap-8">
-        <Link href="#el-mural" className="heaven-nav-link text-sm">El Mural</Link>
-        <Link href="#como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
-        <Link href="#planes" className="heaven-nav-link text-sm">Opciones</Link>
+        <Link href="/#el-mural" className="heaven-nav-link text-sm">El Mural</Link>
+        <Link href="/#como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
+        <Link href="/#planes" className="heaven-nav-link text-sm">Opciones</Link>
+        <Link href="/contacto" className="heaven-nav-link text-sm">Contacto</Link>
         <div className="relative inline-flex flex-col items-center justify-center cursor-default group" title="Tienda de recuerdos conmemorativos (Próximamente)">
           <span 
             className="absolute -top-3 left-1/2 -translate-x-1/2 text-[8.5px] font-bold px-2 py-0.5 rounded-full text-white tracking-wider select-none inline-flex items-center gap-0.5 rotate-6 group-hover:rotate-2 transition-transform duration-200 z-10 whitespace-nowrap"
@@ -62,25 +63,32 @@ export function Header() {
       {isMenuOpen && (
         <div className="absolute top-[calc(100%+10px)] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-[24px] border border-white/80 shadow-[0_16px_40px_rgba(30,42,120,0.18)] p-6 flex flex-col gap-4 items-center md:hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <Link 
-            href="#el-mural" 
+            href="/#el-mural" 
             onClick={() => setIsMenuOpen(false)}
             className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
           >
             El Mural
           </Link>
           <Link 
-            href="#como-funciona" 
+            href="/#como-funciona" 
             onClick={() => setIsMenuOpen(false)}
             className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
           >
             Cómo funciona
           </Link>
           <Link 
-            href="#planes" 
+            href="/#planes" 
             onClick={() => setIsMenuOpen(false)}
             className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
           >
             Opciones
+          </Link>
+          <Link 
+            href="/contacto" 
+            onClick={() => setIsMenuOpen(false)}
+            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
+          >
+            Contacto
           </Link>
           
           <div className="flex items-center gap-2 pt-2 border-t border-gray-100 w-full justify-center">
