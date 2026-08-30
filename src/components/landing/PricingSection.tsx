@@ -92,6 +92,26 @@ export function PricingSection() {
           </div>
         </div>
       </div>
+
+      {/* Aclaración para empresas */}
+      <p className="text-center italic mt-10 text-sm sm:text-base font-medium text-[#8B6BB5] tracking-wide">
+        Si eres empresa y quieres un espacio, contacta vía{' '}
+        <a 
+          href="https://wa.me/34690196207?text=Hola,%20somos%20una%20empresa%20y%20nos%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20un%20espacio%20en%20el%20mural%20de%20%C3%81ngeles%20en%20el%20Cielo"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-[#6D4C99] transition-colors"
+        >
+          whatsapp
+        </a>{' '}
+        o{' '}
+        <Link 
+          href="/contacto" 
+          className="underline hover:text-[#6D4C99] transition-colors"
+        >
+          email
+        </Link>.
+      </p>
     </section>
   );
 }
