@@ -1,14 +1,30 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
+
 export function WhatsAppButton() {
+  const pathname = usePathname();
   const phoneNumber = '34690196207';
   const defaultMessage = 'Hola, tengo una consulta sobre el memorial de Ángeles en el Cielo 🐾';
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(defaultMessage)}`;
 
+  const isMural = pathname === '/mural-global';
+
   return (
-    <aside aria-label="Atención por WhatsApp" className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 group">
+    <aside 
+      aria-label="Atención por WhatsApp" 
+      className={`fixed z-40 group transition-all duration-300 ${
+        isMural 
+          ? 'bottom-4 left-3 sm:bottom-8 sm:left-6' 
+          : 'bottom-5 right-5 sm:bottom-6 sm:right-6'
+      }`}
+    >
       {/* Tooltip visible on desktop hover */}
-      <span className="hidden sm:block absolute right-full top-1/2 -translate-y-1/2 mr-3 px-3 py-1.5 rounded-xl bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-lg border border-slate-700/60">
+      <span 
+        className={`hidden sm:block absolute top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none shadow-lg border border-slate-700/60 ${
+          isMural ? 'left-full ml-3' : 'right-full mr-3'
+        }`}
+      >
         ¿Hablamos por WhatsApp? 💬
       </span>
 

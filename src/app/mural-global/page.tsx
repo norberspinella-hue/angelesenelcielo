@@ -236,11 +236,11 @@ export default function MuralGlobalPage() {
   };
 
   return (
-    <main className="mural-page font-inter fixed inset-0 w-screen h-screen overflow-hidden">
+    <main className="mural-page font-inter fixed inset-0 w-full h-[100dvh] overflow-hidden">
 
       {/* Canvas Wrapper (Full screen en móvil, adaptado en desktop) */}
       <div 
-        className="mural-canvas-wrapper absolute z-0 rounded-2xl overflow-hidden top-[66px] bottom-3 left-2 right-2 md:top-[90px] md:bottom-[80px] md:left-[412px] md:right-[80px]"
+        className="mural-canvas-wrapper absolute z-0 rounded-2xl overflow-hidden top-[58px] sm:top-[70px] md:top-[90px] bottom-3 sm:bottom-4 md:bottom-[80px] left-2 sm:left-4 md:left-[412px] right-2 sm:right-4 md:right-[80px]"
         id="mural-container"
         style={{
           backdropFilter: 'blur(1px)',

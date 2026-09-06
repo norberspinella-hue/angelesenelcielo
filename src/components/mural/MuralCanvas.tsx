@@ -1072,11 +1072,38 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
     handleWheel,
     zoomIn,
     zoomOut,
-    centerOnCoord
+    centerOnCoord,
+    isPinching,
+    hasMovedSignificantly
   } = useMuralViewport();
+
+  // Attach native touch event listeners for pinch-to-zoom on mobile
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const onTouchStart = (e: TouchEvent) => handleTouchStart(e, canvas.getBoundingClientRect());
+    const onTouchMove = (e: TouchEvent) => handleTouchMove(e, canvas.getBoundingClientRect());
+    const onTouchEnd = (e: TouchEvent) => handleTouchEnd(e);
+
+    canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+    canvas.addEventListener('touchend', onTouchEnd, { passive: false });
+    canvas.addEventListener('touchcancel', onTouchEnd, { passive: false });
+
+    return () => {
+      canvas.removeEventListener('touchstart', onTouchStart);
+      canvas.removeEventListener('touchmove', onTouchMove);
+      canvas.removeEventListener('touchend', onTouchEnd);
+      canvas.removeEventListener('touchcancel', onTouchEnd);
+    };
+  }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
   // Track pointer down to differentiate click from drag
   const [pointerDownPos, setPointerDownPos] = useState<{ x: number; y: number } | null>(null);
@@ -1584,6 +1611,10 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
   }, [viewport, seedMap, selectedSlot, showPremiumBadge, realSlotsMap, highlightedMemorialId]);
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isPinching.current || hasMovedSignificantly.current) {
+      return; // It was a pinch or drag gesture, ignore click
+    }
+
     if (pointerDownPos) {
       const dx = Math.abs(e.clientX - pointerDownPos.x);
       const dy = Math.abs(e.clientY - pointerDownPos.y);

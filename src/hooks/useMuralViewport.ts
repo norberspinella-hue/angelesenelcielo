@@ -10,8 +10,21 @@ export function useMuralViewport(initialWidth = 1200, initialHeight = 800) {
     height: initialHeight,
   });
 
+  const viewportRef = useRef(viewport);
+  useEffect(() => {
+    viewportRef.current = viewport;
+  }, [viewport]);
+
   const isDragging = useRef(false);
   const lastMousePos = useRef({ x: 0, y: 0 });
+
+  // Multi-touch tracking for pinch-to-zoom on mobile
+  const touchStartDist = useRef<number | null>(null);
+  const touchStartZoom = useRef<number>(1);
+  const touchStartMidpoint = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const touchStartViewport = useRef<{ x: number; y: number; zoom: number }>({ x: 0, y: 0, zoom: 1 });
+  const isPinching = useRef(false);
+  const hasMovedSignificantly = useRef(false);
 
   // Initialize centered on premium zone
   useEffect(() => {
@@ -36,14 +49,21 @@ export function useMuralViewport(initialWidth = 1200, initialHeight = 800) {
   }, []);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    // Only handle mouse / pen with pointer events; touch is handled with touch events
+    if (e.pointerType === 'touch') return;
     isDragging.current = true;
+    hasMovedSignificantly.current = false;
     lastMousePos.current = { x: e.clientX, y: e.clientY };
   }, []);
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
+    if (e.pointerType === 'touch') return;
     if (!isDragging.current) return;
     const dx = e.clientX - lastMousePos.current.x;
     const dy = e.clientY - lastMousePos.current.y;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+      hasMovedSignificantly.current = true;
+    }
     lastMousePos.current = { x: e.clientX, y: e.clientY };
 
     setViewport(prev => {
@@ -54,8 +74,113 @@ export function useMuralViewport(initialWidth = 1200, initialHeight = 800) {
     });
   }, []);
 
-  const handlePointerUp = useCallback(() => {
+  const handlePointerUp = useCallback((e?: React.PointerEvent) => {
+    if (e && e.pointerType === 'touch') return;
     isDragging.current = false;
+  }, []);
+
+  // Multi-touch gestures for mobile touchscreens
+  const handleTouchStart = useCallback((e: TouchEvent, canvasRect?: DOMRect) => {
+    const rect = canvasRect || (e.target as HTMLElement)?.getBoundingClientRect();
+    if (!rect) return;
+
+    if (e.touches.length === 1) {
+      isDragging.current = true;
+      isPinching.current = false;
+      hasMovedSignificantly.current = false;
+      lastMousePos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    } else if (e.touches.length >= 2) {
+      isDragging.current = false;
+      isPinching.current = true;
+      hasMovedSignificantly.current = true;
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      touchStartDist.current = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      touchStartZoom.current = viewportRef.current.zoom;
+      touchStartViewport.current = {
+        x: viewportRef.current.x,
+        y: viewportRef.current.y,
+        zoom: viewportRef.current.zoom,
+      };
+      const midX = (t1.clientX + t2.clientX) / 2 - rect.left;
+      const midY = (t1.clientY + t2.clientY) / 2 - rect.top;
+      touchStartMidpoint.current = { x: midX, y: midY };
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: TouchEvent, canvasRect?: DOMRect) => {
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+
+    const rect = canvasRect || (e.target as HTMLElement)?.getBoundingClientRect();
+    if (!rect) return;
+
+    if (isPinching.current && e.touches.length >= 2 && touchStartDist.current && touchStartDist.current > 0) {
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const currentDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      const scaleDelta = currentDist / touchStartDist.current;
+
+      const currMidX = (t1.clientX + t2.clientX) / 2 - rect.left;
+      const currMidY = (t1.clientY + t2.clientY) / 2 - rect.top;
+
+      let newZoom = touchStartZoom.current * scaleDelta;
+      newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
+
+      // Calculate world coordinate anchored under the start midpoint
+      const startSlotSize = 16 * touchStartViewport.current.zoom; // BASE_SLOT = 16
+      const worldX = (touchStartMidpoint.current.x - touchStartViewport.current.x) / startSlotSize;
+      const worldY = (touchStartMidpoint.current.y - touchStartViewport.current.y) / startSlotSize;
+
+      // Position that world coordinate at current midpoint in new zoom
+      const newSlotSize = 16 * newZoom;
+      const newX = currMidX - worldX * newSlotSize;
+      const newY = currMidY - worldY * newSlotSize;
+
+      const clamped = clampPan(newX, newY, viewportRef.current.width, viewportRef.current.height, newZoom);
+
+      setViewport(prev => ({
+        ...prev,
+        zoom: newZoom,
+        x: clamped.x,
+        y: clamped.y,
+      }));
+    } else if (isDragging.current && e.touches.length === 1 && !isPinching.current) {
+      const t = e.touches[0];
+      const dx = t.clientX - lastMousePos.current.x;
+      const dy = t.clientY - lastMousePos.current.y;
+
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+        hasMovedSignificantly.current = true;
+      }
+
+      lastMousePos.current = { x: t.clientX, y: t.clientY };
+
+      setViewport(prev => {
+        const newX = prev.x + dx;
+        const newY = prev.y + dy;
+        const clamped = clampPan(newX, newY, prev.width, prev.height, prev.zoom);
+        return { ...prev, x: clamped.x, y: clamped.y };
+      });
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback((e: TouchEvent) => {
+    if (e.touches.length === 1) {
+      lastMousePos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      isDragging.current = true;
+      touchStartDist.current = null;
+      setTimeout(() => {
+        isPinching.current = false;
+      }, 150);
+    } else if (e.touches.length === 0) {
+      isDragging.current = false;
+      touchStartDist.current = null;
+      setTimeout(() => {
+        isPinching.current = false;
+      }, 150);
+    }
   }, []);
 
   const handleWheel = useCallback((e: WheelEvent, canvasRect?: DOMRect) => {
@@ -159,9 +284,14 @@ export function useMuralViewport(initialWidth = 1200, initialHeight = 800) {
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
     handleWheel,
     centerOnCoord,
     zoomIn,
-    zoomOut
+    zoomOut,
+    isPinching,
+    hasMovedSignificantly,
   };
 }
