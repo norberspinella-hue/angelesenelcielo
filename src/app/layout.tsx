@@ -18,8 +18,29 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://todaslasmascotasvanalcielo.com'),
   title: "Ángeles en el Cielo | Todas las mascotas van al cielo",
   description: "Una experiencia memorial digital para mascotas fallecidas. Cada foto guarda una historia. Cada historia deja una huella.",
+  openGraph: {
+    title: "Ángeles en el Cielo | Todas las mascotas van al cielo",
+    description: "Una experiencia memorial digital para mascotas fallecidas. Cada foto guarda una historia. Cada historia deja una huella.",
+    url: "https://todaslasmascotasvanalcielo.com",
+    siteName: "Ángeles en el Cielo",
+    images: [
+      {
+        url: '/images/icons/Logoheart.svg',
+        alt: 'Logo Ángeles en el Cielo',
+      },
+    ],
+    locale: "es_ES",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Ángeles en el Cielo | Todas las mascotas van al cielo",
+    description: "Una experiencia memorial digital para mascotas fallecidas. Cada foto guarda una historia. Cada historia deja una huella.",
+    images: ['/images/icons/Logoheart.svg'],
+  },
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
