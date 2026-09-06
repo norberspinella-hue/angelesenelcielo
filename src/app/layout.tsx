@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     siteName: "Ángeles en el Cielo",
     images: [
       {
-        url: '/logoheart-og.png',
+        url: '/logo-og.png',
         width: 600,
         height: 600,
         type: 'image/png',
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "Ángeles en el Cielo | Todas las mascotas van al cielo",
     description: "Una experiencia memorial digital para mascotas fallecidas. Cada foto guarda una historia. Cada historia deja una huella.",
-    images: ['/logoheart-og.png'],
+    images: ['/logo-og.png'],
   },
   icons: {
     icon: [
