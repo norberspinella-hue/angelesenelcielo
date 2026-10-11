@@ -713,7 +713,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 WebkitFontSmoothing: 'antialiased',
                 MozOsxFontSmoothing: 'grayscale',
                 boxSizing: 'border-box',
-                padding: '20px 24px 32px',
+                padding: '18px 22px 22px',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -725,18 +725,19 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               <img 
                 src="/images/icons/Logoheart.svg"
                 alt=""
-                style={{ width: 108, height: 108, marginBottom: 8 }}
+                style={{ width: 56, height: 56, marginBottom: 4, flexShrink: 0 }}
               />
 
               {/* Título */}
               <h3 style={{
                 fontFamily: 'Georgia, serif',
                 fontStyle: 'italic',
-                fontSize: '18px',
+                fontSize: '17px',
                 fontWeight: 700,
                 color: '#4A3F6B',
-                marginBottom: '4px',
+                marginBottom: '2px',
                 margin: 0,
+                flexShrink: 0,
               }}>
                 Historia de amor
               </h3>
@@ -744,58 +745,67 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               {/* Fechas en formato completo en español */}
               {datesStr && (
                 <p style={{
-                  fontSize: '12px',
+                  fontSize: '11.5px',
                   color: '#8A7B9B',
                   fontFamily: 'sans-serif',
                   fontWeight: 600,
-                  margin: '0 0 10px 0',
-                  lineHeight: 1.4,
+                  margin: '0 0 8px 0',
+                  lineHeight: 1.3,
                   textAlign: 'center',
+                  flexShrink: 0,
                 }}>
                   {datesStr}
                 </p>
               )}
 
-              {/* Dedicatoria */}
+              {/* Dedicatoria — Ocupa todo el espacio disponible con ajuste armonioso */}
               <div 
                 style={{
-                  fontSize: '14px',
+                  fontSize: (petData?.dedication?.length || 0) > 340 
+                    ? '12px' 
+                    : (petData?.dedication?.length || 0) > 180 
+                      ? '13px' 
+                      : '14px',
                   color: '#7B6F9A',
-                  lineHeight: 1.7,
+                  lineHeight: (petData?.dedication?.length || 0) > 340 ? 1.55 : 1.65,
                   fontFamily: 'Georgia, serif',
                   fontStyle: 'italic',
-                  borderLeft: '3px solid rgba(236,111,163,0.40)',
-                  paddingLeft: '16px',
+                  borderLeft: '3px solid rgba(236,111,163,0.45)',
+                  paddingLeft: '14px',
+                  paddingRight: '6px',
                   textAlign: 'left',
-                  maxHeight: '150px',
+                  flex: 1,
+                  maxHeight: '280px',
                   overflowY: 'auto',
                   width: '100%',
                   boxSizing: 'border-box',
+                  whiteSpace: 'pre-line',
                 }}
-                className="scrollbar-none"
+                className="scrollbar-thin scrollbar-thumb-purple-200"
               >
                 {petData?.dedication || 'Sin dedicatoria'}
               </div>
 
               {/* Texto Siempre en nuestro corazón */}
               <p style={{
-                fontSize: 12,
-                color: 'rgba(155,143,176,0.80)',
+                fontSize: 11.5,
+                color: 'rgba(155,143,176,0.85)',
                 fontFamily: 'Georgia, serif',
                 fontStyle: 'italic',
-                marginTop: 12,
+                marginTop: 8,
                 textAlign: 'center',
                 margin: 0,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '6px',
+                flexShrink: 0,
               }}>
                 — Siempre en nuestro corazón
                 <img 
                   src="/images/icons/plans/pawrosa.svg"
                   alt=""
-                  style={{ width: '16px', height: '16px', opacity: 0.70 }}
+                  style={{ width: '15px', height: '15px', opacity: 0.70 }}
                 />
               </p>
 
@@ -1132,7 +1142,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
       }))
     },
     zoomToSlot: (x: number, y: number) => {
-      const targetZoom = 2.5
+      const targetZoom = 3.8
       const startZoom = viewport.zoom
       const startX = viewport.x
       const startY = viewport.y

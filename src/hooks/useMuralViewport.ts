@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { ViewportState, clampPan, MAX_ZOOM, MIN_ZOOM, ZOOM_FACTOR, getPanToCenterPremiumZone } from '@/lib/mural/gridMath';
+import { ViewportState, clampPan, MAX_ZOOM, MIN_ZOOM, ZOOM_FACTOR, getPanToCenterPremiumZone, BASE_SLOT } from '@/lib/mural/gridMath';
 
 export function useMuralViewport(initialWidth = 1200, initialHeight = 800) {
   const [viewport, setViewport] = useState<ViewportState>({
@@ -129,12 +129,12 @@ export function useMuralViewport(initialWidth = 1200, initialHeight = 800) {
       newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
 
       // Calculate world coordinate anchored under the start midpoint
-      const startSlotSize = 16 * touchStartViewport.current.zoom; // BASE_SLOT = 16
+      const startSlotSize = BASE_SLOT * touchStartViewport.current.zoom;
       const worldX = (touchStartMidpoint.current.x - touchStartViewport.current.x) / startSlotSize;
       const worldY = (touchStartMidpoint.current.y - touchStartViewport.current.y) / startSlotSize;
 
       // Position that world coordinate at current midpoint in new zoom
-      const newSlotSize = 16 * newZoom;
+      const newSlotSize = BASE_SLOT * newZoom;
       const newX = currMidX - worldX * newSlotSize;
       const newY = currMidY - worldY * newSlotSize;
 
@@ -230,7 +230,7 @@ export function useMuralViewport(initialWidth = 1200, initialHeight = 800) {
   const centerOnCoord = useCallback((col: number, row: number, targetZoom?: number) => {
     setViewport(prev => {
       const zoom = targetZoom || prev.zoom;
-      const slotSize = 16 * zoom; // Assuming BASE_SLOT is 16
+      const slotSize = BASE_SLOT * zoom;
       const centerX = prev.width / 2;
       const centerY = prev.height / 2;
       

@@ -7,6 +7,7 @@ import { MuralDrawer } from '@/components/mural/MuralDrawer';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ParticlesBackground } from '@/components/mural/ParticlesBackground';
+import { RecentAngelToast } from '@/components/mural/RecentAngelToast';
 import { createClient } from '@/lib/supabase/client';
 
 
@@ -530,6 +531,9 @@ export default function MuralGlobalPage() {
       {showWelcome && (
         <WelcomePopup onClose={handleCloseWelcome} />
       )}
+
+      {/* Aviso Flotante Celestial de nuevos angelitos */}
+      <RecentAngelToast onSelectPet={handleResultClick} />
     </main>
   );
 }

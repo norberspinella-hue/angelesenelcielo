@@ -3,6 +3,7 @@ import Stripe from 'stripe'
 import { createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 import { resend } from '@/lib/resend'
+import { notifyNeighborsOfNewPet } from '@/lib/notifications'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia' as any,
@@ -456,6 +457,21 @@ export async function POST(req: NextRequest) {
             `,
           })
           console.log('Email de notificación enviado al administrador')
+
+          // FÓRMULA B: Notificar a los vecinos en el mural
+          if (memorial?.id && finalX !== null && finalY !== null) {
+            notifyNeighborsOfNewPet({
+              newPetId: memorial.id,
+              newPetName: petName,
+              newBreed: breed || 'Perrito',
+              newDedication: dedication || '',
+              newPhotoUrl: photoUrl || '',
+              x: finalX,
+              y: finalY,
+              planType: plan,
+              newEmail: email,
+            }).catch(e => console.error('Error notificando a vecinos en webhook:', e));
+          }
         } catch (emailErr) {
           console.error('Error enviando emails a través de Resend:', emailErr)
         }

@@ -2,9 +2,9 @@ export const GRID_COLS = 1000;
 export const GRID_ROWS = 1000;
 export const TOTAL_SLOTS = GRID_COLS * GRID_ROWS;
 
-export const BASE_SLOT = 16; // 1x zoom slot size (increased for better default visibility)
-export const MIN_ZOOM = 0.2;
-export const MAX_ZOOM = 8;
+export const BASE_SLOT = 10.56; // 1x zoom slot size (calibrated so the previous 66% panoramic view is the new 100% baseline)
+export const MIN_ZOOM = 0.25;
+export const MAX_ZOOM = 12;
 export const ZOOM_FACTOR = 1.15;
 
 export const PREMIUM_ZONE = {
