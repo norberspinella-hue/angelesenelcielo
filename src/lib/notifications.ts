@@ -1,8 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/server';
 import { resend } from '@/lib/resend';
-import { renderToStaticMarkup } from 'react-dom/server';
-import { NeighborAngelEmail } from '@/components/emails/NeighborAngelEmail';
-import { WeeklyDigestEmail } from '@/components/emails/WeeklyDigestEmail';
+import { renderNeighborAngelEmail } from '@/components/emails/NeighborAngelEmail';
+import { renderWeeklyDigestEmail } from '@/components/emails/WeeklyDigestEmail';
 
 export interface NewPetNotificationData {
   newPetId: string;
@@ -139,18 +138,16 @@ export async function notifyNeighborsOfNewPet(data: NewPetNotificationData) {
       const unsubscribeLink = `${appUrl}/api/notifications/unsubscribe?email=${encodeURIComponent(neighborEmail)}`;
 
       try {
-        const html = renderToStaticMarkup(
-          NeighborAngelEmail({
-            ownerPetName: neighbor.pet_name,
-            neighborPetName: newPetName,
-            neighborBreed: newBreed,
-            neighborDedication: newDedication,
-            neighborPhotoUrl: newPhotoUrl,
-            isFounder: planType === 'recuerdo_eterno' || planType === 'corazon_eterno',
-            muralUrl: muralLink,
-            unsubscribeUrl: unsubscribeLink,
-          })
-        );
+        const html = renderNeighborAngelEmail({
+          ownerPetName: neighbor.pet_name,
+          neighborPetName: newPetName,
+          neighborBreed: newBreed,
+          neighborDedication: newDedication,
+          neighborPhotoUrl: newPhotoUrl,
+          isFounder: planType === 'recuerdo_eterno' || planType === 'corazon_eterno',
+          muralUrl: muralLink,
+          unsubscribeUrl: unsubscribeLink,
+        });
 
         await resend.emails.send({
           from: `Ángeles en el Cielo <${fromEmail}>`,
@@ -243,14 +240,12 @@ export async function sendWeeklyDigestNotification() {
       const unsubscribeLink = `${appUrl}/api/notifications/unsubscribe?email=${encodeURIComponent(email)}`;
 
       try {
-        const html = renderToStaticMarkup(
-          WeeklyDigestEmail({
-            ownerPetNames: ownerPetNames || 'tus angelitos',
-            recentPets,
-            muralUrl: muralLink,
-            unsubscribeUrl: unsubscribeLink,
-          })
-        );
+        const html = renderWeeklyDigestEmail({
+          ownerPetNames: ownerPetNames || 'tus angelitos',
+          recentPets,
+          muralUrl: muralLink,
+          unsubscribeUrl: unsubscribeLink,
+        });
 
         await resend.emails.send({
           from: `Ángeles en el Cielo <${fromEmail}>`,

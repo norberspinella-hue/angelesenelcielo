@@ -10,6 +10,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get('sessionId')
   
