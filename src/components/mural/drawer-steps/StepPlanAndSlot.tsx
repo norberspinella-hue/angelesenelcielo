@@ -15,7 +15,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       title: 'Huellita',
       price: '1,99 €',
       duration: '/ año',
-      slots: '1 slot',
+      slots: '1 espacio',
       icon: '⭐'
     },
     {
@@ -23,7 +23,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       title: 'Estrella Brillante',
       price: '4,99 €',
       duration: 'Para siempre',
-      slots: '4 slots',
+      slots: '4 espacios',
       icon: '⭐⭐⭐⭐'
     },
     {
@@ -31,7 +31,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       title: 'Corazón Eterno',
       price: '9,99 €',
       duration: 'Para siempre',
-      slots: '9 slots',
+      slots: '9 espacios',
       icon: '⭐ 3x3'
     }
   ];
@@ -103,7 +103,9 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
                 <span className="text-sm font-semibold text-[#C9A961] bg-[#C9A961]/10 px-2 py-1 rounded-md">
                   {plan.icon}
                 </span>
-                <span className="text-xs text-[#706A95]">{plan.slots} incluidos</span>
+                <span className="text-xs text-[#706A95]">
+                  {plan.slots === '1 espacio' ? '1 espacio incluido' : `${plan.slots} incluidos`}
+                </span>
               </div>
             </div>
           );

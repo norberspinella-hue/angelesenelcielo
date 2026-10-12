@@ -26,8 +26,9 @@ export function PricingSection() {
             <span className="plan-meta text-sm text-[#5A639C]">Anual</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
-              <li>1 bloque en el mural (1x1)</li>
+              <li>Un trocito de cielo propio (1 espacio)</li>
               <li>Sube su foto más bonita</li>
+              <li>Escribe su historia y dedicatoria</li>
               <li>
                 Certificado Huellita
                 <span className="block text-xs text-[#706A95] opacity-80 italic mt-0.5">
@@ -57,7 +58,7 @@ export function PricingSection() {
             <span className="plan-meta text-sm text-[#5A639C]">Para siempre</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
-              <li>4 bloques en el mural (2x2)</li>
+              <li>Un pedacito de cielo ampliado (4 espacios)</li>
               <li>La foto de tu peque se verá más en el mural</li>
               <li>Brillo durante la semana de su aniversario</li>
               <li>Certificado Estrella</li>
@@ -83,7 +84,7 @@ export function PricingSection() {
             <span className="plan-meta text-sm text-[#9A7D63]">Para siempre</span>
             
             <ul className="plan-list flex-1 text-[#9A7D63]">
-              <li>9 bloques en el mural (3x3)</li>
+              <li>Un gran espacio en el corazón del cielo (9 espacios)</li>
               <li>Tamaño máximo para siempre y más visible que el resto</li>
               <li>Certificado Especial en su Aniversario</li>
               <li>Certificado Corazón Eterno</li>
