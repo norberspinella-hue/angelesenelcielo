@@ -28,8 +28,12 @@ export function PricingSection() {
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>1 bloque en el mural (1x1)</li>
               <li>Sube su foto más bonita</li>
-              <li>Escribe su historia y dedicatoria</li>
-              <li>Certificado Huellita</li>
+              <li>
+                Certificado Huellita
+                <span className="block text-xs text-[#706A95] opacity-80 italic mt-0.5">
+                  Para los 100 primeros angelitos
+                </span>
+              </li>
             </ul>
             
             <Link href="/mural-global" className="btn-inicial-heaven w-full mt-4 text-center">
