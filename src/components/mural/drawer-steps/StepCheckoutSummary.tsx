@@ -142,7 +142,7 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
             <span>✓ 100% Seguro</span>
           </div>
           <p className="text-[11px] text-[#706A95] mt-3 pt-2 border-t border-gray-200/60">
-            ✦ Precios con <strong>IVA (21%) incluido</strong> · <a href="/terminos" target="_blank" className="underline hover:text-[#1E2A78]">Condiciones del servicio</a>
+            ✦ Precios con <strong>IVA (21%) incluido</strong> · Aceptamos pagos internacionales con conversión a tu divisa · <a href="/terminos" target="_blank" className="underline hover:text-[#1E2A78]">Condiciones del servicio</a>
           </p>
         </div>
       </div>

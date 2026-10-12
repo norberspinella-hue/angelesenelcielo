@@ -169,7 +169,7 @@ export function ContactoClient() {
             </div>
             <div>
               <p className="text-sm font-bold text-[#1E2A78]">¿Prefieres una respuesta más rápida?</p>
-              <p className="text-xs text-[#4A3F6B]/80">Escríbenos directamente a nuestro WhatsApp de atención.</p>
+              <p className="text-xs text-[#4A3F6B]/80">Escríbenos directamente a nuestro WhatsApp oficial (Atención internacional).</p>
             </div>
           </div>
           <a

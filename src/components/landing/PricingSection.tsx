@@ -109,6 +109,9 @@ export function PricingSection() {
         <span className="flex items-center gap-1.5">
           <span className="text-emerald-600 font-bold">✓</span> Activo durante la duración del proyecto
         </span>
+        <span className="flex items-center gap-1.5">
+          <span className="text-emerald-600 font-bold">✓</span> Pagos internacionales con conversión automática a tu divisa
+        </span>
       </div>
 
       {/* Aclaración para empresas */}
