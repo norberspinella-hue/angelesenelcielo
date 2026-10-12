@@ -141,6 +141,7 @@ export async function GET(req: NextRequest) {
             stripe_payment_intent_id: session.payment_intent as string,
             payment_status: 'paid',
             price_paid: (session.amount_total ?? 0) / 100,
+            currency: (session.currency || 'eur').toUpperCase(),
             plan_type: planDb,
             email: email,
             pet_name: petName,

@@ -145,7 +145,8 @@ export async function POST(req: NextRequest) {
           stripe_session_id: session.id,
           stripe_payment_intent_id: session.payment_intent as string,
           payment_status: 'paid',
-          price_paid: (session.amount_total ?? 0) / 100, // Convertir de céntimos a euros
+          price_paid: (session.amount_total ?? 0) / 100, // Convertir de céntimos a euros/dólares
+          currency: (session.currency || 'eur').toUpperCase(),
           plan_type: planDb,
           email: email, // En la BD la columna se llama email, no user_email
           pet_name: petName,
