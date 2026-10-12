@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { CurrencySelector } from '@/components/ui/CurrencySelector';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,6 +41,7 @@ export function Header() {
           </span>
           <span className="heaven-nav-link text-sm opacity-80 group-hover:opacity-100 transition-opacity">Tienda</span>
         </div>
+        <CurrencySelector size="sm" className="ml-1" />
       </nav>
 
       {/* Mobile Hamburger Button */}
@@ -104,6 +106,10 @@ export function Header() {
               <span>✨</span>
               <span>Muy pronto</span>
             </span>
+          </div>
+
+          <div className="pt-3 border-t border-gray-100 w-full flex justify-center">
+            <CurrencySelector size="sm" />
           </div>
         </div>
       )}

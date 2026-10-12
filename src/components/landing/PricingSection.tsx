@@ -1,14 +1,26 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCurrency } from '@/context/CurrencyContext';
+import { CurrencySelector } from '@/components/ui/CurrencySelector';
 
 export function PricingSection() {
+  const { formatPrice, taxGuarantee, currency } = useCurrency();
+
   return (
     <section id="planes" className="pt-16 pb-[62px]">
-      <div className="text-center mb-16">
+      <div className="text-center mb-10">
         <h2 className="section-title">Su amor ocupó un lugar inmenso en tu vida</h2>
         <p className="body-copy max-w-[700px] mx-auto mt-4 section-subtitle">
           Ahora puedes elegir cómo quieres que su foto aparezca en el mural: como una pequeña luz, como una huella visible o como una constelación que siga brillando para siempre
         </p>
+      </div>
+
+      {/* Selector de divisa */}
+      <div className="flex items-center justify-center gap-2.5 mb-10">
+        <span className="text-xs sm:text-sm font-semibold text-[#5A639C]">Mostrar precios en:</span>
+        <CurrencySelector size="md" />
       </div>
 
       <div className="pricing-grid">
@@ -22,7 +34,7 @@ export function PricingSection() {
           <div className="relative z-10 flex flex-col h-full flex-1">
             <h3 className="plan-title text-[#1E2A78]">Huellita</h3>
             <p className="microcopy mt-2 text-[#5A639C]">Un espacio para tu pequeño</p>
-            <div className="plan-price text-[#1E2A78]">1,99 €</div>
+            <div className="plan-price text-[#1E2A78]">{formatPrice('huellita')}</div>
             <span className="plan-meta text-sm text-[#5A639C]">Anual</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
@@ -54,7 +66,7 @@ export function PricingSection() {
           <div className="relative z-10 flex flex-col h-full flex-1">
             <h3 className="plan-title text-[#1E2A78]">Estrella Brillante</h3>
             <p className="microcopy mt-2 text-[#5A639C]">Mayor visibilidad para siempre</p>
-            <div className="plan-price text-[#1E2A78]">4,99€</div>
+            <div className="plan-price text-[#1E2A78]">{formatPrice('estrella_brillante')}</div>
             <span className="plan-meta text-sm text-[#5A639C]">Para siempre</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
@@ -80,7 +92,7 @@ export function PricingSection() {
           <div className="relative z-10 flex flex-col h-full flex-1">
             <h3 className="plan-title text-[#8A6033]">Corazón Eterno</h3>
             <p className="microcopy mt-2 text-[#9A7D63]">El homenaje máximo, se verá más que los demás</p>
-            <div className="plan-price text-[#8A6033]">9,99€</div>
+            <div className="plan-price text-[#8A6033]">{formatPrice('corazon_eterno')}</div>
             <span className="plan-meta text-sm text-[#9A7D63]">Para siempre</span>
             
             <ul className="plan-list flex-1 text-[#9A7D63]">
@@ -101,7 +113,7 @@ export function PricingSection() {
       {/* Garantía de precios transparentes */}
       <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mt-10 text-xs sm:text-sm font-medium text-[#706A95]">
         <span className="flex items-center gap-1.5">
-          <span className="text-emerald-600 font-bold">✓</span> Todos los precios incluyen IVA (21%)
+          <span className="text-emerald-600 font-bold">✓</span> {taxGuarantee}
         </span>
         <span className="flex items-center gap-1.5">
           <span className="text-emerald-600 font-bold">✓</span> Pago único · Sin suscripciones ni renovaciones
@@ -110,7 +122,7 @@ export function PricingSection() {
           <span className="text-emerald-600 font-bold">✓</span> Activo durante la duración del proyecto
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="text-emerald-600 font-bold">✓</span> Pagos internacionales con conversión automática a tu divisa
+          <span className="text-emerald-600 font-bold">✓</span> {currency === 'EUR' ? 'Pagos internacionales con conversión automática a tu divisa' : 'Pagos seguros procesados con Stripe'}
         </span>
       </div>
 

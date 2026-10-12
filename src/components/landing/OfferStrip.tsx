@@ -1,6 +1,11 @@
+'use client';
+
 import Image from 'next/image';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export function OfferStrip() {
+  const { formatPrice } = useCurrency();
+
   return (
     <div className="offer-strip bg-white/40 backdrop-blur-md rounded-[32px] shadow-sm border border-white/60">
       <div className="offer-item py-4 sm:py-6 px-4 sm:px-8">
@@ -11,7 +16,7 @@ export function OfferStrip() {
           <h3 className="offer-title text-[#394B87] text-lg sm:text-xl font-bold whitespace-nowrap">Huellita</h3>
           <p className="offer-detail text-xs sm:text-sm text-[#706A95]">Ocupa 1 espacio en el mural</p>
           <div className="offer-price text-xl sm:text-2xl font-black text-[#1E2A78]">
-            1,99 €
+            {formatPrice('huellita')}
             <span className="offer-period text-xs sm:text-sm font-normal text-[#706A95] ml-1">/ año</span>
           </div>
         </div>
@@ -25,7 +30,7 @@ export function OfferStrip() {
           <h3 className="offer-title text-[#394B87] text-lg sm:text-xl font-bold whitespace-nowrap">Estrella Brillante</h3>
           <p className="offer-detail text-xs sm:text-sm text-[#706A95]">Ocupa 4 espacios en el mural</p>
           <div className="offer-price text-xl sm:text-2xl font-black text-[#1E2A78]">
-            4,99 €
+            {formatPrice('estrella_brillante')}
           </div>
         </div>
       </div>
@@ -40,7 +45,7 @@ export function OfferStrip() {
             Ocupa 9 espacios en el mural <span className="font-normal">para siempre</span>
           </p>
           <div className="offer-price text-xl sm:text-2xl font-black text-[#1E2A78]">
-            9,99 €
+            {formatPrice('corazon_eterno')}
           </div>
         </div>
       </div>

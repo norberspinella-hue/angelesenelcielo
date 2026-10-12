@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface StepPlanAndSlotProps {
   onNext: () => void;
@@ -9,11 +10,13 @@ interface StepPlanAndSlotProps {
 }
 
 export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSelectedSlot, isFounderSlot }: StepPlanAndSlotProps) {
+  const { formatPrice } = useCurrency();
+
   const plans = [
     {
       id: 'huellita',
       title: 'Huellita',
-      price: '1,99 €',
+      price: formatPrice('huellita'),
       duration: '/ año',
       slots: '1 espacio',
       icon: '⭐'
@@ -21,7 +24,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
     {
       id: 'estrella_brillante',
       title: 'Estrella Brillante',
-      price: '4,99 €',
+      price: formatPrice('estrella_brillante'),
       duration: 'Para siempre',
       slots: '4 espacios',
       icon: '⭐⭐⭐⭐'
@@ -29,7 +32,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
     {
       id: 'corazon_eterno',
       title: 'Corazón Eterno',
-      price: '9,99 €',
+      price: formatPrice('corazon_eterno'),
       duration: 'Para siempre',
       slots: '9 espacios',
       icon: '⭐ 3x3'

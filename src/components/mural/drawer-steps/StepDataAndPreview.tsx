@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface StepDataAndPreviewProps {
   onNext: () => void;
@@ -9,6 +10,7 @@ interface StepDataAndPreviewProps {
 }
 
 export function StepDataAndPreview({ onNext, onBack, draftData, setDraftData, selectedPlan }: StepDataAndPreviewProps) {
+  const { formatPrice } = useCurrency();
   const isFormValid = draftData.name && draftData.date && draftData.rightsConfirmed;
 
   return (
@@ -61,9 +63,9 @@ export function StepDataAndPreview({ onNext, onBack, draftData, setDraftData, se
           <div className="bg-[#FFF8F4] border border-[#F8C7D8] rounded-lg p-3">
             <label className="block text-xs font-bold text-[#1E2A78] mb-1">Plan seleccionado</label>
             <div className="text-sm text-[#1E2A78]">
-              {selectedPlan === 'corazon_eterno' ? 'Corazón Eterno (9,99€)' : 
-               selectedPlan === 'estrella_brillante' ? 'Estrella Brillante (4,99€/año)' : 
-               'Huellita (1€)'}
+              {selectedPlan === 'corazon_eterno' ? `Corazón Eterno (${formatPrice('corazon_eterno')})` : 
+               selectedPlan === 'estrella_brillante' ? `Estrella Brillante (${formatPrice('estrella_brillante')})` : 
+               `Huellita (${formatPrice('huellita', { showPeriod: true })})`}
             </div>
           </div>
 

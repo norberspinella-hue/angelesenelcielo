@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import CookieBanner from '@/components/CookieBanner';
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton';
+import { CurrencyProvider } from '@/context/CurrencyContext';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -75,9 +76,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet" />
       </head>
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
-        {children}
-        <CookieBanner />
-        <WhatsAppButton />
+        <CurrencyProvider>
+          {children}
+          <CookieBanner />
+          <WhatsAppButton />
+        </CurrencyProvider>
       </body>
     </html>
   );
