@@ -37,36 +37,43 @@ export default function TransparenciaPage() {
             <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-[#FCE7F3]/40 via-[#F3E8FF]/30 to-transparent rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF0F4] border border-[#F8C7D8] text-xs font-semibold text-[#E05282] mb-4">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF0F4] border border-[#F8C7D8] text-xs font-semibold text-[#E05282] mb-4 shadow-sm">
                 <span>🐾</span>
-                <span>El Porqué de este Proyecto</span>
+                <span>En memoria de Juliette · El origen de Ángeles en el Cielo</span>
               </div>
               
-              <h2 className="font-playfair text-2xl sm:text-3xl font-bold text-[#1E2A78] mb-6 leading-snug">
-                Porque ningún amor tan inmenso debería apagarse en el olvido
+              <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl font-bold text-[#1E2A78] mb-6 leading-snug">
+                Por qué nace el Mural Global de Mascotas
               </h2>
 
-              <div className="space-y-4 text-sm sm:text-base text-[#4A3F6B] leading-relaxed">
+              <div className="space-y-5 text-sm sm:text-base text-[#4A3F6B] leading-relaxed">
                 <p>
-                  Quienes hemos convivido con un perro, un gato o cualquier otro animal de compañía conocemos bien esa mirada que no juzgaba, esa presencia constante que alegraba la casa al cruzar la puerta y ese consuelo silencioso cuando las cosas iban mal. Para nosotros no eran «solo mascotas»: eran familia, confidentes y un pilar de amor incondicional en nuestras vidas.
+                  Ángeles en el Cielo nace en memoria de <strong>nuestra pequeña Juliette</strong>, quien partió en 2018 después de 5 años regalándonos el mayor amor que jamás habíamos sentido. Se fue luchando como una auténtica guerrera contra su enfermedad de fallo renal. Luchó hasta el último día, cuando decidió que era su momento de descansar. Y hubo un gesto que jamás olvidaremos: <em>nuestra pequeña esperó con paciencia a que volviéramos de viaje para poder despedirse y marcharse en paz...</em>
                 </p>
 
                 <p>
-                  Cuando llega la dolorosa despedida, el vacío que dejan en el hogar es ensordecedor. Sin embargo, en el mundo exterior el duelo animal suele vivirse en silencio, a menudo minimizado o incomprendido por quienes nunca han compartido su vida con un ser tan noble.
+                  Tras su pérdida, no supe cómo continuar con mi vida y me sentí completamente vacío. Con el paso del tiempo me di cuenta de una realidad desgarradora: ella se había ido, el mundo a nuestro alrededor continuaba como si nada hubiera ocurrido y nadie más podía conocerla, ver su nobleza ni compartir con el mundo lo inmensamente especial que fue.
                 </p>
 
-                <div className="p-5 sm:p-6 rounded-2xl bg-[#FFF8F7] border border-[#F6DCE6] my-6">
-                  <p className="font-playfair italic text-base sm:text-lg text-[#1E2A78] font-medium leading-relaxed">
-                    «Ángeles en el Cielo nació para responder a una necesidad que salía del corazón: crear un santuario compartido donde sus historias no queden perdidas en la memoria de un teléfono móvil, sino brillando juntas en un cielo abierto y visible para siempre.»
+                <div className="p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#FFF8F7] to-[#FAF5FF] border border-[#F6DCE6] my-6 shadow-sm">
+                  <p className="font-playfair italic text-base sm:text-lg text-[#1E2A78] font-medium leading-relaxed mb-3">
+                    «Fue en ese dolor donde surgió la necesidad vital de transformar el duelo en algo que trascendiera su ausencia: crear un santuario donde todos nuestros angelitos fueran recordados para siempre. Un lugar donde todo el mundo pueda verlos, conocer sus historias y sentir la huella de amor que dejaron.»
                   </p>
+                  <span className="text-xs font-bold text-[#C59B73] tracking-wide uppercase">
+                    — En honor a Juliette y a todos los que llenaron nuestro corazón
+                  </span>
                 </div>
 
                 <p>
-                  Queríamos un espacio cálido y respetuoso. Un lugar donde puedas acudir en su aniversario, en un día de nostalgia o simplemente cuando quieras recordarle, ver su foto, leer la dedicatoria que le escribiste y sentir que no estás solo en tu duelo: que a su alrededor hay miles de familias que sienten exactamente lo mismo por sus propios angelitos.
+                  Así nació la visión de crear un <strong>Mural Global de 1.000.000 de Angelitos</strong>: un cielo interactivo infinito dedicado a nuestros compañeros de cuatro patas y a cualquier animalito que llenó de luz el corazón de sus papás y mamás. Un lugar vivo al que volver en aniversarios, fechas señaladas o días de nostalgia para mirar su estrella y saber que no estás solo en tu duelo.
                 </p>
 
                 <p>
-                  Y porque sabemos que este homenaje nace del dolor y del amor más puro, <strong>nos negamos rotundamente a tratarlo como un negocio frío de suscripciones mensuales o con letra pequeña oculta</strong>. De ahí nace nuestro compromiso de claridad total.
+                  Y hay un compromiso más, nacido del corazón: <strong>ayudar a protectoras y asociaciones de animales</strong> a seguir consiguiendo recursos para su día a día. Queremos que la memoria de Juliette y de todos los angelitos sirva también para cuidar, alimentar y dar una segunda oportunidad a aquellos peludos que hoy siguen esperando un hogar en la tierra.
+                </p>
+
+                <p className="pt-2">
+                  Porque este proyecto no nació de una fría estrategia de negocio: <strong>nació de las lágrimas, de la gratitud y del amor más puro que un ser vivo puede regalarte</strong>. Por eso nuestro compromiso es total: honestidad absoluta, cero letra pequeña y un respeto sagrado por el recuerdo de tu familia.
                 </p>
               </div>
             </div>
