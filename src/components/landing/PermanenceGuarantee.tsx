@@ -72,12 +72,18 @@ export function PermanenceGuarantee() {
 
         </div>
 
-        {/* Bottom banner link to legal terms */}
-        <div className="mt-8 pt-6 border-t border-[#EDE8F5] text-center">
-          <p className="text-xs sm:text-sm text-[#706A95]">
-            Para más información sobre las condiciones de nuestro servicio, puedes consultar los{' '}
+        {/* Bottom banner link to legal terms & transparency */}
+        <div className="mt-8 pt-6 border-t border-[#EDE8F5] text-center flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-[#706A95]">
+          <Link href="/transparencia" className="text-[#1E2A78] font-bold hover:text-[#4A3F6B] transition-colors inline-flex items-center gap-1.5 underline">
+            <span>🛡️</span>
+            <span>Conoce nuestra historia y el porqué de la web</span>
+            <span>→</span>
+          </Link>
+          <span className="hidden sm:inline opacity-30">•</span>
+          <p>
+            Consulta nuestros{' '}
             <Link href="/terminos" className="text-[#1E2A78] font-semibold underline hover:text-[#4A3F6B] transition-colors">
-              Términos y Condiciones de Uso
+              Términos y Condiciones
             </Link>.
           </p>
         </div>

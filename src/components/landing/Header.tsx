@@ -26,6 +26,7 @@ export function Header() {
         <Link href="/#el-mural" className="heaven-nav-link text-sm">El Mural</Link>
         <Link href="/#como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
         <Link href="/#planes" className="heaven-nav-link text-sm">Opciones</Link>
+        <Link href="/transparencia" className="heaven-nav-link text-sm">Transparencia</Link>
         <Link href="/contacto" className="heaven-nav-link text-sm">Contacto</Link>
         <div className="relative inline-flex flex-col items-center justify-center cursor-default group" title="Tienda de recuerdos conmemorativos (Próximamente)">
           <span 
@@ -84,6 +85,13 @@ export function Header() {
             className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
           >
             Opciones
+          </Link>
+          <Link 
+            href="/transparencia" 
+            onClick={() => setIsMenuOpen(false)}
+            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
+          >
+            Transparencia
           </Link>
           <Link 
             href="/contacto" 
