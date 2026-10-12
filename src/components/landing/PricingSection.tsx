@@ -100,7 +100,7 @@ export function PricingSection() {
               <li>Tamaño máximo para siempre y más visible que el resto</li>
               <li>Certificado Especial en su Aniversario</li>
               <li>Certificado Corazón Eterno</li>
-              <li>Perfil completo en una página propia <span className="text-xs opacity-75 italic">(disponible muy pronto)</span></li>
+              <li>Página propia conmemorativa para compartir su historia</li>
             </ul>
             
             <Link href="/mural-global" className="btn-secondary-heaven w-full mt-4 !bg-[#EBD5D0] hover:!bg-[#D7BCB6] !text-[#8A6033] !border-none">
