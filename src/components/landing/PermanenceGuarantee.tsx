@@ -9,14 +9,13 @@ export function PermanenceGuarantee() {
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F3EEFA] border border-[#E3D9F2] text-xs font-semibold text-[#6C539A] mb-4">
             <span>🛡️</span>
-            <span>Compromiso de Perpetuidad y Transparencia</span>
+            <span>Tranquilidad y Transparencia para tu Familia</span>
           </div>
           <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl font-bold text-[#1E2A78] leading-tight mb-4">
-            ¿Qué ocurre con el recuerdo de tu mascota con el paso de los años?
+            Un homenaje honesto, claro y sin letra pequeña
           </h2>
           <p className="text-[#706A95] text-sm sm:text-base leading-relaxed">
-            Es la pregunta más honesta y comprensible que se hace cualquier familia antes de elegir un espacio en el cielo. 
-            Aquí tienes nuestro compromiso real, técnico y legal para tu absoluta tranquilidad.
+            Sabemos lo importante que es este paso para ti. Por eso diseñamos Ángeles en el Cielo con total transparencia técnica y humana desde el primer día.
           </p>
         </div>
 
@@ -29,13 +28,13 @@ export function PermanenceGuarantee() {
               ☁️
             </div>
             <h3 className="font-playfair font-bold text-lg text-[#1E2A78] mb-2">
-              Infraestructura Perpetua
+              Infraestructura Estable
             </h3>
             <p className="text-xs sm:text-sm text-[#706A95] leading-relaxed flex-1">
-              Ángeles en el Cielo está desarrollado sobre arquitectura serverless y almacenamiento ultra-optimizado. Los costes técnicos de mantener el mural online son casi nulos, lo que garantiza su viabilidad durante décadas sin depender de suscripciones ni cuotas recurrentes.
+              Ángeles en el Cielo está desarrollado sobre arquitectura moderna y eficiente de mínimo coste técnico. Esto permite mantener el mural abierto y disponible durante la duración del proyecto sin depender de cuotas mensuales de las familias.
             </p>
             <div className="mt-4 pt-3 border-t border-[#F0EBF7] text-xs font-semibold text-[#1E2A78] flex items-center gap-1.5">
-              <span>✦</span> Sin coste de renovación para ti
+              <span>✦</span> Espacio activo durante la duración del proyecto
             </div>
           </div>
 
@@ -45,10 +44,10 @@ export function PermanenceGuarantee() {
               📜
             </div>
             <h3 className="font-playfair font-bold text-lg text-[#1E2A78] mb-2">
-              Custodia y Archivo Propio
+              Custodia y Certificado Propio
             </h3>
             <p className="text-xs sm:text-sm text-[#706A95] leading-relaxed flex-1">
-              El recuerdo de tu pequeño no depende únicamente de una web: nada más publicarse su estrella, tu familia recibe el Certificado Celestial oficial en PDF y el archivo conmemorativo en alta resolución para conservarlo, imprimirlo y guardarlo en tus propios dispositivos.
+              El recuerdo de tu pequeño no depende únicamente de una web: nada más publicarse su estrella, tu familia recibe el Certificado Celestial oficial en PDF y el archivo conmemorativo en alta resolución para guardarlo e imprimirlo siempre en casa.
             </p>
             <div className="mt-4 pt-3 border-t border-[#F0EBF7] text-xs font-semibold text-[#C9A961] flex items-center gap-1.5">
               <span>✦</span> Siempre en tus manos
@@ -58,16 +57,16 @@ export function PermanenceGuarantee() {
           {/* Card 3 */}
           <div className="flex flex-col bg-white/70 p-6 rounded-2xl border border-[#EDE8F5] shadow-sm">
             <div className="w-12 h-12 rounded-2xl bg-[#FFF0F4] text-[#E05282] flex items-center justify-center text-2xl mb-4 shadow-sm">
-              🤝
+              ✨
             </div>
             <h3 className="font-playfair font-bold text-lg text-[#1E2A78] mb-2">
-              ¿Y si el proyecto cerrase?
+              Sin Cuotas ni Renovaciones
             </h3>
             <p className="text-xs sm:text-sm text-[#706A95] leading-relaxed flex-1">
-              Si por cualquier causa de fuerza mayor el proyecto cesara su actividad en un futuro lejano, nos comprometemos por contrato a: <strong>6 meses de preaviso</strong> por email, entrega de copia de seguridad completa a cada familia y cesión del archivo público a una entidad protectora de animales o a The Internet Archive.
+              Realizas un único pago y tu angelito ocupa su lugar en el cielo. No existen cobros ocultos, ni renovaciones automáticas, ni costes de permanencia posteriores. Claridad absoluta para tu tranquilidad.
             </p>
             <div className="mt-4 pt-3 border-t border-[#F0EBF7] text-xs font-semibold text-[#E05282] flex items-center gap-1.5">
-              <span>✦</span> Garantía vinculante en Términos
+              <span>✦</span> Pago único y transparente
             </div>
           </div>
 
@@ -76,9 +75,9 @@ export function PermanenceGuarantee() {
         {/* Bottom banner link to legal terms */}
         <div className="mt-8 pt-6 border-t border-[#EDE8F5] text-center">
           <p className="text-xs sm:text-sm text-[#706A95]">
-            Queremos que sientas la misma paz con la que ellos descansan. Puedes consultar la cláusula legal completa en nuestros{' '}
+            Para más información sobre las condiciones de nuestro servicio, puedes consultar los{' '}
             <Link href="/terminos" className="text-[#1E2A78] font-semibold underline hover:text-[#4A3F6B] transition-colors">
-              Términos y Condiciones (Cláusula 4: Compromiso de Perpetuidad)
+              Términos y Condiciones de Uso
             </Link>.
           </p>
         </div>

@@ -14,7 +14,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       id: 'huellita',
       title: 'Huellita',
       price: '1,99 €',
-      duration: '/ año',
+      duration: 'Durante la duración del proyecto',
       slots: '1 slot',
       icon: '⭐'
     },
@@ -22,7 +22,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       id: 'estrella_brillante',
       title: 'Estrella Brillante',
       price: '4,99 €',
-      duration: 'Para siempre',
+      duration: 'Durante la duración del proyecto',
       slots: '4 slots',
       icon: '⭐⭐⭐⭐'
     },
@@ -30,7 +30,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       id: 'corazon_eterno',
       title: 'Corazón Eterno',
       price: '9,99 €',
-      duration: 'Para siempre',
+      duration: 'Durante la duración del proyecto',
       slots: '9 slots',
       icon: '⭐ 3x3'
     }
@@ -95,8 +95,8 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
               <div className="flex justify-between items-start mb-2">
                 <h3 className="font-bold text-[#1E2A78]">{plan.title}</h3>
                 <div className="text-right">
-                  <span className="font-bold text-[#1E2A78]">{plan.price}</span>
-                  <span className="text-xs text-[#706A95] ml-1">{plan.duration}</span>
+                  <span className="font-bold text-[#1E2A78] text-base">{plan.price}</span>
+                  <span className="block text-[10px] text-[#706A95]">{plan.duration}</span>
                 </div>
               </div>
               <div className="flex justify-between items-center">

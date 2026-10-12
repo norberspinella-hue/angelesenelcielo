@@ -34,7 +34,7 @@ export default function TerminosPage() {
           Resumen para Familias (Transparencia en 1 minuto)
         </h3>
         <p style={{ color: '#7B6F9A', margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-          Ángeles en el Cielo es un memorial digital interactivo. Al encender la estrella de tu mascota, su recuerdo se publica en el mural de forma permanente. Todos los precios incluyen IVA (21%). El servicio se activa de inmediato tras el pago. Si alguna vez experimentas un problema técnico o error en tus datos, nuestro equipo lo resolverá en menos de 48h.
+          Ángeles en el Cielo es un memorial digital interactivo. Al encender la estrella de tu mascota, su recuerdo se publica en el mural durante la duración del proyecto mediante pago único. Todos los precios incluyen IVA (21%). El servicio se activa de inmediato tras el pago. Si alguna vez experimentas un problema técnico o error en tus datos, nuestro equipo lo resolverá en menos de 48h.
         </p>
       </div>
 
@@ -58,13 +58,13 @@ export default function TerminosPage() {
       }}>
         <ul style={{ color: '#4A3F6B', margin: 0, paddingLeft: 20, fontSize: 14 }}>
           <li style={{ marginBottom: 10 }}>
-            <strong>Plan Huellita (1,99 € IVA incl.):</strong> Reserva 1 casilla en el cielo para la foto, nombre y fecha de la mascota. Pago único.
+            <strong>Plan Huellita (1,99 € IVA incl.):</strong> Reserva 1 casilla en el cielo para la foto, nombre y fecha de la mascota durante la duración del proyecto. Pago único.
           </li>
           <li style={{ marginBottom: 10 }}>
-            <strong>Plan Estrella Brillante (4,99 € IVA incl.):</strong> Reserva un espacio ampliado de 4 casillas (2×2), tarjeta conmemorativa y dedicatoria. Pago único.
+            <strong>Plan Estrella Brillante (4,99 € IVA incl.):</strong> Reserva un espacio ampliado de 4 casillas (2×2), tarjeta conmemorativa y dedicatoria durante la duración del proyecto. Pago único.
           </li>
           <li style={{ marginBottom: 0 }}>
-            <strong>Plan Corazón Eterno (9,99 € IVA incl.):</strong> Reserva destacada de 9 casillas (3×3) en la Zona de Ángeles Fundadores (centro del cielo), insignia dorada y máxima visibilidad. Pago único.
+            <strong>Plan Corazón Eterno (9,99 € IVA incl.):</strong> Reserva destacada de 9 casillas (3×3) en la Zona de Ángeles Fundadores (centro del cielo), insignia dorada y máxima visibilidad durante la duración del proyecto. Pago único.
           </li>
         </ul>
       </div>
@@ -90,19 +90,19 @@ export default function TerminosPage() {
         </p>
       </div>
 
-      <h2 style={{ fontSize: 22, color: '#1E2A78', marginBottom: 12 }}>4. Compromiso de Perpetuidad: ¿Qué ocurre si el proyecto cesa en el futuro?</h2>
+      <h2 style={{ fontSize: 22, color: '#1E2A78', marginBottom: 12 }}>4. Vigencia del Servicio y Custodia del Recuerdo</h2>
       <p style={{ fontFamily: 'sans-serif', color: '#7B6F9A', marginBottom: 16 }}>
-        Una de las mayores preocupaciones legítimas de las familias al rendir homenaje a un ser querido es la permanencia del recuerdo en el tiempo. Ángeles en el Cielo asume el siguiente compromiso formal:
+        Ángeles en el Cielo establece las siguientes condiciones de transparencia y permanencia respecto a los homenajes publicados:
       </p>
       <ul style={{ fontFamily: 'sans-serif', color: '#7B6F9A', marginBottom: 24, paddingLeft: 20, fontSize: 14 }}>
         <li style={{ marginBottom: 10 }}>
-          <strong>Arquitectura autosuficiente:</strong> La plataforma está diseñada sobre infraestructura serverless de bajísimo coste de mantenimiento, permitiendo garantizar que los memoriales permanezcan activos sin requerir pagos recurrentes a las familias.
+          <strong>Duración del servicio:</strong> La asignación del espacio y la presencia del memorial en el mural interactivo online se prestan durante la duración del proyecto mediante un único pago, sin cuotas periódicas de mantenimiento ni suscripciones recurrentes.
         </li>
         <li style={{ marginBottom: 10 }}>
-          <strong>Custodia y Certificado Digital:</strong> Cada familia recibe y conserva de por vida el Certificado Oficial emitido en PDF y la ficha conmemorativa descargable en alta resolución, asegurando que el homenaje es propiedad inalienable de la familia con independencia de internet.
+          <strong>Custodia propia mediante Certificado Oficial:</strong> Cada familia recibe y conserva el Certificado Oficial emitido en formato PDF y el archivo conmemorativo en alta resolución para guardarlo e imprimirlo en sus propios dispositivos, asegurando que el homenaje es propiedad de la familia con independencia del entorno web.
         </li>
         <li style={{ marginBottom: 0 }}>
-          <strong>Cláusula de Continuidad y Archivo Histórico:</strong> En el hipotético e imprevisto caso de que el proyecto debiera cesar sus operaciones en un futuro lejano, Ángeles en el Cielo se compromete formalmente a: (i) preavisar por correo electrónico a todos los usuarios con al menos <strong>6 meses de antelación</strong>; (ii) habilitar una herramienta de descarga íntegra en alta resolución del memorial y sus dedicatorias; y (iii) ofrecer el traspaso del archivo del mural a una fundación o entidad sin ánimo de lucro de protección animal o archivo digital abierto (como <em>Internet Archive</em>) para garantizar que ninguna historia se pierda.
+          <strong>Discontinuidad sobrevenida:</strong> En el eventual e hipotético supuesto de que por motivos técnicos, legales o de cese de actividad el proyecto debiera discontinuar sus servicios en el futuro, se publicará un aviso con antelación razonable en el sitio web para que los usuarios puedan guardar sus archivos conmemorativos.
         </li>
       </ul>
 

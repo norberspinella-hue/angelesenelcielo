@@ -23,7 +23,7 @@ export function PricingSection() {
             <h3 className="plan-title text-[#1E2A78]">Huellita</h3>
             <p className="microcopy mt-2 text-[#5A639C]">Un espacio para tu pequeño</p>
             <div className="plan-price text-[#1E2A78]">1,99 €</div>
-            <span className="plan-meta text-sm text-[#5A639C]">Para siempre · Pago único</span>
+            <span className="plan-meta text-sm text-[#5A639C]">Durante la duración del proyecto · Pago único</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>1 bloque en el mural (1x1)</li>
@@ -48,9 +48,9 @@ export function PricingSection() {
           <div className="plan-badge bg-[#1E2A78] text-white">El más elegido</div>
           <div className="relative z-10 flex flex-col h-full flex-1">
             <h3 className="plan-title text-[#1E2A78]">Estrella Brillante</h3>
-            <p className="microcopy mt-2 text-[#5A639C]">Mayor visibilidad para siempre</p>
+            <p className="microcopy mt-2 text-[#5A639C]">Mayor visibilidad en el mural</p>
             <div className="plan-price text-[#1E2A78]">4,99€</div>
-            <span className="plan-meta text-sm text-[#5A639C]">Para siempre</span>
+            <span className="plan-meta text-sm text-[#5A639C]">Durante la duración del proyecto</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>4 bloques en el mural (2x2)</li>
@@ -76,11 +76,11 @@ export function PricingSection() {
             <h3 className="plan-title text-[#8A6033]">Corazón Eterno</h3>
             <p className="microcopy mt-2 text-[#9A7D63]">El homenaje máximo, se verá más que los demás</p>
             <div className="plan-price text-[#8A6033]">9,99€</div>
-            <span className="plan-meta text-sm text-[#9A7D63]">Para siempre</span>
+            <span className="plan-meta text-sm text-[#9A7D63]">Durante la duración del proyecto</span>
             
             <ul className="plan-list flex-1 text-[#9A7D63]">
               <li>9 bloques en el mural (3x3)</li>
-              <li>Tamaño máximo para siempre y más visible que el resto</li>
+              <li>Tamaño máximo en el mural y más visible que el resto</li>
               <li>Certificado Especial en su Aniversario</li>
               <li>Certificado Corazón Eterno</li>
               <li>Perfil completo en una página propia <span className="text-xs opacity-75 italic">(disponible muy pronto)</span></li>
@@ -102,7 +102,7 @@ export function PricingSection() {
           <span className="text-emerald-600 font-bold">✓</span> Pago único · Sin suscripciones ni renovaciones
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="text-emerald-600 font-bold">✓</span> Recuerdo con Compromiso de Perpetuidad
+          <span className="text-emerald-600 font-bold">✓</span> Activo durante la duración del proyecto
         </span>
       </div>
 

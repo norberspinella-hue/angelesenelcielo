@@ -13,9 +13,9 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
   
   const getPlanDetails = () => {
     switch(selectedPlan) {
-      case 'corazon_eterno': return { title: 'Corazón Eterno', price: '9,99 €', duration: 'Para siempre', slots: '9 slots' };
-      case 'estrella_brillante': return { title: 'Estrella Brillante', price: '4,99 €', duration: 'Para siempre', slots: '4 slots' };
-      default: return { title: 'Huellita', price: '1,99 €', duration: 'Para siempre', slots: '1 slot' };
+      case 'corazon_eterno': return { title: 'Corazón Eterno', price: '9,99 €', duration: 'Durante la duración del proyecto', slots: '9 slots' };
+      case 'estrella_brillante': return { title: 'Estrella Brillante', price: '4,99 €', duration: 'Durante la duración del proyecto', slots: '4 slots' };
+      default: return { title: 'Huellita', price: '1,99 €', duration: 'Durante la duración del proyecto', slots: '1 slot' };
     }
   };
 
@@ -142,7 +142,7 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
             <span>✓ 100% Seguro</span>
           </div>
           <p className="text-[11px] text-[#706A95] mt-3 pt-2 border-t border-gray-200/60">
-            ✦ Precios con <strong>IVA (21%) incluido</strong> · Recuerdo con <a href="/terminos" target="_blank" className="underline hover:text-[#1E2A78]">Compromiso de Perpetuidad</a>
+            ✦ Precios con <strong>IVA (21%) incluido</strong> · <a href="/terminos" target="_blank" className="underline hover:text-[#1E2A78]">Condiciones del servicio</a>
           </p>
         </div>
       </div>
