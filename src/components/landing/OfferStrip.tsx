@@ -37,7 +37,7 @@ export function OfferStrip() {
         <div>
           <h3 className="offer-title text-[#394B87] text-lg sm:text-xl font-bold whitespace-nowrap">Corazón Eterno</h3>
           <p className="offer-detail text-xs sm:text-sm text-[#706A95]">
-            Ocupa 9 espacios en el mural <span className="font-normal">durante la duración del proyecto</span>
+            Ocupa 9 espacios en el mural <span className="font-normal">para siempre</span>
           </p>
           <div className="offer-price text-xl sm:text-2xl font-black text-[#1E2A78]">
             9,99 €
