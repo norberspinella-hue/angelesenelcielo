@@ -34,7 +34,7 @@ export default function TerminosPage() {
           Resumen para Familias (Transparencia en 1 minuto)
         </h3>
         <p style={{ color: '#7B6F9A', margin: 0, fontSize: 14, lineHeight: 1.6 }}>
-          Ángeles en el Cielo es un memorial digital interactivo. Al encender la estrella de tu mascota, su recuerdo se publica en el mural durante la duración del proyecto mediante pago único. Todos los precios incluyen IVA (21%). El servicio se activa de inmediato tras el pago. Si alguna vez experimentas un problema técnico o error en tus datos, nuestro equipo lo resolverá en menos de 48h.
+          Ángeles en el Cielo es un memorial digital interactivo. Al encender la estrella de tu mascota, su recuerdo se publica en el mural (con validez anual para el Plan Huellita o pago único para los planes Estrella Brillante y Corazón Eterno). Todos los precios incluyen IVA (21%). El servicio se activa de inmediato tras el pago. Si alguna vez experimentas un problema técnico o error en tus datos, nuestro equipo lo resolverá en menos de 48h.
         </p>
       </div>
 
@@ -58,13 +58,13 @@ export default function TerminosPage() {
       }}>
         <ul style={{ color: '#4A3F6B', margin: 0, paddingLeft: 20, fontSize: 14 }}>
           <li style={{ marginBottom: 10 }}>
-            <strong>Plan Huellita (1,99 € IVA incl.):</strong> Reserva 1 casilla en el cielo para la foto, nombre y fecha de la mascota durante la duración del proyecto. Pago único.
+            <strong>Plan Huellita (1,99 € / año IVA incl.):</strong> Reserva 1 casilla en el cielo para la foto, nombre y fecha de la mascota. Validez y renovación anual.
           </li>
           <li style={{ marginBottom: 10 }}>
-            <strong>Plan Estrella Brillante (4,99 € IVA incl.):</strong> Reserva un espacio ampliado de 4 casillas (2×2), tarjeta conmemorativa y dedicatoria durante la duración del proyecto. Pago único.
+            <strong>Plan Estrella Brillante (4,99 € IVA incl.):</strong> Reserva un espacio ampliado de 4 casillas (2×2), tarjeta conmemorativa y dedicatoria. Pago único durante la duración del proyecto.
           </li>
           <li style={{ marginBottom: 0 }}>
-            <strong>Plan Corazón Eterno (9,99 € IVA incl.):</strong> Reserva destacada de 9 casillas (3×3) en la Zona de Ángeles Fundadores (centro del cielo), insignia dorada y máxima visibilidad durante la duración del proyecto. Pago único.
+            <strong>Plan Corazón Eterno (9,99 € IVA incl.):</strong> Reserva destacada de 9 casillas (3×3) en la Zona de Ángeles Fundadores (centro del cielo), insignia dorada y máxima visibilidad. Pago único durante la duración del proyecto.
           </li>
         </ul>
       </div>

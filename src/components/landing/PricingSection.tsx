@@ -23,7 +23,7 @@ export function PricingSection() {
             <h3 className="plan-title text-[#1E2A78]">Huellita</h3>
             <p className="microcopy mt-2 text-[#5A639C]">Un espacio para tu pequeño</p>
             <div className="plan-price text-[#1E2A78]">1,99 €</div>
-            <span className="plan-meta text-sm text-[#5A639C]">Para siempre</span>
+            <span className="plan-meta text-sm text-[#5A639C]">Anual</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>1 bloque en el mural (1x1)</li>

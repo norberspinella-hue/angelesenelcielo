@@ -13,9 +13,9 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
   
   const getPlanDetails = () => {
     switch(selectedPlan) {
-      case 'corazon_eterno': return { title: 'Corazón Eterno', price: '9,99 €', duration: 'Durante la duración del proyecto', slots: '9 slots' };
-      case 'estrella_brillante': return { title: 'Estrella Brillante', price: '4,99 €', duration: 'Durante la duración del proyecto', slots: '4 slots' };
-      default: return { title: 'Huellita', price: '1,99 €', duration: 'Durante la duración del proyecto', slots: '1 slot' };
+      case 'corazon_eterno': return { title: 'Corazón Eterno', price: '9,99 €', duration: 'Para siempre', slots: '9 slots' };
+      case 'estrella_brillante': return { title: 'Estrella Brillante', price: '4,99 €', duration: 'Para siempre', slots: '4 slots' };
+      default: return { title: 'Huellita', price: '1,99 €/año', duration: '1 año', slots: '1 slot' };
     }
   };
 
