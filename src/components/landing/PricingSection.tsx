@@ -23,7 +23,7 @@ export function PricingSection() {
             <h3 className="plan-title text-[#1E2A78]">Huellita</h3>
             <p className="microcopy mt-2 text-[#5A639C]">Un espacio para tu pequeño</p>
             <div className="plan-price text-[#1E2A78]">1,99 €</div>
-            <span className="plan-meta text-sm text-[#5A639C]">Anual</span>
+            <span className="plan-meta text-sm text-[#5A639C]">Para siempre · Pago único</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
               <li>1 bloque en el mural (1x1)</li>
@@ -91,6 +91,19 @@ export function PricingSection() {
             </Link>
           </div>
         </div>
+      </div>
+
+      {/* Garantía de precios transparentes */}
+      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mt-10 text-xs sm:text-sm font-medium text-[#706A95]">
+        <span className="flex items-center gap-1.5">
+          <span className="text-emerald-600 font-bold">✓</span> Todos los precios incluyen IVA (21%)
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="text-emerald-600 font-bold">✓</span> Pago único · Sin suscripciones ni renovaciones
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="text-emerald-600 font-bold">✓</span> Recuerdo con Compromiso de Perpetuidad
+        </span>
       </div>
 
       {/* Aclaración para empresas */}

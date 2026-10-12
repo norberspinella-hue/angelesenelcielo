@@ -31,7 +31,9 @@ export async function POST(req: NextRequest) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
-    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication } = session.metadata!
+    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication, shareOnSocials } = session.metadata!
+
+    const isShareOnSocialsAllowed = shareOnSocials === 'true'
 
     const planMapping: Record<string, string> = {
       'huellita': 'recuerdo_inicial',
@@ -160,6 +162,7 @@ export async function POST(req: NextRequest) {
           moderation_status: 'approved',
           dedication: dedication || '',
           slot_assigned: slotAssignedStr,
+          moderation_notes: isShareOnSocialsAllowed ? '[autoriza_redes_sociales]' : null,
         })
         .select()
         .single()
@@ -444,6 +447,13 @@ export async function POST(req: NextRequest) {
                     font-weight: 700;">Slot</td>
                     <td style="padding: 8px; border-bottom: 1px solid #eee;">
                     ${slotId}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; 
+                    font-weight: 700;">Autoriza Redes</td>
+                    <td style="padding: 8px; border-bottom: 1px solid #eee; 
+                    color: ${isShareOnSocialsAllowed ? '#16a34a' : '#6b7280'}; font-weight: 700;">
+                    ${isShareOnSocialsAllowed ? '✅ SÍ (Autorizado para Instagram/TikTok/FB)' : '❌ NO'}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px; font-weight: 700;">Sesión Stripe</td>

@@ -96,15 +96,29 @@ export function StepStory({ onNext, onBack, draftData, setDraftData }: StepStory
             />
           </div>
 
-          <label className="flex items-start gap-2 cursor-pointer mt-4 bg-gray-50 p-3 rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+          {/* Casilla obligatoria: Derechos y políticas */}
+          <label className="flex items-start gap-2.5 cursor-pointer mt-4 bg-gray-50 p-3 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors">
             <input 
               type="checkbox" 
-              className="mt-1 flex-shrink-0"
+              className="mt-0.5 flex-shrink-0 rounded text-[#1E2A78] focus:ring-[#1E2A78]"
               checked={draftData.rightsConfirmed || false}
               onChange={(e) => setDraftData({ ...draftData, rightsConfirmed: e.target.checked })}
             />
-            <span className="text-xs text-[#706A95]">
-              Confirmo que tengo los derechos sobre esta imagen y acepto las políticas de uso.
+            <span className="text-xs text-[#706A95] leading-relaxed">
+              Confirmo que tengo los derechos sobre esta fotografía y acepto los <a href="/terminos" target="_blank" className="underline hover:text-[#1E2A78]">Términos</a> y la <a href="/privacidad" target="_blank" className="underline hover:text-[#1E2A78]">Política de Privacidad</a>. <strong className="text-rose-500">*</strong>
+            </span>
+          </label>
+
+          {/* Casilla opcional: Difusión en Redes Sociales */}
+          <label className="flex items-start gap-2.5 cursor-pointer mt-2 bg-[#FFF8F7] p-3 rounded-xl border border-[#F3DCE7] hover:border-[#E8B8CE] transition-colors">
+            <input 
+              type="checkbox" 
+              className="mt-0.5 flex-shrink-0 rounded text-[#F65F8F] focus:ring-[#F65F8F]"
+              checked={draftData.shareOnSocials || false}
+              onChange={(e) => setDraftData({ ...draftData, shareOnSocials: e.target.checked })}
+            />
+            <span className="text-xs text-[#706A95] leading-relaxed">
+              <strong className="text-[#25335F] font-semibold">Autorizo con amor</strong> compartir la foto y la dedicatoria de mi angelito en las redes sociales de Ángeles en el Cielo (Instagram, TikTok y Facebook) para rendirle homenaje y dar a conocer su historia a la comunidad. <span className="text-[#9B8FB0] font-normal">(Opcional)</span>
             </span>
           </label>
         </div>
