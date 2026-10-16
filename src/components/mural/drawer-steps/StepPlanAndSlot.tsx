@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useCurrency } from '@/context/CurrencyContext';
+import { PLANS, PLAN_ORDER, getPlan, slotsLabel } from '@/lib/plans';
 
 interface StepPlanAndSlotProps {
   onNext: () => void;
@@ -12,32 +13,17 @@ interface StepPlanAndSlotProps {
 export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSelectedSlot, isFounderSlot }: StepPlanAndSlotProps) {
   const { formatPrice } = useCurrency();
 
-  const plans = [
-    {
-      id: 'huellita',
-      title: 'Huellita',
-      price: formatPrice('huellita'),
-      duration: '/ año',
-      slots: '1 espacio',
-      icon: '⭐'
-    },
-    {
-      id: 'estrella_brillante',
-      title: 'Estrella Brillante',
-      price: formatPrice('estrella_brillante'),
-      duration: 'Para siempre',
-      slots: '4 espacios',
-      icon: '⭐⭐⭐⭐'
-    },
-    {
-      id: 'corazon_eterno',
-      title: 'Corazón Eterno',
-      price: formatPrice('corazon_eterno'),
-      duration: 'Para siempre',
-      slots: '9 espacios',
-      icon: '⭐ 3x3'
-    }
-  ];
+  const plans = PLAN_ORDER.map((id) => {
+    const p = PLANS[id];
+    return {
+      id: p.id,
+      title: p.title,
+      price: formatPrice(p.id),
+      duration: p.durationShort,
+      slots: slotsLabel(p),
+      icon: p.drawerIcon
+    };
+  });
 
   const [founderInfo, setFounderInfo] = useState<{ count: number; maxFounders: number; available: boolean } | null>(null);
 
@@ -156,17 +142,13 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
                   const actualRow = (preSelectedSlot?.row || 0) - 2 + rowIdx;
                   
                   // Determine if this cell is part of the selected plan
-                  const isMainSlot = actualCol === preSelectedSlot?.col && actualRow === preSelectedSlot?.row;
                   let isSelected = false;
-                  
-                  if (selectedPlan === 'huellita') {
-                    isSelected = isMainSlot;
-                  } else if (selectedPlan === 'estrella_brillante') {
-                    isSelected = actualCol >= (preSelectedSlot?.col || 0) && actualCol < (preSelectedSlot?.col || 0) + 2 &&
-                                 actualRow >= (preSelectedSlot?.row || 0) && actualRow < (preSelectedSlot?.row || 0) + 2;
-                  } else if (selectedPlan === 'corazon_eterno') {
-                    isSelected = actualCol >= (preSelectedSlot?.col || 0) && actualCol < (preSelectedSlot?.col || 0) + 3 &&
-                                 actualRow >= (preSelectedSlot?.row || 0) && actualRow < (preSelectedSlot?.row || 0) + 3;
+                  const selectedPlanConfig = getPlan(selectedPlan);
+
+                  if (selectedPlanConfig && preSelectedSlot) {
+                    const blockSize = selectedPlanConfig.size;
+                    isSelected = actualCol >= preSelectedSlot.col && actualCol < preSelectedSlot.col + blockSize &&
+                                 actualRow >= preSelectedSlot.row && actualRow < preSelectedSlot.row + blockSize;
                   }
 
                   // Mock: Some random neighbors are occupied based on coordinates to look realistic

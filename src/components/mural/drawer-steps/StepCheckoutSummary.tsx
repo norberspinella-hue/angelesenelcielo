@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useCurrency } from '@/context/CurrencyContext';
+import { getPlanOrDefault, slotsLabel } from '@/lib/plans';
 
 interface StepCheckoutSummaryProps {
   onBack: () => void;
@@ -14,11 +15,13 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
   const { formatPrice, currency } = useCurrency();
   
   const getPlanDetails = () => {
-    switch(selectedPlan) {
-      case 'corazon_eterno': return { title: 'Corazón Eterno', price: formatPrice('corazon_eterno'), duration: 'Para siempre', slots: '9 espacios en el cielo' };
-      case 'estrella_brillante': return { title: 'Estrella Brillante', price: formatPrice('estrella_brillante'), duration: 'Para siempre', slots: '4 espacios en el cielo' };
-      default: return { title: 'Huellita', price: formatPrice('huellita', { showPeriod: true }), duration: '1 año', slots: '1 espacio en el cielo' };
-    }
+    const p = getPlanOrDefault(selectedPlan);
+    return {
+      title: p.title,
+      price: formatPrice(p.id, { showPeriod: true }),
+      duration: p.durationLong,
+      slots: `${slotsLabel(p)} en el cielo`
+    };
   };
 
   const plan = getPlanDetails();
@@ -27,11 +30,7 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
     try {
       setLoading(true)
       
-      const planKey = {
-        'huellita': 'huellita',
-        'estrella_brillante': 'estrella_brillante', 
-        'corazon_eterno': 'corazon_eterno',
-      }[selectedPlan] ?? 'huellita'
+      const planKey = getPlanOrDefault(selectedPlan).id
 
       const slotIdStr = selectedSlot ? `${selectedSlot.col},${selectedSlot.row}` : 'auto';
 

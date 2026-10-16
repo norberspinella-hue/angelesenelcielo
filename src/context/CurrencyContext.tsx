@@ -1,13 +1,14 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { formatPlanPrice, getPlan, type PlanId } from '@/lib/plans';
 
 export type Currency = 'EUR' | 'USD';
 
 interface CurrencyContextType {
   currency: Currency;
   setCurrency: (c: Currency) => void;
-  formatPrice: (plan: 'huellita' | 'estrella_brillante' | 'corazon_eterno', options?: { showPeriod?: boolean }) => string;
+  formatPrice: (plan: PlanId, options?: { showPeriod?: boolean }) => string;
   taxGuarantee: string;
 }
 
@@ -44,21 +45,10 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     } catch {}
   };
 
-  const formatPrice = (plan: 'huellita' | 'estrella_brillante' | 'corazon_eterno', options?: { showPeriod?: boolean }): string => {
-    const isUSD = currency === 'USD';
-    if (plan === 'huellita') {
-      if (options?.showPeriod) {
-        return isUSD ? '$1.99 / año' : '1,99 € / año';
-      }
-      return isUSD ? '$1.99' : '1,99 €';
-    }
-    if (plan === 'estrella_brillante') {
-      return isUSD ? '$4.99' : '4,99 €';
-    }
-    if (plan === 'corazon_eterno') {
-      return isUSD ? '$9.99' : '9,99 €';
-    }
-    return '';
+  const formatPrice = (plan: PlanId, options?: { showPeriod?: boolean }): string => {
+    const planConfig = getPlan(plan);
+    if (!planConfig) return '';
+    return formatPlanPrice(planConfig, currency, options);
   };
 
   const taxGuarantee = currency === 'EUR'

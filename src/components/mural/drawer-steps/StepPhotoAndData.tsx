@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Cropper from 'react-easy-crop';
 import { useCurrency } from '@/context/CurrencyContext';
+import { getPlanOrDefault } from '@/lib/plans';
 
 interface StepPhotoAndDataProps {
   onNext: () => void;
@@ -13,6 +14,7 @@ interface StepPhotoAndDataProps {
 
 export function StepPhotoAndData({ onNext, onBack, draftData, setDraftData, selectedPlan }: StepPhotoAndDataProps) {
   const { formatPrice } = useCurrency();
+  const currentPlan = getPlanOrDefault(selectedPlan);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(draftData.photoUrl || null);
   const [uploading, setUploading] = useState(false);
@@ -335,9 +337,7 @@ export function StepPhotoAndData({ onNext, onBack, draftData, setDraftData, sele
           <div className="bg-[#FFF8F4] border border-[#F8C7D8] rounded-lg p-3 mt-auto">
             <label className="block text-xs font-bold text-[#1E2A78] mb-1">Plan seleccionado</label>
             <div className="text-sm text-[#1E2A78]">
-              {selectedPlan === 'corazon_eterno' ? `Corazón Eterno (${formatPrice('corazon_eterno')})` : 
-               selectedPlan === 'estrella_brillante' ? `Estrella Brillante (${formatPrice('estrella_brillante')})` : 
-               `Huellita (${formatPrice('huellita', { showPeriod: true })})`}
+              {`${currentPlan.title} (${formatPrice(currentPlan.id, { showPeriod: true })})`}
             </div>
           </div>
         </div>
