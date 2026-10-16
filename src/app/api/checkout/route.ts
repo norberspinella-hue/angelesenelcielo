@@ -1,17 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { getPlan } from '@/lib/plans'
+import { getPlan, LEGACY_STRIPE_PRICE_FALLBACKS } from '@/lib/plans'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia' as any, // Cast to any to avoid strict version mismatch if package version differs slightly, or just use the exact version string expected: '2026-04-22.dahlia'
 })
 
 export async function POST(req: NextRequest) {
+  let currentPlan: string | undefined
+  let currentPriceId: string | undefined
   try {
     const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication, shareOnSocials } = await req.json()
+    currentPlan = plan
 
     const planCfg = getPlan(plan)
-    const priceId = planCfg ? process.env[planCfg.stripePriceEnvVar] : undefined
+    let priceId = planCfg ? process.env[planCfg.stripePriceEnvVar] : undefined
+    if (priceId && LEGACY_STRIPE_PRICE_FALLBACKS[priceId]) {
+      priceId = LEGACY_STRIPE_PRICE_FALLBACKS[priceId]
+    }
+    currentPriceId = priceId
+
     if (!priceId) {
       return NextResponse.json(
         { error: 'Plan no válido' },
@@ -49,7 +57,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url })
   } catch (error) {
-    console.error('Stripe checkout error:', error)
+    console.error('Stripe checkout error for plan:', currentPlan, 'priceId:', currentPriceId, error)
     return NextResponse.json(
       { error: 'Error al crear la sesión de pago' },
       { status: 500 }

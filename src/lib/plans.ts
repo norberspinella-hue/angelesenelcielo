@@ -89,6 +89,15 @@ export const PLANS: Record<PlanId, PlanConfig> = {
 /** Planes en el orden en que se muestran al usuario. */
 export const PLAN_ORDER: PlanId[] = ['huellita', 'estrella_brillante', 'corazon_eterno'];
 
+/**
+ * IDs de Stripe obsoletos o inactivos que deben ser redirigidos automáticamente
+ * a su sustituto activo si las variables de entorno de producción no se han actualizado.
+ */
+export const LEGACY_STRIPE_PRICE_FALLBACKS: Record<string, string> = {
+  // Precio one-time original de Huellita archivado en Stripe -> sustituto recurrente anual activo
+  'price_1UPP2vEky7gqHQh1rua0O7EL': 'price_1UPiQnEky7gqHQh1JIGVjWLq',
+};
+
 /** Plan por defecto cuando el id recibido no se reconoce. */
 export const DEFAULT_PLAN_ID: PlanId = 'huellita';
 
