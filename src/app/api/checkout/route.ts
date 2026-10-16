@@ -1,21 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { getPlan } from '@/lib/plans'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia' as any, // Cast to any to avoid strict version mismatch if package version differs slightly, or just use the exact version string expected: '2026-04-22.dahlia'
 })
 
-const PRICE_IDS: Record<string, string> = {
-  huellita: process.env.STRIPE_PRICE_HUELLITA!,
-  estrella_brillante: process.env.STRIPE_PRICE_ESTRELLA_BRILLANTE!,
-  corazon_eterno: process.env.STRIPE_PRICE_CORAZON_ETERNO!,
-}
-
 export async function POST(req: NextRequest) {
   try {
     const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication, shareOnSocials } = await req.json()
 
-    const priceId = PRICE_IDS[plan]
+    const planCfg = getPlan(plan)
+    const priceId = planCfg ? process.env[planCfg.stripePriceEnvVar] : undefined
     if (!priceId) {
       return NextResponse.json(
         { error: 'Plan no válido' },
