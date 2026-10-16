@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useCurrency } from '@/context/CurrencyContext';
+import { PLANS, slotsLabel } from '@/lib/plans';
 
 export function OfferStrip() {
   const { formatPrice } = useCurrency();
@@ -14,7 +15,7 @@ export function OfferStrip() {
         </div>
         <div>
           <h3 className="offer-title text-[#394B87] text-lg sm:text-xl font-bold whitespace-nowrap">Huellita</h3>
-          <p className="offer-detail text-xs sm:text-sm text-[#706A95]">Ocupa 1 espacio en el mural</p>
+          <p className="offer-detail text-xs sm:text-sm text-[#706A95]">{`Ocupa ${slotsLabel(PLANS.huellita)} en el mural`}</p>
           <div className="offer-price text-xl sm:text-2xl font-black text-[#1E2A78]">
             {formatPrice('huellita')}
             <span className="offer-period text-xs sm:text-sm font-normal text-[#706A95] ml-1">/ año</span>
@@ -28,7 +29,7 @@ export function OfferStrip() {
         </div>
         <div>
           <h3 className="offer-title text-[#394B87] text-lg sm:text-xl font-bold whitespace-nowrap">Estrella Brillante</h3>
-          <p className="offer-detail text-xs sm:text-sm text-[#706A95]">Ocupa 4 espacios en el mural</p>
+          <p className="offer-detail text-xs sm:text-sm text-[#706A95]">{`Ocupa ${slotsLabel(PLANS.estrella_brillante)} en el mural`}</p>
           <div className="offer-price text-xl sm:text-2xl font-black text-[#1E2A78]">
             {formatPrice('estrella_brillante')}
           </div>
@@ -42,7 +43,7 @@ export function OfferStrip() {
         <div>
           <h3 className="offer-title text-[#394B87] text-lg sm:text-xl font-bold whitespace-nowrap">Corazón Eterno</h3>
           <p className="offer-detail text-xs sm:text-sm text-[#706A95]">
-            Ocupa 9 espacios en el mural <span className="font-normal">para siempre</span>
+            {`Ocupa ${slotsLabel(PLANS.corazon_eterno)} en el mural`}{' '}<span className="font-normal">para siempre</span>
           </p>
           <div className="offer-price text-xl sm:text-2xl font-black text-[#1E2A78]">
             {formatPrice('corazon_eterno')}

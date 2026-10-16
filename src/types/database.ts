@@ -24,7 +24,7 @@ export interface Database {
           plan_type: 'huellita' | 'estrella_brillante' | 'corazon_eterno'
           price_paid: number
           currency: string
-          slots_count: 1 | 4 | 9
+          slots_count: number
           profile_slug: string
           visibility: 'public' | 'private'
           reactions_count: number

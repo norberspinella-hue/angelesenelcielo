@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCurrency } from '@/context/CurrencyContext';
+import { PLANS, slotsLabel } from '@/lib/plans';
 import { CurrencySelector } from '@/components/ui/CurrencySelector';
 
 export function PricingSection() {
@@ -38,7 +39,7 @@ export function PricingSection() {
             <span className="plan-meta text-sm text-[#5A639C]">Anual</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
-              <li>Un trocito de cielo propio (1 espacio)</li>
+              <li>{`Un trocito de cielo propio (${slotsLabel(PLANS.huellita)})`}</li>
               <li>Sube su foto más bonita</li>
               <li>Escribe su historia y dedicatoria</li>
               <li>
@@ -70,7 +71,7 @@ export function PricingSection() {
             <span className="plan-meta text-sm text-[#5A639C]">Para siempre</span>
             
             <ul className="plan-list flex-1 text-[#5A639C]">
-              <li>Un pedacito de cielo ampliado (4 espacios)</li>
+              <li>{`Un pedacito de cielo ampliado (${slotsLabel(PLANS.estrella_brillante)})`}</li>
               <li>La foto de tu peque se verá más en el mural</li>
               <li>Brillo durante la semana de su aniversario</li>
               <li>Certificado Estrella</li>
@@ -96,7 +97,7 @@ export function PricingSection() {
             <span className="plan-meta text-sm text-[#9A7D63]">Para siempre</span>
             
             <ul className="plan-list flex-1 text-[#9A7D63]">
-              <li>Un gran espacio en el corazón del cielo (9 espacios)</li>
+              <li>{`Un gran espacio en el corazón del cielo (${slotsLabel(PLANS.corazon_eterno)})`}</li>
               <li>Tamaño máximo para siempre y más visible que el resto</li>
               <li>Certificado Especial en su Aniversario</li>
               <li>Certificado Corazón Eterno</li>
