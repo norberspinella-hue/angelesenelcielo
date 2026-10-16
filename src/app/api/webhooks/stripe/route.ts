@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 import { resend } from '@/lib/resend'
 import { notifyNeighborsOfNewPet } from '@/lib/notifications'
+import { getPlanOrDefault } from '@/lib/plans'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia' as any,
@@ -35,12 +36,8 @@ export async function POST(req: NextRequest) {
 
     const isShareOnSocialsAllowed = shareOnSocials === 'true'
 
-    const planMapping: Record<string, string> = {
-      'huellita': 'recuerdo_inicial',
-      'estrella_brillante': 'estrella_anual',
-      'corazon_eterno': 'recuerdo_eterno',
-    }
-    const planDb = planMapping[plan] ?? 'recuerdo_inicial'
+    const planCfg = getPlanOrDefault(plan)
+    const planDb = planCfg.dbName
 
     console.log('Pago completado:', {
       plan,
@@ -94,8 +91,7 @@ export async function POST(req: NextRequest) {
         finalX = xVal
         finalY = yVal
 
-        const planSize = planDb === 'recuerdo_eterno' ? 3 :
-                         planDb === 'estrella_anual' ? 2 : 1
+        const planSize = planCfg.size
 
         // Verificar si el bloque completo está libre
         const blockFree = await isBlockFree(xVal, yVal, planSize)
@@ -156,7 +152,7 @@ export async function POST(req: NextRequest) {
           location: location || '',
           photo_url: photoUrl || '', // de los metadatos de Stripe
           death_date: petDate || new Date().toISOString().split('T')[0],
-          slots_count: plan === 'corazon_eterno' ? 9 : plan === 'estrella_brillante' ? 4 : 1,
+          slots_count: planCfg.slotsCount,
           profile_slug: `${petName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`,
           visibility: 'public',
           publication_status: 'published',
@@ -176,7 +172,7 @@ export async function POST(req: NextRequest) {
 
       // 2. Registrar/actualizar los slots en mural_slots
       if (finalX !== null && finalY !== null) {
-        const size = plan === 'corazon_eterno' ? 3 : plan === 'estrella_brillante' ? 2 : 1
+        const size = planCfg.size
         const slotsToUpsert = []
 
         for (let dx = 0; dx < size; dx++) {
@@ -297,7 +293,7 @@ export async function POST(req: NextRequest) {
                   Plan
                 </td>
                 <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#25335F;font-weight:700;text-align:right;border-bottom:1px solid #F3DCE7;">
-                  ${plan === 'huellita' ? 'Huellita' : plan === 'estrella_brillante' ? 'Estrella Brillante' : 'Corazón Eterno'}
+                  ${planCfg.title}
                 </td>
               </tr>
               <tr>
@@ -305,7 +301,7 @@ export async function POST(req: NextRequest) {
                   Luces en el cielo
                 </td>
                 <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#25335F;font-weight:700;text-align:right;border-bottom:1px solid #F3DCE7;">
-                  ${plan === 'corazon_eterno' ? '9' : plan === 'estrella_brillante' ? '4' : '1'} luces ✨
+                  ${planCfg.slotsCount} luces ✨
                 </td>
               </tr>
               <tr>
@@ -321,7 +317,7 @@ export async function POST(req: NextRequest) {
                   Importe
                 </td>
                 <td style="padding:8px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#25335F;font-weight:700;text-align:right;">
-                  ${plan === 'corazon_eterno' ? '9,99 €' : plan === 'estrella_brillante' ? '4,99 €' : '1,99 €'}
+                  ${planCfg.price.EUR}
                 </td>
               </tr>
             </table>
