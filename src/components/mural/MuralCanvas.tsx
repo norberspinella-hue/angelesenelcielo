@@ -7,6 +7,7 @@ import { getVisibleRange, getSlotSize, screenToGrid, PREMIUM_ZONE, PREMIUM_ZONE 
 import { generateSeedSlots } from '@/lib/mural/mockSeed';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import { getPlanByDbName } from '@/lib/plans';
 
 const supabase = createClient();
 
@@ -219,8 +220,7 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
         : '';
 
   const slotsCount = petData?.slots_count ||
-    (planType === 'recuerdo_eterno' ? 9 : 
-     planType === 'estrella_anual' ? 4 : 1);
+    (getPlanByDbName(planType)?.slotsCount ?? 1);
 
   // Render plan badge conditionally
   const planBadgeSrc = 
@@ -1407,9 +1407,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
             } else {
               let imageDrawn = false;
 
-              const planSize = 
-                realSlot.plan_type === 'recuerdo_eterno' ? 3 :
-                realSlot.plan_type === 'estrella_anual' ? 2 : 1;
+              const planSize = getPlanByDbName(realSlot.plan_type)?.size ?? 1;
 
               if (thumbnailUrl && isMainSlot) {
                 const img = loadImage(thumbnailUrl, () => {
@@ -1511,8 +1509,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
               let inside = false;
               realSlotsMap.forEach((v, k) => {
                 if (inside || !v.isMainSlot) return;
-                const planSize = v.plan_type === 'recuerdo_eterno' ? 3 :
-                                 v.plan_type === 'estrella_anual' ? 2 : 1;
+                const planSize = getPlanByDbName(v.plan_type)?.size ?? 1;
                 const [mx, my] = k.split(',').map(Number);
                 if (col >= mx && col < mx + planSize &&
                     row >= my && row < my + planSize) {
