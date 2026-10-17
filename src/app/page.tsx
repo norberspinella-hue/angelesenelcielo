@@ -1,8 +1,10 @@
 import Image from 'next/image';
+import { OctubreBanner } from '@/components/landing/OctubreBanner';
 import { Header } from '@/components/landing/Header';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { OfferStrip } from '@/components/landing/OfferStrip';
 import { ValueProposition } from '@/components/landing/ValueProposition';
+import { CorazonesDeAngelSection } from '@/components/landing/CorazonesDeAngelSection';
 import { PricingSection } from '@/components/landing/PricingSection';
 import { Testimonials } from '@/components/landing/Testimonials';
 import { Footer } from '@/components/landing/Footer';
@@ -14,6 +16,7 @@ import { TrustStrip } from '@/components/landing/TrustStrip';
 export default function AngelesEnElCieloLanding() {
   return (
     <>
+      <OctubreBanner />
       <Header />
       
       <main>
@@ -81,6 +84,8 @@ export default function AngelesEnElCieloLanding() {
           </section>
 
           <ValueProposition />
+
+          <CorazonesDeAngelSection />
           
           <PricingSection />
           <RainbowBridge />
