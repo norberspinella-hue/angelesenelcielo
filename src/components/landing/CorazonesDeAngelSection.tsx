@@ -22,25 +22,8 @@ export function CorazonesDeAngelSection() {
   return (
     <section 
       id="corazones-de-angel"
-      className="w-full py-12 sm:py-16 px-4 sm:px-6 relative overflow-hidden flex flex-col items-center justify-center transition-all bg-[#FAF6F3]"
-      style={{
-        backgroundImage: 'var(--bg-solidario-image, url("/images/solidario/bg-corazones-pc.webp"))',
-        backgroundSize: '100% 100%',
-        backgroundPosition: 'center center',
-        backgroundRepeat: 'no-repeat',
-      }}
+      className="w-full py-12 sm:py-16 px-4 sm:px-6 relative overflow-hidden flex flex-col items-center justify-center transition-all"
     >
-      {/* Estilo para cargar la versión vertical en dispositivos móviles */}
-      <style jsx>{`
-        @media (max-width: 768px) {
-          #corazones-de-angel {
-            --bg-solidario-image: url("/images/solidario/bg-corazones-mobile.webp");
-            background-size: cover;
-            background-position: center top;
-          }
-        }
-      `}</style>
-
       {/* Contenedor central proporcionado */}
       <div className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center text-center">
 
@@ -90,23 +73,37 @@ export function CorazonesDeAngelSection() {
           {/* ======================= */}
           {/* TARJETA 1: PROTECTORAS */}
           {/* ======================= */}
-          <div className="rounded-[24px] p-5 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-white/82 backdrop-blur-[14px] border-[1.5px] border-white/95 shadow-[0_12px_32px_rgba(180,140,190,0.14)] hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(180,140,190,0.22)] transition-all">
-            {/* Badge Mayor Impacto */}
-            <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-[9.5px] font-bold shadow-xs">
-              <span>👑</span>
-              <span>Mayor Impacto</span>
-            </div>
-
+          <div className="rounded-[24px] p-5 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-white/85 backdrop-blur-[14px] border-[1.5px] border-white/95 shadow-[0_12px_32px_rgba(180,140,190,0.14)] hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(180,140,190,0.22)] transition-all">
             <div>
-              {/* Icono Casita Protectoras (SVG Oficial) */}
-              <div className="w-full flex items-center justify-center my-1.5 h-16">
-                <Image 
-                  src="/images/solidario/icon-casa-protectoras.svg" 
-                  alt="Casa Protectoras" 
-                  width={64}
-                  height={64}
-                  className="h-16 w-auto object-contain filter drop-shadow-[0_4px_10px_rgba(200,160,180,0.30)] hover:scale-105 transition-transform"
-                />
+              {/* Encabezado: Logo Casa en la esquina izquierda + Mariposa a su derecha + Badge */}
+              <div className="flex items-center justify-between w-full mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-13 h-13 sm:w-14 sm:h-14 relative flex items-center justify-center shrink-0">
+                    <Image 
+                      src="/images/solidario/icon-casa-protectoras.svg" 
+                      alt="Casa Protectoras" 
+                      width={54}
+                      height={54}
+                      className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(200,160,180,0.30)] hover:scale-105 transition-transform"
+                    />
+                  </div>
+                  {/* Mariposa al lado derecho del icono */}
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 relative -mt-3 shrink-0">
+                    <Image 
+                      src="/images/icons/butterfly1.svg" 
+                      alt="Mariposa" 
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(236,72,153,0.35)] hover:scale-110 hover:rotate-6 transition-transform"
+                    />
+                  </div>
+                </div>
+
+                {/* Badge Mayor Impacto */}
+                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-[9.5px] font-bold shadow-xs">
+                  <span>👑</span>
+                  <span>Mayor Impacto</span>
+                </div>
               </div>
 
               <span className="text-[9.5px] font-extrabold text-[#9C7A4E] uppercase tracking-wider block mb-0.5">
@@ -123,17 +120,26 @@ export function CorazonesDeAngelSection() {
               </p>
             </div>
 
-            {/* Botón Rosa Claro */}
+            {/* Botón CTA Estilo HeavenCTAButton */}
             <button 
               onClick={() => {
                 setIsShelterModalOpen(true)
                 setSubmitted(false)
               }}
-              className="mt-4 w-full py-2.5 px-4 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm text-[#8A3D54] hover:scale-[1.02] active:scale-[0.98] transition-all"
-              style={{ background: 'linear-gradient(90deg, #FDE2E4 0%, #F8B4C0 100%)', border: '1px solid rgba(255,255,255,0.8)' }}
+              className="mt-4 w-full py-3 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer"
+              style={{
+                background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%)',
+                boxShadow: 'inset 0 2px 3px rgba(255, 255, 255, 0.75), inset 0 -3px 6px rgba(180, 83, 9, 0.4), 0 0 0 1.8px rgba(253, 230, 138, 0.85), 0 0 14px 3px rgba(245, 158, 11, 0.4), 0 8px 20px -2px rgba(217, 119, 6, 0.4)',
+                letterSpacing: '0.3px',
+                textShadow: '0 1px 2px rgba(0,0,0,0.15)'
+              }}
             >
+              <span className="flex items-center justify-center">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                  <path fill="#FFFDF0" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+              </span>
               <span>Inscribir protectora piloto</span>
-              <span>🐾</span>
               <span className="text-xs">›</span>
             </button>
           </div>
@@ -141,28 +147,37 @@ export function CorazonesDeAngelSection() {
           {/* ======================= */}
           {/* TARJETA 2: COMUNIDAD */}
           {/* ======================= */}
-          <div className="rounded-[24px] p-5 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-white/82 backdrop-blur-[14px] border-[1.5px] border-white/95 shadow-[0_12px_32px_rgba(180,140,190,0.14)] hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(180,140,190,0.22)] transition-all">
-            {/* Badge 50% donación directa */}
-            <div className="absolute top-4 right-4 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFF1F2] border border-[#FECDD3] text-[#BE123C] text-[9.5px] font-bold shadow-xs">
-              <span>🩷</span>
-              <span>50% donación directa</span>
-            </div>
-
+          <div className="rounded-[24px] p-5 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-white/85 backdrop-blur-[14px] border-[1.5px] border-white/95 shadow-[0_12px_32px_rgba(180,140,190,0.14)] hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(180,140,190,0.22)] transition-all">
             <div>
-              {/* Icono Estrella Dorada 3D */}
-              <div className="w-full flex items-center justify-center my-1.5 h-16 relative">
-                <svg width="64" height="64" viewBox="0 0 100 100" className="filter drop-shadow-[0_6px_14px_rgba(245,190,60,0.45)] hover:scale-105 transition-transform">
-                  <defs>
-                    <radialGradient id="starGold3DSection" cx="35%" cy="30%" r="70%">
-                      <stop offset="0%" stopColor="#FFFDF0" />
-                      <stop offset="35%" stopColor="#FCD34D" />
-                      <stop offset="75%" stopColor="#D97706" />
-                      <stop offset="100%" stopColor="#92400E" />
-                    </radialGradient>
-                  </defs>
-                  <polygon points="50,5 64,36 98,38 72,62 80,95 50,77 20,95 28,62 2,38 36,36" fill="url(#starGold3DSection)" />
-                </svg>
-                <span className="absolute top-0 right-16 text-xs select-none">🦋</span>
+              {/* Encabezado: Estrella en la esquina izquierda (misma posicón) + Mariposa a su derecha + Badge */}
+              <div className="flex items-center justify-between w-full mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-13 h-13 sm:w-14 sm:h-14 relative flex items-center justify-center shrink-0">
+                    <Image 
+                      src="/images/icons/plans/icon-plan-estrella.svg" 
+                      alt="Estrella Solidaria" 
+                      width={54}
+                      height={54}
+                      className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(245,190,60,0.40)] hover:scale-105 transition-transform"
+                    />
+                  </div>
+                  {/* Mariposa al lado derecho del icono */}
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 relative -mt-3 shrink-0">
+                    <Image 
+                      src="/images/icons/butterfly2.svg" 
+                      alt="Mariposa" 
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(167,139,250,0.35)] hover:scale-110 hover:-rotate-6 transition-transform"
+                    />
+                  </div>
+                </div>
+
+                {/* Badge 50% donación directa */}
+                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFF1F2] border border-[#FECDD3] text-[#BE123C] text-[9.5px] font-bold shadow-xs">
+                  <span>🩷</span>
+                  <span>50% donación directa</span>
+                </div>
               </div>
 
               <span className="text-[9.5px] font-extrabold text-[#9C7A4E] uppercase tracking-wider block mb-0.5">
@@ -203,14 +218,23 @@ export function CorazonesDeAngelSection() {
               </div>
             </div>
 
-            {/* Botón Lila Suave */}
+            {/* Botón CTA Moradito Claro Estilo HeavenCTAButton */}
             <Link 
               href="/mural-global"
-              className="mt-3 w-full py-2.5 px-4 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm text-white hover:scale-[1.02] active:scale-[0.98] transition-all"
-              style={{ background: 'linear-gradient(90deg, #A78BFA 0%, #8B5CF6 100%)', border: '1px solid rgba(255,255,255,0.7)' }}
+              className="mt-4 w-full py-3 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer"
+              style={{
+                background: 'linear-gradient(135deg, #C4B5FD 0%, #A78BFA 50%, #8B5CF6 100%)',
+                boxShadow: 'inset 0 2px 3px rgba(255, 255, 255, 0.85), inset 0 -3px 6px rgba(139, 92, 246, 0.4), 0 0 0 1.8px rgba(233, 213, 255, 0.9), 0 0 14px 3px rgba(167, 139, 250, 0.45), 0 8px 20px -2px rgba(139, 92, 246, 0.4)',
+                letterSpacing: '0.3px',
+                textShadow: '0 1px 2px rgba(0,0,0,0.15)'
+              }}
             >
+              <span className="flex items-center justify-center">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                  <path fill="#FFFDF0" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+              </span>
               <span>Ver ángeles en el mural</span>
-              <span>⭐</span>
               <span className="text-xs">›</span>
             </Link>
           </div>
@@ -218,20 +242,36 @@ export function CorazonesDeAngelSection() {
           {/* ======================= */}
           {/* TARJETA 3: RECONOCIMIENTO */}
           {/* ======================= */}
-          <div className="rounded-[24px] p-5 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-white/82 backdrop-blur-[14px] border-[1.5px] border-white/95 shadow-[0_12px_32px_rgba(180,140,190,0.14)] hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(180,140,190,0.22)] transition-all">
-            <span className="absolute top-4 right-4 text-xs select-none">🦋</span>
-
+          <div className="rounded-[24px] p-5 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-white/85 backdrop-blur-[14px] border-[1.5px] border-white/95 shadow-[0_12px_32px_rgba(180,140,190,0.14)] hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(180,140,190,0.22)] transition-all">
             <div>
-              {/* Icono Corazón Alado con Halo */}
-              <div className="w-full flex items-center justify-center my-1.5 h-16">
-                <div className="relative flex items-center justify-center scale-90">
-                  <div className="absolute -top-2.5 w-14 h-4 rounded-full border-2 border-[#F5C842] shadow-[0_0_8px_#F5C842]"></div>
-                  <svg width="80" height="54" viewBox="0 0 100 70">
-                    <path d="M25 45 C10 35 0 25 5 10 C15 5 25 20 30 35 Z" fill="#FDE2E4" stroke="#F472B6" strokeWidth="1.5" />
-                    <path d="M75 45 C90 35 100 25 95 10 C85 5 75 20 70 35 Z" fill="#FDE2E4" stroke="#F472B6" strokeWidth="1.5" />
-                    <circle cx="50" cy="40" r="20" fill="#FBCFE8" stroke="#DB2777" strokeWidth="2" />
-                    <text x="50" y="46" fontSize="18" textAnchor="middle">🐾</text>
-                  </svg>
+              {/* Encabezado: Logoheart en la esquina izquierda (misma posición) + Mariposa a su derecha + Badge */}
+              <div className="flex items-center justify-between w-full mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-13 h-13 sm:w-14 sm:h-14 relative flex items-center justify-center shrink-0">
+                    <Image 
+                      src="/images/icons/Logoheart.svg" 
+                      alt="Corazón de Ángel" 
+                      width={54}
+                      height={54}
+                      className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(244,114,182,0.40)] hover:scale-105 transition-transform"
+                    />
+                  </div>
+                  {/* Mariposa al lado derecho del icono */}
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 relative -mt-3 shrink-0">
+                    <Image 
+                      src="/images/icons/butterfly1.svg" 
+                      alt="Mariposa" 
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(245,158,11,0.35)] hover:scale-110 hover:rotate-6 transition-transform"
+                    />
+                  </div>
+                </div>
+
+                {/* Badge Guardián Solidario */}
+                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-[9.5px] font-bold shadow-xs">
+                  <span>💛</span>
+                  <span>Guardián Solidario</span>
                 </div>
               </div>
 
@@ -263,13 +303,30 @@ export function CorazonesDeAngelSection() {
               </div>
             </div>
 
-            {/* Botón Dorado Cálido */}
+            {/* Botón CTA Color Oficial heaven-cta-btn (Rosa/Melocotón Cálido Celestial) */}
             <button 
               onClick={() => setIsSocialDemoOpen(true)}
-              className="mt-3 w-full py-2.5 px-4 rounded-full text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm text-[#78350F] hover:scale-[1.02] active:scale-[0.98] transition-all"
-              style={{ background: 'linear-gradient(90deg, #FDE68A 0%, #F5C842 100%)', border: '1px solid rgba(255,255,255,0.8)' }}
+              className="mt-4 w-full py-3 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer"
+              style={{
+                background: 'linear-gradient(135deg, #F86E9E 0%, #FA8994 50%, #FFB680 100%)',
+                boxShadow: 'inset 0 2px 3px rgba(255, 255, 255, 0.8), inset 0 -3px 6px rgba(255, 140, 90, 0.4), 0 0 0 1.8px rgba(255, 225, 130, 0.85), 0 0 14px 3px rgba(255, 160, 80, 0.5), 0 8px 20px -2px rgba(248, 110, 158, 0.55)',
+                letterSpacing: '0.3px',
+                textShadow: '0 1px 2px rgba(0,0,0,0.12)'
+              }}
             >
-              <span>Reconocimiento eterno al donante</span>
+              <span className="flex items-center justify-center">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                  <defs>
+                    <linearGradient id="cream-heart-card3" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="50%" stopColor="#FFF2D6" />
+                      <stop offset="100%" stopColor="#FFDEB5" />
+                    </linearGradient>
+                  </defs>
+                  <path fill="url(#cream-heart-card3)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+              </span>
+              <span>Reconocimiento y Badge</span>
               <span className="text-xs">›</span>
             </button>
           </div>
