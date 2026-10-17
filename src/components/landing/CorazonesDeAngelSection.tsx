@@ -186,42 +186,42 @@ export function CorazonesDeAngelSection() {
                 Una protectora le da una luz; tú puedes hacer que brille como se merece. Al patrocinar su constelación 3×3, el 50% del importe se destina como donación directa al refugio para alimentar y cuidar a los perros que aún esperan adopción.
               </p>
 
-              {/* Cuadrícula 3x3 Miniatura ilustrativa */}
-              <div className="w-full flex justify-center my-2">
-                <div className="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-white/80 border border-[#E9D5FF]/70 shadow-inner w-36">
-                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center p-1">
-                    <Image src="/images/icons/paw.svg" alt="Huella" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+              {/* Cuadrícula 3x3 Miniatura ilustrativa Ampliada */}
+              <div className="w-full flex justify-center my-3">
+                <div className="grid grid-cols-3 gap-2 p-2.5 rounded-2xl bg-white/85 border border-[#E9D5FF]/80 shadow-md w-full max-w-[220px]">
+                  <div className="aspect-square rounded-xl bg-[#FFFBEB] border border-[#FDE68A]/60 flex items-center justify-center p-1.5 shadow-xs">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
                   </div>
-                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center p-1">
-                    <Image src="/images/icons/star.svg" alt="Destello" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  <div className="aspect-square rounded-xl bg-pink-50 border border-pink-200/60 flex items-center justify-center p-1.5 shadow-xs">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
                   </div>
-                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center p-1">
-                    <Image src="/images/icons/paw.svg" alt="Huella" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  <div className="aspect-square rounded-xl bg-[#FFFBEB] border border-[#FDE68A]/60 flex items-center justify-center p-1.5 shadow-xs">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
                   </div>
                   
-                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center p-1">
-                    <Image src="/images/icons/star.svg" alt="Destello" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  <div className="aspect-square rounded-xl bg-pink-50 border border-pink-200/60 flex items-center justify-center p-1.5 shadow-xs">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
                   </div>
                   {/* Foto del perrito en el centro */}
-                  <div className="h-7 rounded overflow-hidden border border-[#DCA257] shadow-xs bg-white">
+                  <div className="aspect-square rounded-xl overflow-hidden border-2 border-[#DCA257] shadow-sm bg-white relative">
                     <img 
                       src="https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/house_1791661708523.jpg" 
                       alt="Perrito apadrinado"
                       className="w-full h-full object-cover" 
                     />
                   </div>
-                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center p-1">
-                    <Image src="/images/icons/star.svg" alt="Destello" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  <div className="aspect-square rounded-xl bg-pink-50 border border-pink-200/60 flex items-center justify-center p-1.5 shadow-xs">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
                   </div>
 
-                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center p-1">
-                    <Image src="/images/icons/paw.svg" alt="Huella" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  <div className="aspect-square rounded-xl bg-[#FFFBEB] border border-[#FDE68A]/60 flex items-center justify-center p-1.5 shadow-xs">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
                   </div>
-                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center p-1">
-                    <Image src="/images/icons/star.svg" alt="Destello" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  <div className="aspect-square rounded-xl bg-pink-50 border border-pink-200/60 flex items-center justify-center p-1.5 shadow-xs">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
                   </div>
-                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center p-1">
-                    <Image src="/images/icons/paw.svg" alt="Huella" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  <div className="aspect-square rounded-xl bg-[#FFFBEB] border border-[#FDE68A]/60 flex items-center justify-center p-1.5 shadow-xs">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
                   </div>
                 </div>
               </div>
