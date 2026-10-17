@@ -33,28 +33,60 @@ export function OctubreBanner({ onVisibilityChange }: OctubreBannerProps) {
     <div 
       className="w-full bg-[#180A2D] border-b border-[#F5C842]/40 relative z-50 overflow-hidden text-white shadow-md select-none"
     >
-      <div className="max-w-[1240px] mx-auto flex items-center justify-between gap-2 px-3 sm:px-6 h-[50px] sm:h-[58px] md:h-[62px]">
+      {/* Fondo artístico con los perritos y flores a la izquierda, y altar con velas a la derecha */}
+      <div className="absolute inset-0 flex justify-between pointer-events-none opacity-30 sm:opacity-70">
+        <div className="relative h-full w-[160px] sm:w-[220px]">
+          <Image 
+            src="/images/campanas/perritos-octubre-fade.webp" 
+            alt="Perritos con flores y velas" 
+            fill
+            className="object-cover object-left"
+            priority
+          />
+        </div>
+        <div className="relative h-full w-[140px] sm:w-[200px] hidden md:block">
+          <Image 
+            src="/images/campanas/altar-octubre-fade.webp" 
+            alt="Altar de velas" 
+            fill
+            className="object-cover object-right"
+          />
+        </div>
+      </div>
+
+      {/* Contenedor principal con textos vectoriales de máxima nitidez */}
+      <div className="relative z-10 max-w-[1240px] mx-auto flex items-center justify-between gap-2 px-3 sm:px-6 h-[54px] sm:h-[60px]">
         
-        {/* Lado izquierdo: Banner conmemorativo de perros y velas */}
+        {/* Lado izquierdo: Avatar miniatura de perritos + Textos conmemorativos */}
         <Link 
           href="/#planes" 
-          className="flex items-center gap-2.5 sm:gap-3 overflow-hidden group cursor-pointer"
+          className="flex items-center gap-2.5 sm:gap-3.5 overflow-hidden group cursor-pointer"
         >
-          <div className="relative h-[38px] sm:h-[46px] md:h-[50px] w-auto aspect-[1024/126] shrink-0 rounded overflow-hidden">
+          <div className="relative h-[42px] sm:h-[48px] w-[66px] sm:w-[76px] shrink-0 rounded overflow-hidden shadow-inner border border-[#F5C842]/30">
             <Image 
-              src="/images/campanas/banner-27-octubre.webp" 
-              alt="27 de octubre - Encendamos una luz por nuestras mascotas" 
+              src="/images/campanas/perritos-octubre-fade.webp" 
+              alt="27 de octubre - Día de Muertos de las Mascotas" 
               fill
-              className="object-contain"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
               priority
             />
           </div>
-          <div className="hidden lg:flex flex-col text-left leading-tight">
-            <span className="text-[10px] uppercase font-bold text-[#FDE68A] tracking-wider">
-              Tradición del Día de Muertos de las Mascotas
-            </span>
-            <span className="text-xs text-white/90 font-medium group-hover:text-amber-200 transition-colors">
-              Ellos regresan a visitarnos antes que nadie. Prepara su luz en el cielo.
+
+          <div className="flex flex-col text-left leading-tight">
+            <div className="flex items-center gap-2">
+              <span 
+                className="font-bold text-sm sm:text-base text-[#FDE68A] tracking-wide drop-shadow-xs"
+                style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
+              >
+                27 de octubre
+              </span>
+              <span className="hidden sm:inline-block text-[#F59E0B] text-xs">✦</span>
+              <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-widest text-[#FCD34D]/90">
+                Día de las Mascotas
+              </span>
+            </div>
+            <span className="text-xs sm:text-sm text-white/95 font-medium group-hover:text-amber-200 transition-colors">
+              Encendamos una luz por nuestras mascotas <span className="hidden lg:inline text-white/75">· Ellas regresan a visitarnos antes que nadie 🕯️</span>
             </span>
           </div>
         </Link>
