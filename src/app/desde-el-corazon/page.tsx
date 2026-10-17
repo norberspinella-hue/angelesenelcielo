@@ -24,9 +24,12 @@ export default function DesdeElCorazonPage() {
               <span>❤️</span>
               <span>Desde el Corazón · Nuestro Porqué y Compromiso</span>
             </div>
-            <h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold text-[#1E2A78] leading-tight mb-5">
+            <h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold text-[#1E2A78] leading-tight mb-4">
               Por qué nació este cielo... Por ellos y para siempre
             </h1>
+            <p className="font-playfair italic text-lg sm:text-xl text-[#A05278] font-medium mb-4">
+              «Todas dejan huella. Algunas siguen caminando a nuestro lado. Otras ya brillan entre las nubes.»
+            </p>
             <p className="text-[#5A639C] text-base sm:text-lg leading-relaxed">
               Sabemos lo importante y delicado que es este paso para ti. Por eso compartimos la historia real que dio vida a Ángeles en el Cielo y nuestro compromiso humano con cada familia.
             </p>
@@ -68,9 +71,14 @@ export default function DesdeElCorazonPage() {
                   Así nació la visión de crear un <strong>Mural Global de 1.000.000 de Angelitos</strong>: un cielo interactivo infinito dedicado a nuestros compañeros de cuatro patas y a cualquier animalito que llenó de luz el corazón de sus papás y mamás. Un lugar vivo al que volver en aniversarios, fechas señaladas o días de nostalgia para mirar su estrella y saber que no estás solo en tu duelo.
                 </p>
 
-                <p>
-                  Y hay un compromiso más, nacido del corazón: <strong>ayudar a protectoras y asociaciones de animales</strong> a seguir consiguiendo recursos para su día a día. Queremos que la memoria de Juliette y de todos los angelitos sirva también para cuidar, alimentar y dar una segunda oportunidad a aquellos peludos que hoy siguen esperando un hogar en la tierra.
-                </p>
+                <div className="p-5 sm:p-6 rounded-2xl bg-[#FFF5F7] border border-[#FAD2E1] my-4 shadow-sm">
+                  <h3 className="font-playfair font-bold text-lg text-[#8A2B53] mb-2 flex items-center gap-2">
+                    <span>🐾</span> Una huella por los que siguen esperando
+                  </h3>
+                  <p className="text-sm sm:text-base text-[#6B2E53] leading-relaxed">
+                    Y hay un compromiso más, nacido del corazón: <strong>ayudar a protectoras y asociaciones de animales</strong> a seguir consiguiendo recursos para su día a día. Queremos que el amor que nos dejó Juliette y todos los angelitos sirva también para cuidar, alimentar y dar una segunda oportunidad a aquellos peludos que hoy siguen esperando un hogar en la tierra.
+                  </p>
+                </div>
 
                 <p className="pt-2">
                   Porque este proyecto no nació de una fría estrategia de negocio: <strong>nació de las lágrimas, de la gratitud y del amor más puro que un ser vivo puede regalarte</strong>. Por eso nuestro compromiso es total: honestidad absoluta, cero letra pequeña y un respeto sagrado por el recuerdo de tu familia.
