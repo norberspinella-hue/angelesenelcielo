@@ -90,7 +90,7 @@ export function CorazonesDeAngelSection() {
             <div className="relative z-10">
               {/* Encabezado: Logo Casa en la esquina izquierda */}
               <div className="flex items-center justify-start w-full mb-3">
-                <div className="w-18 h-18 sm:w-20 sm:h-20 relative flex items-center justify-center shrink-0">
+                <div className="w-20 h-20 relative flex items-center justify-center shrink-0">
                   <Image 
                     src="/images/solidario/icon-casa-protectoras.svg" 
                     alt="Casa Protectoras" 
@@ -160,7 +160,7 @@ export function CorazonesDeAngelSection() {
             }}
           >
             {/* 6 MARIPOSAS REPARTIDAS POR LA TARJETA */}
-            <div className="absolute top-3 left-[92px] sm:left-[96px] w-7 h-7 -rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.30)] opacity-95 group-hover:scale-110 group-hover:rotate-0 transition-transform duration-500">
+            <div className="absolute top-3 left-[135px] sm:left-[150px] w-7 h-7 -rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.30)] opacity-95 group-hover:scale-110 group-hover:rotate-0 transition-transform duration-500">
               <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={28} height={28} className="w-full h-full object-contain" />
             </div>
             <div className="absolute top-4 right-3 w-6 h-6 rotate-15 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-85 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
@@ -169,7 +169,7 @@ export function CorazonesDeAngelSection() {
             <div className="absolute top-[140px] right-3 w-5 h-5 -rotate-6 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.30)] opacity-75 group-hover:scale-115 transition-transform duration-500">
               <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
             </div>
-            <div className="absolute top-[152px] left-3 w-5 h-5 rotate-45 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
+            <div className="absolute top-[165px] left-3 w-5 h-5 rotate-45 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
               <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
             </div>
             <div className="absolute bottom-[90px] right-4 w-7 h-7 rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-85 group-hover:scale-115 transition-transform duration-500">
@@ -180,15 +180,15 @@ export function CorazonesDeAngelSection() {
             </div>
 
             <div className="relative z-10">
-              {/* Encabezado: Estrella en la esquina izquierda */}
-              <div className="flex items-center justify-start w-full mb-3">
-                <div className="w-18 h-18 sm:w-20 sm:h-20 relative flex items-center justify-center shrink-0">
+              {/* Encabezado: Estrella en la esquina izquierda (aumentada 100% · 160px) */}
+              <div className="flex items-center justify-start w-full mb-2">
+                <div className="w-36 h-36 sm:w-40 sm:h-40 relative flex items-center justify-center shrink-0 -ml-3 -mt-2">
                   <Image 
                     src="/images/icons/plans/icon-plan-estrella.svg" 
                     alt="Estrella Solidaria" 
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(245,190,60,0.40)] hover:scale-105 transition-transform"
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-contain filter drop-shadow-[0_6px_16px_rgba(245,190,60,0.45)] hover:scale-105 transition-transform"
                   />
                 </div>
               </div>
@@ -296,7 +296,7 @@ export function CorazonesDeAngelSection() {
             }}
           >
             {/* 6 MARIPOSAS REPARTIDAS POR LA TARJETA */}
-            <div className="absolute top-3 left-[92px] sm:left-[96px] w-7 h-7 -rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.30)] opacity-95 group-hover:scale-110 group-hover:rotate-0 transition-transform duration-500">
+            <div className="absolute top-3 left-[135px] sm:left-[150px] w-7 h-7 -rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.30)] opacity-95 group-hover:scale-110 group-hover:rotate-0 transition-transform duration-500">
               <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={28} height={28} className="w-full h-full object-contain" />
             </div>
             <div className="absolute top-4 right-3 w-6 h-6 rotate-15 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-85 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
@@ -305,7 +305,7 @@ export function CorazonesDeAngelSection() {
             <div className="absolute top-[140px] right-3 w-5 h-5 -rotate-6 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.30)] opacity-75 group-hover:scale-115 transition-transform duration-500">
               <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
             </div>
-            <div className="absolute top-[152px] left-3 w-5 h-5 rotate-45 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
+            <div className="absolute top-[165px] left-3 w-5 h-5 rotate-45 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
               <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
             </div>
             <div className="absolute bottom-[90px] right-4 w-7 h-7 rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-85 group-hover:scale-115 transition-transform duration-500">
@@ -316,15 +316,15 @@ export function CorazonesDeAngelSection() {
             </div>
 
             <div className="relative z-10">
-              {/* Encabezado: Logoheart en la esquina izquierda */}
-              <div className="flex items-center justify-start w-full mb-3">
-                <div className="w-18 h-18 sm:w-20 sm:h-20 relative flex items-center justify-center shrink-0">
+              {/* Encabezado: Logoheart en la esquina izquierda (aumentado 100% · 160px) */}
+              <div className="flex items-center justify-start w-full mb-2">
+                <div className="w-36 h-36 sm:w-40 sm:h-40 relative flex items-center justify-center shrink-0 -ml-3 -mt-2">
                   <Image 
                     src="/images/icons/Logoheart.svg" 
                     alt="Corazón de Ángel" 
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(244,114,182,0.40)] hover:scale-105 transition-transform"
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-contain filter drop-shadow-[0_6px_16px_rgba(244,114,182,0.45)] hover:scale-105 transition-transform"
                   />
                 </div>
               </div>
