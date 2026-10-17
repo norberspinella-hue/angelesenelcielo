@@ -22,100 +22,98 @@ export function CorazonesDeAngelSection() {
   return (
     <section 
       id="corazones-de-angel"
-      className="w-full py-12 sm:py-16 px-4 sm:px-6 relative overflow-hidden flex flex-col items-center justify-center transition-all"
+      className="w-full py-16 sm:py-20 px-4 sm:px-6 relative overflow-hidden flex flex-col items-center justify-center transition-all"
     >
-      {/* Contenedor central proporcionado */}
-      <div className="relative z-10 max-w-5xl mx-auto w-full flex flex-col items-center text-center">
+      {/* Contenedor central con la tipografía estándar del sitio */}
+      <div className="relative z-10 w-full max-w-[1120px] mx-auto flex flex-col items-center text-center">
 
-        {/* 1. BADGE CABECERA PILL */}
-        <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/85 backdrop-blur-md border border-[#DCA257]/50 shadow-xs text-xs font-semibold text-[#8B6528] tracking-wide mb-2">
-          <span className="text-xs select-none">🐾</span>
-          <span className="font-bold tracking-widest text-[10px] sm:text-[11px] text-[#A67831]">INICIATIVA SOLIDARIA</span>
-          <span className="text-xs select-none">💛</span>
-        </div>
-
-        {/* 2. TÍTULO PRINCIPAL SERIF */}
-        <h2 
-          className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight max-w-3xl text-[#2E214D]"
-          style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-        >
+        {/* 1. TÍTULO PRINCIPAL DE LA SECCIÓN (MISMO TAMAÑO QUE EL RESTO DE SECCIONES) */}
+        <h2 className="section-title">
           Iniciativa Solidaria · Corazones de Ángel
         </h2>
 
-        {/* 3. SUBTÍTULO CON DIAMANTES DORADOS */}
-        <div 
-          className="flex items-center justify-center gap-2 my-2 text-xs sm:text-sm md:text-base italic font-semibold text-[#A07028]"
-          style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-        >
-          <span className="text-[10px] select-none">◇</span>
-          <span>Una huella por los que siguen esperando</span>
-          <span className="text-[10px] select-none">◇</span>
-        </div>
-
-        {/* 4. TEXTO EMOCIONAL (JULIETTE) */}
-        <p className="text-xs sm:text-sm text-[#4A3F6B] max-w-2xl leading-relaxed mt-0.5 font-medium">
-          Inspirados en la historia de <strong>Juliette</strong> y en todos los compañeros que llenaron nuestras vidas de amor.<br className="hidden sm:inline" />
-          Porque recordar a los que ya brillan y cuidar a los que siguen esperando son dos formas de decir lo mismo:<br />
-          <strong className="text-[#2E214D] font-bold">todas las vidas importan.</strong>
+        {/* 2. SUBTÍTULO (MISMO TAMAÑO QUE EL RESTO DE SECCIONES) */}
+        <p className="body-copy max-w-[700px] mx-auto mt-4 section-subtitle font-medium">
+          Una huella por los que siguen esperando
         </p>
 
-        {/* 5. CITA REFLEXIVA */}
-        <p className="text-[11px] sm:text-xs text-[#6C5B8A] italic max-w-lg leading-relaxed mt-1.5 mb-6">
+        {/* 3. TEXTO EMOCIONAL (JULIETTE) */}
+        <p className="body-copy max-w-[720px] mx-auto mt-3">
+          Inspirados en la historia de <strong className="text-[#1E2A78] font-bold">Juliette</strong> y en todos los compañeros que llenaron nuestras vidas de amor.<br className="hidden sm:inline" />
+          Porque recordar a los que ya brillan y cuidar a los que siguen esperando son dos formas de decir lo mismo:{' '}
+          <strong className="text-[#1E2A78] font-bold">todas las vidas importan.</strong>
+        </p>
+
+        {/* 4. CITA REFLEXIVA */}
+        <p className="text-sm sm:text-base italic text-[#706A95] max-w-[620px] mx-auto mt-2 mb-8">
           No todos los perritos tuvieron una familia que pudiera pronunciar su nombre al despedirse...<br />
           Todos merecen una historia, una luz y un lugar digno en el cielo.
         </p>
 
         {/* ======================================================== */}
-        {/* 6. LAS 3 TARJETAS DE CRISTAL (PROTECTORAS · COMUNIDAD · BADGE) */}
+        {/* 5. LAS 3 TARJETAS (MISMO TAMAÑO QUE LOS PLANES · PRICING-GRID) */}
         {/* ======================================================== */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 w-full max-w-4xl text-left my-1 items-stretch">
+        <div className="pricing-grid items-stretch my-2 w-full">
           
           {/* ======================= */}
           {/* TARJETA 1: PROTECTORAS */}
           {/* ======================= */}
-          <div className="rounded-[24px] p-5 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-white/85 backdrop-blur-[14px] border-[1.5px] border-white/95 shadow-[0_12px_32px_rgba(180,140,190,0.14)] hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(180,140,190,0.22)] transition-all">
-            <div>
-              {/* Encabezado: Logo Casa en la esquina izquierda + Mariposa a su derecha + Badge */}
+          <div 
+            className="plan-card heaven-card flex flex-col justify-between relative group rounded-[28px] p-6 sm:p-7 transition-all duration-300 overflow-hidden shadow-[0_12px_32px_rgba(180,140,190,0.12)] hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(180,140,190,0.20)]"
+            style={{ 
+              backgroundColor: 'rgba(255, 255, 255, 0.70)', 
+              borderColor: 'rgba(255, 255, 255, 0.85)', 
+              borderWidth: '1.5px',
+              backdropFilter: 'blur(14px)'
+            }}
+          >
+            {/* 6 MARIPOSAS REPARTIDAS POR LA TARJETA */}
+            <div className="absolute top-3 left-[92px] sm:left-[96px] w-7 h-7 -rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-95 group-hover:scale-110 group-hover:rotate-0 transition-transform duration-500">
+              <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={28} height={28} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute top-4 right-3 w-6 h-6 rotate-15 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.30)] opacity-85 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
+              <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={24} height={24} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute top-[140px] right-3 w-5 h-5 -rotate-6 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.30)] opacity-75 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute top-[152px] left-3 w-5 h-5 rotate-45 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute bottom-[90px] right-4 w-7 h-7 rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.30)] opacity-85 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={28} height={28} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute bottom-[92px] left-4 w-5 h-5 -rotate-15 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
+            </div>
+
+            <div className="relative z-10">
+              {/* Encabezado: Logo Casa en la esquina izquierda (grande y proporcionado) + Badge */}
               <div className="flex items-center justify-between w-full mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-13 h-13 sm:w-14 sm:h-14 relative flex items-center justify-center shrink-0">
-                    <Image 
-                      src="/images/solidario/icon-casa-protectoras.svg" 
-                      alt="Casa Protectoras" 
-                      width={54}
-                      height={54}
-                      className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(200,160,180,0.30)] hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  {/* Mariposa al lado derecho del icono */}
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 relative -mt-3 shrink-0">
-                    <Image 
-                      src="/images/icons/butterfly1.svg" 
-                      alt="Mariposa" 
-                      width={32}
-                      height={32}
-                      className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(236,72,153,0.35)] hover:scale-110 hover:rotate-6 transition-transform"
-                    />
-                  </div>
+                <div className="w-18 h-18 sm:w-20 sm:h-20 relative flex items-center justify-center shrink-0">
+                  <Image 
+                    src="/images/solidario/icon-casa-protectoras.svg" 
+                    alt="Casa Protectoras" 
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(200,160,180,0.30)] hover:scale-105 transition-transform"
+                  />
                 </div>
 
                 {/* Badge Mayor Impacto */}
-                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-[9.5px] font-bold shadow-xs">
+                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-[10px] font-bold shadow-xs">
                   <span>👑</span>
                   <span>Mayor Impacto</span>
                 </div>
               </div>
 
-              <span className="text-[9.5px] font-extrabold text-[#9C7A4E] uppercase tracking-wider block mb-0.5">
+              <span className="microcopy font-bold text-[#8A6033] uppercase tracking-wider block mb-1">
                 PARA PROTECTORAS & REFUGIOS
               </span>
-              <h3 
-                className="text-base sm:text-lg font-bold text-[#2E214D] mb-1.5 leading-tight"
-                style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-              >
+              <h3 className="plan-title text-[#1E2A78] mb-2 leading-tight">
                 5 Angelitos Gratuitos
               </h3>
-              <p className="text-[11.5px] text-[#584582] leading-relaxed">
+              <p className="body-copy text-sm sm:text-base leading-relaxed">
                 Invitamos a protectoras colaboradoras a publicar hasta 5 perros fallecidos bajo su custodia sin ningún coste. Tendrán su luz y su historia preservadas para siempre en el mural.
               </p>
             </div>
@@ -126,7 +124,7 @@ export function CorazonesDeAngelSection() {
                 setIsShelterModalOpen(true)
                 setSubmitted(false)
               }}
-              className="mt-4 w-full py-3 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer"
+              className="mt-6 w-full py-3.5 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer relative z-10"
               style={{
                 background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%)',
                 boxShadow: 'inset 0 2px 3px rgba(255, 255, 255, 0.75), inset 0 -3px 6px rgba(180, 83, 9, 0.4), 0 0 0 1.8px rgba(253, 230, 138, 0.85), 0 0 14px 3px rgba(245, 158, 11, 0.4), 0 8px 20px -2px rgba(217, 119, 6, 0.4)',
@@ -147,73 +145,86 @@ export function CorazonesDeAngelSection() {
           {/* ======================= */}
           {/* TARJETA 2: COMUNIDAD */}
           {/* ======================= */}
-          <div className="rounded-[24px] p-5 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-white/85 backdrop-blur-[14px] border-[1.5px] border-white/95 shadow-[0_12px_32px_rgba(180,140,190,0.14)] hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(180,140,190,0.22)] transition-all">
-            <div>
-              {/* Encabezado: Estrella en la esquina izquierda (misma posicón) + Mariposa a su derecha + Badge */}
+          <div 
+            className="plan-card heaven-card flex flex-col justify-between relative group rounded-[28px] p-6 sm:p-7 transition-all duration-300 overflow-hidden shadow-[0_12px_32px_rgba(180,140,190,0.12)] hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(180,140,190,0.20)]"
+            style={{ 
+              backgroundColor: 'rgba(255, 255, 255, 0.70)', 
+              borderColor: 'rgba(255, 255, 255, 0.85)', 
+              borderWidth: '1.5px',
+              backdropFilter: 'blur(14px)'
+            }}
+          >
+            {/* 6 MARIPOSAS REPARTIDAS POR LA TARJETA */}
+            <div className="absolute top-3 left-[92px] sm:left-[96px] w-7 h-7 -rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.30)] opacity-95 group-hover:scale-110 group-hover:rotate-0 transition-transform duration-500">
+              <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={28} height={28} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute top-4 right-3 w-6 h-6 rotate-15 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-85 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
+              <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={24} height={24} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute top-[140px] right-3 w-5 h-5 -rotate-6 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.30)] opacity-75 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute top-[152px] left-3 w-5 h-5 rotate-45 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute bottom-[90px] right-4 w-7 h-7 rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-85 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={28} height={28} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute bottom-[92px] left-4 w-5 h-5 -rotate-15 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
+            </div>
+
+            <div className="relative z-10">
+              {/* Encabezado: Estrella en la esquina izquierda (50% MÁS GRANDE · 80px) + Badge */}
               <div className="flex items-center justify-between w-full mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-13 h-13 sm:w-14 sm:h-14 relative flex items-center justify-center shrink-0">
-                    <Image 
-                      src="/images/icons/plans/icon-plan-estrella.svg" 
-                      alt="Estrella Solidaria" 
-                      width={54}
-                      height={54}
-                      className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(245,190,60,0.40)] hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  {/* Mariposa al lado derecho del icono */}
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 relative -mt-3 shrink-0">
-                    <Image 
-                      src="/images/icons/butterfly2.svg" 
-                      alt="Mariposa" 
-                      width={32}
-                      height={32}
-                      className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(167,139,250,0.35)] hover:scale-110 hover:-rotate-6 transition-transform"
-                    />
-                  </div>
+                <div className="w-18 h-18 sm:w-20 sm:h-20 relative flex items-center justify-center shrink-0">
+                  <Image 
+                    src="/images/icons/plans/icon-plan-estrella.svg" 
+                    alt="Estrella Solidaria" 
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(245,190,60,0.40)] hover:scale-105 transition-transform"
+                  />
                 </div>
 
                 {/* Badge 50% donación directa */}
-                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFF1F2] border border-[#FECDD3] text-[#BE123C] text-[9.5px] font-bold shadow-xs">
+                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FFF1F2] border border-[#FECDD3] text-[#BE123C] text-[10px] font-bold shadow-xs">
                   <span>🩷</span>
                   <span>50% donación directa</span>
                 </div>
               </div>
 
-              <span className="text-[9.5px] font-extrabold text-[#9C7A4E] uppercase tracking-wider block mb-0.5">
+              <span className="microcopy font-bold text-[#8A6033] uppercase tracking-wider block mb-1">
                 COMUNIDAD SOLIDARIA
               </span>
-              <h3 
-                className="text-base sm:text-lg font-bold text-[#2E214D] mb-1.5 leading-tight"
-                style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-              >
+              <h3 className="plan-title text-[#1E2A78] mb-2 leading-tight">
                 Patrocinar sus 9 Estrellas
               </h3>
-              <p className="text-[11.5px] text-[#584582] leading-relaxed mb-2">
+              <p className="body-copy text-sm sm:text-base leading-relaxed mb-3">
                 Una protectora le da una luz; tú puedes hacer que brille como se merece. Al patrocinar su constelación 3×3, el 50% del importe se destina como donación directa al refugio para alimentar y cuidar a los perros que aún esperan adopción.
               </p>
 
               {/* Cuadrícula 3x3 Miniatura ilustrativa */}
-              <div className="w-full flex justify-center my-1">
-                <div className="grid grid-cols-3 gap-1 p-1.5 rounded-xl bg-white/75 border border-[#E9D5FF]/60 shadow-inner w-32">
-                  <div className="h-6 rounded bg-[#FFFBEB] flex items-center justify-center text-[10px]">🐾</div>
-                  <div className="h-6 rounded bg-pink-50 flex items-center justify-center text-[8px]">✨</div>
-                  <div className="h-6 rounded bg-[#FFFBEB] flex items-center justify-center text-[10px]">🐾</div>
+              <div className="w-full flex justify-center my-2">
+                <div className="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-white/80 border border-[#E9D5FF]/70 shadow-inner w-36">
+                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center text-[11px]">🐾</div>
+                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center text-[9px]">✨</div>
+                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center text-[11px]">🐾</div>
                   
-                  <div className="h-6 rounded bg-pink-50 flex items-center justify-center text-[8px]">✨</div>
+                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center text-[9px]">✨</div>
                   {/* Foto del perrito en el centro */}
-                  <div className="h-6 rounded overflow-hidden border border-[#DCA257] shadow-xs bg-white">
+                  <div className="h-7 rounded overflow-hidden border border-[#DCA257] shadow-xs bg-white">
                     <img 
                       src="https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/house_1791661708523.jpg" 
                       alt="Perrito apadrinado"
                       className="w-full h-full object-cover" 
                     />
                   </div>
-                  <div className="h-6 rounded bg-pink-50 flex items-center justify-center text-[8px]">✨</div>
+                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center text-[9px]">✨</div>
 
-                  <div className="h-6 rounded bg-[#FFFBEB] flex items-center justify-center text-[10px]">🐾</div>
-                  <div className="h-6 rounded bg-pink-50 flex items-center justify-center text-[8px]">✨</div>
-                  <div className="h-6 rounded bg-[#FFFBEB] flex items-center justify-center text-[10px]">🐾</div>
+                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center text-[11px]">🐾</div>
+                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center text-[9px]">✨</div>
+                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center text-[11px]">🐾</div>
                 </div>
               </div>
             </div>
@@ -221,7 +232,7 @@ export function CorazonesDeAngelSection() {
             {/* Botón CTA Moradito Claro Estilo HeavenCTAButton */}
             <Link 
               href="/mural-global"
-              className="mt-4 w-full py-3 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer"
+              className="mt-6 w-full py-3.5 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer relative z-10"
               style={{
                 background: 'linear-gradient(135deg, #C4B5FD 0%, #A78BFA 50%, #8B5CF6 100%)',
                 boxShadow: 'inset 0 2px 3px rgba(255, 255, 255, 0.85), inset 0 -3px 6px rgba(139, 92, 246, 0.4), 0 0 0 1.8px rgba(233, 213, 255, 0.9), 0 0 14px 3px rgba(167, 139, 250, 0.45), 0 8px 20px -2px rgba(139, 92, 246, 0.4)',
@@ -242,62 +253,72 @@ export function CorazonesDeAngelSection() {
           {/* ======================= */}
           {/* TARJETA 3: RECONOCIMIENTO */}
           {/* ======================= */}
-          <div className="rounded-[24px] p-5 sm:p-5 flex flex-col justify-between relative overflow-hidden bg-white/85 backdrop-blur-[14px] border-[1.5px] border-white/95 shadow-[0_12px_32px_rgba(180,140,190,0.14)] hover:-translate-y-1 hover:shadow-[0_18px_42px_rgba(180,140,190,0.22)] transition-all">
-            <div>
-              {/* Encabezado: Logoheart en la esquina izquierda (misma posición) + Mariposa a su derecha + Badge */}
+          <div 
+            className="plan-card heaven-card flex flex-col justify-between relative group rounded-[28px] p-6 sm:p-7 transition-all duration-300 overflow-hidden shadow-[0_12px_32px_rgba(180,140,190,0.12)] hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(180,140,190,0.20)]"
+            style={{ 
+              backgroundColor: 'rgba(255, 255, 255, 0.70)', 
+              borderColor: 'rgba(255, 255, 255, 0.85)', 
+              borderWidth: '1.5px',
+              backdropFilter: 'blur(14px)'
+            }}
+          >
+            {/* 6 MARIPOSAS REPARTIDAS POR LA TARJETA */}
+            <div className="absolute top-3 left-[92px] sm:left-[96px] w-7 h-7 -rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.30)] opacity-95 group-hover:scale-110 group-hover:rotate-0 transition-transform duration-500">
+              <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={28} height={28} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute top-4 right-3 w-6 h-6 rotate-15 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-85 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
+              <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={24} height={24} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute top-[140px] right-3 w-5 h-5 -rotate-6 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.30)] opacity-75 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute top-[152px] left-3 w-5 h-5 rotate-45 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute bottom-[90px] right-4 w-7 h-7 rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-85 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={28} height={28} className="w-full h-full object-contain" />
+            </div>
+            <div className="absolute bottom-[92px] left-4 w-5 h-5 -rotate-15 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(167,139,250,0.25)] opacity-70 group-hover:scale-115 transition-transform duration-500">
+              <Image src="/images/icons/butterfly2.svg" alt="Mariposa" width={20} height={20} className="w-full h-full object-contain" />
+            </div>
+
+            <div className="relative z-10">
+              {/* Encabezado: Logoheart en la esquina izquierda (50% MÁS GRANDE · 80px) + Badge */}
               <div className="flex items-center justify-between w-full mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-13 h-13 sm:w-14 sm:h-14 relative flex items-center justify-center shrink-0">
-                    <Image 
-                      src="/images/icons/Logoheart.svg" 
-                      alt="Corazón de Ángel" 
-                      width={54}
-                      height={54}
-                      className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(244,114,182,0.40)] hover:scale-105 transition-transform"
-                    />
-                  </div>
-                  {/* Mariposa al lado derecho del icono */}
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 relative -mt-3 shrink-0">
-                    <Image 
-                      src="/images/icons/butterfly1.svg" 
-                      alt="Mariposa" 
-                      width={32}
-                      height={32}
-                      className="w-full h-full object-contain filter drop-shadow-[0_2px_6px_rgba(245,158,11,0.35)] hover:scale-110 hover:rotate-6 transition-transform"
-                    />
-                  </div>
+                <div className="w-18 h-18 sm:w-20 sm:h-20 relative flex items-center justify-center shrink-0">
+                  <Image 
+                    src="/images/icons/Logoheart.svg" 
+                    alt="Corazón de Ángel" 
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(244,114,182,0.40)] hover:scale-105 transition-transform"
+                  />
                 </div>
 
                 {/* Badge Guardián Solidario */}
-                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-[9.5px] font-bold shadow-xs">
+                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-[10px] font-bold shadow-xs">
                   <span>💛</span>
                   <span>Guardián Solidario</span>
                 </div>
               </div>
 
-              <span className="text-[9.5px] font-extrabold text-[#9C7A4E] uppercase tracking-wider block mb-0.5">
+              <span className="microcopy font-bold text-[#8A6033] uppercase tracking-wider block mb-1">
                 ESTATUS PROSOCIAL & RECUERDO
               </span>
-              <h3 
-                className="text-base sm:text-lg font-bold text-[#2E214D] mb-1.5 leading-tight"
-                style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-              >
+              <h3 className="plan-title text-[#1E2A78] mb-2 leading-tight">
                 Badge «Corazón de Ángel»
               </h3>
-              <p className="text-[11.5px] text-[#584582] leading-relaxed mb-2">
+              <p className="body-copy text-sm sm:text-base leading-relaxed mb-3">
                 Si apadrinas en memoria de tu propia mascota, su amor se convertirá en un puente: recibirás el distintivo oficial <strong>Ángel con Corazón de Perrito</strong>, visible en el mural y con certificado conmemorativo descargable.
               </p>
 
               {/* Miniatura de certificado y medalla */}
-              <div className="w-full flex items-center justify-center gap-2 p-1.5 rounded-xl bg-white/75 border border-[#FDE68A] shadow-xs my-1">
-                <div 
-                  className="text-[8.5px] text-center text-[#8A6528] leading-tight"
-                  style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-                >
+              <div className="w-full flex items-center justify-center gap-2 p-2 rounded-xl bg-white/80 border border-[#FDE68A] shadow-xs my-2">
+                <div className="text-[9px] text-center font-serif text-[#8A6528] leading-tight">
                   <span className="font-bold block">📜 Certificado Oficial</span>
-                  <span className="text-[7.5px] opacity-75">Corazón de Ángel</span>
+                  <span className="text-[8px] opacity-75">Corazón de Ángel</span>
                 </div>
-                <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-[#FDE68A] to-[#F59E0B] flex items-center justify-center shadow-xs text-[10px]">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#FDE68A] to-[#F59E0B] flex items-center justify-center shadow-xs text-xs">
                   💛
                 </div>
               </div>
@@ -306,7 +327,7 @@ export function CorazonesDeAngelSection() {
             {/* Botón CTA Color Oficial heaven-cta-btn (Rosa/Melocotón Cálido Celestial) */}
             <button 
               onClick={() => setIsSocialDemoOpen(true)}
-              className="mt-4 w-full py-3 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer"
+              className="mt-6 w-full py-3.5 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer relative z-10"
               style={{
                 background: 'linear-gradient(135deg, #F86E9E 0%, #FA8994 50%, #FFB680 100%)',
                 boxShadow: 'inset 0 2px 3px rgba(255, 255, 255, 0.8), inset 0 -3px 6px rgba(255, 140, 90, 0.4), 0 0 0 1.8px rgba(255, 225, 130, 0.85), 0 0 14px 3px rgba(255, 160, 80, 0.5), 0 8px 20px -2px rgba(248, 110, 158, 0.55)',
