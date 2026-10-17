@@ -4,11 +4,15 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { CurrencySelector } from '@/components/ui/CurrencySelector';
 
-export function Header() {
+export function Header({ hasTopBanner = false }: { hasTopBanner?: boolean }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="heaven-header flex items-center justify-between px-4 sm:px-6 relative">
+    <header 
+      className={`heaven-header flex items-center justify-between px-4 sm:px-6 relative transition-all duration-300 ${
+        hasTopBanner ? '!top-[62px] sm:!top-[72px] md:!top-[78px]' : ''
+      }`}
+    >
       <Link href="/" className="flex items-center gap-2 select-none">
         <img 
           src="/images/icons/Logoheart.svg" 

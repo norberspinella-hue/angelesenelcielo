@@ -1,9 +1,14 @@
+'use client';
+
+import { useState } from 'react';
 import Image from 'next/image';
+import { OctubreBanner } from '@/components/landing/OctubreBanner';
 import { Header } from '@/components/landing/Header';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { OfferStrip } from '@/components/landing/OfferStrip';
 import { ValueProposition } from '@/components/landing/ValueProposition';
 import { PricingSection } from '@/components/landing/PricingSection';
+import { CorazonesDeAngelSection } from '@/components/landing/CorazonesDeAngelSection';
 import { Testimonials } from '@/components/landing/Testimonials';
 import { Footer } from '@/components/landing/Footer';
 import { RainbowBridge } from '@/components/landing/RainbowBridge';
@@ -12,9 +17,12 @@ import { HeavenCTAButton } from '@/components/ui/HeavenCTAButton';
 import { TrustStrip } from '@/components/landing/TrustStrip';
 
 export default function AngelesEnElCieloLanding() {
+  const [hasTopBanner, setHasTopBanner] = useState(false);
+
   return (
     <>
-      <Header />
+      <OctubreBanner onVisibilityChange={setHasTopBanner} />
+      <Header hasTopBanner={hasTopBanner} />
       
       <main>
         <HeroSection />
@@ -83,6 +91,7 @@ export default function AngelesEnElCieloLanding() {
           <ValueProposition />
           
           <PricingSection />
+          <CorazonesDeAngelSection />
           <RainbowBridge />
           <Testimonials />
  
