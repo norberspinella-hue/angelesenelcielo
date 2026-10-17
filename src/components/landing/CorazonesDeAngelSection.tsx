@@ -360,39 +360,6 @@ export function CorazonesDeAngelSection() {
 
         </div>
 
-        {/* ======================================================== */}
-        {/* 7. BARRA FLOTANTE INFERIOR: RECORDAR TAMBIÉN SALVA VIDAS */}
-        {/* ======================================================== */}
-        <div className="w-full max-w-3xl mt-6 rounded-full p-2.5 sm:p-3 bg-white/85 backdrop-blur-xl border border-white/95 shadow-[0_12px_30px_rgba(180,140,190,0.14)] flex flex-col sm:flex-row items-center justify-between gap-3">
-          
-          <div className="flex items-center gap-3 text-left pl-2 sm:pl-3">
-            <div className="w-9 h-9 rounded-full bg-pink-50 border border-pink-200 flex items-center justify-center text-base shrink-0 shadow-inner">
-              🐾
-            </div>
-            <div>
-              <h4 
-                className="font-bold text-xs sm:text-sm text-[#2E214D] leading-tight"
-                style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-              >
-                Recordar también puede salvar vidas.
-              </h4>
-              <p className="text-[10.5px] text-[#706A95] leading-snug">
-                Cada historia compartida mantiene viva su luz y ayuda a otros perros que aún esperan una oportunidad.
-              </p>
-            </div>
-          </div>
-
-          <Link 
-            href="/mural-global"
-            className="py-2 px-5 sm:px-6 rounded-full text-xs font-bold text-white shadow-sm whitespace-nowrap shrink-0 hover:scale-[1.02] active:scale-[0.98] transition-all"
-            style={{ background: 'linear-gradient(90deg, #F472B6 0%, #EC4899 100%)' }}
-          >
-            <span>Quiero ayudar 🩷</span>
-            <span className="ml-1">›</span>
-          </Link>
-
-        </div>
-
       </div>
 
       {/* MODAL 1: REGISTRO DE PROTECTORA PILOTO */}
