@@ -206,7 +206,7 @@ export function PricingSection() {
                   <li>{`Un espacio estelar privilegiado (${slotsLabel(PLANS.galaxia_amor)})`}</li>
                   <li>Resplandor visible al explorar el cielo</li>
                   <li>Certificado Especial Galaxia de Amor</li>
-                  <li>Página conmemorativa propia en alta resolución</li>
+                  <li>Página conmemorativa propia para compartir</li>
                   <li>Brillo conmemorativo en su fecha especial</li>
                 </ul>
                 
@@ -235,7 +235,12 @@ export function PricingSection() {
                   <li>Visible incluso con el zoom alejado al máximo</li>
                   <li>Aureola y corona de luz celestial única</li>
                   <li>Certificado de Honor Vínculo Infinito</li>
-                  <li>Página propia conmemorativa con galería completa</li>
+                  <li>
+                    Página propia conmemorativa con galería ampliada
+                    <span className="block text-xs text-[#9A7D63] opacity-80 italic mt-0.5">
+                      (te contactaremos para pedirte 4 fotos más)
+                    </span>
+                  </li>
                 </ul>
                 
                 <Link href="/mural-global" className="btn-secondary-heaven w-full mt-4 !bg-[#C9A961] hover:!bg-[#B3934B] !text-white !border-none font-bold shadow-md">
