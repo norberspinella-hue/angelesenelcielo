@@ -65,7 +65,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
         )}
 
         {plans.map((plan) => {
-          const isDisabled = isFounderSlot && (plan.id === 'huellita' || plan.id === 'estrella_brillante');
+          const isDisabled = isFounderSlot && plan.id !== 'corazon_eterno';
           return (
             <div 
               key={plan.id}

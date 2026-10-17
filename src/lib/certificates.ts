@@ -22,6 +22,9 @@ const PLAN_LABELS: Record<string, string> = {
   corazon_eterno: 'Corazón Eterno',
   estrella_brillante: 'Estrella Brillante',
   huellita: 'Huellita',
+  angelito_protector: 'Ángelito Protector',
+  galaxia_amor: 'Galaxia de Amor',
+  vinculo_infinito: 'Vínculo Infinito',
 };
 
 /**

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { getPlan, LEGACY_STRIPE_PRICE_FALLBACKS } from '@/lib/plans'
+import { getPlan, LEGACY_STRIPE_PRICE_FALLBACKS, DEFAULT_STRIPE_PRICES } from '@/lib/plans'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia' as any, // Cast to any to avoid strict version mismatch if package version differs slightly, or just use the exact version string expected: '2026-04-22.dahlia'
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     currentPlan = plan
 
     const planCfg = getPlan(plan)
-    let priceId = planCfg ? process.env[planCfg.stripePriceEnvVar] : undefined
+    let priceId = planCfg ? (process.env[planCfg.stripePriceEnvVar] || DEFAULT_STRIPE_PRICES[planCfg.id]) : undefined
     if (priceId && LEGACY_STRIPE_PRICE_FALLBACKS[priceId]) {
       priceId = LEGACY_STRIPE_PRICE_FALLBACKS[priceId]
     }

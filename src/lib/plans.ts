@@ -16,7 +16,13 @@
  * el código de servidor quien la lee.
  */
 
-export type PlanId = 'huellita' | 'estrella_brillante' | 'corazon_eterno';
+export type PlanId =
+  | 'huellita'
+  | 'estrella_brillante'
+  | 'corazon_eterno'
+  | 'angelito_protector'
+  | 'galaxia_amor'
+  | 'vinculo_infinito';
 
 /** Monedas con precio publicado. */
 export type PlanCurrency = 'EUR' | 'USD';
@@ -84,10 +90,63 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     durationLong: 'Para siempre',
     drawerIcon: '⭐ 3x3',
   },
+  angelito_protector: {
+    id: 'angelito_protector',
+    title: 'Ángelito Protector',
+    dbName: 'angelito_protector',
+    size: 4,
+    slotsCount: 16,
+    stripePriceEnvVar: 'STRIPE_PRICE_ANGELITO_PROTECTOR',
+    price: { EUR: '14,99 €', USD: '$14.99' },
+    durationShort: 'Para siempre',
+    durationLong: 'Para siempre',
+    drawerIcon: '🌟 4x4',
+  },
+  galaxia_amor: {
+    id: 'galaxia_amor',
+    title: 'Galaxia de Amor',
+    dbName: 'galaxia_amor',
+    size: 5,
+    slotsCount: 25,
+    stripePriceEnvVar: 'STRIPE_PRICE_GALAXIA_AMOR',
+    price: { EUR: '19,99 €', USD: '$19.99' },
+    durationShort: 'Para siempre',
+    durationLong: 'Para siempre',
+    drawerIcon: '💫 5x5',
+  },
+  vinculo_infinito: {
+    id: 'vinculo_infinito',
+    title: 'Vínculo Infinito',
+    dbName: 'vinculo_infinito',
+    size: 6,
+    slotsCount: 36,
+    stripePriceEnvVar: 'STRIPE_PRICE_VINCULO_INFINITO',
+    price: { EUR: '29,99 €', USD: '$29.99' },
+    durationShort: 'Para siempre',
+    durationLong: 'Para siempre',
+    drawerIcon: '♾️ 6x6',
+  },
 };
 
 /** Planes en el orden en que se muestran al usuario. */
-export const PLAN_ORDER: PlanId[] = ['huellita', 'estrella_brillante', 'corazon_eterno'];
+export const PLAN_ORDER: PlanId[] = [
+  'huellita',
+  'estrella_brillante',
+  'corazon_eterno',
+  'angelito_protector',
+  'galaxia_amor',
+  'vinculo_infinito',
+];
+
+/**
+ * IDs por defecto para entornos donde la variable aún no se ha configurado en Vercel.
+ * Permite que los nuevos planes funcionen inmediatamente sin esperar a guardar en el dashboard.
+ */
+export const DEFAULT_STRIPE_PRICES: Partial<Record<PlanId, string>> = {
+  angelito_protector: 'price_1URSCnEky7gqHQh1vtALXm6Y',
+  galaxia_amor: 'price_1URSCoEky7gqHQh1uFiMucpb',
+  vinculo_infinito: 'price_1URSCoEky7gqHQh1a5QkhDMO',
+};
 
 /**
  * IDs de Stripe obsoletos o inactivos que deben ser redirigidos automáticamente
