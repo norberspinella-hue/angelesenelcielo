@@ -99,7 +99,7 @@ export async function sendUserPendingEmail(
     from: `Ángeles en el Cielo <${fromEmail}>`,
     to: userEmail,
     subject: `✨ El certificado de ${petName} está en camino`,
-    react: React.createElement(CertificatePendingEmail, { petName, planLabel }),
+    react: React.createElement(CertificatePendingEmail, { petName, planLabel, plan }),
   });
 
   if (error) {

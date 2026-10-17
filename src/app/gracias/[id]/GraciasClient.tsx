@@ -150,6 +150,19 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
             <span className="text-sm">Cada homenaje se prepara con mimo para que su recuerdo brille como merece.</span>
           </div>
 
+          {/* Aviso especial para plan Vínculo Infinito */}
+          {(plan?.toLowerCase().includes('infinito') || plan === 'vinculo_infinito') && (
+            <div className="w-full max-w-[580px] mb-6 p-4 rounded-2xl bg-[#FFF5F7]/90 backdrop-blur-md border border-[#FAD2E1] flex items-start gap-3 text-xs text-[#8A4A6E] shadow-sm">
+              <span className="text-xl flex-shrink-0">📸</span>
+              <div className="leading-relaxed">
+                <strong className="font-semibold text-[#6B2E53] text-sm block mb-1">
+                  Tu Galería Conmemorativa Ampliada (Plan Vínculo Infinito)
+                </strong>
+                Nos pondremos en contacto contigo por correo electrónico en las próximas horas para solicitarte las 4 fotos adicionales con las que crearemos la galería conmemorativa de {petName}.
+              </div>
+            </div>
+          )}
+
           {/* Tarjeta Glassmorphic principal */}
           <div className="w-full max-w-[580px] bg-white/45 backdrop-blur-[16px] border border-white/50 rounded-[24px] p-6 md:p-8 shadow-[0_20px_50px_rgba(111,95,168,0.12)] flex flex-col sm:flex-row gap-6 items-center">
             

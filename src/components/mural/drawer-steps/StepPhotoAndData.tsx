@@ -220,6 +220,16 @@ export function StepPhotoAndData({ onNext, onBack, draftData, setDraftData, sele
                 </>
               )}
             </label>
+
+            {currentPlan.id === 'vinculo_infinito' && (
+              <div className="mt-2.5 p-3 rounded-xl bg-[#FFF5F7] border border-[#FAD2E1] flex items-start gap-2.5 shadow-sm">
+                <span className="text-base flex-shrink-0">📸</span>
+                <p className="text-xs text-[#8A4A6E] leading-relaxed">
+                  <strong className="font-semibold text-[#6B2E53] block mb-0.5">Plan Vínculo Infinito · Galería ampliada</strong>
+                  Sube aquí la foto principal que brillará en el cielo. No te preocupes ahora por las 4 fotos adicionales de su galería: nos pondremos en contacto contigo con mucho cariño tras finalizar el encargo para pedírtelas.
+                </p>
+              </div>
+            )}
           </div>
 
           <div>

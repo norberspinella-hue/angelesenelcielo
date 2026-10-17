@@ -108,6 +108,17 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
           </div>
         </div>
 
+        {/* Recordatorio galería ampliada para Vínculo Infinito */}
+        {getPlanOrDefault(selectedPlan).id === 'vinculo_infinito' && (
+          <div className="bg-[#FFF5F7] border border-[#FAD2E1] rounded-2xl p-3.5 flex items-start gap-2.5 text-xs text-[#8A4A6E] shadow-sm">
+            <span className="text-base flex-shrink-0">📸</span>
+            <div className="leading-relaxed">
+              <strong className="font-semibold text-[#6B2E53] block mb-0.5">Galería conmemorativa ampliada incluida</strong>
+              Te contactaremos por email tras el pago para recibir las 4 fotos adicionales de {draftData.name || 'tu angelito'}.
+            </div>
+          </div>
+        )}
+
         {/* Resumen de dedicatoria */}
         <div className="bg-[#FFF8F4] border border-[#F8C7D8] rounded-2xl p-4">
           <h4 className="text-xs font-bold text-[#1E2A78] mb-2 uppercase tracking-wider">Dedicatoria para {draftData.name}</h4>

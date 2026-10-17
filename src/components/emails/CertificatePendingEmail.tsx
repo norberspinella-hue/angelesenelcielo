@@ -3,12 +3,16 @@ import * as React from 'react';
 interface CertificatePendingEmailProps {
   petName: string;
   planLabel: string;
+  plan?: string;
 }
 
 export const CertificatePendingEmail = ({
   petName,
   planLabel,
+  plan,
 }: CertificatePendingEmailProps) => {
+  const isVinculoInfinito = plan === 'vinculo_infinito' || planLabel.toLowerCase().includes('infinito');
+
   return (
     <div style={{
       fontFamily: 'system-ui, -apple-system, sans-serif',
@@ -45,6 +49,33 @@ export const CertificatePendingEmail = ({
       <p style={{ fontSize: '16px', lineHeight: '1.6', margin: '0 0 16px' }}>
         Nuestro equipo de diseño lo está elaborando especialmente para ti. Lo recibirás en tu bandeja de entrada en las próximas 24-72 horas.
       </p>
+
+      {isVinculoInfinito && (
+        <div style={{
+          backgroundColor: '#FFF0F5',
+          border: '1.5px solid #F8C7D8',
+          borderRadius: '16px',
+          padding: '16px 20px',
+          margin: '0 0 20px',
+        }}>
+          <h3 style={{
+            fontSize: '15px',
+            fontWeight: 'bold',
+            color: '#A0285D',
+            margin: '0 0 6px',
+          }}>
+            📸 Tu galería conmemorativa ampliada (4 fotos más)
+          </h3>
+          <p style={{
+            fontSize: '14px',
+            lineHeight: '1.5',
+            color: '#6E2548',
+            margin: 0,
+          }}>
+            Al haber elegido el plan <strong>Vínculo Infinito</strong>, nos pondremos en contacto contigo muy pronto a este mismo correo para que nos compartas las 4 fotos adicionales con las que crearemos la galería conmemorativa de <strong>{petName}</strong>.
+          </p>
+        </div>
+      )}
 
       <p style={{ fontSize: '16px', lineHeight: '1.6', margin: '0 0 24px' }}>
         Mientras tanto, {petName} ya tiene su espacio reservado en el Mural de Ángeles en el Cielo, donde su recuerdo brillará para siempre.

@@ -354,6 +354,23 @@ export async function POST(req: NextRequest) {
         </tr>
       </table>
 
+      ${planCfg.id === 'vinculo_infinito' ? `
+      <!-- Bloque Galería Ampliada Vínculo Infinito -->
+      <table width="100%" cellpadding="0" cellspacing="0"
+             style="background:#FFF0F5;border:1.5px solid #F8C7D8;border-radius:18px;margin:0 0 28px 0;">
+        <tr>
+          <td style="padding:20px 24px;">
+            <p style="font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#A0285D;font-weight:700;margin:0 0 8px 0;">
+              📸 Tu Galería Conmemorativa Ampliada (4 fotos más)
+            </p>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6E2548;line-height:1.6;margin:0;">
+              Al haber elegido el plan <strong>Vínculo Infinito</strong>, nos pondremos en contacto contigo muy pronto a este mismo correo para que nos compartas las 4 fotos adicionales con las que crearemos la galería conmemorativa de <strong>${petName}</strong>.
+            </p>
+          </td>
+        </tr>
+      </table>
+      ` : ''}
+
       <!-- CTA principal -->
       <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px 0;">
         <tr>
@@ -431,7 +448,8 @@ export async function POST(req: NextRequest) {
                     <td style="padding: 8px; border-bottom: 1px solid #eee; 
                     font-weight: 700;">Plan</td>
                     <td style="padding: 8px; border-bottom: 1px solid #eee;">
-                    ${plan}</td>
+                    ${planCfg.title} (${plan})
+                    ${planCfg.id === 'vinculo_infinito' ? '<br><span style="display:inline-block;margin-top:4px;padding:3px 8px;background:#ffe4e6;color:#be123c;border-radius:6px;font-size:12px;font-weight:bold;">⚠️ ATENCIÓN: Plan Vínculo Infinito. Contactar al cliente para pedirle las 4 fotos adicionales de la galería.</span>' : ''}</td>
                   </tr>
                   <tr>
                     <td style="padding: 8px; border-bottom: 1px solid #eee; 

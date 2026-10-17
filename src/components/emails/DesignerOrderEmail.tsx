@@ -29,6 +29,8 @@ export const DesignerOrderEmail = ({
     vinculo_infinito: 'Vínculo Infinito',
   };
 
+  const isVinculoInfinito = plan === 'vinculo_infinito' || (planLabel[plan] || '').toLowerCase().includes('infinito');
+
   return (
     <div style={{
       fontFamily: 'system-ui, -apple-system, sans-serif',
@@ -59,7 +61,10 @@ export const DesignerOrderEmail = ({
           </tr>
           <tr>
             <td style={{ padding: '8px 0', fontWeight: 'bold', color: '#4B5563' }}>Plan:</td>
-            <td style={{ padding: '8px 0', color: '#111827' }}>{planLabel[plan] || plan}</td>
+            <td style={{ padding: '8px 0', color: '#111827' }}>
+              {planLabel[plan] || plan}
+              {isVinculoInfinito && ' ⭐ (Galería ampliada)'}
+            </td>
           </tr>
           {founderNumber && (
             <tr>
@@ -77,6 +82,27 @@ export const DesignerOrderEmail = ({
           </tr>
         </tbody>
       </table>
+
+      {isVinculoInfinito && (
+        <div style={{
+          backgroundColor: '#FFFBEB',
+          border: '2px solid #F59E0B',
+          borderRadius: '12px',
+          padding: '16px',
+          marginBottom: '24px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+            <span style={{ fontSize: '20px' }}>🌟</span>
+            <strong style={{ color: '#92400E', fontSize: '15px' }}>
+              ATENCIÓN: PLAN VÍNCULO INFINITO (Galería ampliada)
+            </strong>
+          </div>
+          <p style={{ margin: 0, fontSize: '13px', lineHeight: '1.5', color: '#78350F' }}>
+            Este pedido incluye una galería conmemorativa con <strong>4 fotos adicionales</strong>.
+            Recuerda contactar al cliente a <a href={`mailto:${userEmail}`} style={{ color: '#1E2A78', fontWeight: 'bold', textDecoration: 'underline' }}>{userEmail}</a> para solicitarlas antes de finalizar su página conmemorativa y diseño.
+          </p>
+        </div>
+      )}
 
       <div style={{ marginBottom: '32px', textAlign: 'center' }}>
         <a 
