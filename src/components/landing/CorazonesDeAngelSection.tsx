@@ -88,8 +88,8 @@ export function CorazonesDeAngelSection() {
             </div>
 
             <div className="relative z-10">
-              {/* Encabezado: Logo Casa en la esquina izquierda (grande y proporcionado) + Badge */}
-              <div className="flex items-center justify-between w-full mb-3">
+              {/* Encabezado: Logo Casa en la esquina izquierda */}
+              <div className="flex items-center justify-start w-full mb-3">
                 <div className="w-18 h-18 sm:w-20 sm:h-20 relative flex items-center justify-center shrink-0">
                   <Image 
                     src="/images/solidario/icon-casa-protectoras.svg" 
@@ -99,19 +99,10 @@ export function CorazonesDeAngelSection() {
                     className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(200,160,180,0.30)] hover:scale-105 transition-transform"
                   />
                 </div>
-
-                {/* Badge Mayor Impacto */}
-                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-[10px] font-bold shadow-xs">
-                  <span>👑</span>
-                  <span>Mayor Impacto</span>
-                </div>
               </div>
 
-              <span className="microcopy font-bold text-[#8A6033] uppercase tracking-wider block mb-1">
-                PARA PROTECTORAS & REFUGIOS
-              </span>
               <h3 className="plan-title text-[#1E2A78] mb-2 leading-tight">
-                5 Angelitos Gratuitos
+                Ángel de Protectora
               </h3>
               <p className="body-copy text-sm sm:text-base leading-relaxed">
                 Invitamos a protectoras colaboradoras a publicar hasta 5 perros fallecidos bajo su custodia sin ningún coste. Tendrán su luz y su historia preservadas para siempre en el mural.
@@ -175,8 +166,8 @@ export function CorazonesDeAngelSection() {
             </div>
 
             <div className="relative z-10">
-              {/* Encabezado: Estrella en la esquina izquierda (50% MÁS GRANDE · 80px) + Badge */}
-              <div className="flex items-center justify-between w-full mb-3">
+              {/* Encabezado: Estrella en la esquina izquierda */}
+              <div className="flex items-center justify-start w-full mb-3">
                 <div className="w-18 h-18 sm:w-20 sm:h-20 relative flex items-center justify-center shrink-0">
                   <Image 
                     src="/images/icons/plans/icon-plan-estrella.svg" 
@@ -186,17 +177,8 @@ export function CorazonesDeAngelSection() {
                     className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(245,190,60,0.40)] hover:scale-105 transition-transform"
                   />
                 </div>
-
-                {/* Badge 50% donación directa */}
-                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FFF1F2] border border-[#FECDD3] text-[#BE123C] text-[10px] font-bold shadow-xs">
-                  <span>🩷</span>
-                  <span>50% donación directa</span>
-                </div>
               </div>
 
-              <span className="microcopy font-bold text-[#8A6033] uppercase tracking-wider block mb-1">
-                COMUNIDAD SOLIDARIA
-              </span>
               <h3 className="plan-title text-[#1E2A78] mb-2 leading-tight">
                 Patrocinar sus 9 Estrellas
               </h3>
@@ -283,8 +265,8 @@ export function CorazonesDeAngelSection() {
             </div>
 
             <div className="relative z-10">
-              {/* Encabezado: Logoheart en la esquina izquierda (50% MÁS GRANDE · 80px) + Badge */}
-              <div className="flex items-center justify-between w-full mb-3">
+              {/* Encabezado: Logoheart en la esquina izquierda */}
+              <div className="flex items-center justify-start w-full mb-3">
                 <div className="w-18 h-18 sm:w-20 sm:h-20 relative flex items-center justify-center shrink-0">
                   <Image 
                     src="/images/icons/Logoheart.svg" 
@@ -294,19 +276,10 @@ export function CorazonesDeAngelSection() {
                     className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(244,114,182,0.40)] hover:scale-105 transition-transform"
                   />
                 </div>
-
-                {/* Badge Guardián Solidario */}
-                <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FFFBEB] border border-[#FDE68A] text-[#B45309] text-[10px] font-bold shadow-xs">
-                  <span>💛</span>
-                  <span>Guardián Solidario</span>
-                </div>
               </div>
 
-              <span className="microcopy font-bold text-[#8A6033] uppercase tracking-wider block mb-1">
-                ESTATUS PROSOCIAL & RECUERDO
-              </span>
               <h3 className="plan-title text-[#1E2A78] mb-2 leading-tight">
-                Badge «Corazón de Ángel»
+                Reconocimiento Corazón de Ángel
               </h3>
               <p className="body-copy text-sm sm:text-base leading-relaxed mb-3">
                 Si apadrinas en memoria de tu propia mascota, su amor se convertirá en un puente: recibirás el distintivo oficial <strong>Ángel con Corazón de Perrito</strong>, visible en el mural y con certificado conmemorativo descargable.
