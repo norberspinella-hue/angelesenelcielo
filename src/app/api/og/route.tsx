@@ -164,21 +164,33 @@ export async function GET(req: NextRequest) {
         </div>
 
         {/* 3. Nombre mascota */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '105px',
-            left: 0,
-            right: 0,
-            display: 'flex',
-            justifyContent: 'center',
-            fontFamily: "'Pinyon Script', cursive",
-            fontSize: '52px',
-            color: '#C29028',
-          }}
-        >
-          {petName}
-        </div>
+        {(() => {
+          const len = (petName || '').trim().length;
+          let fontSize = '52px';
+          if (len > 16) fontSize = '28px';
+          else if (len > 13) fontSize = '34px';
+          else if (len > 10) fontSize = '38px'; // Ej. Mary Margaret
+          else if (len > 7) fontSize = '45px';  // Ej. Juliette
+
+          return (
+            <div
+              style={{
+                position: 'absolute',
+                top: '105px',
+                left: 0,
+                right: 0,
+                display: 'flex',
+                justifyContent: 'center',
+                fontFamily: "'Pinyon Script', cursive",
+                fontSize,
+                whiteSpace: 'nowrap',
+                color: '#C29028',
+              }}
+            >
+              {petName}
+            </div>
+          );
+        })()}
 
         {/* 4. Halo dorado elipse */}
         <div

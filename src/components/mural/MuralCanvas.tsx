@@ -399,33 +399,52 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
                 }} 
               />
 
-              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA */}
-              <h3 
-                style={{
-                  position: 'absolute',
-                  top: '60px',
-                  left: 0,
-                  right: 0,
-                  textAlign: 'center',
-                  fontFamily: "'Pinyon Script', cursive",
-                  fontSize: 72,
-                  fontWeight: 400,
-                  lineHeight: 1.2,
-                  zIndex: 10,
-                  color: '#C29028',
-                  filter: 'drop-shadow(0 1px 1px rgba(255,255,255,0.70)) drop-shadow(0 2px 4px rgba(110,70,15,0.30))',
-                  padding: '0 16px',
-                  margin: 0,
-                  transform: 'translateZ(1px)',
-                  WebkitFontSmoothing: 'antialiased',
-                  MozOsxFontSmoothing: 'grayscale',
-                  textRendering: 'optimizeLegibility',
-                  backfaceVisibility: 'hidden',
-                  WebkitBackfaceVisibility: 'hidden',
-                }}
-              >
-                {loading ? '' : (petData?.pet_name || '')}
-              </h3>
+              {/* ELEMENTO 1: NOMBRE DE LA MASCOTA CON TAMAÑO DINÁMICO */}
+              {(() => {
+                const nameStr = loading ? '' : (petData?.pet_name || '');
+                const nameLen = nameStr.trim().length;
+                let dynamicFontSize = 70;
+                if (nameLen > 16) dynamicFontSize = 34;
+                else if (nameLen > 13) dynamicFontSize = 40;
+                else if (nameLen > 10) dynamicFontSize = 46; // Ej. Mary Margaret (13 chars)
+                else if (nameLen > 7) dynamicFontSize = 56;  // Ej. Juliette (8 chars)
+
+                return (
+                  <h3 
+                    style={{
+                      position: 'absolute',
+                      top: '62px',
+                      left: 0,
+                      right: 0,
+                      height: '66px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      textAlign: 'center',
+                      fontFamily: "'Pinyon Script', cursive",
+                      fontSize: dynamicFontSize,
+                      fontWeight: 400,
+                      lineHeight: 1,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      zIndex: 10,
+                      color: '#C29028',
+                      filter: 'drop-shadow(0 1px 1px rgba(255,255,255,0.70)) drop-shadow(0 2px 4px rgba(110,70,15,0.30))',
+                      padding: '0 20px',
+                      margin: 0,
+                      transform: 'translateZ(1px)',
+                      WebkitFontSmoothing: 'antialiased',
+                      MozOsxFontSmoothing: 'grayscale',
+                      textRendering: 'optimizeLegibility',
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                    }}
+                  >
+                    {nameStr}
+                  </h3>
+                );
+              })()}
 
               {/* CORAZÓN DORADO 3D */}
               <div
