@@ -10,7 +10,6 @@ import { RainbowBridge } from '@/components/landing/RainbowBridge';
 import { MuralPreview } from '@/components/landing/MuralPreview';
 import { HeavenCTAButton } from '@/components/ui/HeavenCTAButton';
 import { TrustStrip } from '@/components/landing/TrustStrip';
-import { PermanenceGuarantee } from '@/components/landing/PermanenceGuarantee';
 
 export default function AngelesEnElCieloLanding() {
   return (
@@ -86,7 +85,6 @@ export default function AngelesEnElCieloLanding() {
           <PricingSection />
           <RainbowBridge />
           <Testimonials />
-          <PermanenceGuarantee />
  
           {/* Final CTA */}
           <section className="final-heaven-cta relative overflow-hidden text-white rounded-[32px] mx-auto w-[min(1120px,calc(100%-32px))] mt-[40px] sm:mt-[80px] mb-[40px] px-5 py-8 sm:px-[32px] sm:py-[52px] text-center shadow-[0_26px_70px_rgba(111,95,168,0.24)]">
