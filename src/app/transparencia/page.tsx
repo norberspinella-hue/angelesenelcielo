@@ -4,8 +4,8 @@ import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
 
 export const metadata: Metadata = {
-  title: 'Tranquilidad, Transparencia y Nuestro Porqué | Ángeles en el Cielo',
-  description: 'Conoce por qué creamos Ángeles en el Cielo: un homenaje honesto, respetuoso y transparente para honrar la vida de nuestras mascotas sin letra pequeña.',
+  title: 'Desde el Corazón · Nuestro Porqué y Compromiso | Ángeles en el Cielo',
+  description: 'Conoce por qué creamos Ángeles en el Cielo: en memoria de Juliette, un homenaje honesto, respetuoso y lleno de amor para honrar la vida de nuestras mascotas.',
 };
 
 export default function TransparenciaPage() {
@@ -20,15 +20,15 @@ export default function TransparenciaPage() {
           
           {/* Hero Header */}
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F3EEFA] border border-[#E3D9F2] text-xs font-semibold text-[#6C539A] mb-4 shadow-sm">
-              <span>🛡️</span>
-              <span>Tranquilidad y Transparencia para tu Familia</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFF0F4] border border-[#F8C7D8] text-xs font-semibold text-[#E05282] mb-4 shadow-sm">
+              <span>❤️</span>
+              <span>Desde el Corazón · Nuestro Porqué y Compromiso</span>
             </div>
             <h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold text-[#1E2A78] leading-tight mb-5">
-              Un homenaje honesto, claro y sin letra pequeña
+              Por qué nació este cielo... Por ellos y para siempre
             </h1>
             <p className="text-[#5A639C] text-base sm:text-lg leading-relaxed">
-              Sabemos lo importante y delicado que es este paso para ti. Por eso diseñamos Ángeles en el Cielo con total transparencia técnica y humana desde el primer día.
+              Sabemos lo importante y delicado que es este paso para ti. Por eso compartimos la historia real que dio vida a Ángeles en el Cielo y nuestro compromiso humano con cada familia.
             </p>
           </div>
 

@@ -7,9 +7,9 @@ export function PermanenceGuarantee() {
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F3EEFA] border border-[#E3D9F2] text-xs font-semibold text-[#6C539A] mb-4">
-            <span>🛡️</span>
-            <span>Tranquilidad y Transparencia para tu Familia</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF0F4] border border-[#F8C7D8] text-xs font-semibold text-[#E05282] mb-4">
+            <span>❤️</span>
+            <span>Desde el Corazón · Tranquilidad y Compromiso</span>
           </div>
           <h2 className="font-playfair text-2xl sm:text-3xl md:text-4xl font-bold text-[#1E2A78] leading-tight mb-4">
             Un homenaje honesto, claro y sin letra pequeña
@@ -75,8 +75,8 @@ export function PermanenceGuarantee() {
         {/* Bottom banner link to legal terms & transparency */}
         <div className="mt-8 pt-6 border-t border-[#EDE8F5] text-center flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-[#706A95]">
           <Link href="/transparencia" className="text-[#1E2A78] font-bold hover:text-[#4A3F6B] transition-colors inline-flex items-center gap-1.5 underline">
-            <span>🛡️</span>
-            <span>Conoce nuestra historia y el porqué de la web</span>
+            <span>❤️</span>
+            <span>Desde el Corazón: conoce nuestra historia y por qué lo creamos</span>
             <span>→</span>
           </Link>
           <span className="hidden sm:inline opacity-30">•</span>
