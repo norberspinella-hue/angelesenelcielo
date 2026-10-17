@@ -180,7 +180,7 @@ export function CorazonesDeAngelSection() {
               </div>
 
               <h3 className="plan-title text-[#1E2A78] mb-2 leading-tight">
-                Patrocinar sus 9 Estrellas
+                Ayuda a un Ángelito, dale 9 estrellas en el cielo.
               </h3>
               <p className="body-copy text-sm sm:text-base leading-relaxed mb-3">
                 Una protectora le da una luz; tú puedes hacer que brille como se merece. Al patrocinar su constelación 3×3, el 50% del importe se destina como donación directa al refugio para alimentar y cuidar a los perros que aún esperan adopción.
