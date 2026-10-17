@@ -189,11 +189,19 @@ export function CorazonesDeAngelSection() {
               {/* Cuadrícula 3x3 Miniatura ilustrativa */}
               <div className="w-full flex justify-center my-2">
                 <div className="grid grid-cols-3 gap-1.5 p-2 rounded-xl bg-white/80 border border-[#E9D5FF]/70 shadow-inner w-36">
-                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center text-[11px]">🐾</div>
-                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center text-[9px]">✨</div>
-                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center text-[11px]">🐾</div>
+                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center p-1">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  </div>
+                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center p-1">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  </div>
+                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center p-1">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  </div>
                   
-                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center text-[9px]">✨</div>
+                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center p-1">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  </div>
                   {/* Foto del perrito en el centro */}
                   <div className="h-7 rounded overflow-hidden border border-[#DCA257] shadow-xs bg-white">
                     <img 
@@ -202,11 +210,19 @@ export function CorazonesDeAngelSection() {
                       className="w-full h-full object-cover" 
                     />
                   </div>
-                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center text-[9px]">✨</div>
+                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center p-1">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  </div>
 
-                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center text-[11px]">🐾</div>
-                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center text-[9px]">✨</div>
-                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center text-[11px]">🐾</div>
+                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center p-1">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  </div>
+                  <div className="h-7 rounded bg-pink-50 flex items-center justify-center p-1">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  </div>
+                  <div className="h-7 rounded bg-[#FFFBEB] flex items-center justify-center p-1">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={18} height={18} className="w-4.5 h-4.5 object-contain" />
+                  </div>
                 </div>
               </div>
             </div>
