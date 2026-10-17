@@ -200,42 +200,63 @@ export function CorazonesDeAngelSection() {
                 Una protectora le da una luz; tú puedes hacer que brille como se merece. Al patrocinar su constelación 3×3, el 50% del importe se destina como donación directa al refugio para alimentar y cuidar a los perros que aún esperan adopción.
               </p>
 
-              {/* Cuadrícula 3x3 Miniatura ilustrativa Ampliada */}
+              {/* Cuadrícula 3x3 Miniatura ilustrativa Ampliada con paleta suave pastel */}
               <div className="w-full flex justify-center my-3">
-                <div className="grid grid-cols-3 gap-2 p-2.5 rounded-2xl bg-white/85 border border-[#E9D5FF]/80 shadow-md w-full max-w-[220px]">
-                  <div className="aspect-square rounded-xl bg-[#FFFBEB] border border-[#FDE68A]/60 flex items-center justify-center p-1.5 shadow-xs">
-                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+                <div 
+                  className="grid grid-cols-3 gap-2.5 p-3 rounded-[24px] border shadow-md w-full max-w-[220px]"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                    borderColor: 'rgba(255, 235, 245, 0.9)',
+                    boxShadow: '0 8px 24px rgba(210, 180, 220, 0.16)'
+                  }}
+                >
+                  {/* (0,0) Melocotón suave */}
+                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#FFF6EC] to-[#FFE5CC] border border-[#FED7AA] flex items-center justify-center p-1.5 shadow-[inset_0_2px_3px_rgba(255,255,255,0.95),0_2px_6px_rgba(251,146,60,0.12)] hover:scale-105 transition-transform duration-300">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain filter drop-shadow-[0_2px_4px_rgba(217,119,6,0.20)]" />
                   </div>
-                  <div className="aspect-square rounded-xl bg-pink-50 border border-pink-200/60 flex items-center justify-center p-1.5 shadow-xs">
-                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+
+                  {/* (0,1) Rosa pastel */}
+                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#FFF0F5] to-[#FCE7F3] border border-[#FBCFE8] flex items-center justify-center p-1.5 shadow-[inset_0_2px_3px_rgba(255,255,255,0.95),0_2px_6px_rgba(244,114,182,0.12)] hover:scale-105 transition-transform duration-300">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.20)]" />
                   </div>
-                  <div className="aspect-square rounded-xl bg-[#FFFBEB] border border-[#FDE68A]/60 flex items-center justify-center p-1.5 shadow-xs">
-                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+
+                  {/* (0,2) Lavanda suave */}
+                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#F5F0FF] to-[#E9DEFF] border border-[#DDD6FE] flex items-center justify-center p-1.5 shadow-[inset_0_2px_3px_rgba(255,255,255,0.95),0_2px_6px_rgba(167,139,250,0.12)] hover:scale-105 transition-transform duration-300">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain filter drop-shadow-[0_2px_4px_rgba(139,92,246,0.20)]" />
                   </div>
                   
-                  <div className="aspect-square rounded-xl bg-pink-50 border border-pink-200/60 flex items-center justify-center p-1.5 shadow-xs">
-                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+                  {/* (1,0) Celeste periwinkle */}
+                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#F0F6FF] to-[#E0EBFF] border border-[#BFDBFE] flex items-center justify-center p-1.5 shadow-[inset_0_2px_3px_rgba(255,255,255,0.95),0_2px_6px_rgba(96,165,250,0.12)] hover:scale-105 transition-transform duration-300">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain filter drop-shadow-[0_2px_4px_rgba(59,130,246,0.20)]" />
                   </div>
-                  {/* Foto del perrito en el centro */}
-                  <div className="aspect-square rounded-xl overflow-hidden border-2 border-[#DCA257] shadow-sm bg-white relative">
+
+                  {/* (1,1) Foto del perrito en el centro con marco dorado */}
+                  <div className="aspect-square rounded-2xl overflow-hidden border-2 border-[#EAB308]/70 shadow-[0_4px_12px_rgba(234,179,8,0.25)] bg-white relative hover:scale-105 transition-transform duration-300">
                     <img 
                       src="https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/house_1791661708523.jpg" 
                       alt="Perrito apadrinado"
                       className="w-full h-full object-cover" 
                     />
                   </div>
-                  <div className="aspect-square rounded-xl bg-pink-50 border border-pink-200/60 flex items-center justify-center p-1.5 shadow-xs">
-                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+
+                  {/* (1,2) Melocotón crema */}
+                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#FFF8EE] to-[#FFEACC] border border-[#FED7AA] flex items-center justify-center p-1.5 shadow-[inset_0_2px_3px_rgba(255,255,255,0.95),0_2px_6px_rgba(251,146,60,0.12)] hover:scale-105 transition-transform duration-300">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain filter drop-shadow-[0_2px_4px_rgba(217,119,6,0.20)]" />
                   </div>
 
-                  <div className="aspect-square rounded-xl bg-[#FFFBEB] border border-[#FDE68A]/60 flex items-center justify-center p-1.5 shadow-xs">
-                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+                  {/* (2,0) Lila pastel */}
+                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#FAF5FF] to-[#EDE4FF] border border-[#E9D5FF] flex items-center justify-center p-1.5 shadow-[inset_0_2px_3px_rgba(255,255,255,0.95),0_2px_6px_rgba(192,132,252,0.12)] hover:scale-105 transition-transform duration-300">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain filter drop-shadow-[0_2px_4px_rgba(168,85,247,0.20)]" />
                   </div>
-                  <div className="aspect-square rounded-xl bg-pink-50 border border-pink-200/60 flex items-center justify-center p-1.5 shadow-xs">
-                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+
+                  {/* (2,1) Rosa nube */}
+                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#FFF1F2] to-[#FFE4E6] border border-[#FECDD3] flex items-center justify-center p-1.5 shadow-[inset_0_2px_3px_rgba(255,255,255,0.95),0_2px_6px_rgba(251,113,133,0.12)] hover:scale-105 transition-transform duration-300">
+                    <Image src="/images/icons/star.svg" alt="Destello" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain filter drop-shadow-[0_2px_4px_rgba(244,63,94,0.20)]" />
                   </div>
-                  <div className="aspect-square rounded-xl bg-[#FFFBEB] border border-[#FDE68A]/60 flex items-center justify-center p-1.5 shadow-xs">
-                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain" />
+
+                  {/* (2,2) Celeste malva */}
+                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-[#F5F3FF] to-[#E4E7FF] border border-[#C7D2FE] flex items-center justify-center p-1.5 shadow-[inset_0_2px_3px_rgba(255,255,255,0.95),0_2px_6px_rgba(129,140,248,0.12)] hover:scale-105 transition-transform duration-300">
+                    <Image src="/images/icons/paw.svg" alt="Huella" width={32} height={32} className="w-7 h-7 sm:w-8 sm:h-8 object-contain filter drop-shadow-[0_2px_4px_rgba(99,102,241,0.20)]" />
                   </div>
                 </div>
               </div>
