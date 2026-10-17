@@ -5,7 +5,16 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ['sharp']
-  }
+  },
+  async redirects() {
+    return [
+      {
+        source: '/transparencia',
+        destination: '/desde-el-corazon',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -74,7 +74,7 @@ export function PermanenceGuarantee() {
 
         {/* Bottom banner link to legal terms & transparency */}
         <div className="mt-8 pt-6 border-t border-[#EDE8F5] text-center flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-[#706A95]">
-          <Link href="/transparencia" className="text-[#1E2A78] font-bold hover:text-[#4A3F6B] transition-colors inline-flex items-center gap-1.5 underline">
+          <Link href="/desde-el-corazon" className="text-[#1E2A78] font-bold hover:text-[#4A3F6B] transition-colors inline-flex items-center gap-1.5 underline">
             <span>❤️</span>
             <span>Desde el Corazón: conoce nuestra historia y por qué lo creamos</span>
             <span>→</span>
