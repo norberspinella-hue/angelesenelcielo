@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import PostalStoryShareModal from '@/components/ui/PostalStoryShareModal'
 
 interface GraciasClientProps {
   sessionId: string
@@ -18,6 +19,9 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
   const [plan, setPlan] = useState('')
   const [petPhotoUrl, setPetPhotoUrl] = useState<string | null>(null)
   const [slotId, setSlotId] = useState<string>('')
+  const [dedication, setDedication] = useState<string>('')
+  const [profileSlug, setProfileSlug] = useState<string>('')
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return ''
@@ -41,6 +45,8 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
           setPetDate(data.petDate || '')
           setPlan(data.plan)
           setSlotId(data.slotId || '')
+          setDedication(data.dedication || '')
+          setProfileSlug(data.slug || '')
           if (data.photoUrl) {
             setPetPhotoUrl(data.photoUrl)
           } else if (data.thumbnailUrl) {
@@ -293,9 +299,53 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
 
           </div>
 
+          {/* BLOQUE VIRAL POST-COMPRA (F04 & O07) */}
+          {!loading && (
+            <div className="w-full max-w-[580px] mt-6 p-5 sm:p-6 rounded-[24px] bg-gradient-to-br from-white/85 to-[#FFFDF8]/90 backdrop-blur-md border border-[#F5D06A]/70 shadow-[0_12px_36px_rgba(201,169,97,0.18)] flex flex-col gap-3.5 z-20">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-2xl select-none">✨</span>
+                  <div>
+                    <h3 className="font-bold text-sm sm:text-base text-[#151D54] leading-tight">
+                      ¡Comparte a {petName} con el mundo!
+                    </h3>
+                    <p className="text-xs text-[#706A95]">
+                      Sube la imagen formateada a tu Story de Instagram o guarda la postal
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[#F5C842]/20 text-[#8F6110] border border-[#F5C842]/40 shrink-0">
+                  1 Clic 📲
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <button
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="w-full py-3 px-4 rounded-full text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md select-none"
+                  style={{
+                    background: 'linear-gradient(90deg, #F59E0B 0%, #EC4899 50%, #8B5CF6 100%)',
+                    boxShadow: '0 6px 18px rgba(236, 72, 153, 0.35)',
+                  }}
+                >
+                  <span>📱</span>
+                  <span>Story para Instagram (9:16)</span>
+                </button>
+
+                <button
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="w-full py-3 px-4 rounded-full text-[#4A3F6B] text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] bg-white/90 border border-[#E9D5FF] shadow-sm hover:bg-white select-none"
+                >
+                  <span>🖼️</span>
+                  <span>Descargar Postal (1:1)</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Botones de acción (Aparecen al completar la carga) */}
           {!loading && (
-            <div className="flex flex-wrap items-center gap-4 mt-8 w-full z-20">
+            <div className="flex flex-wrap items-center gap-4 mt-6 w-full z-20">
               <button
                 onClick={() => {
                   if (slotId) {
@@ -339,6 +389,18 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
           <span>🩷</span>
         </div>
       </div>
+
+      {/* Modal Viral de Compartir Story / Postal */}
+      <PostalStoryShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        petName={petName}
+        photoUrl={petPhotoUrl || ''}
+        birthDate={birthDate}
+        deathDate={petDate}
+        dedication={dedication}
+        memorialUrl={profileSlug ? `https://todaslasmascotasvanalcielo.com/memorial/${profileSlug}` : undefined}
+      />
 
     </div>
   )

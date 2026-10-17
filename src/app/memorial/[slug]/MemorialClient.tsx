@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import Image from 'next/image'
+import PostalStoryShareModal from '@/components/ui/PostalStoryShareModal'
 
 interface Memorial {
   id: string
@@ -24,6 +25,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
   const [slotCoords, setSlotCoords] = useState<{ x: number; y: number } | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false)
   const supabase = createClient()
 
   useEffect(() => {
@@ -399,6 +401,24 @@ export default function MemorialClient({ slug }: { slug: string }) {
             <span className="text-xs font-bold text-[#7C3AED] tracking-wide mb-2 sm:mb-2.5">
               Compartir este recuerdo
             </span>
+
+            {/* Botón Destacado: Story de Instagram y Postal */}
+            <div className="w-full max-w-sm mb-2.5">
+              <button
+                onClick={() => setIsShareModalOpen(true)}
+                className="w-full py-2.5 px-4 rounded-full text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md select-none"
+                style={{
+                  background: 'linear-gradient(90deg, #F59E0B 0%, #EC4899 50%, #8B5CF6 100%)',
+                  boxShadow: '0 6px 18px rgba(236, 72, 153, 0.35)',
+                  border: '1px solid rgba(255, 255, 255, 0.35)',
+                }}
+              >
+                <span>✨</span>
+                <span>Story de Instagram (9:16) y Postal</span>
+                <span className="text-xs opacity-90">›</span>
+              </button>
+            </div>
+
             <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 items-center w-full max-w-sm">
               {/* WhatsApp */}
               <button
@@ -481,6 +501,20 @@ export default function MemorialClient({ slug }: { slug: string }) {
           💛
         </div>
       </footer>
+
+      {/* Modal Viral de Compartir Story / Postal */}
+      {memorial && (
+        <PostalStoryShareModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          petName={memorial.pet_name}
+          photoUrl={memorial.photo_url}
+          birthDate={memorial.birth_date}
+          deathDate={memorial.death_date}
+          dedication={memorial.dedication}
+          memorialUrl={shareUrl}
+        />
+      )}
     </div>
   )
 }

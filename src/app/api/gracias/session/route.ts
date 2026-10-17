@@ -442,6 +442,8 @@ export async function GET(req: NextRequest) {
       breed: session.metadata?.breed || '',
       birthDate: session.metadata?.birthDate || '',
       location: session.metadata?.location || '',
+      dedication: session.metadata?.dedication || '',
+      slug: existingMemorial?.profile_slug || '',
       slotId: finalSlotId,
     })
   } catch (error) {
