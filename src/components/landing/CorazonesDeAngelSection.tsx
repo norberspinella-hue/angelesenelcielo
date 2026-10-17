@@ -104,9 +104,23 @@ export function CorazonesDeAngelSection() {
               <h3 className="plan-title text-[#1E2A78] mb-2 leading-tight">
                 Ángel de Protectora
               </h3>
-              <p className="body-copy text-sm sm:text-base leading-relaxed">
+              <p className="body-copy text-sm sm:text-base leading-relaxed mb-3">
                 Invitamos a protectoras colaboradoras a publicar hasta 5 perros fallecidos bajo su custodia sin ningún coste. Tendrán su luz y su historia preservadas para siempre en el mural.
               </p>
+
+              {/* Imagen Ilustrativa Tarjeta 1 (220x220) con suave opacidad */}
+              <div className="w-full flex justify-center my-3">
+                <div className="w-full max-w-[220px] aspect-square rounded-2xl overflow-hidden border border-[#FDE68A]/70 shadow-md relative bg-white/60 backdrop-blur-xs group/img">
+                  <Image 
+                    src="/images/solidario/tarjeta1-220x220.webp" 
+                    alt="Ángel de Protectora" 
+                    width={220} 
+                    height={220} 
+                    className="w-full h-full object-cover opacity-90 group-hover/img:opacity-100 transition-opacity duration-500" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-white/10 pointer-events-none" />
+                </div>
+              </div>
             </div>
 
             {/* Botón CTA Estilo HeavenCTAButton */}
@@ -301,14 +315,17 @@ export function CorazonesDeAngelSection() {
                 Si apadrinas en memoria de tu propia mascota, su amor se convertirá en un puente: recibirás el distintivo oficial <strong>Ángel con Corazón de Perrito</strong>, visible en el mural y con certificado conmemorativo descargable.
               </p>
 
-              {/* Miniatura de certificado y medalla */}
-              <div className="w-full flex items-center justify-center gap-2 p-2 rounded-xl bg-white/80 border border-[#FDE68A] shadow-xs my-2">
-                <div className="text-[9px] text-center font-serif text-[#8A6528] leading-tight">
-                  <span className="font-bold block">📜 Certificado Oficial</span>
-                  <span className="text-[8px] opacity-75">Corazón de Ángel</span>
-                </div>
-                <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#FDE68A] to-[#F59E0B] flex items-center justify-center shadow-xs text-xs">
-                  💛
+              {/* Imagen Ilustrativa Tarjeta 3 (220x220) con suave opacidad */}
+              <div className="w-full flex justify-center my-3">
+                <div className="w-full max-w-[220px] aspect-square rounded-2xl overflow-hidden border border-[#FDE68A]/70 shadow-md relative bg-white/60 backdrop-blur-xs group/img">
+                  <Image 
+                    src="/images/solidario/tarjeta3-220x220.webp" 
+                    alt="Reconocimiento Corazón de Ángel" 
+                    width={220} 
+                    height={220} 
+                    className="w-full h-full object-cover opacity-90 group-hover/img:opacity-100 transition-opacity duration-500" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-white/10 pointer-events-none" />
                 </div>
               </div>
             </div>
