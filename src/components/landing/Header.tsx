@@ -26,7 +26,24 @@ export function Header() {
         <Link href="/#el-mural" className="heaven-nav-link text-sm">El Mural</Link>
         <Link href="/#como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
         <Link href="/#planes" className="heaven-nav-link text-sm">Opciones</Link>
-        <Link href="/desde-el-corazon" className="heaven-nav-link text-sm">Desde el Corazón</Link>
+        <div className="relative inline-flex flex-col items-center justify-center group">
+          <span 
+            className="absolute -top-3 left-1/2 -translate-x-1/2 text-[8.5px] font-bold px-2 py-0.5 rounded-full text-white tracking-wider select-none inline-flex items-center gap-1 -rotate-3 group-hover:rotate-0 transition-transform duration-200 z-10 whitespace-nowrap"
+            style={{
+              background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%)',
+              border: '1.2px solid rgba(255, 255, 255, 0.95)',
+              boxShadow: '0 2px 6px rgba(217, 119, 6, 0.40), inset 0 1px 1px rgba(255, 255, 255, 0.70)',
+            }}
+          >
+            <img 
+              src="/images/icons/plans/icon-plan-eterno.svg" 
+              alt="Corazón Eterno" 
+              className="w-2.5 h-2.5 object-contain" 
+            />
+            <span>En su memoria</span>
+          </span>
+          <Link href="/desde-el-corazon" className="heaven-nav-link text-sm">Desde el Corazón</Link>
+        </div>
         <Link href="/contacto" className="heaven-nav-link text-sm">Contacto</Link>
         <div className="relative inline-flex flex-col items-center justify-center cursor-default group" title="Tienda de recuerdos conmemorativos (Próximamente)">
           <span 
@@ -89,9 +106,20 @@ export function Header() {
           <Link 
             href="/desde-el-corazon" 
             onClick={() => setIsMenuOpen(false)}
-            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
+            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1 inline-flex items-center gap-2"
           >
-            Desde el Corazón
+            <span>Desde el Corazón</span>
+            <span 
+              className="text-[9px] font-bold px-2 py-0.5 rounded-full text-white tracking-wider select-none inline-flex items-center gap-1 -rotate-2"
+              style={{
+                background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                border: '1.2px solid rgba(255, 255, 255, 0.95)',
+                boxShadow: '0 2px 6px rgba(217, 119, 6, 0.35)',
+              }}
+            >
+              <img src="/images/icons/plans/icon-plan-eterno.svg" alt="Corazón Eterno" className="w-2.5 h-2.5 object-contain" />
+              <span>En su memoria</span>
+            </span>
           </Link>
           <Link 
             href="/contacto" 

@@ -59,6 +59,7 @@ export function Footer() {
       <div className="flex flex-wrap justify-center gap-6 text-sm text-[#706A95]">
         <Link href="/desde-el-corazon" className="hover:text-[#6F5FA8]">Desde el Corazón</Link>
         <Link href="/contacto" className="hover:text-[#6F5FA8]">Contacto</Link>
+        <Link href="/compromisos" className="hover:text-[#6F5FA8]">Compromisos</Link>
         <Link href="/aviso-legal" className="hover:text-[#6F5FA8]">Aviso Legal</Link>
         <Link href="/privacidad" className="hover:text-[#6F5FA8]">Privacidad</Link>
         <Link href="/terminos" className="hover:text-[#6F5FA8]">Términos</Link>
