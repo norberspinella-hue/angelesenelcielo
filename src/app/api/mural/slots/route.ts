@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     // Fetch occupied blocks within the requested coordinate range
     const { data, error } = await supabase
       .from('mural_slots')
-      .select('x, y, status, plan_type, memorial_id, memorials(pet_name, photo_url, dedication)')
+      .select('x, y, status, plan_type, memorial_id, memorials(pet_name, photo_url, dedication, visibility, moderation_status)')
       .gte('x', minCol)
       .lte('x', maxCol)
       .gte('y', minRow)
@@ -31,19 +31,27 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Failed to fetch slots' }, { status: 500 });
     }
 
-    const mappedData = (data || []).map((slot: any) => ({
-      col: slot.x,
-      row: slot.y,
-      width: 1,
-      height: 1,
-      status: slot.status,
-      star_id: slot.memorial_id,
-      photoUrl: slot.memorials?.photo_url || '',
-      stars: {
-        name: slot.memorials?.pet_name || '',
-        message: slot.memorials?.dedication || '',
-      }
-    }));
+    const mappedData = (data || [])
+      .filter((slot: any) => {
+        // Excluir si el memorial está en privado o rechazado por moderación
+        if (slot.memorials?.visibility === 'private' || slot.memorials?.moderation_status === 'rejected') {
+          return false;
+        }
+        return true;
+      })
+      .map((slot: any) => ({
+        col: slot.x,
+        row: slot.y,
+        width: 1,
+        height: 1,
+        status: slot.status,
+        star_id: slot.memorial_id,
+        photoUrl: slot.memorials?.photo_url || '',
+        stars: {
+          name: slot.memorials?.pet_name || '',
+          message: slot.memorials?.dedication || '',
+        }
+      }));
 
     return NextResponse.json({
       data: mappedData,

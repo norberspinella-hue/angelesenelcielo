@@ -14,8 +14,8 @@ interface MemorialItem {
   photo_url?: string;
   plan_type: string;
   price_paid?: number;
-  visibility: 'public' | 'hidden';
-  moderation_status: 'approved' | 'pending' | 'rejected';
+  visibility: 'public' | 'private' | 'hidden';
+  moderation_status: 'approved' | 'pending' | 'rejected' | 'flagged';
   slot_assigned?: string;
   profile_slug?: string;
   created_at: string;
@@ -130,16 +130,17 @@ export default function AdminModeracionPage() {
   const toggleVisibility = async (item: MemorialItem) => {
     try {
       setUpdatingId(item.id);
-      const newVisibility = item.visibility === 'public' ? 'hidden' : 'public';
-      const newModeration = newVisibility === 'hidden' ? 'rejected' : 'approved';
+      const isCurrentlyHidden = item.visibility === 'private' || item.visibility === 'hidden' || item.moderation_status === 'rejected';
+      const targetVisibility = isCurrentlyHidden ? 'public' : 'private';
+      const targetModeration = isCurrentlyHidden ? 'approved' : 'rejected';
 
       const res = await fetch('/api/admin/moderacion', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id: item.id,
-          visibility: newVisibility,
-          moderation_status: newModeration,
+          visibility: targetVisibility,
+          moderation_status: targetModeration,
         }),
       });
 
@@ -148,19 +149,22 @@ export default function AdminModeracionPage() {
         setMemorials((prev) =>
           prev.map((m) =>
             m.id === item.id
-              ? { ...m, visibility: newVisibility, moderation_status: newModeration }
+              ? { ...m, visibility: targetVisibility, moderation_status: targetModeration }
               : m
           )
         );
         // Actualizar contadores
         setStats((prev) => ({
           ...prev,
-          publicCount: newVisibility === 'public' ? prev.publicCount + 1 : prev.publicCount - 1,
-          hiddenCount: newVisibility === 'hidden' ? prev.hiddenCount + 1 : prev.hiddenCount - 1,
+          publicCount: targetVisibility === 'public' ? prev.publicCount + 1 : Math.max(0, prev.publicCount - 1),
+          hiddenCount: targetVisibility === 'private' ? prev.hiddenCount + 1 : Math.max(0, prev.hiddenCount - 1),
         }));
+      } else {
+        alert(`Error al actualizar visibilidad: ${data.error || 'Error del servidor'}`);
       }
     } catch (err) {
       console.error('Error cambiando visibilidad:', err);
+      alert('Error de conexión al actualizar la visibilidad.');
     } finally {
       setUpdatingId(null);
     }
@@ -483,12 +487,12 @@ export default function AdminModeracionPage() {
                       ) : isHidden ? (
                         <>
                           <span>👁️</span>
-                          <span>Hacer Público</span>
+                          <span>Publicar en Mural</span>
                         </>
                       ) : (
                         <>
                           <span>🚫</span>
-                          <span>Ocultar</span>
+                          <span>Ocultar del Mural</span>
                         </>
                       )}
                     </button>

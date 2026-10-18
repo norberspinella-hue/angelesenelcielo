@@ -21,9 +21,9 @@ export async function GET(req: NextRequest) {
 
     // Filtros
     if (filter === 'public') {
-      query = query.eq('visibility', 'public');
+      query = query.eq('visibility', 'public').neq('moderation_status', 'rejected');
     } else if (filter === 'hidden') {
-      query = query.or('visibility.eq.hidden,moderation_status.eq.rejected');
+      query = query.or('visibility.eq.private,moderation_status.eq.rejected');
     }
 
     // Búsqueda por nombre de mascota o email
@@ -62,8 +62,8 @@ export async function GET(req: NextRequest) {
       .select('visibility, moderation_status, story_answers');
 
     const totalCount = allStats?.length || 0;
-    const publicCount = (allStats || []).filter((m: any) => m.visibility === 'public').length;
-    const hiddenCount = (allStats || []).filter((m: any) => m.visibility === 'hidden' || m.moderation_status === 'rejected').length;
+    const publicCount = (allStats || []).filter((m: any) => m.visibility === 'public' && m.moderation_status !== 'rejected').length;
+    const hiddenCount = (allStats || []).filter((m: any) => m.visibility === 'private' || m.moderation_status === 'rejected').length;
     const shelterCount = (allStats || []).filter((m: any) => m.story_answers?.isShelter || m.story_answers?.shelterName).length;
 
     return NextResponse.json({
@@ -98,12 +98,27 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'El ID del memorial es obligatorio' }, { status: 400 });
     }
 
+    // Mapear visibilidad al enum de postgres: 'public' o 'private'
+    let dbVisibility: 'public' | 'private' | undefined = undefined;
+    if (visibility !== undefined) {
+      dbVisibility = (visibility === 'hidden' || visibility === 'private') ? 'private' : 'public';
+    }
+
+    // Mapear estado de moderación acorde
+    let dbModeration = moderation_status;
+    if (dbVisibility === 'private' && !moderation_status) {
+      dbModeration = 'rejected';
+    } else if (dbVisibility === 'public' && !moderation_status) {
+      dbModeration = 'approved';
+    }
+
     const updatePayload: any = {};
-    if (visibility !== undefined) updatePayload.visibility = visibility;
-    if (moderation_status !== undefined) updatePayload.moderation_status = moderation_status;
+    if (dbVisibility !== undefined) updatePayload.visibility = dbVisibility;
+    if (dbModeration !== undefined) updatePayload.moderation_status = dbModeration;
     if (dedication !== undefined) updatePayload.dedication = dedication;
     if (pet_name !== undefined) updatePayload.pet_name = pet_name;
 
+    // 1. Actualizar la tabla memorials
     const { data: updated, error } = await (supabase
       .from('memorials') as any)
       .update(updatePayload)
@@ -114,6 +129,19 @@ export async function PATCH(req: NextRequest) {
     if (error) {
       console.error('Error al actualizar memorial en moderación:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // 2. Si cambia la visibilidad, sincronizar los slots en mural_slots
+    if (dbVisibility !== undefined) {
+      const slotStatus = dbVisibility === 'private' ? 'blocked_admin' : 'occupied';
+      const { error: slotErr } = await (supabase
+        .from('mural_slots') as any)
+        .update({ status: slotStatus })
+        .eq('memorial_id', id);
+
+      if (slotErr) {
+        console.error('Error al sincronizar mural_slots en moderación:', slotErr);
+      }
     }
 
     return NextResponse.json({

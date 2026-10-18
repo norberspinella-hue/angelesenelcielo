@@ -1464,8 +1464,8 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
       try {
         const { data, error } = await supabase
           .from('mural_slots')
-          .select('x, y, plan_type, memorial_id, thumbnail_url, memorials(pet_name, story_answers)')
-          .eq('status', 'occupied');
+          .select('x, y, status, plan_type, memorial_id, thumbnail_url, memorials(pet_name, story_answers, visibility, moderation_status)')
+          .in('status', ['occupied', 'blocked_admin']);
         
         if (error) {
           console.error('Error cargando slots:', error);
@@ -1473,9 +1473,35 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
         }
         
         if (data) {
+          // Detectar mascotas que están ocultadas por moderación / privadas
+          const hiddenMemorialIds = new Set<string>();
+          const hiddenPetNames = new Set<string>();
+          const blockedCoords = new Set<string>();
+
+          data.forEach((slot: any) => {
+            const isHidden = 
+              slot.status === 'blocked_admin' || 
+              slot.memorials?.visibility === 'private' || 
+              slot.memorials?.moderation_status === 'rejected';
+
+            if (isHidden) {
+              if (slot.memorial_id) hiddenMemorialIds.add(slot.memorial_id);
+              if (slot.memorials?.pet_name) hiddenPetNames.add(slot.memorials.pet_name.toLowerCase().trim());
+              blockedCoords.add(`${slot.x},${slot.y}`);
+            }
+          });
+
+          // Filtrar slots válidos y activos
+          const validSlots = data.filter((slot: any) => {
+            if (slot.status === 'blocked_admin') return false;
+            if (slot.memorial_id && hiddenMemorialIds.has(slot.memorial_id)) return false;
+            if (slot.memorials?.visibility === 'private' || slot.memorials?.moderation_status === 'rejected') return false;
+            return true;
+          });
+
           // 1. Agrupar por memorial_id para encontrar el slot de origen (x mínimo y y mínimo)
           const minsMap = new Map<string, { minX: number; minY: number }>();
-          data.forEach((slot: any) => {
+          validSlots.forEach((slot: any) => {
             if (!slot.memorial_id) return;
             const current = minsMap.get(slot.memorial_id);
             if (!current) {
@@ -1488,7 +1514,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
 
           // 2. Poblar el mapa realSlots directamente usando las celdas de la base de datos
           const realSlots = new Map<string, any>();
-          data.forEach((slot: any) => {
+          validSlots.forEach((slot: any) => {
             const key = `${slot.x},${slot.y}`;
             const mins = slot.memorial_id ? minsMap.get(slot.memorial_id) : null;
             const isMain = mins ? (slot.x === mins.minX && slot.y === mins.minY) : true;
@@ -1510,7 +1536,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
             });
           });
 
-          // 3. Añadir angelitos piloto de protectoras (MVP) en coordenadas visibles cerca del centro
+          // 3. Añadir angelitos piloto de protectoras (MVP) sólo si no están bloqueados ni ocultados
           const pilotShelters = [
             { x: 497, y: 495, pet: DEFAULT_SHELTER_PETS[0] }, // Juliette (3x3 en 497, 495)
             { x: 518, y: 494, pet: DEFAULT_SHELTER_PETS[1] }, // Rocky (3x3)
@@ -1518,9 +1544,13 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
           ];
 
           pilotShelters.forEach(({ x, y, pet }) => {
+            if (hiddenPetNames.has(pet.name.toLowerCase().trim())) return;
+            if (blockedCoords.has(`${x},${y}`)) return;
+
             if (!realSlots.has(`${x},${y}`)) {
               for (let dx = 0; dx < 3; dx++) {
                 for (let dy = 0; dy < 3; dy++) {
+                  if (blockedCoords.has(`${x + dx},${y + dy}`)) continue;
                   realSlots.set(`${x + dx},${y + dy}`, {
                     status: 'occupied',
                     plan_type: 'recuerdo_eterno',
