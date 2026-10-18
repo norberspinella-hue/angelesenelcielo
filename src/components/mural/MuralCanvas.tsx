@@ -1465,6 +1465,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
             const mins = slot.memorial_id ? minsMap.get(slot.memorial_id) : null;
             const isMain = mins ? (slot.x === mins.minX && slot.y === mins.minY) : true;
             const isDbShelter = Boolean(
+              slot.plan_type === 'corazon_eterno' ||
               slot.memorial_id?.startsWith('shelter_') ||
               slot.memorials?.story_answers?.isShelter ||
               slot.memorials?.story_answers?.shelterName
