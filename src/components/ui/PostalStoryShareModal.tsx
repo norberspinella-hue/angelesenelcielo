@@ -162,9 +162,9 @@ export default function PostalStoryShareModal({
     <div 
       className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
       style={{
-        background: 'rgba(11, 6, 22, 0.85)',
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        background: 'rgba(20, 15, 35, 0.70)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
@@ -172,21 +172,21 @@ export default function PostalStoryShareModal({
     >
       {/* Toast flotante */}
       {toastMessage && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100000] px-5 py-3 rounded-full bg-[#150D2A] text-[#FDE68A] border border-[#F5C842]/50 shadow-2xl text-xs sm:text-sm font-semibold flex items-center gap-2 animate-bounce">
-          <span>✨</span>
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100000] px-5 py-3 rounded-full bg-white text-[#BE185D] border-2 border-[#FBCFE8] shadow-2xl text-xs sm:text-sm font-bold flex items-center gap-2 animate-bounce">
+          <span>💖</span>
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Contenedor Modal */}
+      {/* Contenedor Modal: Visor Corazón Ghibli */}
       <div 
-        className="relative w-full max-w-2xl bg-gradient-to-b from-[#1C1236] to-[#0E081D] border border-white/20 rounded-[28px] shadow-[0_25px_60px_rgba(0,0,0,0.6)] p-5 sm:p-7 flex flex-col items-center text-white"
+        className="relative w-full max-w-2xl bg-gradient-to-b from-[#FFFDFE] via-[#FFF8FA] to-[#FFF5F8] border-2 border-[#FBCFE8] rounded-[32px] shadow-[0_25px_60px_-12px_rgba(190,24,93,0.18),0_0_0_1px_rgba(255,255,255,0.8)_inset] p-5 sm:p-7 flex flex-col items-center text-slate-800"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Botón cerrar */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center transition-all text-sm font-bold z-10"
+          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-pink-100/80 hover:bg-pink-200 text-[#BE185D] hover:text-[#9D174D] flex items-center justify-center transition-all text-sm font-bold z-10 border border-pink-200 shadow-xs cursor-pointer"
           aria-label="Cerrar"
         >
           ✕
@@ -194,26 +194,26 @@ export default function PostalStoryShareModal({
 
         {/* Cabecera */}
         <div className="text-center max-w-md mb-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F5C842]/15 border border-[#F5C842]/30 text-[#FDE68A] text-xs font-semibold mb-2">
-            <span>✨</span>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-[#BE185D] border border-pink-300 text-xs font-bold mb-2 shadow-xs">
+            <span>💖</span>
             <span>Comparte su luz en el mundo</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold font-serif italic text-white tracking-wide">
+          <h2 className="text-xl sm:text-2xl font-black font-serif italic text-[#1E2A78] tracking-wide">
             Recuerdo de {resolvedName}
           </h2>
-          <p className="text-xs sm:text-sm text-[#C4B5FD] mt-1">
+          <p className="text-xs sm:text-sm text-[#706A95] mt-1 font-medium">
             Sube la Story formateada a Instagram con 1 clic o descarga la postal conmemorativa.
           </p>
         </div>
 
         {/* Selector de Pestañas */}
-        <div className="flex items-center gap-2 p-1 bg-white/5 border border-white/10 rounded-full mb-5 w-full max-w-xs justify-center">
+        <div className="flex items-center gap-2 p-1.5 bg-pink-50/80 border border-pink-200 rounded-full mb-5 w-full max-w-xs justify-center shadow-inner">
           <button
             onClick={() => setActiveTab('story')}
-            className={`flex-1 py-1.5 px-3 rounded-full text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-1.5 px-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               activeTab === 'story'
-                ? 'bg-gradient-to-r from-[#DCA257] to-[#E982A6] text-white shadow-md'
-                : 'text-[#C4B5FD] hover:text-white'
+                ? 'bg-gradient-to-r from-[#F472B6] to-[#EC4899] text-white shadow-sm'
+                : 'text-[#706A95] hover:text-[#1E2A78]'
             }`}
           >
             <span>📱</span>
@@ -221,10 +221,10 @@ export default function PostalStoryShareModal({
           </button>
           <button
             onClick={() => setActiveTab('postal')}
-            className={`flex-1 py-1.5 px-3 rounded-full text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-1.5 px-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
               activeTab === 'postal'
-                ? 'bg-gradient-to-r from-[#DCA257] to-[#E982A6] text-white shadow-md'
-                : 'text-[#C4B5FD] hover:text-white'
+                ? 'bg-gradient-to-r from-[#F472B6] to-[#EC4899] text-white shadow-sm'
+                : 'text-[#706A95] hover:text-[#1E2A78]'
             }`}
           >
             <span>🖼️</span>
@@ -237,11 +237,11 @@ export default function PostalStoryShareModal({
           {activeTab === 'story' ? (
             /* Vista previa Story 9:16 (escalada a 260px ancho) */
             <div 
-              className="relative rounded-[22px] overflow-hidden shadow-2xl border border-white/20 flex flex-col items-center justify-between select-none"
+              className="relative rounded-[22px] overflow-hidden shadow-xl border-2 border-pink-200/90 flex flex-col items-center justify-between select-none"
               style={{
                 width: 250,
                 height: 444, // 9:16
-                background: 'radial-gradient(ellipse at 50% 30%, #2A194C 0%, #150D2A 55%, #0B0616 100%)',
+                background: 'radial-gradient(ellipse at 50% 25%, #182252 0%, #0F1638 60%, #090D22 100%)',
                 padding: '16px 12px',
               }}
             >
@@ -334,7 +334,7 @@ export default function PostalStoryShareModal({
                 <span className="text-[10px] font-bold text-[#F3E8FF] tracking-wide">
                   🐾 TodasLasMascotasVanAlCielo.com
                 </span>
-                <span className="text-[8px] text-[#C4B5FD] italic">
+                <span className="text-[8px] text-[#FBCFE8] italic">
                   Mural Global de las Estrellas
                 </span>
               </div>
@@ -342,11 +342,11 @@ export default function PostalStoryShareModal({
           ) : (
             /* Vista previa Postal 1:1 (escalada a 270px) */
             <div 
-              className="relative rounded-[20px] overflow-hidden shadow-2xl border border-white/20 flex flex-col items-center justify-center select-none"
+              className="relative rounded-[20px] overflow-hidden shadow-xl border-2 border-pink-200/90 flex flex-col items-center justify-center select-none"
               style={{
                 width: 270,
                 height: 270,
-                background: 'radial-gradient(ellipse at 50% 30%, #2A194C 0%, #150D2A 55%, #0B0616 100%)',
+                background: 'radial-gradient(ellipse at 50% 25%, #182252 0%, #0F1638 60%, #090D22 100%)',
                 padding: '14px',
               }}
             >
@@ -428,10 +428,12 @@ export default function PostalStoryShareModal({
           <button
             onClick={() => handleExport(activeTab)}
             disabled={isExporting}
-            className="w-full py-3.5 px-6 rounded-full text-white text-sm sm:text-base font-bold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg disabled:opacity-50 select-none"
+            className="w-full py-3.5 px-6 rounded-full text-white text-sm sm:text-base font-extrabold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md disabled:opacity-50 select-none cursor-pointer"
             style={{
-              background: 'linear-gradient(90deg, #F59E0B 0%, #EC4899 50%, #8B5CF6 100%)',
-              boxShadow: '0 8px 25px rgba(236, 72, 153, 0.45)',
+              background: 'linear-gradient(135deg, #F86E9E 0%, #FA8994 50%, #FFB680 100%)',
+              boxShadow: 'inset 0 2px 3px rgba(255, 255, 255, 0.75), inset 0 -3px 6px rgba(255, 150, 100, 0.45), 0 0 0 1.5px rgba(255, 220, 130, 0.9), 0 4px 14px rgba(248, 110, 158, 0.35)',
+              letterSpacing: '0.3px',
+              textShadow: '0 1px 2px rgba(0, 0, 0, 0.12)',
             }}
           >
             {isExporting ? (
@@ -453,10 +455,10 @@ export default function PostalStoryShareModal({
           </button>
 
           {/* Botones secundarios */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             <button
               onClick={handleShareWhatsApp}
-              className="py-2.5 px-3 rounded-full text-xs font-semibold bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#4ADE80] border border-[#25D366]/40 flex items-center justify-center gap-1.5 transition-all"
+              className="py-2.5 px-3 rounded-full text-xs font-bold bg-[#25D366] hover:bg-[#20ba59] text-white shadow-xs border border-[#16a34a]/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
             >
               <span>💬</span>
               <span>Enviar por WhatsApp</span>
@@ -464,16 +466,16 @@ export default function PostalStoryShareModal({
 
             <button
               onClick={handleCopyLink}
-              className="py-2.5 px-3 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/15 text-[#C4B5FD] border border-white/20 flex items-center justify-center gap-1.5 transition-all"
+              className="py-2.5 px-3 rounded-full text-xs font-bold bg-white hover:bg-pink-50 text-[#1E2A78] border border-pink-200 shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
             >
               <span>{copied ? '✓' : '📋'}</span>
-              <span>{copied ? 'Copiado' : 'Copiar enlace'}</span>
+              <span>{copied ? '¡Copiado!' : 'Copiar enlace'}</span>
             </button>
           </div>
         </div>
 
         {/* Microcopy de apoyo */}
-        <p className="text-[11px] text-[#A78BFA] mt-4 text-center">
+        <p className="text-xs text-[#706A95] mt-4 text-center font-medium">
           💡 En tu teléfono se abrirá la opción de publicar directamente en tu Historia de Instagram o guardarla en tus fotos.
         </p>
       </div>
@@ -501,7 +503,7 @@ export default function PostalStoryShareModal({
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '100px 60px',
-            background: 'radial-gradient(ellipse at 50% 30%, #2A194C 0%, #150D2A 55%, #0B0616 100%)',
+            background: 'radial-gradient(ellipse at 50% 30%, #182252 0%, #0F1638 55%, #090D22 100%)',
             position: 'relative',
             boxSizing: 'border-box',
           }}
@@ -702,7 +704,7 @@ export default function PostalStoryShareModal({
             <div
               style={{
                 fontSize: 22,
-                color: '#C4B5FD',
+                color: '#FBCFE8',
                 fontStyle: 'italic',
               }}
             >
@@ -722,7 +724,7 @@ export default function PostalStoryShareModal({
             alignItems: 'center',
             justifyContent: 'center',
             padding: 60,
-            background: 'radial-gradient(ellipse at 50% 30%, #2A194C 0%, #150D2A 55%, #0B0616 100%)',
+            background: 'radial-gradient(ellipse at 50% 30%, #182252 0%, #0F1638 55%, #090D22 100%)',
             position: 'relative',
             boxSizing: 'border-box',
           }}
