@@ -31,8 +31,11 @@ export const DEFAULT_SHELTER_PETS: ShelterPet[] = [
     shelterCity: 'Valencia',
     photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/juliette_1791706558194.jpg',
     storyPreview: 'Rescatada tras 8 años, partió rodeada de cariño y paz en el refugio.',
-    starsCount: 1,
-    isSponsored: false,
+    starsCount: 9,
+    isSponsored: true,
+    sponsorName: 'Marc',
+    memorialPetName: 'Nilo',
+    muralCoords: { x: 497, y: 495 },
   },
   {
     id: 'shelter_rocky',
@@ -357,11 +360,11 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                         onClick={() => setSelectedPet(pet)}
                         className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-3.5 relative ${
                           isSelected 
-                            ? 'border-[#F59E0B] bg-[#FFFDF5] shadow-md scale-[1.01]' 
-                            : 'border-gray-200 bg-white hover:border-[#D5CAE6] hover:bg-gray-50'
+                            ? 'border-[#EC4899] bg-[#FFF5F8] shadow-md scale-[1.01]' 
+                            : 'border-gray-200 bg-white hover:border-[#FBCFE8] hover:bg-gray-50'
                         }`}
                       >
-                        <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 shrink-0 shadow-xs relative">
+                        <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-pink-300 shrink-0 shadow-xs relative">
                           <img 
                             src={pet.photoUrl} 
                             alt={pet.name} 
@@ -377,7 +380,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                                 <span>💖</span> Apadrinado
                               </span>
                             ) : (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 shrink-0">
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-50 text-[#BE185D] shrink-0 border border-pink-200/80">
                                 ⭐ Constelación 3×3
                               </span>
                             )}
@@ -488,13 +491,13 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                 </div>
 
                 {/* Casilla Emocional Clave: Apadrinar en memoria de propia mascota */}
-                <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50/70 to-pink-50/70 border border-amber-200">
+                <div className="p-3 rounded-xl bg-gradient-to-r from-pink-50/90 to-purple-50/70 border border-pink-200">
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input 
                       type="checkbox"
                       checked={isMemorial}
                       onChange={(e) => setIsMemorial(e.target.checked)}
-                      className="w-4 h-4 text-amber-500 rounded focus:ring-amber-400"
+                      className="w-4 h-4 text-pink-600 rounded focus:ring-pink-400"
                     />
                     <span className="text-xs font-bold text-[#1E2A78]">
                       🕊️ Deseo apadrinar en memoria de mi propia mascota
@@ -511,9 +514,9 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                         placeholder="Ej. Max, Toby, Luna..."
                         value={sponsorPetName}
                         onChange={(e) => setSponsorPetName(e.target.value)}
-                        className="w-full text-xs px-3 py-2 rounded-lg border border-amber-300 focus:border-amber-500 focus:outline-none bg-white"
+                        className="w-full text-xs px-3 py-2 rounded-lg border border-pink-300 focus:border-pink-500 focus:outline-none bg-white"
                       />
-                      <span className="text-[10px] text-amber-800 italic mt-1 block">
+                      <span className="text-[10px] text-[#BE185D] italic mt-1 block">
                         ✦ Ambos nombres quedarán unidos con amor en la placa pública del mural.
                       </span>
                     </div>
@@ -534,7 +537,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                 </div>
 
                 {/* Ticket Transparente del Split Solidario 50% */}
-                <div className="rounded-xl p-3.5 bg-gradient-to-br from-[#FFFBEB] to-[#F5EEFF] border border-[#F59E0B]/50 shadow-xs space-y-1.5">
+                <div className="rounded-xl p-3.5 bg-gradient-to-br from-[#FFF5F8] to-[#FDF4FF] border border-pink-200/90 shadow-xs space-y-1.5">
                   <div className="flex justify-between text-xs text-gray-600">
                     <span>Constelación 3×3 (9 Estrellas Perpetuas)</span>
                     <span className="font-bold">9,99 €</span>
@@ -545,11 +548,11 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                   </div>
                   <div className="flex justify-between text-xs text-purple-800 font-semibold">
                     <span>🏅 Distintivo Ángel con Corazón de Perrito:</span>
-                    <span className="text-amber-600 font-bold">INCLUIDO ✓</span>
+                    <span className="text-[#BE185D] font-bold">INCLUIDO ✓</span>
                   </div>
-                  <div className="border-t border-amber-200/70 pt-2 flex justify-between items-center text-sm font-bold text-[#1E2A78]">
+                  <div className="border-t border-pink-200/80 pt-2 flex justify-between items-center text-sm font-bold text-[#1E2A78]">
                     <span>Total aportación única:</span>
-                    <span className="text-base text-amber-600 font-extrabold">9,99 €</span>
+                    <span className="text-base text-[#BE185D] font-extrabold">9,99 €</span>
                   </div>
                 </div>
 

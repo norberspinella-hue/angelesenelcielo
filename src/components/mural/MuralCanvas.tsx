@@ -155,18 +155,47 @@ function PetProfileCard({
       try {
         setLoading(true);
 
-        // 1. Intentar buscar en la base de datos (incluso para protectoras, para obtener patrocinio real)
-        const { data, error } = await supabase
-          .from('memorials')
-          .select('id, pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers, slot_assigned')
-          .eq('id', memorialId)
-          .maybeSingle();
+        // 1. Intentar buscar en la base de datos (manejando UUIDs y IDs de protectora como shelter_juliette)
+        let data: any = null;
+        const isUuid = Boolean(memorialId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(memorialId));
+
+        if (isUuid) {
+          const { data: memById } = await supabase
+            .from('memorials')
+            .select('id, pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers, slot_assigned')
+            .eq('id', memorialId)
+            .maybeSingle();
+          if (memById) data = memById;
+        }
+
+        // Si no se encontró por ID directo o memorialId es shelter_..., buscar por sponsoredPetId en story_answers
+        if (!data && memorialId) {
+          const { data: memBySponsored } = await (supabase.from('memorials') as any)
+            .select('id, pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers, slot_assigned')
+            .filter('story_answers->>sponsoredPetId', 'eq', memorialId)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (memBySponsored) data = memBySponsored;
+        }
+
+        // Si aún no se encontró, buscar por nombre de la mascota de protectora (ej. Juliette)
+        const petNameToSearch = shelterPet?.name || (memorialId?.toLowerCase().includes('juliette') ? 'Juliette' : '');
+        if (!data && petNameToSearch) {
+          const { data: memByName } = await (supabase.from('memorials') as any)
+            .select('id, pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers, slot_assigned')
+            .ilike('pet_name', petNameToSearch)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (memByName) data = memByName;
+        }
         
         if (data) {
           setPetData(data);
         } else if (memorialId?.startsWith('shelter_') || isShelter) {
           // Si no está aún en base de datos, fallback a datos por defecto
-          const matched = shelterPet || DEFAULT_SHELTER_PETS.find(p => p.id === memorialId);
+          const matched = shelterPet || DEFAULT_SHELTER_PETS.find(p => p.id === memorialId || (shelterPet ? p.name.toLowerCase() === (shelterPet as any).name?.toLowerCase() : false));
           if (matched) {
             setPetData({
               pet_name: matched.name,
@@ -187,21 +216,25 @@ function PetProfileCard({
               }
             });
           }
-        } else if (error) {
-          console.error('Error fetching pet profile:', error);
+        } else {
+          console.error('Memorial no encontrado:', memorialId);
         }
 
-        const { data: slot } = await supabase
-          .from('mural_slots')
-          .select('x, y')
-          .eq('memorial_id', memorialId)
-          .order('x', { ascending: true })
-          .order('y', { ascending: true })
-          .limit(1)
-          .single();
+        const targetMemorialId = data?.id || memorialId;
+        const isTargetUuid = Boolean(targetMemorialId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetMemorialId));
+        if (isTargetUuid) {
+          const { data: slot } = await supabase
+            .from('mural_slots')
+            .select('x, y')
+            .eq('memorial_id', targetMemorialId)
+            .order('x', { ascending: true })
+            .order('y', { ascending: true })
+            .limit(1)
+            .maybeSingle();
 
-        if (slot) {
-          setSlotData(slot as { x: number; y: number });
+          if (slot) {
+            setSlotData(slot as { x: number; y: number });
+          }
         }
       } catch (err) {
         console.error(err);
@@ -987,51 +1020,61 @@ function PetProfileCard({
           </div>
         </div>
 
-        {/* CINTA CONMEMORATIVA SI YA ESTÁ APADRINADO */}
+        {/* CINTA CONMEMORATIVA SI YA ESTÁ APADRINADO (DISEÑO VISOR CORAZÓN GHIBLI) */}
         {isShelterPet && isSponsored && (
           <div 
-            className="rounded-[24px] border border-white/65 shadow-[0_12px_40px_rgba(30,10,50,0.15)] p-4 sm:p-[20px_18px] flex flex-col items-center overflow-hidden w-full max-w-[360px] text-center relative"
+            className="rounded-[24px] border border-[#FBCFE8] shadow-[0_12px_40px_rgba(244,114,182,0.22)] p-4 sm:p-[20px_18px] flex flex-col items-center overflow-hidden w-full max-w-[360px] text-center relative"
             style={{
               width: 'min(360px, calc(100vw - 20px))',
               flexShrink: 0,
-              background: 'linear-gradient(180deg, rgba(255, 230, 235, 0.85) 0%, rgba(250, 200, 215, 0.85) 100%)',
+              background: 'linear-gradient(180deg, rgba(255, 253, 254, 0.95) 0%, rgba(255, 245, 248, 0.95) 100%)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
             }}
           >
-            <h4 className="font-serif font-bold text-[17px] text-[#4A3F6B] m-0 mb-1.5 leading-snug">
-              «Apadrinado con amor por {sponsorName || 'un Ángel Solidario'}{memorialPetName ? ` en memoria de su ángel ${memorialPetName}` : ''} 🐾»
+            <div className="flex items-center justify-center gap-2 mb-2 px-3 py-1 rounded-full bg-[#FFF0F5] border border-pink-200/80 shadow-xs">
+              <img src="/images/icons/badge-alas-angel.webp" alt="Corazón de Ángel" className="w-5 h-5 object-contain" />
+              <span className="text-[11px] font-extrabold text-[#BE185D] tracking-wider uppercase">
+                Apadrinado · Corazón de Ángel
+              </span>
+              <img src="/images/icons/badge-alas-angel.webp" alt="Corazón de Ángel" className="w-5 h-5 object-contain" />
+            </div>
+
+            <h4 className="font-serif font-bold text-[17px] text-[#1E2A78] m-0 mb-1.5 leading-snug">
+              «Apadrinado con amor por {sponsorName || 'Marc'}{memorialPetName ? ` en memoria de su ángel ${memorialPetName} 🐾` : ''}»
             </h4>
 
-            <p className="text-[12px] text-[#7B6F9A] m-0 leading-[1.4] font-sans">
-              {matchedShelterPet.shelterName} {matchedShelterPet.shelterCity ? `· ${matchedShelterPet.shelterCity}` : ''} · <strong>Constelación de 9 estrellas</strong>
+            <p className="text-[12px] text-[#706A95] m-0 leading-[1.4] font-sans">
+              {matchedShelterPet.shelterName} {matchedShelterPet.shelterCity ? `· ${matchedShelterPet.shelterCity}` : ''} · <strong className="text-[#BE185D]">Constelación de 9 estrellas</strong>
             </p>
           </div>
         )}
 
-        {/* BANNER SOLIDARIO SI ES ANGELITO DE PROTECTORA Y AÚN NO ESTÁ APADRINADO */}
+        {/* BANNER SOLIDARIO SI ES ANGELITO DE PROTECTORA Y AÚN NO ESTÁ APADRINADO (DISEÑO VISOR CORAZÓN GHIBLI) */}
         {isShelterPet && !isSponsored && (
           <div 
-            className="rounded-[24px] border-2 border-amber-300 shadow-[0_12px_36px_rgba(245,158,11,0.25)] p-5 flex flex-col items-center overflow-hidden w-full max-w-[360px] text-center"
+            className="rounded-[24px] border border-[#FBCFE8] shadow-[0_12px_36px_rgba(244,114,182,0.22)] p-5 flex flex-col items-center overflow-hidden w-full max-w-[360px] text-center"
             style={{
               width: 'min(360px, calc(100vw - 20px))',
               flexShrink: 0,
-              background: 'linear-gradient(135deg, #FFFDF5 0%, #FEF3C7 50%, #FDE68A 100%)',
+              background: 'linear-gradient(180deg, rgba(255, 253, 254, 0.95) 0%, rgba(255, 245, 248, 0.95) 100%)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
             }}
           >
-            <div className="flex items-center justify-center gap-2 mb-1.5 text-amber-900 font-extrabold text-xs uppercase tracking-wider">
+            <div className="flex items-center justify-center gap-2 mb-2 px-3 py-1 rounded-full bg-[#FFF0F5] border border-pink-200/80 shadow-xs">
               <img src="/images/icons/badge-alas-angel.webp" alt="Alas" className="w-5 h-5 object-contain" />
-              <span>Angelito de Protectora</span>
+              <span className="text-[11px] font-extrabold text-[#BE185D] tracking-wider uppercase">
+                Angelito de Protectora
+              </span>
               <img src="/images/icons/badge-alas-angel.webp" alt="Alas" className="w-5 h-5 object-contain" />
             </div>
             
-            <p className="text-xs text-amber-950 mb-3.5 font-medium leading-relaxed">
-              <strong>{matchedShelterPet.shelterName}</strong> {matchedShelterPet.shelterCity ? `· ${matchedShelterPet.shelterCity}` : ''}
+            <p className="text-xs text-[#5D4E75] mb-3.5 font-medium leading-relaxed">
+              <strong className="text-[#1E2A78] text-[13px]">{matchedShelterPet.shelterName}</strong> {matchedShelterPet.shelterCity ? <span className="text-[#BE185D]">· {matchedShelterPet.shelterCity}</span> : ''}
               <br />
-              <span className="text-[11px] text-amber-800">
-                ¡Sé su ángel de la guarda! Al apadrinar sus 9 estrellas, el <strong>50% del importe (5,00 €)</strong> se dona directamente a su refugio.
+              <span className="text-[11.5px] text-[#706A95] mt-1.5 block">
+                ¡Sé su ángel de la guarda! Al apadrinar sus 9 estrellas, el <strong className="text-[#BE185D] font-bold">50% del importe (5,00 €)</strong> se dona directamente a su refugio.
               </span>
             </p>
 
@@ -1042,10 +1085,10 @@ function PetProfileCard({
                   onApadrinar(matchedShelterPet);
                 }
               }}
-              className="w-full py-3.5 px-4 rounded-full text-[#180A2D] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+              className="w-full py-3.5 px-4 rounded-full text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
               style={{
-                background: 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #D97706 100%)',
-                boxShadow: '0 4px 15px rgba(217, 119, 6, 0.45)',
+                background: 'linear-gradient(135deg, #F472B6 0%, #EC4899 50%, #DB2777 100%)',
+                boxShadow: '0 6px 20px rgba(244, 114, 182, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
               }}
             >
               <span>💖</span>
@@ -1441,7 +1484,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
 
           // 3. Añadir angelitos piloto de protectoras (MVP) en coordenadas visibles cerca del centro
           const pilotShelters = [
-            { x: 479, y: 494, pet: DEFAULT_SHELTER_PETS[0] }, // Juliette (3x3)
+            { x: 497, y: 495, pet: DEFAULT_SHELTER_PETS[0] }, // Juliette (3x3 en 497, 495)
             { x: 518, y: 494, pet: DEFAULT_SHELTER_PETS[1] }, // Rocky (3x3)
             { x: 498, y: 516, pet: DEFAULT_SHELTER_PETS[2] }, // Galleta (3x3)
           ];

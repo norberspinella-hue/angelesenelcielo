@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
         starsCount: m.story_answers?.starsCount || (isSponsored ? 9 : 1),
         isSponsored,
         sponsorName: m.story_answers?.sponsorName || '',
-        memorialPetName: m.story_answers?.memorialPetName || '',
+        memorialPetName: m.story_answers?.sponsorPetName || m.story_answers?.memorialPetName || '',
         sponsoredAt: m.story_answers?.sponsoredAt,
         muralCoords: coords,
       };
