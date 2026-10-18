@@ -413,7 +413,7 @@ function PetProfileCard({
                 ✕
               </button>
 
-              {/* Medallón 3D de Alas Celestiales para angelitos de protectora */}
+              {/* Distintivo Corazones de Ángel (Alas con Corazón Rosa Studio Ghibli) */}
               {isShelterPet && (
                 <div 
                   data-download-ignore="true"
@@ -424,27 +424,27 @@ function PetProfileCard({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '6px',
-                    padding: '3px 10px 3px 4px',
+                    padding: '3px 12px 3px 4px',
                     borderRadius: 999,
-                    background: 'rgba(255, 255, 255, 0.92)',
+                    background: 'rgba(255, 255, 255, 0.95)',
                     backdropFilter: 'blur(8px)',
-                    border: '1.5px solid #F59E0B',
-                    boxShadow: '0 4px 14px rgba(245, 158, 11, 0.35)',
+                    border: '1.5px solid #F472B6',
+                    boxShadow: '0 4px 14px rgba(244, 114, 182, 0.35)',
                     zIndex: 30,
                   }}
                 >
                   <img 
                     src="/images/icons/badge-alas-angel.webp" 
-                    alt="Ángel de Protectora" 
-                    style={{ width: 26, height: 26, objectFit: 'contain' }}
+                    alt="Corazón de Ángel" 
+                    style={{ width: 28, height: 28, objectFit: 'contain' }}
                   />
                   <span style={{
                     fontSize: '10.5px',
                     fontWeight: 800,
-                    color: '#B45309',
+                    color: '#BE185D',
                     letterSpacing: '0.4px',
                   }}>
-                    PROTECTORA
+                    CORAZÓN DE ÁNGEL
                   </span>
                 </div>
               )}
@@ -1640,20 +1640,20 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
                   const isShelterSlot = Boolean(realSlot?.isShelter || realSlot?.memorial_id?.startsWith('shelter_'));
                   if (isShelterSlot) {
                     ctx.save();
-                    // Aureola dorada suave pulsante
-                    const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 500);
+                    // Aureola suave pulsante con tono rosado cálido y dorado
+                    const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 450);
                     ctx.shadowBlur = 12 * pulse + 6;
-                    ctx.shadowColor = 'rgba(245, 158, 11, 0.9)';
-                    ctx.strokeStyle = 'rgba(251, 191, 36, 0.95)';
+                    ctx.shadowColor = 'rgba(244, 114, 182, 0.85)';
+                    ctx.strokeStyle = 'rgba(251, 146, 60, 0.95)';
                     ctx.lineWidth = Math.max(1.8, fullSize * 0.035);
                     rr(sx, sy, fullSize, fullSize, radius);
                     ctx.stroke();
 
-                    // Distintivo alado en la esquina superior derecha (Medallón 3D Celestial)
+                    // Distintivo alado en la esquina superior derecha (Corazones de Ángel - Studio Ghibli)
                     if (fullSize >= 18) {
-                      const badgeD = Math.max(16, Math.min(32, fullSize * 0.32));
-                      const bX = sx + fullSize - badgeD + 1;
-                      const bY = sy - 1;
+                      const badgeD = Math.max(18, Math.min(36, fullSize * 0.35));
+                      const bX = sx + fullSize - badgeD + 2;
+                      const bY = sy - 2;
 
                       const badgeImg = loadImage('/images/icons/badge-alas-angel.webp', () => {
                         requestAnimationFrame(render);
@@ -1661,12 +1661,12 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
 
                       if (badgeImg) {
                         ctx.shadowBlur = 8;
-                        ctx.shadowColor = 'rgba(245, 158, 11, 0.7)';
+                        ctx.shadowColor = 'rgba(244, 114, 182, 0.75)';
                         ctx.drawImage(badgeImg, bX, bY, badgeD, badgeD);
                       } else {
                         ctx.shadowBlur = 4;
-                        ctx.shadowColor = 'rgba(0,0,0,0.35)';
-                        ctx.fillStyle = '#F59E0B';
+                        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                        ctx.fillStyle = '#F472B6';
                         ctx.strokeStyle = '#FFFFFF';
                         ctx.lineWidth = 1.2;
                         ctx.beginPath();
@@ -1674,11 +1674,11 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
                         ctx.fill();
                         ctx.stroke();
 
-                        ctx.font = `${Math.round(badgeD * 0.62)}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
+                        ctx.font = `${Math.round(badgeD * 0.6)}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
                         ctx.textAlign = 'center';
                         ctx.textBaseline = 'middle';
                         ctx.fillStyle = '#FFFFFF';
-                        ctx.fillText('🪽', bX + badgeD / 2, bY + badgeD / 2 + 1);
+                        ctx.fillText('💖', bX + badgeD / 2, bY + badgeD / 2 + 1);
                       }
                     }
                     ctx.restore();

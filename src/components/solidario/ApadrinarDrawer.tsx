@@ -234,9 +234,13 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
         <div className="flex flex-col w-full md:w-[500px] lg:w-[550px] shrink-0 h-full relative z-10 p-6 md:p-8 overflow-y-auto">
           
           {/* Cabecera del Drawer */}
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-xl">💖</span>
-            <span className="font-bold text-[#1E2A78] text-base">Apadrinar un Angelito de Protectora</span>
+          <div className="flex items-center gap-2.5 mb-4">
+            <img 
+              src="/images/icons/badge-alas-angel.webp" 
+              alt="Corazones de Ángel" 
+              className="w-7 h-7 object-contain" 
+            />
+            <span className="font-bold text-[#1E2A78] text-base">Corazones de Ángel · Apadrinamiento</span>
           </div>
 
           {/* Stepper de 2 Pasos */}
@@ -360,17 +364,20 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
               </button>
 
               {/* Ficha Resumen del Angelito Seleccionado */}
-              <div className="bg-gradient-to-r from-amber-50 to-purple-50 border border-amber-200/80 rounded-2xl p-3 flex items-center gap-3 mb-4 shadow-xs">
-                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400 shrink-0">
+              <div className="bg-gradient-to-r from-pink-50/80 via-purple-50/50 to-amber-50/50 border border-pink-200/90 rounded-2xl p-3 flex items-center gap-3 mb-4 shadow-xs">
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-pink-300 shrink-0 relative">
                   <img src={selectedPet.photoUrl} alt={selectedPet.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 block">Angelito Seleccionado</span>
+                  <div className="flex items-center gap-1.5 mb-0.5">
+                    <img src="/images/icons/badge-alas-angel.webp" alt="Corazón de Ángel" className="w-3.5 h-3.5 object-contain" />
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-pink-700 block">Corazón de Ángel</span>
+                  </div>
                   <h4 className="font-bold text-sm text-[#1E2A78]">{selectedPet.name}</h4>
                   <span className="text-[11px] text-[#5D4E75] truncate block">{selectedPet.shelterName} · {selectedPet.shelterCity}</span>
                 </div>
                 <div className="text-right shrink-0">
-                  <span className="text-xs font-bold text-amber-700 block">9 Estrellas</span>
+                  <span className="text-xs font-bold text-pink-700 block">9 Estrellas</span>
                   <span className="text-[10px] text-emerald-700 font-semibold">50% Donación</span>
                 </div>
               </div>
