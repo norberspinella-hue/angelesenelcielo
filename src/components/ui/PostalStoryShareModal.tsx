@@ -377,16 +377,22 @@ export default function PostalStoryShareModal({
                   >
                     {resolvedName}
                   </div>
+                  {/* Corazón dorado */}
+                  <div className="flex items-center justify-center my-0.5">
+                    <svg width="10" height="10" viewBox="0 0 24 24">
+                      <path fill="#C29028" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                  </div>
                 </div>
 
-                {/* Foto circular con halo */}
+                {/* Foto circular con halo y medalla */}
                 <div className="relative">
                   <div 
                     className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full border border-[#F5C842] shadow-[0_0_6px_#F5C842]"
                     style={{ width: 62, height: 16 }}
                   />
                   <div 
-                    className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#C9A961] shadow-md bg-white mt-1"
+                    className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#C9A961] shadow-md bg-white mt-1 relative"
                   >
                     <img 
                       src={resolvedPhoto} 
@@ -395,14 +401,20 @@ export default function PostalStoryShareModal({
                       crossOrigin="anonymous"
                     />
                   </div>
+                  {/* Insignia corazón del plan */}
+                  <img
+                    src="/images/icons/plans/icon-plan-eterno.svg"
+                    alt="Corazón"
+                    className="absolute -bottom-1 -right-1 w-6 h-6 object-contain drop-shadow"
+                  />
                 </div>
 
                 <div className="text-center">
-                  <p className="text-[7.5px] font-bold text-[#584582] font-serif leading-tight">
+                  <p className="text-[7.5px] font-bold text-[#584582] font-serif leading-tight m-0">
                     Siempre serás mi lugar favorito en el mundo
                   </p>
-                  <span className="text-[7px] text-[#7C3AED] font-semibold mt-0.5 block">
-                    🐾 TodasLasMascotasVanAlCielo.com
+                  <span className="text-[7.5px] text-[#584582] font-bold font-serif opacity-90 mt-0.5 block">
+                    Ángeles en el Cielo
                   </span>
                 </div>
               </div>
@@ -749,7 +761,7 @@ export default function PostalStoryShareModal({
                   fontWeight: 700,
                   color: '#584582',
                   letterSpacing: 4,
-                  marginBottom: 10,
+                  marginBottom: 6,
                 }}
               >
                 MI ANGELITO
@@ -763,9 +775,15 @@ export default function PostalStoryShareModal({
               >
                 {resolvedName}
               </div>
+              {/* Corazón dorado 3D */}
+              <div style={{ marginTop: 4 }}>
+                <svg width="26" height="26" viewBox="0 0 24 24">
+                  <path fill="#C29028" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </div>
             </div>
 
-            {/* Foto circular con Halo */}
+            {/* Foto circular con Halo y medalla corazón */}
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div
                 style={{
@@ -787,6 +805,7 @@ export default function PostalStoryShareModal({
                   border: '6px solid rgba(201, 169, 97, 0.85)',
                   boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
                   backgroundColor: '#ffffff',
+                  position: 'relative',
                 }}
               >
                 <img
@@ -796,30 +815,48 @@ export default function PostalStoryShareModal({
                   crossOrigin="anonymous"
                 />
               </div>
+              {/* Insignia corazón del plan */}
+              <img
+                src="/images/icons/plans/icon-plan-eterno.svg"
+                alt="Corazón"
+                style={{
+                  position: 'absolute',
+                  bottom: -10,
+                  right: -10,
+                  width: 84,
+                  height: 84,
+                  objectFit: 'contain',
+                  zIndex: 10,
+                  filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.25))',
+                }}
+              />
             </div>
 
             {/* Dedicatoria y cierre */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 6 }}>
               <div
                 style={{
                   fontFamily: 'Georgia, serif',
-                  fontSize: 24,
+                  fontSize: 26,
                   fontWeight: 700,
                   color: '#584582',
                   maxWidth: 700,
+                  lineHeight: 1.35,
                 }}
               >
                 Siempre serás mi lugar favorito en el mundo
               </div>
               <div
                 style={{
-                  fontSize: 18,
+                  fontFamily: 'Georgia, serif',
+                  fontSize: 22,
                   fontWeight: 700,
-                  color: '#7C3AED',
-                  marginTop: 6,
+                  color: '#584582',
+                  opacity: 0.9,
+                  marginTop: 2,
                 }}
               >
-                🐾 TodasLasMascotasVanAlCielo.com · Mural de las Estrellas
+                Ángeles en el Cielo
               </div>
             </div>
           </div>

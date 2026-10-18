@@ -23,9 +23,10 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
   const [dedication, setDedication] = useState<string>('')
   const [profileSlug, setProfileSlug] = useState<string>('')
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
-  const [sponsorName, setSponsorName] = useState<string>('Familia Gómez Martí')
-  const [shelterName, setShelterName] = useState<string>('Refugio Nueva Vida')
-  const [shelterPetName, setShelterPetName] = useState<string>('Juliette')
+  const [sponsorName, setSponsorName] = useState<string>('')
+  const [shelterName, setShelterName] = useState<string>('')
+  const [shelterPetName, setShelterPetName] = useState<string>('')
+  const [sponsorPetName, setSponsorPetName] = useState<string>('')
   const [isSponsorship, setIsSponsorship] = useState<boolean>(false)
 
   const formatDate = (dateStr: string) => {
@@ -60,6 +61,7 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
           if (data.sponsorName) setSponsorName(data.sponsorName)
           if (data.shelterName) setShelterName(data.shelterName)
           if (data.shelterPetName) setShelterPetName(data.shelterPetName)
+          if (data.sponsorPetName) setSponsorPetName(data.sponsorPetName)
           if (data.isSponsorship) setIsSponsorship(true)
         }
       } catch (err) {
@@ -333,6 +335,7 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
                   sponsorName,
                   petName: shelterPetName || petName,
                   shelterName,
+                  sponsorPetName,
                 }}
               />
             </div>

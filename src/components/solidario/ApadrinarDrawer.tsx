@@ -31,10 +31,8 @@ export const DEFAULT_SHELTER_PETS: ShelterPet[] = [
     shelterCity: 'Valencia',
     photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/juliette_1791706558194.jpg',
     storyPreview: 'Rescatada tras 8 años, partió rodeada de cariño y paz en el refugio.',
-    starsCount: 9,
-    isSponsored: true,
-    sponsorName: 'Familia Gómez Martí',
-    memorialPetName: 'Toby',
+    starsCount: 1,
+    isSponsored: false,
   },
   {
     id: 'shelter_rocky',

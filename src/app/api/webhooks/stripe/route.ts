@@ -317,7 +317,7 @@ export async function POST(req: NextRequest) {
                 sponsorPetName: sponsorPetName || '',
                 dedication: dedication || '',
                 muralUrl: `${process.env.NEXT_PUBLIC_URL}/mural-global?highlight=${finalX},${finalY}&zoom=true`,
-                diplomaUrl: `${process.env.NEXT_PUBLIC_URL}/gracias/${orderId || session.id}`,
+                diplomaUrl: `${process.env.NEXT_PUBLIC_URL}/gracias/${session.id}`,
               })
             : `
 <!DOCTYPE html>

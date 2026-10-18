@@ -14,6 +14,102 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const dynamic = 'force-dynamic';
 
+function buildMemorialResponse(memorial: any) {
+  const answers = memorial.story_answers || {}
+  const isSponsorship = Boolean(
+    answers.isSponsorship ||
+    answers.isSponsored ||
+    memorial.plan_type === 'corazon_eterno' ||
+    memorial.plan_type?.toLowerCase().includes('corazon') ||
+    memorial.plan_type?.toLowerCase().includes('apadrinamiento')
+  )
+  return NextResponse.json({
+    petName: memorial.pet_name || 'Tu ángel',
+    petDate: memorial.death_date || '',
+    plan: memorial.plan_type || '',
+    email: memorial.email || '',
+    photoUrl: memorial.photo_url || '',
+    thumbnailUrl: memorial.photo_url || '',
+    species: memorial.species || '',
+    breed: memorial.breed || '',
+    birthDate: memorial.birth_date || '',
+    location: memorial.location || '',
+    dedication: memorial.dedication || '',
+    slug: memorial.profile_slug || '',
+    slotId: memorial.slot_assigned || '',
+    sponsorName: answers.sponsorName || 'Padrino Solidario',
+    shelterName: answers.shelterName || 'Refugio Nueva Vida',
+    shelterPetName: memorial.pet_name || 'Juliette',
+    sponsorPetName: answers.sponsorPetName || answers.memorialPetName || '',
+    isSponsorship,
+  })
+}
+
+async function findMemorialInDb(sessionId: string) {
+  const supabase = createAdminClient()
+  let foundMemorial: any = null
+
+  // 1. Buscar en certificates por order_id (ej. order_649e7b2f o AEC-...)
+  const { data: cert } = await (supabase.from('certificates') as any)
+    .select('*')
+    .eq('order_id', sessionId)
+    .maybeSingle()
+
+  if (cert) {
+    if (cert.user_email && cert.pet_name) {
+      const { data: mem } = await (supabase.from('memorials') as any)
+        .select('*')
+        .eq('email', cert.user_email)
+        .eq('pet_name', cert.pet_name)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      if (mem) foundMemorial = mem
+    }
+    if (!foundMemorial && cert.pet_name) {
+      const { data: memByName } = await (supabase.from('memorials') as any)
+        .select('*')
+        .eq('pet_name', cert.pet_name)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      if (memByName) foundMemorial = memByName
+    }
+  }
+
+  // 2. Buscar en memorials por stripe_session_id
+  if (!foundMemorial) {
+    const { data: memBySession } = await (supabase.from('memorials') as any)
+      .select('*')
+      .eq('stripe_session_id', sessionId)
+      .maybeSingle()
+    if (memBySession) foundMemorial = memBySession
+  }
+
+  // 3. Buscar en memorials por id
+  if (!foundMemorial) {
+    const { data: memById } = await (supabase.from('memorials') as any)
+      .select('*')
+      .eq('id', sessionId)
+      .maybeSingle()
+    if (memById) foundMemorial = memById
+  }
+
+  // 4. Si sessionId empieza por order_ o AEC-, buscar apadrinamiento reciente
+  if (!foundMemorial && (sessionId.startsWith('order_') || sessionId.startsWith('AEC-'))) {
+    const { data: recentMems } = await (supabase.from('memorials') as any)
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10)
+    if (recentMems && recentMems.length > 0) {
+      const match = recentMems.find((m: any) => m.story_answers?.isSponsorship || m.story_answers?.isSponsored)
+      if (match) foundMemorial = match
+    }
+  }
+
+  return foundMemorial
+}
+
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get('sessionId')
   
@@ -24,10 +120,23 @@ export async function GET(req: NextRequest) {
     )
   }
 
+  // Si no es un session_id de Stripe (ej: order_id o memorial_id desde email), buscar en la BD
+  if (!sessionId.startsWith('cs_')) {
+    const dbMemorial = await findMemorialInDb(sessionId)
+    if (dbMemorial) {
+      return buildMemorialResponse(dbMemorial)
+    }
+    return NextResponse.json({ error: 'Sesión no encontrada' }, { status: 404 })
+  }
+
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId)
     
     if (!session) {
+      const dbMemorial = await findMemorialInDb(sessionId)
+      if (dbMemorial) {
+        return buildMemorialResponse(dbMemorial)
+      }
       return NextResponse.json(
         { error: 'Sesión no encontrada en Stripe' },
         { status: 404 }
@@ -547,14 +656,20 @@ export async function GET(req: NextRequest) {
       dedication: session.metadata?.dedication || '',
       slug: existingMemorial?.profile_slug || '',
       slotId: finalSlotId,
-      sponsorName: session.metadata?.sponsorName || session.customer_details?.name || 'Familia Gómez Martí',
+      sponsorName: session.metadata?.sponsorName || session.customer_details?.name || 'Padrino Solidario',
       shelterName: session.metadata?.shelterName || 'Refugio Nueva Vida',
-      shelterPetName: session.metadata?.shelterPetName || 'Juliette',
+      shelterPetName: session.metadata?.shelterPetName || session.metadata?.petName || 'Juliette',
+      sponsorPetName: session.metadata?.sponsorPetName || '',
       isSponsorship: session.metadata?.isSponsorship === 'true' || 
         session.metadata?.plan?.toLowerCase().includes('corazon') || 
         session.metadata?.plan?.toLowerCase().includes('apadrinamiento'),
     })
   } catch (error) {
+    console.error('Error recuperando sesión de Stripe, probando búsqueda en base de datos:', error)
+    const dbMemorial = await findMemorialInDb(sessionId)
+    if (dbMemorial) {
+      return buildMemorialResponse(dbMemorial)
+    }
     return NextResponse.json(
       { error: 'Sesión no encontrada' },
       { status: 404 }

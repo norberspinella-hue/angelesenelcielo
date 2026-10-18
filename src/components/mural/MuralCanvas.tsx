@@ -9,7 +9,6 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { getPlanByDbName } from '@/lib/plans';
 import { ApadrinarDrawer, DEFAULT_SHELTER_PETS, ShelterPet } from '@/components/solidario/ApadrinarDrawer';
-import SponsorshipCertificateA4 from '@/components/certificates/SponsorshipCertificateA4';
 
 const supabase = createClient();
 
@@ -76,7 +75,6 @@ function PetProfileCard({
   const [loading, setLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [showDiplomaModal, setShowDiplomaModal] = useState(false);
   const frontFaceRef = useRef<HTMLDivElement>(null);
   const backFaceRef = useRef<HTMLDivElement>(null);
 
@@ -157,7 +155,17 @@ function PetProfileCard({
       try {
         setLoading(true);
 
-        if (memorialId?.startsWith('shelter_') || isShelter) {
+        // 1. Intentar buscar en la base de datos (incluso para protectoras, para obtener patrocinio real)
+        const { data, error } = await supabase
+          .from('memorials')
+          .select('id, pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers, slot_assigned')
+          .eq('id', memorialId)
+          .maybeSingle();
+        
+        if (data) {
+          setPetData(data);
+        } else if (memorialId?.startsWith('shelter_') || isShelter) {
+          // Si no está aún en base de datos, fallback a datos por defecto
           const matched = shelterPet || DEFAULT_SHELTER_PETS.find(p => p.id === memorialId);
           if (matched) {
             setPetData({
@@ -173,23 +181,14 @@ function PetProfileCard({
                 isSponsorship: true,
                 shelterName: matched.shelterName,
                 shelterCity: matched.shelterCity,
+                isSponsored: matched.isSponsored || false,
+                sponsorName: matched.sponsorName,
+                sponsorPetName: matched.memorialPetName,
               }
             });
-            setLoading(false);
-            return;
           }
-        }
-
-        const { data, error } = await supabase
-          .from('memorials')
-          .select('id, pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers, slot_assigned')
-          .eq('id', memorialId)
-          .single();
-        
-        if (error) {
+        } else if (error) {
           console.error('Error fetching pet profile:', error);
-        } else if (data) {
-          setPetData(data);
         }
 
         const { data: slot } = await supabase
@@ -235,16 +234,16 @@ function PetProfileCard({
       storyPreview: petData?.story_answers?.storyPreview || petData?.dedication || '',
       isSponsored: petData?.story_answers?.isSponsored || false,
       sponsorName: petData?.story_answers?.sponsorName,
-      memorialPetName: petData?.story_answers?.memorialPetName,
+      memorialPetName: petData?.story_answers?.sponsorPetName || petData?.story_answers?.memorialPetName,
     };
 
   const isSponsored = Boolean(
-    matchedShelterPet.isSponsored || 
     petData?.story_answers?.isSponsored || 
-    matchedShelterPet.id === 'shelter_juliette'
+    (petData?.story_answers?.isSponsorship && petData?.story_answers?.sponsorName) ||
+    matchedShelterPet.isSponsored
   );
-  const sponsorName = matchedShelterPet.sponsorName || petData?.story_answers?.sponsorName || 'Familia Gómez Martí';
-  const memorialPetName = matchedShelterPet.memorialPetName || petData?.story_answers?.memorialPetName || 'Toby';
+  const sponsorName = petData?.story_answers?.sponsorName || matchedShelterPet.sponsorName || '';
+  const memorialPetName = petData?.story_answers?.sponsorPetName || petData?.story_answers?.memorialPetName || matchedShelterPet.memorialPetName || '';
 
   const nombre = petData?.pet_name || 'Ángel';
   const foto = petData?.photo_url || thumbnailUrl || '/images/placeholders/first.webp';
@@ -1001,29 +1000,12 @@ function PetProfileCard({
             }}
           >
             <h4 className="font-serif font-bold text-[17px] text-[#4A3F6B] m-0 mb-1.5 leading-snug">
-              «Apadrinado con amor por {sponsorName} en memoria de su ángel {memorialPetName} 🐾»
+              «Apadrinado con amor por {sponsorName || 'un Ángel Solidario'}{memorialPetName ? ` en memoria de su ángel ${memorialPetName}` : ''} 🐾»
             </h4>
 
-            <p className="text-[12px] text-[#7B6F9A] m-0 mb-3.5 leading-[1.4] font-sans">
+            <p className="text-[12px] text-[#7B6F9A] m-0 leading-[1.4] font-sans">
               {matchedShelterPet.shelterName} {matchedShelterPet.shelterCity ? `· ${matchedShelterPet.shelterCity}` : ''} · <strong>Constelación de 9 estrellas</strong>
             </p>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowDiplomaModal(true);
-              }}
-              className="w-full py-3.5 px-4 rounded-full text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
-              style={{
-                background: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)',
-                border: '1px solid rgba(255, 255, 255, 0.40)',
-                boxShadow: '0 4px 15px rgba(236, 72, 153, 0.45)',
-              }}
-            >
-              <span>📜</span>
-              <span>Ver Diploma Oficial «Corazón de Ángel»</span>
-              <span>›</span>
-            </button>
           </div>
         )}
 
@@ -1268,46 +1250,6 @@ function PetProfileCard({
 
       </div>
     </div>
-
-    {/* MODAL POPUP: DIPLOMA CONMEMORATIVO OFICIAL */}
-    {showDiplomaModal && (
-      <div 
-        className="fixed inset-0 z-[100000] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
-        onClick={(e) => {
-          e.stopPropagation();
-          setShowDiplomaModal(false);
-        }}
-      >
-        <div 
-          className="bg-white rounded-3xl p-4 sm:p-6 max-w-[760px] w-full shadow-2xl border-2 border-pink-200 relative animate-in fade-in zoom-in-95 duration-200 my-auto"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex items-center justify-between pb-3 mb-3 border-b border-pink-100">
-            <div className="flex items-center gap-2.5">
-              <span className="text-xl">📜</span>
-              <h4 className="font-extrabold text-sm sm:text-base text-[#1E2A78]">
-                Diploma Conmemorativo Oficial · Corazones de Ángel
-              </h4>
-            </div>
-            <button 
-              onClick={() => setShowDiplomaModal(false)}
-              className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm cursor-pointer"
-              aria-label="Cerrar diploma"
-            >
-              ✕
-            </button>
-          </div>
-
-          <SponsorshipCertificateA4 
-            data={{
-              sponsorName: sponsorName,
-              petName: matchedShelterPet.name || nombre,
-              shelterName: matchedShelterPet.shelterName || 'Refugio Protector',
-            }}
-          />
-        </div>
-      </div>
-    )}
   </>,
   document.body
 );
