@@ -154,48 +154,103 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-      // 1. Guardar en tabla memorials
-      const { data: memorial, error: memorialError } = await (supabase
-        .from('memorials') as any)
-        .insert({
-          stripe_session_id: session.id,
-          stripe_payment_intent_id: session.payment_intent as string,
-          payment_status: 'paid',
-          price_paid: (session.amount_total ?? 0) / 100, // Convertir de céntimos a euros/dólares
-          currency: (session.currency || 'eur').toUpperCase(),
-          plan_type: planDb,
-          email: email, // En la BD la columna se llama email, no user_email
-          pet_name: petName,
-          species: (species || 'otro') as any,
-          breed: breed || '',
-          birth_date: birthDate || null,
-          location: location || '',
-          photo_url: photoUrl || '', // de los metadatos de Stripe
-          death_date: petDate || new Date().toISOString().split('T')[0],
-          slots_count: planCfg.slotsCount,
-          profile_slug: `${petName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`,
-          visibility: 'public',
-          publication_status: 'published',
-          moderation_status: 'approved',
-          dedication: dedication || '',
-          slot_assigned: slotAssignedStr,
-          moderation_notes: isShareOnSocialsAllowed ? '[autoriza_redes_sociales]' : null,
-          story_answers: isSponsorship === 'true' ? {
+      // 1. Guardar o actualizar en tabla memorials
+      let memorialRecord: any = null;
+      let isExistingShelter = false;
+
+      if (isSponsorship === 'true' && sponsoredPetId && sponsoredPetId !== 'auto') {
+        const { data: existingShelter } = await (supabase.from('memorials') as any)
+          .select('id, slot_assigned, story_answers, photo_url')
+          .eq('id', sponsoredPetId)
+          .single();
+
+        if (existingShelter) {
+          isExistingShelter = true;
+          const updatedAnswers = {
+            ...(existingShelter.story_answers || {}),
+            isSponsored: true,
             isSponsorship: true,
             sponsorName: sponsorName || '',
             sponsorPetName: sponsorPetName || '',
-            shelterName: shelterName || '',
-            sponsoredPetId: sponsoredPetId || '',
-          } : {},
-        })
-        .select()
-        .single()
+            shelterName: shelterName || existingShelter.story_answers?.shelterName || '',
+            sponsoredPetId,
+            sponsoredAt: new Date().toISOString(),
+            starsCount: 9,
+          };
 
-      if (memorialError) {
-        console.error('Error guardando memorial:', memorialError)
-      } else {
-        console.log('Memorial guardado:', memorial.id)
+          const { data: updated, error: updateErr } = await (supabase.from('memorials') as any)
+            .update({
+              story_answers: updatedAnswers,
+              dedication: dedication || undefined,
+            })
+            .eq('id', existingShelter.id)
+            .select()
+            .single();
+
+          if (!updateErr && updated) {
+            memorialRecord = updated;
+            console.log('Memorial de protectora actualizado con éxito:', updated.id);
+            if (existingShelter.slot_assigned && existingShelter.slot_assigned.includes(',')) {
+              const [ex, ey] = existingShelter.slot_assigned.split(',').map((v: string) => parseInt(v.trim(), 10));
+              if (!isNaN(ex) && !isNaN(ey)) {
+                finalX = ex;
+                finalY = ey;
+                slotAssignedStr = existingShelter.slot_assigned;
+              }
+            }
+          }
+        }
       }
+
+      if (!isExistingShelter) {
+        const { data: inserted, error: memorialError } = await (supabase
+          .from('memorials') as any)
+          .insert({
+            stripe_session_id: session.id,
+            stripe_payment_intent_id: session.payment_intent as string,
+            payment_status: 'paid',
+            price_paid: (session.amount_total ?? 0) / 100, // Convertir de céntimos a euros/dólares
+            currency: (session.currency || 'eur').toUpperCase(),
+            plan_type: planDb,
+            email: email, // En la BD la columna se llama email, no user_email
+            pet_name: petName,
+            species: (species || 'otro') as any,
+            breed: breed || '',
+            birth_date: birthDate || null,
+            location: location || '',
+            photo_url: photoUrl || '', // de los metadatos de Stripe
+            death_date: petDate || new Date().toISOString().split('T')[0],
+            slots_count: planCfg.slotsCount,
+            profile_slug: `${petName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`,
+            visibility: 'public',
+            publication_status: 'published',
+            moderation_status: 'approved',
+            dedication: dedication || '',
+            slot_assigned: slotAssignedStr,
+            moderation_notes: isShareOnSocialsAllowed ? '[autoriza_redes_sociales]' : null,
+            story_answers: isSponsorship === 'true' ? {
+              isSponsorship: true,
+              isSponsored: true,
+              sponsorName: sponsorName || '',
+              sponsorPetName: sponsorPetName || '',
+              shelterName: shelterName || '',
+              sponsoredPetId: sponsoredPetId || '',
+              sponsoredAt: new Date().toISOString(),
+              starsCount: 9,
+            } : {},
+          })
+          .select()
+          .single();
+
+        if (memorialError) {
+          console.error('Error guardando memorial:', memorialError);
+        } else {
+          memorialRecord = inserted;
+          console.log('Memorial guardado:', inserted.id);
+        }
+      }
+
+      const memorial = memorialRecord;
 
       // 2. Registrar/actualizar los slots en mural_slots
       if (finalX !== null && finalY !== null) {

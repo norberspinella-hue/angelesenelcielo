@@ -10,11 +10,15 @@ export interface ShelterPet {
   shelterCity: string;
   photoUrl: string;
   storyPreview?: string;
+  story?: string;
+  species?: string;
+  breed?: string;
   starsCount?: number;
   isSponsored?: boolean;
   sponsorName?: string;
   memorialPetName?: string;
   sponsoredAt?: string;
+  muralCoords?: { x: number; y: number };
 }
 
 // Lista inicial de angelitos piloto de protectoras (MVP para lanzamiento inmediato)
@@ -59,6 +63,8 @@ interface ApadrinarDrawerProps {
 
 export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDrawerProps) {
   const [step, setStep] = useState<1 | 2>(1);
+  const [shelterPetsList, setShelterPetsList] = useState<ShelterPet[]>(DEFAULT_SHELTER_PETS);
+  const [loadingPets, setLoadingPets] = useState(false);
   const [selectedPet, setSelectedPet] = useState<ShelterPet>(preSelectedPet || DEFAULT_SHELTER_PETS[0]);
   const [sponsorName, setSponsorName] = useState('');
   const [sponsorEmail, setSponsorEmail] = useState('');
@@ -67,6 +73,34 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
   const [dedication, setDedication] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Cargar angelitos dinámicos desde la base de datos
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchShelterPets() {
+      try {
+        setLoadingPets(true);
+        const res = await fetch('/api/shelter-pets');
+        const data = await res.json();
+        if (isMounted && data.success && Array.isArray(data.pets) && data.pets.length > 0) {
+          setShelterPetsList(data.pets);
+          if (!preSelectedPet) {
+            // Seleccionar por defecto el primero que esté disponible para apadrinar
+            const firstAvailable = data.pets.find((p: ShelterPet) => !p.isSponsored) || data.pets[0];
+            setSelectedPet(firstAvailable);
+          }
+        }
+      } catch (err) {
+        console.error('Error cargando angelitos de protectoras:', err);
+      } finally {
+        if (isMounted) setLoadingPets(false);
+      }
+    }
+    fetchShelterPets();
+    return () => {
+      isMounted = false;
+    };
+  }, [preSelectedPet]);
 
   useEffect(() => {
     if (preSelectedPet) {
@@ -295,52 +329,70 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
 
               {/* Lista de perritos de protectoras */}
               <div className="space-y-3 mb-6 flex-1 overflow-y-auto pr-1">
-                {DEFAULT_SHELTER_PETS.map((pet) => {
-                  const isSelected = selectedPet.id === pet.id;
-                  return (
-                    <div
-                      key={pet.id}
-                      onClick={() => setSelectedPet(pet)}
-                      className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-3.5 relative ${
-                        isSelected 
-                          ? 'border-[#F59E0B] bg-[#FFFDF5] shadow-md scale-[1.01]' 
-                          : 'border-gray-200 bg-white hover:border-[#D5CAE6] hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 shrink-0 shadow-xs relative">
-                        <img 
-                          src={pet.photoUrl} 
-                          alt={pet.name} 
-                          className="w-full h-full object-cover" 
-                        />
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-1">
-                          <h4 className="font-bold text-sm text-[#1E2A78] truncate">{pet.name}</h4>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 shrink-0">
-                            ⭐ Constelación 3×3
-                          </span>
+                {loadingPets && shelterPetsList.length === 0 ? (
+                  <div className="py-8 text-center text-xs text-[#706A95]">
+                    Cargando angelitos de protectoras...
+                  </div>
+                ) : (
+                  shelterPetsList.map((pet) => {
+                    const isSelected = selectedPet.id === pet.id;
+                    return (
+                      <div
+                        key={pet.id}
+                        onClick={() => setSelectedPet(pet)}
+                        className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-3.5 relative ${
+                          isSelected 
+                            ? 'border-[#F59E0B] bg-[#FFFDF5] shadow-md scale-[1.01]' 
+                            : 'border-gray-200 bg-white hover:border-[#D5CAE6] hover:bg-gray-50'
+                        }`}
+                      >
+                        <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 shrink-0 shadow-xs relative">
+                          <img 
+                            src={pet.photoUrl} 
+                            alt={pet.name} 
+                            className="w-full h-full object-cover" 
+                          />
                         </div>
-                        <span className="text-xs text-[#5D4E75] block truncate">
-                          {pet.shelterName} · {pet.shelterCity}
-                        </span>
-                        {pet.storyPreview && (
-                          <p className="text-[11px] text-gray-500 italic mt-0.5 line-clamp-1">
-                            "{pet.storyPreview}"
-                          </p>
-                        )}
-                      </div>
 
-                      {/* Check icon */}
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                        isSelected ? 'bg-[#F59E0B] text-white' : 'border border-gray-300 text-transparent'
-                      }`}>
-                        ✓
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-1">
+                            <h4 className="font-bold text-sm text-[#1E2A78] truncate">{pet.name}</h4>
+                            {pet.isSponsored ? (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 shrink-0 flex items-center gap-1 border border-pink-200">
+                                <span>💖</span> Apadrinado
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 shrink-0">
+                                ⭐ Constelación 3×3
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs text-[#5D4E75] block truncate">
+                            {pet.shelterName} · {pet.shelterCity}
+                          </span>
+                          {pet.isSponsored && pet.sponsorName ? (
+                            <p className="text-[11px] text-pink-700/80 font-medium truncate mt-0.5">
+                              Padrino: {pet.sponsorName}{pet.memorialPetName ? ` (en memoria de ${pet.memorialPetName})` : ''}
+                            </p>
+                          ) : (
+                            pet.storyPreview && (
+                              <p className="text-[11px] text-gray-500 italic mt-0.5 line-clamp-1">
+                                "{pet.storyPreview}"
+                              </p>
+                            )
+                          )}
+                        </div>
+
+                        {/* Check icon */}
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                          isSelected ? 'bg-[#F59E0B] text-white' : 'border border-gray-300 text-transparent'
+                        }`}>
+                          ✓
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
 
               {/* Botón Siguiente */}

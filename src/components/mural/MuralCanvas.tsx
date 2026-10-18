@@ -60,6 +60,7 @@ function PetProfileCard({
   onApadrinar 
 }: PetProfileCardProps) {
   const [petData, setPetData] = useState<{ 
+    id?: string;
     pet_name: string; 
     photo_url: string; 
     plan_type: string; 
@@ -69,6 +70,7 @@ function PetProfileCard({
     death_date?: string | null; 
     dedication?: string | null;
     story_answers?: any;
+    slot_assigned?: string | null;
   } | null>(null);
   const [slotData, setSlotData] = useState<{ x: number; y: number } | null>(null);
   const [loading, setLoading] = useState(true);
@@ -180,7 +182,7 @@ function PetProfileCard({
 
         const { data, error } = await supabase
           .from('memorials')
-          .select('pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers')
+          .select('id, pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers, slot_assigned')
           .eq('id', memorialId)
           .single();
         
@@ -217,7 +219,10 @@ function PetProfileCard({
   const isShelterPet = Boolean(
     isShelter || 
     memorialId?.startsWith('shelter_') || 
-    petData?.story_answers?.isSponsorship
+    petData?.story_answers?.isSponsorship ||
+    petData?.story_answers?.isShelter ||
+    petData?.story_answers?.shelterName ||
+    petData?.plan_type === 'corazon_eterno'
   );
 
   const matchedShelterPet: ShelterPet = shelterPet || 
@@ -225,9 +230,12 @@ function PetProfileCard({
       id: memorialId,
       name: petData?.pet_name || 'Angelito',
       photoUrl: petData?.photo_url || thumbnailUrl || '/images/placeholders/first.webp',
-      shelterName: petData?.story_answers?.shelterName || 'Refugio colaborador',
+      shelterName: petData?.story_answers?.shelterName || 'Refugio Colaborador',
       shelterCity: petData?.story_answers?.shelterCity || 'España',
-      storyPreview: petData?.dedication || '',
+      storyPreview: petData?.story_answers?.storyPreview || petData?.dedication || '',
+      isSponsored: petData?.story_answers?.isSponsored || false,
+      sponsorName: petData?.story_answers?.sponsorName,
+      memorialPetName: petData?.story_answers?.memorialPetName,
     };
 
   const isSponsored = Boolean(

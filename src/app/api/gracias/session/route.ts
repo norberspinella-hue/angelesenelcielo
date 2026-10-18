@@ -130,40 +130,112 @@ export async function GET(req: NextRequest) {
       }
 
       try {
-        // 1. Guardar en tabla memorials
-        const { data: memorial, error: memorialError } = await (supabase
-          .from('memorials') as any)
-          .insert({
-            stripe_session_id: sessionId,
-            stripe_payment_intent_id: session.payment_intent as string,
-            payment_status: 'paid',
-            price_paid: (session.amount_total ?? 0) / 100,
-            currency: (session.currency || 'eur').toUpperCase(),
-            plan_type: planDb,
-            email: email,
-            pet_name: petName,
-            species: (species || 'otro') as any,
-            breed: breed || '',
-            birth_date: birthDate || null,
-            location: location || '',
-            photo_url: photoUrl || '',
-            death_date: petDate || new Date().toISOString().split('T')[0],
-            slots_count: planCfg.slotsCount,
-            profile_slug: `${petName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`,
-            visibility: 'public',
-            publication_status: 'published',
-            moderation_status: 'approved',
-            dedication: dedication || '',
-            slot_assigned: slotAssignedStr,
-          })
-          .select()
-          .single()
+        // 1. Guardar o actualizar en tabla memorials
+        let memorialRecord: any = null;
+        let isExistingShelter = false;
 
-        if (memorialError) {
-          console.error('Error guardando memorial en fallback:', memorialError)
-        } else if (memorial) {
-          console.log('Memorial guardado en fallback:', memorial.id)
-          finalSlotId = slotAssignedStr
+        const isSponsorshipFallback = session.metadata?.isSponsorship === 'true' || 
+          plan?.toLowerCase().includes('corazon') || 
+          plan?.toLowerCase().includes('apadrinamiento');
+        const sponsoredPetIdVal = session.metadata?.sponsoredPetId || '';
+        const sponsorNameVal = session.metadata?.sponsorName || session.customer_details?.name || 'Padrino de Corazón';
+        const sponsorPetNameVal = session.metadata?.sponsorPetName || '';
+        const shelterNameVal = session.metadata?.shelterName || 'Refugio Colaborador';
+
+        if (isSponsorshipFallback && sponsoredPetIdVal && sponsoredPetIdVal !== 'auto') {
+          const { data: existingShelter } = await (supabase.from('memorials') as any)
+            .select('id, slot_assigned, story_answers, photo_url')
+            .eq('id', sponsoredPetIdVal)
+            .single();
+
+          if (existingShelter) {
+            isExistingShelter = true;
+            const updatedAnswers = {
+              ...(existingShelter.story_answers || {}),
+              isSponsored: true,
+              isSponsorship: true,
+              sponsorName: sponsorNameVal,
+              sponsorPetName: sponsorPetNameVal,
+              shelterName: shelterNameVal,
+              sponsoredPetId: sponsoredPetIdVal,
+              sponsoredAt: new Date().toISOString(),
+              starsCount: 9,
+            };
+
+            const { data: updated, error: updateErr } = await (supabase.from('memorials') as any)
+              .update({
+                story_answers: updatedAnswers,
+                dedication: dedication || undefined,
+              })
+              .eq('id', existingShelter.id)
+              .select()
+              .single();
+
+            if (!updateErr && updated) {
+              memorialRecord = updated;
+              console.log('Memorial de protectora actualizado en fallback:', updated.id);
+              if (existingShelter.slot_assigned && existingShelter.slot_assigned.includes(',')) {
+                const [ex, ey] = existingShelter.slot_assigned.split(',').map((v: string) => parseInt(v.trim(), 10));
+                if (!isNaN(ex) && !isNaN(ey)) {
+                  finalX = ex;
+                  finalY = ey;
+                  slotAssignedStr = existingShelter.slot_assigned;
+                }
+              }
+            }
+          }
+        }
+
+        if (!isExistingShelter) {
+          const { data: inserted, error: memorialError } = await (supabase
+            .from('memorials') as any)
+            .insert({
+              stripe_session_id: sessionId,
+              stripe_payment_intent_id: session.payment_intent as string,
+              payment_status: 'paid',
+              price_paid: (session.amount_total ?? 0) / 100,
+              currency: (session.currency || 'eur').toUpperCase(),
+              plan_type: planDb,
+              email: email,
+              pet_name: petName,
+              species: (species || 'otro') as any,
+              breed: breed || '',
+              birth_date: birthDate || null,
+              location: location || '',
+              photo_url: photoUrl || '',
+              death_date: petDate || new Date().toISOString().split('T')[0],
+              slots_count: planCfg.slotsCount,
+              profile_slug: `${petName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`,
+              visibility: 'public',
+              publication_status: 'published',
+              moderation_status: 'approved',
+              dedication: dedication || '',
+              slot_assigned: slotAssignedStr,
+              story_answers: isSponsorshipFallback ? {
+                isSponsorship: true,
+                isSponsored: true,
+                sponsorName: sponsorNameVal,
+                sponsorPetName: sponsorPetNameVal,
+                shelterName: shelterNameVal,
+                sponsoredPetId: sponsoredPetIdVal,
+                sponsoredAt: new Date().toISOString(),
+                starsCount: 9,
+              } : {},
+            })
+            .select()
+            .single();
+
+          if (memorialError) {
+            console.error('Error guardando memorial en fallback:', memorialError);
+          } else if (inserted) {
+            memorialRecord = inserted;
+            console.log('Memorial guardado en fallback:', inserted.id);
+          }
+        }
+
+        const memorial = memorialRecord;
+        if (memorial) {
+          finalSlotId = slotAssignedStr;
 
           // 2. Registrar/actualizar los slots en mural_slots
           if (finalX !== null && finalY !== null) {
