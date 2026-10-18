@@ -76,49 +76,56 @@ export default function SponsorshipCertificateA4({
       ctx.textAlign = 'center'
 
       // 1. Apadrinado por [Nombre del Padrino]
-      let sponsorFontSize = 40
+      let sponsorFontSize = 38
       ctx.font = `italic 700 ${sponsorFontSize}px "Playfair Display", Georgia, serif`
       let sponsorText = `Apadrinado por ${sponsor}`
-      while (ctx.measureText(sponsorText).width > 760 && sponsorFontSize > 22) {
+      while (ctx.measureText(sponsorText).width > 740 && sponsorFontSize > 22) {
         sponsorFontSize -= 2
         ctx.font = `italic 700 ${sponsorFontSize}px "Playfair Display", Georgia, serif`
       }
       ctx.fillStyle = '#1E2A78' // Azul marino noble
-      const sponsorY = sponsorPet ? 505 : 520
+      const sponsorY = sponsorPet ? 445 : 460
       ctx.fillText(sponsorText, 600, sponsorY)
 
       // 1.5. Cita en memoria (si el apadrinamiento fue en honor a su propio ángel)
       let currentY = sponsorY
       if (sponsorPet) {
-        ctx.font = 'italic 500 20px "Playfair Display", Georgia, serif'
+        ctx.font = 'italic 500 19px "Playfair Display", Georgia, serif'
         ctx.fillStyle = '#6B4C7D'
         currentY += 32
         ctx.fillText(`en memoria de su amado ángel ${sponsorPet} 🐾`, 600, currentY)
       }
 
       // 2. Subtítulo lema: - Tienes corazón de perrito -
-      currentY += (sponsorPet ? 42 : 55)
+      currentY += (sponsorPet ? 39 : 52)
       ctx.fillStyle = '#967126' // Oro ámbar cálido
-      ctx.font = 'italic 700 22px "Playfair Display", Georgia, serif'
+      ctx.font = 'italic 700 21px "Playfair Display", Georgia, serif'
       ctx.fillText('- Tienes corazón de perrito -', 600, currentY)
 
       // 3. Agradecimiento cuerpo línea 1
-      currentY += 46
+      currentY += 40
       ctx.fillStyle = '#374151'
-      ctx.font = '500 17px "Montserrat", sans-serif'
+      ctx.font = '500 16px "Montserrat", sans-serif'
       ctx.fillText('Hay personas que no miran hacia otro lado, que ven una historia y deciden hacer algo.', 600, currentY)
 
-      // 4. Agradecimiento cuerpo línea 2 con datos dinámicos
-      currentY += 28
+      // 4. Agradecimiento cuerpo línea 2 con datos dinámicos (ancho máximo 620px para no rozar nunca el sello de cera)
+      currentY += 26
       ctx.fillStyle = '#1E2A78'
-      ctx.font = '600 17.5px "Montserrat", sans-serif'
-      const agradecimientoText = `Gracias por apadrinar con 9 estrellas a ${pet} del refugio ${shelter}.`
-      if (ctx.measureText(agradecimientoText).width > 800) {
-        ctx.fillText(`Gracias por apadrinar con 9 estrellas a ${pet}`, 600, currentY)
-        currentY += 26
-        ctx.fillText(`del refugio ${shelter}.`, 600, currentY)
+      ctx.font = '600 16.5px "Montserrat", sans-serif'
+      const linePart1 = `Gracias por apadrinar con 9 estrellas a ${pet}`
+      const linePart2 = `del refugio ${shelter}.`
+      const fullLine = `${linePart1} ${linePart2}`
+
+      if (ctx.measureText(fullLine).width <= 620) {
+        ctx.fillText(fullLine, 600, currentY)
       } else {
-        ctx.fillText(agradecimientoText, 600, currentY)
+        ctx.fillText(linePart1, 600, currentY)
+        currentY += 24
+        // Si el nombre del refugio es muy largo, ajustamos tamaño o línea
+        if (ctx.measureText(linePart2).width > 640) {
+          ctx.font = '600 15px "Montserrat", sans-serif'
+        }
+        ctx.fillText(linePart2, 600, currentY)
       }
     }
   }, [isSample, sponsor, pet, shelter, sponsorPet])
