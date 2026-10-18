@@ -1085,15 +1085,28 @@ function PetProfileCard({
                   onApadrinar(matchedShelterPet);
                 }
               }}
-              className="w-full py-3.5 px-4 rounded-full text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+              className="w-full py-3.5 px-4 rounded-full text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
               style={{
-                background: 'linear-gradient(135deg, #F472B6 0%, #EC4899 50%, #DB2777 100%)',
-                boxShadow: '0 6px 20px rgba(244, 114, 182, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                background: 'linear-gradient(135deg, #F86E9E 0%, #FA8994 50%, #FFB680 100%)',
+                boxShadow: 'inset 0 2px 3px rgba(255, 255, 255, 0.75), inset 0 -3px 6px rgba(255, 150, 100, 0.45), 0 0 0 1.5px rgba(255, 220, 130, 0.9), 0 4px 12px rgba(248, 110, 158, 0.25)',
+                letterSpacing: '0.3px',
+                textShadow: '0 1px 2px rgba(0, 0, 0, 0.12)',
               }}
             >
-              <span>💖</span>
+              <span className="flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 24 24" width="20" height="20" className="drop-shadow-[0_1px_2px_rgba(200,50,100,0.25)]">
+                  <defs>
+                    <linearGradient id="cream-heart-apadrinar" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="50%" stopColor="#FFF2D6" />
+                      <stop offset="100%" stopColor="#FFDEB5" />
+                    </linearGradient>
+                  </defs>
+                  <path fill="url(#cream-heart-apadrinar)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+              </span>
               <span>Apadrinar sus 9 estrellas (5,00 €)</span>
-              <span>›</span>
+              <span className="text-base leading-none font-bold">›</span>
             </button>
           </div>
         )}
