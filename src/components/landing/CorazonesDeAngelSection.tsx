@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ApadrinarDrawer } from '@/components/solidario/ApadrinarDrawer'
+import SponsorshipCertificateA4 from '@/components/certificates/SponsorshipCertificateA4'
 
 export function CorazonesDeAngelSection() {
   const [isShelterModalOpen, setIsShelterModalOpen] = useState(false)
@@ -376,7 +377,7 @@ export function CorazonesDeAngelSection() {
                   <path fill="url(#cream-heart-card3)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                 </svg>
               </span>
-              <span>Reconocimiento y Badge</span>
+              <span>Ver Reconocimiento Oficial</span>
               <span className="text-xs">›</span>
             </button>
           </div>
@@ -481,76 +482,45 @@ export function CorazonesDeAngelSection() {
         </div>
       )}
 
-      {/* MODAL 2: DEMOSTRACIÓN VISIBILIDAD & ENLACE SOCIAL DONANTE */}
+      {/* MODAL 2: DIPLOMA CONMEMORATIVO OFICIAL A4 */}
       {isSocialDemoOpen && (
         <div 
-          className="fixed inset-0 z-[99999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[99999] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
           onClick={(e) => {
             if (e.target === e.currentTarget) setIsSocialDemoOpen(false)
           }}
         >
-          <div className="bg-white rounded-[24px] max-w-md w-full p-6 text-left shadow-2xl border border-purple-200 relative">
-            <button 
-              onClick={() => setIsSocialDemoOpen(false)} 
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 font-bold"
-              aria-label="Cerrar modal"
-            >
-              ✕
-            </button>
-            
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-2xl">📱</span>
-              <h4 
-                className="font-bold text-lg text-[#1E2A78]"
-                style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
+          <div className="bg-white rounded-3xl max-w-[760px] w-full p-4 sm:p-6 text-left shadow-2xl border-2 border-pink-200 relative my-auto animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-pink-100">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xl">📜</span>
+                <h4 
+                  className="font-bold text-sm sm:text-base text-[#1E2A78]"
+                  style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
+                >
+                  Diploma Conmemorativo Oficial · Corazones de Ángel
+                </h4>
+              </div>
+              <button 
+                onClick={() => setIsSocialDemoOpen(false)} 
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-sm cursor-pointer"
+                aria-label="Cerrar modal"
               >
-                Enlace Social del Donante / Protectora
-              </h4>
+                ✕
+              </button>
             </div>
 
             <p className="text-xs text-[#5D4E75] mb-4 leading-relaxed">
-              Así es como luce la ficha de un perrito apadrinado en el mural para dar <strong>visibilidad pública, estatus y agradecimiento</strong> a quien realizó la aportación:
+              Al apadrinar las 9 estrellas de un angelito en memoria de tu propia mascota, recibirás este <strong>Reconocimiento Oficial descargable en alta resolución (A4 imprimible a 300 DPI)</strong> y la cinta conmemorativa de apadrinamiento en el Mural Global.
             </p>
 
-            {/* Tarjeta simulación del mural con badge de donante */}
-            <div className="rounded-2xl p-4 bg-gradient-to-br from-[#FFF9F5] to-[#F5EEFF] border border-[#F5C842]/50 shadow-sm flex flex-col gap-2.5">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-[#DCA257]">
-                  <img 
-                    src="https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/juliette_1791706558194.jpg" 
-                    alt="Juliette"
-                    className="w-full h-full object-cover" 
-                  />
-                </div>
-                <div>
-                  <h5 className="font-bold text-sm text-[#1E2A78]">Juliette · Ángel Protegido</h5>
-                  <span className="text-[11px] text-[#706A95]">Refugio Huellas de Esperanza</span>
-                </div>
-              </div>
-
-              {/* CINTA DE RECONOCIMIENTO CON ENLACE SOCIAL */}
-              <div className="p-3 rounded-xl bg-white/90 border border-[#FDE68A] flex flex-col gap-1">
-                <span className="text-[10px] font-extrabold uppercase text-[#B45309] tracking-wider flex items-center gap-1">
-                  <span>💛</span>
-                  <span>Apadrinado por Corazón de Ángel</span>
-                </span>
-                <div className="flex items-center justify-between mt-0.5">
-                  <span className="text-xs font-bold text-[#1E2A78]">Laura & Familia (en memoria de Toby)</span>
-                  <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-700 text-[10px] font-bold flex items-center gap-1 cursor-pointer">
-                    <span>📸</span>
-                    <span>@laura_petlover ↗</span>
-                  </span>
-                </div>
-                <span className="text-[10px] text-[#706A95] italic">«Gracias por hacer que su estrella brille eternamente en el cielo.»</span>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => setIsSocialDemoOpen(false)} 
-              className="mt-5 w-full py-2.5 rounded-full bg-[#1E2A78] text-white text-xs font-bold hover:bg-[#151C5C] transition-colors"
-            >
-              Entendido ✓
-            </button>
+            <SponsorshipCertificateA4 
+              data={{
+                sponsorName: 'Familia Gómez Martí',
+                petName: 'Juliette',
+                shelterName: 'Refugio Nueva Vida',
+              }}
+            />
           </div>
         </div>
       )}

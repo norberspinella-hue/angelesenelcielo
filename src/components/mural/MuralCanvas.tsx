@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { getPlanByDbName } from '@/lib/plans';
 import { ApadrinarDrawer, DEFAULT_SHELTER_PETS, ShelterPet } from '@/components/solidario/ApadrinarDrawer';
+import SponsorshipCertificateA4 from '@/components/certificates/SponsorshipCertificateA4';
 
 const supabase = createClient();
 
@@ -73,6 +74,7 @@ function PetProfileCard({
   const [loading, setLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showDiplomaModal, setShowDiplomaModal] = useState(false);
   const frontFaceRef = useRef<HTMLDivElement>(null);
   const backFaceRef = useRef<HTMLDivElement>(null);
 
@@ -228,6 +230,14 @@ function PetProfileCard({
       storyPreview: petData?.dedication || '',
     };
 
+  const isSponsored = Boolean(
+    matchedShelterPet.isSponsored || 
+    petData?.story_answers?.isSponsored || 
+    matchedShelterPet.id === 'shelter_juliette'
+  );
+  const sponsorName = matchedShelterPet.sponsorName || petData?.story_answers?.sponsorName || 'Familia Gómez Martí';
+  const memorialPetName = matchedShelterPet.memorialPetName || petData?.story_answers?.memorialPetName || 'Toby';
+
   const nombre = petData?.pet_name || 'Ángel';
   const foto = petData?.photo_url || thumbnailUrl || '/images/placeholders/first.webp';
   const plan = petData?.plan_type || planType;
@@ -302,7 +312,8 @@ function PetProfileCard({
   if (!mounted || typeof document === 'undefined') return null;
 
   return createPortal(
-    <div 
+    <>
+      <div 
       onClick={handleOverlayClick}
       style={{
         position: 'fixed',
@@ -969,12 +980,52 @@ function PetProfileCard({
           </div>
         </div>
 
-        {/* BANNER SOLIDARIO SI ES ANGELITO DE PROTECTORA */}
-        {isShelterPet && (
+        {/* CINTA CONMEMORATIVA SI YA ESTÁ APADRINADO */}
+        {isShelterPet && isSponsored && (
+          <div 
+            className="rounded-[24px] border border-white/65 shadow-[0_12px_40px_rgba(30,10,50,0.15)] p-4 sm:p-[20px_18px] flex flex-col items-center overflow-hidden w-full max-w-[360px] text-center relative"
+            style={{
+              width: 'min(360px, calc(100vw - 20px))',
+              flexShrink: 0,
+              background: 'linear-gradient(180deg, rgba(255, 230, 235, 0.85) 0%, rgba(250, 200, 215, 0.85) 100%)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+            }}
+          >
+            <h4 className="font-serif font-bold text-[17px] text-[#4A3F6B] m-0 mb-1.5 leading-snug">
+              «Apadrinado con amor por {sponsorName} en memoria de su ángel {memorialPetName} 🐾»
+            </h4>
+
+            <p className="text-[12px] text-[#7B6F9A] m-0 mb-3.5 leading-[1.4] font-sans">
+              {matchedShelterPet.shelterName} {matchedShelterPet.shelterCity ? `· ${matchedShelterPet.shelterCity}` : ''} · <strong>Constelación de 9 estrellas</strong>
+            </p>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDiplomaModal(true);
+              }}
+              className="w-full py-3.5 px-4 rounded-full text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+              style={{
+                background: 'linear-gradient(135deg, #F472B6 0%, #EC4899 100%)',
+                border: '1px solid rgba(255, 255, 255, 0.40)',
+                boxShadow: '0 4px 15px rgba(236, 72, 153, 0.45)',
+              }}
+            >
+              <span>📜</span>
+              <span>Ver Diploma Oficial «Corazón de Ángel»</span>
+              <span>›</span>
+            </button>
+          </div>
+        )}
+
+        {/* BANNER SOLIDARIO SI ES ANGELITO DE PROTECTORA Y AÚN NO ESTÁ APADRINADO */}
+        {isShelterPet && !isSponsored && (
           <div 
             className="rounded-[24px] border-2 border-amber-300 shadow-[0_12px_36px_rgba(245,158,11,0.25)] p-5 flex flex-col items-center overflow-hidden w-full max-w-[360px] text-center"
             style={{
               width: 'min(360px, calc(100vw - 20px))',
+              flexShrink: 0,
               background: 'linear-gradient(135deg, #FFFDF5 0%, #FEF3C7 50%, #FDE68A 100%)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
@@ -1208,9 +1259,50 @@ function PetProfileCard({
         </div>
 
       </div>
-    </div>,
-    document.body
-  );
+    </div>
+
+    {/* MODAL POPUP: DIPLOMA CONMEMORATIVO OFICIAL */}
+    {showDiplomaModal && (
+      <div 
+        className="fixed inset-0 z-[100000] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowDiplomaModal(false);
+        }}
+      >
+        <div 
+          className="bg-white rounded-3xl p-4 sm:p-6 max-w-[760px] w-full shadow-2xl border-2 border-pink-200 relative animate-in fade-in zoom-in-95 duration-200 my-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between pb-3 mb-3 border-b border-pink-100">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl">📜</span>
+              <h4 className="font-extrabold text-sm sm:text-base text-[#1E2A78]">
+                Diploma Conmemorativo Oficial · Corazones de Ángel
+              </h4>
+            </div>
+            <button 
+              onClick={() => setShowDiplomaModal(false)}
+              className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm cursor-pointer"
+              aria-label="Cerrar diploma"
+            >
+              ✕
+            </button>
+          </div>
+
+          <SponsorshipCertificateA4 
+            data={{
+              sponsorName: sponsorName,
+              petName: matchedShelterPet.name || nombre,
+              shelterName: matchedShelterPet.shelterName || 'Refugio Protector',
+            }}
+          />
+        </div>
+      </div>
+    )}
+  </>,
+  document.body
+);
 }
 
 interface MuralCanvasProps {

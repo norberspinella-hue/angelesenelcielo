@@ -11,6 +11,10 @@ export interface ShelterPet {
   photoUrl: string;
   storyPreview?: string;
   starsCount?: number;
+  isSponsored?: boolean;
+  sponsorName?: string;
+  memorialPetName?: string;
+  sponsoredAt?: string;
 }
 
 // Lista inicial de angelitos piloto de protectoras (MVP para lanzamiento inmediato)
@@ -22,7 +26,10 @@ export const DEFAULT_SHELTER_PETS: ShelterPet[] = [
     shelterCity: 'Valencia',
     photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/juliette_1791706558194.jpg',
     storyPreview: 'Rescatada tras 8 años, partió rodeada de cariño y paz en el refugio.',
-    starsCount: 1,
+    starsCount: 9,
+    isSponsored: true,
+    sponsorName: 'Familia Gómez Martí',
+    memorialPetName: 'Toby',
   },
   {
     id: 'shelter_rocky',
