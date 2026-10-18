@@ -158,11 +158,24 @@ export async function POST(req: NextRequest) {
       let memorialRecord: any = null;
       let isExistingShelter = false;
 
-      if (isSponsorship === 'true' && sponsoredPetId && sponsoredPetId !== 'auto') {
-        const { data: existingShelter } = await (supabase.from('memorials') as any)
-          .select('id, slot_assigned, story_answers, photo_url')
-          .eq('id', sponsoredPetId)
-          .single();
+      if (isSponsorship === 'true') {
+        let existingShelter: any = null;
+        if (sponsoredPetId && sponsoredPetId !== 'auto') {
+          const { data: byId } = await (supabase.from('memorials') as any)
+            .select('id, slot_assigned, story_answers, photo_url')
+            .eq('id', sponsoredPetId)
+            .maybeSingle();
+          if (byId) existingShelter = byId;
+        }
+        if (!existingShelter && petName) {
+          const { data: byName } = await (supabase.from('memorials') as any)
+            .select('id, slot_assigned, story_answers, photo_url')
+            .ilike('pet_name', petName)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (byName) existingShelter = byName;
+        }
 
         if (existingShelter) {
           isExistingShelter = true;

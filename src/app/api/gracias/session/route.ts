@@ -86,6 +86,18 @@ async function findMemorialInDb(sessionId: string) {
     if (memBySession) foundMemorial = memBySession
   }
 
+  // 2.5. Si sessionId empieza por order_, buscar stripe_session_id que coincida por sufijo
+  if (!foundMemorial && sessionId.startsWith('order_')) {
+    const suffix = sessionId.replace('order_', '')
+    if (suffix.length >= 4) {
+      const { data: memBySuffix } = await (supabase.from('memorials') as any)
+        .select('*')
+        .ilike('stripe_session_id', '%' + suffix)
+        .maybeSingle()
+      if (memBySuffix) foundMemorial = memBySuffix
+    }
+  }
+
   // 3. Buscar en memorials por id
   if (!foundMemorial) {
     const { data: memById } = await (supabase.from('memorials') as any)
@@ -251,11 +263,24 @@ export async function GET(req: NextRequest) {
         const sponsorPetNameVal = session.metadata?.sponsorPetName || '';
         const shelterNameVal = session.metadata?.shelterName || 'Refugio Colaborador';
 
-        if (isSponsorshipFallback && sponsoredPetIdVal && sponsoredPetIdVal !== 'auto') {
-          const { data: existingShelter } = await (supabase.from('memorials') as any)
-            .select('id, slot_assigned, story_answers, photo_url')
-            .eq('id', sponsoredPetIdVal)
-            .single();
+        if (isSponsorshipFallback) {
+          let existingShelter: any = null;
+          if (sponsoredPetIdVal && sponsoredPetIdVal !== 'auto') {
+            const { data: byId } = await (supabase.from('memorials') as any)
+              .select('id, slot_assigned, story_answers, photo_url')
+              .eq('id', sponsoredPetIdVal)
+              .maybeSingle();
+            if (byId) existingShelter = byId;
+          }
+          if (!existingShelter && petName) {
+            const { data: byName } = await (supabase.from('memorials') as any)
+              .select('id, slot_assigned, story_answers, photo_url')
+              .ilike('pet_name', petName)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (byName) existingShelter = byName;
+          }
 
           if (existingShelter) {
             isExistingShelter = true;
