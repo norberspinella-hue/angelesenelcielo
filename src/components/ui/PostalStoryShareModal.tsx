@@ -237,22 +237,22 @@ export default function PostalStoryShareModal({
           {activeTab === 'story' ? (
             /* Vista previa Story 9:16 (escalada a 260px ancho) */
             <div 
-              className="relative rounded-[22px] overflow-hidden shadow-xl border-2 border-pink-200/90 flex flex-col items-center justify-between select-none"
+              className="relative rounded-[22px] overflow-hidden shadow-xl border-2 border-[#FBCFE8] flex flex-col items-center justify-between select-none"
               style={{
                 width: 250,
                 height: 444, // 9:16
-                background: 'radial-gradient(ellipse at 50% 25%, #182252 0%, #0F1638 60%, #090D22 100%)',
+                background: 'radial-gradient(ellipse at 50% 30%, #FFFDFE 0%, #FFF5F8 50%, #FCE7F3 100%)',
                 padding: '16px 12px',
               }}
             >
               {/* Estrellitas de fondo */}
-              <div className="absolute top-4 left-4 text-[10px] text-[#FDE68A]/60 animate-pulse">✦</div>
-              <div className="absolute top-12 right-6 text-[8px] text-[#FDE68A]/40">✧</div>
-              <div className="absolute bottom-16 left-6 text-[9px] text-[#FDE68A]/50">⋆</div>
-              <div className="absolute bottom-20 right-5 text-[11px] text-[#FDE68A]/60 animate-pulse">✦</div>
+              <div className="absolute top-4 left-4 text-[11px] text-[#F59E0B] animate-pulse">✦</div>
+              <div className="absolute top-12 right-6 text-[9px] text-[#F59E0B]/70">✧</div>
+              <div className="absolute bottom-16 left-6 text-[10px] text-[#F59E0B]/80">⋆</div>
+              <div className="absolute bottom-20 right-5 text-[12px] text-[#F59E0B] animate-pulse">✦</div>
 
               {/* Top badge */}
-              <div className="z-10 px-3 py-1 rounded-full bg-white/10 border border-[#F5C842]/50 text-[#FDE68A] text-[9px] font-bold tracking-wider uppercase text-center shadow-sm">
+              <div className="z-10 px-3.5 py-1 rounded-full bg-white/95 border-2 border-[#FBCFE8] text-[#BE185D] text-[9px] font-black tracking-wider uppercase text-center shadow-xs">
                 ✨ MI ÁNGEL YA BRILLA EN EL CIELO ✨
               </div>
 
@@ -331,28 +331,28 @@ export default function PostalStoryShareModal({
 
               {/* Bottom Branding */}
               <div className="z-10 flex flex-col items-center text-center">
-                <span className="text-[10px] font-bold text-[#F3E8FF] tracking-wide">
+                <span className="text-[10px] font-black text-[#1E2A78] tracking-wide">
                   🐾 TodasLasMascotasVanAlCielo.com
                 </span>
-                <span className="text-[8px] text-[#FBCFE8] italic">
-                  Mural Global de las Estrellas
+                <span className="text-[8.5px] text-[#BE185D] font-bold italic mt-0.5">
+                  Un millón Ángeles, un solo cielo.
                 </span>
               </div>
             </div>
           ) : (
             /* Vista previa Postal 1:1 (escalada a 270px) */
             <div 
-              className="relative rounded-[20px] overflow-hidden shadow-xl border-2 border-pink-200/90 flex flex-col items-center justify-center select-none"
+              className="relative rounded-[20px] overflow-hidden shadow-xl border-2 border-[#FBCFE8] flex flex-col items-center justify-center select-none"
               style={{
                 width: 270,
                 height: 270,
-                background: 'radial-gradient(ellipse at 50% 25%, #182252 0%, #0F1638 60%, #090D22 100%)',
+                background: 'radial-gradient(ellipse at 50% 30%, #FFFDFE 0%, #FFF5F8 50%, #FCE7F3 100%)',
                 padding: '14px',
               }}
             >
               {/* Estrellitas */}
-              <div className="absolute top-3 left-3 text-[9px] text-[#FDE68A]/60">✦</div>
-              <div className="absolute bottom-3 right-3 text-[9px] text-[#FDE68A]/60">✦</div>
+              <div className="absolute top-3 left-3 text-[10px] text-[#F59E0B]">✦</div>
+              <div className="absolute bottom-3 right-3 text-[10px] text-[#F59E0B]">✦</div>
 
               {/* Contenedor central postal */}
               <div 
@@ -503,16 +503,16 @@ export default function PostalStoryShareModal({
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '100px 60px',
-            background: 'radial-gradient(ellipse at 50% 30%, #182252 0%, #0F1638 55%, #090D22 100%)',
+            background: 'radial-gradient(ellipse at 50% 30%, #FFFDFE 0%, #FFF5F8 50%, #FCE7F3 100%)',
             position: 'relative',
             boxSizing: 'border-box',
           }}
         >
           {/* Estrellas decorativas */}
-          <div style={{ position: 'absolute', top: 120, left: 100, fontSize: 36, color: 'rgba(253, 230, 138, 0.7)' }}>✦</div>
-          <div style={{ position: 'absolute', top: 220, right: 120, fontSize: 28, color: 'rgba(253, 230, 138, 0.5)' }}>✧</div>
-          <div style={{ position: 'absolute', bottom: 350, left: 110, fontSize: 32, color: 'rgba(253, 230, 138, 0.6)' }}>⋆</div>
-          <div style={{ position: 'absolute', bottom: 420, right: 90, fontSize: 40, color: 'rgba(253, 230, 138, 0.7)' }}>✦</div>
+          <div style={{ position: 'absolute', top: 120, left: 100, fontSize: 38, color: '#F59E0B' }}>✦</div>
+          <div style={{ position: 'absolute', top: 220, right: 120, fontSize: 30, color: 'rgba(245, 158, 11, 0.75)' }}>✧</div>
+          <div style={{ position: 'absolute', bottom: 350, left: 110, fontSize: 34, color: 'rgba(245, 158, 11, 0.85)' }}>⋆</div>
+          <div style={{ position: 'absolute', bottom: 420, right: 90, fontSize: 42, color: '#F59E0B' }}>✦</div>
 
           {/* Top Pill */}
           <div
@@ -522,13 +522,13 @@ export default function PostalStoryShareModal({
               justifyContent: 'center',
               padding: '18px 48px',
               borderRadius: 9999,
-              background: 'rgba(255, 255, 255, 0.12)',
-              border: '2.5px solid rgba(245, 200, 66, 0.7)',
-              color: '#FDE68A',
+              background: 'rgba(255, 255, 255, 0.95)',
+              border: '3.5px solid #FBCFE8',
+              color: '#BE185D',
               fontSize: 26,
-              fontWeight: 800,
+              fontWeight: 900,
               letterSpacing: 3,
-              boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
+              boxShadow: '0 8px 30px rgba(190, 24, 93, 0.12)',
             }}
           >
             ✨ MI ÁNGEL YA BRILLA EN EL CIELO ✨
@@ -693,9 +693,9 @@ export default function PostalStoryShareModal({
           >
             <div
               style={{
-                fontSize: 32,
-                fontWeight: 800,
-                color: '#FFFFFF',
+                fontSize: 34,
+                fontWeight: 900,
+                color: '#1E2A78',
                 letterSpacing: 2,
               }}
             >
@@ -703,12 +703,14 @@ export default function PostalStoryShareModal({
             </div>
             <div
               style={{
-                fontSize: 22,
-                color: '#FBCFE8',
+                fontSize: 24,
+                color: '#BE185D',
                 fontStyle: 'italic',
+                fontWeight: 700,
+                marginTop: 6,
               }}
             >
-              Mural Global de las Estrellas
+              Un millón Ángeles, un solo cielo.
             </div>
           </div>
         </div>
@@ -724,14 +726,14 @@ export default function PostalStoryShareModal({
             alignItems: 'center',
             justifyContent: 'center',
             padding: 60,
-            background: 'radial-gradient(ellipse at 50% 30%, #182252 0%, #0F1638 55%, #090D22 100%)',
+            background: 'radial-gradient(ellipse at 50% 30%, #FFFDFE 0%, #FFF5F8 50%, #FCE7F3 100%)',
             position: 'relative',
             boxSizing: 'border-box',
           }}
         >
           {/* Estrellas decorativas */}
-          <div style={{ position: 'absolute', top: 50, left: 60, fontSize: 30, color: 'rgba(253, 230, 138, 0.7)' }}>✦</div>
-          <div style={{ position: 'absolute', bottom: 50, right: 60, fontSize: 30, color: 'rgba(253, 230, 138, 0.7)' }}>✦</div>
+          <div style={{ position: 'absolute', top: 50, left: 60, fontSize: 32, color: '#F59E0B' }}>✦</div>
+          <div style={{ position: 'absolute', bottom: 50, right: 60, fontSize: 32, color: '#F59E0B' }}>✦</div>
 
           {/* Marco Postal */}
           <div
