@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import { resend } from '@/lib/resend'
 import { notifyNeighborsOfNewPet } from '@/lib/notifications'
 import { getPlanOrDefault } from '@/lib/plans'
+import { generateSponsorshipEmailHtml } from '@/lib/emails/sponsorshipEmail'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia' as any,
@@ -245,12 +246,25 @@ export async function POST(req: NextRequest) {
 
         // Enviar emails transaccionales
         try {
-          // EMAIL 1 -> USUARIO (confirmación de compra)
-          await resend.emails.send({
-            from: process.env.RESEND_FROM_EMAIL!,
-            to: email,
-            subject: '✨ Su recuerdo ya brilla en el cielo',
-            html: `
+          const isSponsor = isSponsorship === 'true'
+          const userEmailSubject = isSponsor
+            ? (sponsorPetName 
+                ? `🕊️ En memoria de ${sponsorPetName} · Gracias por apadrinar a ${petName} 🐾`
+                : `📜 Reconocimiento Oficial Corazón de Ángel · Gracias por apadrinar a ${petName} 🐾`)
+            : '✨ Su recuerdo ya brilla en el cielo'
+
+          const userEmailHtml = isSponsor
+            ? generateSponsorshipEmailHtml({
+                sponsorName: sponsorName || 'Padrino de Corazón',
+                sponsorEmail: email,
+                petName,
+                shelterName: shelterName || 'Refugio Colaborador',
+                sponsorPetName: sponsorPetName || '',
+                dedication: dedication || '',
+                muralUrl: `${process.env.NEXT_PUBLIC_URL}/mural-global?highlight=${finalX},${finalY}&zoom=true`,
+                diplomaUrl: `${process.env.NEXT_PUBLIC_URL}/gracias/${orderId || session.id}`,
+              })
+            : `
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -450,15 +464,26 @@ export async function POST(req: NextRequest) {
 
 </body>
 </html>
-            `,
+            `
+
+          // EMAIL 1 -> USUARIO (confirmación de compra o apadrinamiento)
+          await resend.emails.send({
+            from: process.env.RESEND_FROM_EMAIL!,
+            to: email,
+            subject: userEmailSubject,
+            html: userEmailHtml,
           })
           console.log('Email de confirmación enviado al usuario:', email)
 
-          // EMAIL 2 -> ADMIN (notificación nuevo ángel)
+          // EMAIL 2 -> ADMIN (notificación nuevo ángel o apadrinamiento)
+          const adminSubject = isSponsor
+            ? `💖 ¡Nuevo Apadrinamiento!: ${petName} (Por ${sponsorName || 'Padrino'})`
+            : `🐾 Nuevo ángel: ${petName} (${plan})`
+
           await resend.emails.send({
             from: process.env.RESEND_FROM_EMAIL!,
             to: process.env.ADMIN_EMAIL || 'admin@todaslasmascotasvanalcielo.com',
-            subject: `🐾 Nuevo ángel: ${petName} (${plan})`,
+            subject: adminSubject,
             html: `
               <div style="font-family: sans-serif; max-width: 600px; 
               margin: 0 auto; padding: 40px 20px;">

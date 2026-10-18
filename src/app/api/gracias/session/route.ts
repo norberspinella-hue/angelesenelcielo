@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 import { Resend } from 'resend'
 import { getPlanOrDefault } from '@/lib/plans'
+import { generateSponsorshipEmailHtml } from '@/lib/emails/sponsorshipEmail'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2026-04-22.dahlia' as any,
@@ -214,12 +215,31 @@ export async function GET(req: NextRequest) {
 
           // Enviar notificaciones por email
           try {
-            // EMAIL 1 → USUARIO
-            await resend.emails.send({
-              from: process.env.RESEND_FROM_EMAIL!,
-              to: email,
-              subject: `🐾 ${petName} ya brilla en el cielo`,
-              html: `
+            const isSponsor = session.metadata?.isSponsorship === 'true' || 
+              plan?.toLowerCase().includes('corazon') || 
+              plan?.toLowerCase().includes('apadrinamiento');
+            const sponsorNameVal = session.metadata?.sponsorName || session.customer_details?.name || 'Padrino de Corazón';
+            const sponsorPetNameVal = session.metadata?.sponsorPetName || '';
+            const shelterNameVal = session.metadata?.shelterName || 'Refugio Colaborador';
+
+            const userEmailSubject = isSponsor
+              ? (sponsorPetNameVal
+                  ? `🕊️ En memoria de ${sponsorPetNameVal} · Gracias por apadrinar a ${petName} 🐾`
+                  : `📜 Reconocimiento Oficial Corazón de Ángel · Gracias por apadrinar a ${petName} 🐾`)
+              : `🐾 ${petName} ya brilla en el cielo`;
+
+            const userEmailHtml = isSponsor
+              ? generateSponsorshipEmailHtml({
+                  sponsorName: sponsorNameVal,
+                  sponsorEmail: email,
+                  petName,
+                  shelterName: shelterNameVal,
+                  sponsorPetName: sponsorPetNameVal,
+                  dedication: dedication || '',
+                  muralUrl: `${process.env.NEXT_PUBLIC_URL}/mural-global?highlight=${finalX},${finalY}&zoom=true`,
+                  diplomaUrl: `${process.env.NEXT_PUBLIC_URL}/gracias/${sessionId}`,
+                })
+              : `
 <!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -402,15 +422,25 @@ export async function GET(req: NextRequest) {
 
 </body>
 </html>
-            `,
+            `
+
+            await resend.emails.send({
+              from: process.env.RESEND_FROM_EMAIL!,
+              to: email,
+              subject: userEmailSubject,
+              html: userEmailHtml,
             })
             console.log('Email de confirmación enviado al usuario (fallback):', email)
 
             // EMAIL 2 → ADMIN
+            const adminSubject = isSponsor
+              ? `💖 ¡Nuevo Apadrinamiento Solidario! (fallback): ${petName} (Por ${sponsorNameVal})`
+              : `🐾 Nuevo ángel: ${petName} (${plan})`
+
             await resend.emails.send({
               from: process.env.RESEND_FROM_EMAIL!,
               to: process.env.ADMIN_EMAIL || 'admin@todaslasmascotasvanalcielo.com',
-              subject: `🐾 Nuevo ángel: ${petName} (${plan})`,
+              subject: adminSubject,
               html: `
                 <div style="font-family: sans-serif; padding: 20px;">
                   <h2>Nuevo ángel registrado (fallback)</h2>
