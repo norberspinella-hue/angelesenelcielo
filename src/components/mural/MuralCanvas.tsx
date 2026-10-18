@@ -413,30 +413,39 @@ function PetProfileCard({
                 ✕
               </button>
 
-              {/* Distintivo alado para angelitos de protectora */}
+              {/* Medallón 3D de Alas Celestiales para angelitos de protectora */}
               {isShelterPet && (
                 <div 
                   data-download-ignore="true"
                   style={{
                     position: 'absolute',
-                    top: 12,
+                    top: 10,
                     left: 12,
-                    padding: '4px 10px',
-                    borderRadius: 999,
-                    background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-                    color: '#FFFDF0',
-                    fontSize: '10px',
-                    fontWeight: 800,
-                    letterSpacing: '0.4px',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '4px',
-                    boxShadow: '0 2px 8px rgba(217, 119, 6, 0.35)',
+                    gap: '6px',
+                    padding: '3px 10px 3px 4px',
+                    borderRadius: 999,
+                    background: 'rgba(255, 255, 255, 0.92)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1.5px solid #F59E0B',
+                    boxShadow: '0 4px 14px rgba(245, 158, 11, 0.35)',
                     zIndex: 30,
                   }}
                 >
-                  <span>🪽</span>
-                  <span>PROTECTORA</span>
+                  <img 
+                    src="/images/icons/badge-alas-angel.webp" 
+                    alt="Ángel de Protectora" 
+                    style={{ width: 26, height: 26, objectFit: 'contain' }}
+                  />
+                  <span style={{
+                    fontSize: '10.5px',
+                    fontWeight: 800,
+                    color: '#B45309',
+                    letterSpacing: '0.4px',
+                  }}>
+                    PROTECTORA
+                  </span>
                 </div>
               )}
 
@@ -971,10 +980,10 @@ function PetProfileCard({
               WebkitBackdropFilter: 'blur(10px)',
             }}
           >
-            <div className="flex items-center justify-center gap-1.5 mb-1.5 text-amber-900 font-extrabold text-xs uppercase tracking-wider">
-              <span>🪽</span>
+            <div className="flex items-center justify-center gap-2 mb-1.5 text-amber-900 font-extrabold text-xs uppercase tracking-wider">
+              <img src="/images/icons/badge-alas-angel.webp" alt="Alas" className="w-5 h-5 object-contain" />
               <span>Angelito de Protectora</span>
-              <span>🪽</span>
+              <img src="/images/icons/badge-alas-angel.webp" alt="Alas" className="w-5 h-5 object-contain" />
             </div>
             
             <p className="text-xs text-amber-950 mb-3.5 font-medium leading-relaxed">
@@ -1640,27 +1649,37 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
                     rr(sx, sy, fullSize, fullSize, radius);
                     ctx.stroke();
 
-                    // Distintivo alado 🪽 en la esquina superior derecha
+                    // Distintivo alado en la esquina superior derecha (Medallón 3D Celestial)
                     if (fullSize >= 18) {
-                      const badgeD = Math.max(16, Math.min(28, fullSize * 0.28));
-                      const bX = sx + fullSize - badgeD - 2;
-                      const bY = sy + 2;
+                      const badgeD = Math.max(16, Math.min(32, fullSize * 0.32));
+                      const bX = sx + fullSize - badgeD + 1;
+                      const bY = sy - 1;
 
-                      ctx.shadowBlur = 4;
-                      ctx.shadowColor = 'rgba(0,0,0,0.35)';
-                      ctx.fillStyle = '#F59E0B';
-                      ctx.strokeStyle = '#FFFFFF';
-                      ctx.lineWidth = 1.2;
-                      ctx.beginPath();
-                      ctx.arc(bX + badgeD/2, bY + badgeD/2, badgeD/2, 0, Math.PI * 2);
-                      ctx.fill();
-                      ctx.stroke();
+                      const badgeImg = loadImage('/images/icons/badge-alas-angel.webp', () => {
+                        requestAnimationFrame(render);
+                      });
 
-                      ctx.font = `${Math.round(badgeD * 0.62)}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
-                      ctx.textAlign = 'center';
-                      ctx.textBaseline = 'middle';
-                      ctx.fillStyle = '#FFFFFF';
-                      ctx.fillText('🪽', bX + badgeD/2, bY + badgeD/2 + 1);
+                      if (badgeImg) {
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = 'rgba(245, 158, 11, 0.7)';
+                        ctx.drawImage(badgeImg, bX, bY, badgeD, badgeD);
+                      } else {
+                        ctx.shadowBlur = 4;
+                        ctx.shadowColor = 'rgba(0,0,0,0.35)';
+                        ctx.fillStyle = '#F59E0B';
+                        ctx.strokeStyle = '#FFFFFF';
+                        ctx.lineWidth = 1.2;
+                        ctx.beginPath();
+                        ctx.arc(bX + badgeD / 2, bY + badgeD / 2, badgeD / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+
+                        ctx.font = `${Math.round(badgeD * 0.62)}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillText('🪽', bX + badgeD / 2, bY + badgeD / 2 + 1);
+                      }
                     }
                     ctx.restore();
                   }
