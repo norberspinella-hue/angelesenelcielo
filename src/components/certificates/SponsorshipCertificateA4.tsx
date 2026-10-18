@@ -33,6 +33,16 @@ export default function SponsorshipCertificateA4({
   const handleDownload = async () => {
     try {
       setIsDownloading(true)
+      
+      // En modo ejemplo, descargamos directamente la imagen PNG que lleva el cintillo diagonal 'EJEMPLO' integrado en el archivo
+      if (isSample) {
+        const link = document.createElement('a')
+        link.download = 'ejemplo-reconocimiento-corazon-de-angel.png'
+        link.href = '/images/certificates/diploma-corazones-de-angel-ejemplo.png'
+        link.click()
+        return
+      }
+
       const { toPng } = await import('html-to-image')
       if (certificateRef.current) {
         const dataUrl = await toPng(certificateRef.current, {
@@ -50,8 +60,12 @@ export default function SponsorshipCertificateA4({
       console.error('Error al descargar el reconocimiento:', err)
       // Fallback a descarga de la imagen base oficial
       const link = document.createElement('a')
-      link.download = 'reconocimiento-corazon-de-angel.png'
-      link.href = '/images/certificates/diploma-corazones-de-angel.png'
+      link.download = isSample 
+        ? 'ejemplo-reconocimiento-corazon-de-angel.png' 
+        : 'reconocimiento-corazon-de-angel.png'
+      link.href = isSample 
+        ? '/images/certificates/diploma-corazones-de-angel-ejemplo.png' 
+        : '/images/certificates/diploma-corazones-de-angel.png'
       link.click()
     } finally {
       setIsDownloading(false)
@@ -71,27 +85,12 @@ export default function SponsorshipCertificateA4({
           id="certificate-corazon-de-angel"
           className="relative w-full aspect-[1200/896] rounded-xl overflow-hidden shadow-xl border-[5px] sm:border-[8px] border-[#FAF0E6] bg-cover bg-center select-none"
           style={{
-            backgroundImage: "url('/images/certificates/diploma-corazones-de-angel.webp')",
+            backgroundImage: isSample 
+              ? "url('/images/certificates/diploma-corazones-de-angel-ejemplo.webp')" 
+              : "url('/images/certificates/diploma-corazones-de-angel.webp')",
             backgroundColor: '#FBF8F2',
           }}
         >
-          {/* Cintillo diagonal "EJEMPLO" cuando se muestra como demo */}
-          {isSample && (
-            <div className="absolute top-0 right-0 w-28 sm:w-40 h-28 sm:h-40 overflow-hidden pointer-events-none z-30">
-              <div 
-                className="absolute top-5 sm:top-7 -right-9 sm:-right-11 w-36 sm:w-48 py-1 sm:py-1.5 text-center text-white font-black text-[10px] sm:text-xs tracking-widest uppercase shadow-xl rotate-45 select-none"
-                style={{
-                  background: 'linear-gradient(135deg, #F59E0B 0%, #EC4899 100%)',
-                  boxShadow: '0 3px 12px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.5)',
-                  borderTop: '1px solid rgba(255, 255, 255, 0.7)',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
-                }}
-              >
-                EJEMPLO
-              </div>
-            </div>
-          )}
-
           {/* Capa de respaldo para asegurar visibilidad en cualquier dispositivo */}
           <div className="absolute inset-0 pointer-events-none" />
         </div>
