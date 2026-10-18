@@ -174,7 +174,9 @@ export async function POST(req: NextRequest) {
             .order('created_at', { ascending: false })
             .limit(1)
             .maybeSingle();
-          if (byName) existingShelter = byName;
+          if (byName && (byName.story_answers?.isShelter || byName.story_answers?.shelterName)) {
+            existingShelter = byName;
+          }
         }
 
         if (existingShelter) {

@@ -25,19 +25,6 @@ export interface ShelterPet {
 // Lista inicial de angelitos piloto de protectoras (MVP para lanzamiento inmediato)
 export const DEFAULT_SHELTER_PETS: ShelterPet[] = [
   {
-    id: 'shelter_juliette',
-    name: 'Juliette',
-    shelterName: 'Refugio Nueva Vida',
-    shelterCity: 'Valencia',
-    photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/juliette_1791706558194.jpg',
-    storyPreview: 'Rescatada tras 8 años, partió rodeada de cariño y paz en el refugio.',
-    starsCount: 9,
-    isSponsored: true,
-    sponsorName: 'Marc',
-    memorialPetName: 'Nilo',
-    muralCoords: { x: 497, y: 495 },
-  },
-  {
     id: 'shelter_vaiana',
     name: 'Vaiana',
     shelterName: 'Refugio Nueva Vida',

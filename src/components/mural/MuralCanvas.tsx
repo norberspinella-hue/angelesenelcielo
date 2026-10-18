@@ -179,8 +179,8 @@ function PetProfileCard({
           if (memBySponsored) data = memBySponsored;
         }
 
-        // Si aún no se encontró, buscar por nombre de la mascota de protectora (ej. Juliette)
-        const petNameToSearch = shelterPet?.name || (memorialId?.toLowerCase().includes('juliette') ? 'Juliette' : '');
+        // Si aún no se encontró, buscar por nombre de la mascota de protectora
+        const petNameToSearch = shelterPet?.name || '';
         if (!data && petNameToSearch) {
           const { data: memByName } = await (supabase.from('memorials') as any)
             .select('id, pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers, slot_assigned')
