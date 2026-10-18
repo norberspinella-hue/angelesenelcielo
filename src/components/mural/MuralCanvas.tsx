@@ -1351,7 +1351,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
       try {
         const { data, error } = await supabase
           .from('mural_slots')
-          .select('x, y, plan_type, memorial_id, thumbnail_url')
+          .select('x, y, plan_type, memorial_id, thumbnail_url, memorials(pet_name, story_answers)')
           .eq('status', 'occupied');
         
         if (error) {
@@ -1379,6 +1379,11 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
             const key = `${slot.x},${slot.y}`;
             const mins = slot.memorial_id ? minsMap.get(slot.memorial_id) : null;
             const isMain = mins ? (slot.x === mins.minX && slot.y === mins.minY) : true;
+            const isDbShelter = Boolean(
+              slot.memorial_id?.startsWith('shelter_') ||
+              slot.memorials?.story_answers?.isShelter ||
+              slot.memorials?.story_answers?.shelterName
+            );
             
             realSlots.set(key, {
               status: 'occupied',
@@ -1388,7 +1393,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
               isMainSlot: isMain,
               x: slot.x,
               y: slot.y,
-              isShelter: Boolean(slot.memorial_id?.startsWith('shelter_')),
+              isShelter: isDbShelter,
             });
           });
 
