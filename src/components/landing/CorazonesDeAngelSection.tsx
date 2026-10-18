@@ -13,7 +13,11 @@ export function CorazonesDeAngelSection() {
   const [isApadrinarDrawerOpen, setIsApadrinarDrawerOpen] = useState(false)
   const [shelterName, setShelterName] = useState('')
   const [shelterCity, setShelterCity] = useState('')
-  const [shelterContact, setShelterContact] = useState('')
+  const [shelterEmail, setShelterEmail] = useState('')
+  const [shelterPhone, setShelterPhone] = useState('')
+  const [shelterNotes, setShelterNotes] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [mounted, setMounted] = useState(false)
 
@@ -31,11 +35,36 @@ export function CorazonesDeAngelSection() {
     }
   }, [isShelterModalOpen, isSocialDemoOpen])
 
-  const handleSubmitShelter = (e: React.FormEvent) => {
+  const handleSubmitShelter = async (e: React.FormEvent) => {
     e.preventDefault()
-    const message = `Hola, represento a la protectora ${shelterName} en ${shelterCity}. Queremos sumarnos al programa piloto Corazones de Ángel para publicar 5 angelitos de forma gratuita. Contacto: ${shelterContact}`
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank')
-    setSubmitted(true)
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      const res = await fetch('/api/shelter-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          shelterName,
+          shelterCity,
+          shelterEmail,
+          shelterPhone,
+          notes: shelterNotes,
+        }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || 'Error al enviar la solicitud')
+      }
+
+      setSubmitted(true)
+    } catch (err: any) {
+      console.error('Error enviando formulario de protectora:', err)
+      setSubmitError(err.message || 'Hubo un error al enviar la solicitud. Por favor intenta de nuevo.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -449,23 +478,50 @@ export function CorazonesDeAngelSection() {
             </p>
 
             {submitted ? (
-              <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center">
-                <span className="text-3xl block mb-2">🐾</span>
-                <h4 className="font-bold text-emerald-800 text-sm mb-1">¡Gracias por contactarnos!</h4>
-                <p className="text-xs text-emerald-700">
-                  Te responderemos muy pronto por WhatsApp o correo para habilitar los 5 recuerdos gratuitos de tu refugio.
+              <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-3">
+                <span className="text-4xl block">🐾✨</span>
+                <h4 className="font-bold text-emerald-900 text-base">¡Solicitud recibida con éxito!</h4>
+                <p className="text-xs sm:text-sm text-emerald-800 leading-relaxed max-w-md mx-auto">
+                  Hemos recibido los datos de <strong>{shelterName}</strong>. Te hemos enviado un correo de confirmación a <strong>{shelterEmail}</strong> y nos pondremos en contacto contigo en las próximas 24 horas para habilitar los 5 recuerdos gratuitos de tu refugio.
                 </p>
-                <button
-                  onClick={() => setIsShelterModalOpen(false)}
-                  className="mt-4 px-4 py-2 rounded-full bg-emerald-600 text-white font-bold text-xs"
-                >
-                  Cerrar
-                </button>
+                <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
+                  <button
+                    onClick={() => {
+                      setIsShelterModalOpen(false)
+                      setSubmitted(false)
+                      setShelterName('')
+                      setShelterCity('')
+                      setShelterEmail('')
+                      setShelterPhone('')
+                      setShelterNotes('')
+                    }}
+                    className="px-5 py-2.5 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition-colors shadow-sm cursor-pointer"
+                  >
+                    Entendido, muchas gracias
+                  </button>
+                  <a
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Hola, acabo de enviar la solicitud del programa piloto para la protectora ${shelterName} en ${shelterCity}.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2.5 rounded-full bg-white hover:bg-emerald-100 text-emerald-800 font-semibold text-xs border border-emerald-300 transition-colors inline-flex items-center justify-center gap-1.5"
+                  >
+                    <span>💬</span>
+                    <span>Escribir también por WhatsApp</span>
+                  </a>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmitShelter} className="space-y-3.5 text-xs">
+                {submitError && (
+                  <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
+                    {submitError}
+                  </div>
+                )}
+
                 <div>
-                  <label className="font-semibold text-[#1E2A78] block mb-1">Nombre de la Protectora o Refugio</label>
+                  <label className="font-semibold text-[#1E2A78] block mb-1">
+                    Nombre de la Protectora o Refugio <span className="text-pink-600">*</span>
+                  </label>
                   <input
                     type="text"
                     required
@@ -477,7 +533,9 @@ export function CorazonesDeAngelSection() {
                 </div>
 
                 <div>
-                  <label className="font-semibold text-[#1E2A78] block mb-1">Ciudad o Región</label>
+                  <label className="font-semibold text-[#1E2A78] block mb-1">
+                    Ciudad o Región <span className="text-pink-600">*</span>
+                  </label>
                   <input
                     type="text"
                     required
@@ -489,23 +547,63 @@ export function CorazonesDeAngelSection() {
                 </div>
 
                 <div>
-                  <label className="font-semibold text-[#1E2A78] block mb-1">Teléfono (WhatsApp) o Email de contacto</label>
+                  <label className="font-semibold text-[#1E2A78] block mb-1">
+                    Email de contacto <span className="text-pink-600">*</span>
+                  </label>
                   <input
-                    type="text"
+                    type="email"
                     required
-                    placeholder="Ej. 612 345 678 o info@asociacion.org"
-                    value={shelterContact}
-                    onChange={(e) => setShelterContact(e.target.value)}
+                    placeholder="Ej. contacto@protectora.org"
+                    value={shelterEmail}
+                    onChange={(e) => setShelterEmail(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#D5CAE6] focus:border-[#7C3AED] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-[#1E2A78] block mb-1">
+                    Teléfono o WhatsApp <span className="text-slate-400 font-normal">(opcional)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="Ej. 612 345 678"
+                    value={shelterPhone}
+                    onChange={(e) => setShelterPhone(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#D5CAE6] focus:border-[#7C3AED] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="font-semibold text-[#1E2A78] block mb-1">
+                    Notas o comentarios <span className="text-slate-400 font-normal">(opcional)</span>
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="N.º aproximado de perros en custodia, enlace a vuestra web o redes sociales..."
+                    value={shelterNotes}
+                    onChange={(e) => setShelterNotes(e.target.value)}
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D5CAE6] focus:border-[#7C3AED] focus:outline-none resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 rounded-full text-white font-bold text-xs shadow-md transition-all hover:scale-[1.01] mt-2"
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 px-4 rounded-full text-white font-bold text-xs sm:text-sm shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] mt-2 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
                   style={{ background: 'linear-gradient(90deg, #7C3AED 0%, #A855F7 100%)' }}
                 >
-                  Solicitar los 5 recuerdos gratuitos por WhatsApp 💬
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Enviando solicitud...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>🐾</span>
+                      <span>Solicitar 5 recuerdos gratuitos para la protectora</span>
+                      <span>›</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}
