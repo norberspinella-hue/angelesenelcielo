@@ -355,12 +355,27 @@ export function CorazonesDeAngelSection() {
                 Si apadrinas en memoria de tu propia mascota, su amor se convertirá en un puente: recibirás el distintivo oficial <strong>Ángel con Corazón de Perrito</strong>, visible en el mural y con certificado conmemorativo descargable.
               </p>
 
-              {/* Imagen Ilustrativa Tarjeta 3 (220x220) con suave opacidad */}
+              {/* Imagen Ilustrativa Tarjeta 3 (220x220) con suave opacidad y cintillo de Ejemplo */}
               <div className="w-full flex justify-center my-3">
                 <div className="w-full max-w-[220px] aspect-square rounded-2xl overflow-hidden border border-[#FDE68A]/70 shadow-md relative bg-white/60 backdrop-blur-xs group/img">
+                  {/* Cintillo diagonal "EJEMPLO" */}
+                  <div className="absolute top-0 right-0 w-24 h-24 overflow-hidden pointer-events-none z-20">
+                    <div 
+                      className="absolute top-4 -right-9 w-32 py-1 text-center text-white font-extrabold text-[10px] tracking-widest uppercase shadow-md rotate-45 select-none"
+                      style={{
+                        background: 'linear-gradient(135deg, #F59E0B 0%, #EC4899 100%)',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.45)',
+                        borderTop: '1px solid rgba(255, 255, 255, 0.6)',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
+                      }}
+                    >
+                      EJEMPLO
+                    </div>
+                  </div>
+
                   <Image 
                     src="/images/solidario/tarjeta3-220x220.webp" 
-                    alt="Reconocimiento Corazón de Ángel" 
+                    alt="Reconocimiento Corazón de Ángel (Ejemplo)" 
                     width={220} 
                     height={220} 
                     className="w-full h-full object-cover opacity-90 group-hover/img:opacity-100 transition-opacity duration-500" 
@@ -393,7 +408,7 @@ export function CorazonesDeAngelSection() {
                   <path fill="url(#cream-heart-card3)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                 </svg>
               </span>
-              <span>Ver Reconocimiento Oficial</span>
+              <span>Ver ejemplo de Reconocimiento</span>
               <span className="text-xs">›</span>
             </button>
           </div>
@@ -509,7 +524,7 @@ export function CorazonesDeAngelSection() {
         >
           <div className="bg-white rounded-3xl max-w-[760px] w-full p-4 sm:p-6 text-left shadow-2xl border-2 border-pink-200 relative my-auto animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 mb-3 border-b border-pink-100">
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <span className="text-xl">📜</span>
                 <h4 
                   className="font-bold text-sm sm:text-base text-[#1E2A78]"
@@ -517,6 +532,9 @@ export function CorazonesDeAngelSection() {
                 >
                   Diploma Conmemorativo Oficial · Corazones de Ángel
                 </h4>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-300 tracking-wide uppercase shrink-0">
+                  Muestra de Ejemplo
+                </span>
               </div>
               <button 
                 onClick={() => setIsSocialDemoOpen(false)} 
@@ -528,7 +546,7 @@ export function CorazonesDeAngelSection() {
             </div>
 
             <p className="text-xs text-[#5D4E75] mb-4 leading-relaxed">
-              Al apadrinar las 9 estrellas de un angelito en memoria de tu propia mascota, recibirás este <strong>Reconocimiento Oficial descargable en alta resolución (A4 imprimible a 300 DPI)</strong> y la cinta conmemorativa de apadrinamiento en el Mural Global.
+              Este es un <strong>modelo de demostración</strong>. Al apadrinar las 9 estrellas de un angelito en memoria de tu propia mascota, recibirás este <strong>Reconocimiento Oficial personalizado descargable en alta resolución (A4 imprimible a 300 DPI)</strong> y la cinta conmemorativa de apadrinamiento en el Mural Global.
             </p>
 
             <SponsorshipCertificateA4 
@@ -537,6 +555,7 @@ export function CorazonesDeAngelSection() {
                 petName: 'Juliette',
                 shelterName: 'Refugio Nueva Vida',
               }}
+              isSample={true}
             />
           </div>
         </div>,

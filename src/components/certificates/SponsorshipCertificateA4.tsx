@@ -14,12 +14,14 @@ interface SponsorshipCertificateA4Props {
   data: SponsorshipCertificateData
   className?: string
   showDownloadButton?: boolean
+  isSample?: boolean
 }
 
 export default function SponsorshipCertificateA4({
   data,
   className = '',
   showDownloadButton = true,
+  isSample = false,
 }: SponsorshipCertificateA4Props) {
   const [isDownloading, setIsDownloading] = useState(false)
   const certificateRef = useRef<HTMLDivElement>(null)
@@ -73,6 +75,23 @@ export default function SponsorshipCertificateA4({
             backgroundColor: '#FBF8F2',
           }}
         >
+          {/* Cintillo diagonal "EJEMPLO" cuando se muestra como demo */}
+          {isSample && (
+            <div className="absolute top-0 right-0 w-28 sm:w-40 h-28 sm:h-40 overflow-hidden pointer-events-none z-30">
+              <div 
+                className="absolute top-5 sm:top-7 -right-9 sm:-right-11 w-36 sm:w-48 py-1 sm:py-1.5 text-center text-white font-black text-[10px] sm:text-xs tracking-widest uppercase shadow-xl rotate-45 select-none"
+                style={{
+                  background: 'linear-gradient(135deg, #F59E0B 0%, #EC4899 100%)',
+                  boxShadow: '0 3px 12px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.5)',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.7)',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
+                }}
+              >
+                EJEMPLO
+              </div>
+            </div>
+          )}
+
           {/* Capa de respaldo para asegurar visibilidad en cualquier dispositivo */}
           <div className="absolute inset-0 pointer-events-none" />
         </div>
@@ -103,7 +122,11 @@ export default function SponsorshipCertificateA4({
               </svg>
             )}
             <span>
-              {isDownloading ? 'Generando Reconocimiento...' : 'Descargar Reconocimiento Oficial (A4 Imprimible)'}
+              {isDownloading 
+                ? 'Generando Reconocimiento...' 
+                : isSample 
+                  ? 'Descargar Ejemplo de Reconocimiento (A4)' 
+                  : 'Descargar Reconocimiento Oficial (A4 Imprimible)'}
             </span>
           </button>
         </div>
