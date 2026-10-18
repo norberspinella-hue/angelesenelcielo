@@ -3,10 +3,12 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ApadrinarDrawer } from '@/components/solidario/ApadrinarDrawer'
 
 export function CorazonesDeAngelSection() {
   const [isShelterModalOpen, setIsShelterModalOpen] = useState(false)
   const [isSocialDemoOpen, setIsSocialDemoOpen] = useState(false)
+  const [isApadrinarDrawerOpen, setIsApadrinarDrawerOpen] = useState(false)
   const [shelterName, setShelterName] = useState('')
   const [shelterCity, setShelterCity] = useState('')
   const [shelterContact, setShelterContact] = useState('')
@@ -263,8 +265,8 @@ export function CorazonesDeAngelSection() {
             </div>
 
             {/* Botón CTA Moradito Claro Estilo HeavenCTAButton */}
-            <Link 
-              href="/mural-global"
+            <button 
+              onClick={() => setIsApadrinarDrawerOpen(true)}
               className="mt-6 w-full py-3.5 px-4 rounded-full text-white font-medium text-xs sm:text-sm flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md cursor-pointer relative z-10"
               style={{
                 background: 'linear-gradient(135deg, #C4B5FD 0%, #A78BFA 50%, #8B5CF6 100%)',
@@ -278,9 +280,9 @@ export function CorazonesDeAngelSection() {
                   <path fill="#FFFDF0" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                 </svg>
               </span>
-              <span>Ver ángeles en el mural</span>
+              <span>Dar 9 estrellas a un angelito</span>
               <span className="text-xs">›</span>
-            </Link>
+            </button>
           </div>
 
           {/* ======================= */}
@@ -552,6 +554,12 @@ export function CorazonesDeAngelSection() {
           </div>
         </div>
       )}
+
+      {/* DRAWER DE APADRINAMIENTO SOLIDARIO (9 ESTRELLAS - ESTILO MURAL DRAWER) */}
+      <ApadrinarDrawer 
+        isOpen={isApadrinarDrawerOpen} 
+        onClose={() => setIsApadrinarDrawerOpen(false)} 
+      />
 
     </section>
   )

@@ -8,6 +8,7 @@ import { generateSeedSlots } from '@/lib/mural/mockSeed';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { getPlanByDbName } from '@/lib/plans';
+import { ApadrinarDrawer, DEFAULT_SHELTER_PETS, ShelterPet } from '@/components/solidario/ApadrinarDrawer';
 
 const supabase = createClient();
 
@@ -42,11 +43,32 @@ interface PetProfileCardProps {
   memorialId: string;
   planType: string;
   thumbnailUrl: string;
+  isShelter?: boolean;
+  shelterPet?: ShelterPet | null;
   onClose: () => void;
+  onApadrinar?: (pet: ShelterPet) => void;
 }
 
-function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProfileCardProps) {
-  const [petData, setPetData] = useState<{ pet_name: string; photo_url: string; plan_type: string; profile_slug?: string | null; slots_count?: number | null; birth_date?: string | null; death_date?: string | null; dedication?: string | null } | null>(null);
+function PetProfileCard({ 
+  memorialId, 
+  planType, 
+  thumbnailUrl, 
+  isShelter, 
+  shelterPet, 
+  onClose, 
+  onApadrinar 
+}: PetProfileCardProps) {
+  const [petData, setPetData] = useState<{ 
+    pet_name: string; 
+    photo_url: string; 
+    plan_type: string; 
+    profile_slug?: string | null; 
+    slots_count?: number | null; 
+    birth_date?: string | null; 
+    death_date?: string | null; 
+    dedication?: string | null;
+    story_answers?: any;
+  } | null>(null);
   const [slotData, setSlotData] = useState<{ x: number; y: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -130,9 +152,33 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
     const fetchPetData = async () => {
       try {
         setLoading(true);
+
+        if (memorialId?.startsWith('shelter_') || isShelter) {
+          const matched = shelterPet || DEFAULT_SHELTER_PETS.find(p => p.id === memorialId);
+          if (matched) {
+            setPetData({
+              pet_name: matched.name,
+              photo_url: matched.photoUrl,
+              plan_type: 'recuerdo_eterno',
+              profile_slug: null,
+              slots_count: 9,
+              birth_date: null,
+              death_date: null,
+              dedication: matched.storyPreview || 'Angelito de protectora esperando un corazón generoso que encienda sus 9 estrellas perpetuas.',
+              story_answers: {
+                isSponsorship: true,
+                shelterName: matched.shelterName,
+                shelterCity: matched.shelterCity,
+              }
+            });
+            setLoading(false);
+            return;
+          }
+        }
+
         const { data, error } = await supabase
           .from('memorials')
-          .select('pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication')
+          .select('pet_name, photo_url, plan_type, profile_slug, slots_count, birth_date, death_date, dedication, story_answers')
           .eq('id', memorialId)
           .single();
         
@@ -164,7 +210,23 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
     if (memorialId) {
       fetchPetData();
     }
-  }, [memorialId]);
+  }, [memorialId, isShelter, shelterPet]);
+
+  const isShelterPet = Boolean(
+    isShelter || 
+    memorialId?.startsWith('shelter_') || 
+    petData?.story_answers?.isSponsorship
+  );
+
+  const matchedShelterPet: ShelterPet = shelterPet || 
+    DEFAULT_SHELTER_PETS.find(p => p.id === memorialId) || {
+      id: memorialId,
+      name: petData?.pet_name || 'Angelito',
+      photoUrl: petData?.photo_url || thumbnailUrl || '/images/placeholders/first.webp',
+      shelterName: petData?.story_answers?.shelterName || 'Refugio colaborador',
+      shelterCity: petData?.story_answers?.shelterCity || 'España',
+      storyPreview: petData?.dedication || '',
+    };
 
   const nombre = petData?.pet_name || 'Ángel';
   const foto = petData?.photo_url || thumbnailUrl || '/images/placeholders/first.webp';
@@ -350,6 +412,33 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
               >
                 ✕
               </button>
+
+              {/* Distintivo alado para angelitos de protectora */}
+              {isShelterPet && (
+                <div 
+                  data-download-ignore="true"
+                  style={{
+                    position: 'absolute',
+                    top: 12,
+                    left: 12,
+                    padding: '4px 10px',
+                    borderRadius: 999,
+                    background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                    color: '#FFFDF0',
+                    fontSize: '10px',
+                    fontWeight: 800,
+                    letterSpacing: '0.4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    boxShadow: '0 2px 8px rgba(217, 119, 6, 0.35)',
+                    zIndex: 30,
+                  }}
+                >
+                  <span>🪽</span>
+                  <span>PROTECTORA</span>
+                </div>
+              )}
 
               {/* CABECERA: MI ANGELITO CURVADO EN ARCO */}
               <div 
@@ -871,6 +960,51 @@ function PetProfileCard({ memorialId, planType, thumbnailUrl, onClose }: PetProf
           </div>
         </div>
 
+        {/* BANNER SOLIDARIO SI ES ANGELITO DE PROTECTORA */}
+        {isShelterPet && (
+          <div 
+            className="rounded-[24px] border-2 border-amber-300 shadow-[0_12px_36px_rgba(245,158,11,0.25)] p-5 flex flex-col items-center overflow-hidden w-full max-w-[360px] text-center"
+            style={{
+              width: 'min(360px, calc(100vw - 20px))',
+              background: 'linear-gradient(135deg, #FFFDF5 0%, #FEF3C7 50%, #FDE68A 100%)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+            }}
+          >
+            <div className="flex items-center justify-center gap-1.5 mb-1.5 text-amber-900 font-extrabold text-xs uppercase tracking-wider">
+              <span>🪽</span>
+              <span>Angelito de Protectora</span>
+              <span>🪽</span>
+            </div>
+            
+            <p className="text-xs text-amber-950 mb-3.5 font-medium leading-relaxed">
+              <strong>{matchedShelterPet.shelterName}</strong> {matchedShelterPet.shelterCity ? `· ${matchedShelterPet.shelterCity}` : ''}
+              <br />
+              <span className="text-[11px] text-amber-800">
+                ¡Sé su ángel de la guarda! Al apadrinar sus 9 estrellas, el <strong>50% del importe (5,00 €)</strong> se dona directamente a su refugio.
+              </span>
+            </p>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onApadrinar) {
+                  onApadrinar(matchedShelterPet);
+                }
+              }}
+              className="w-full py-3.5 px-4 rounded-full text-[#180A2D] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+              style={{
+                background: 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 50%, #D97706 100%)',
+                boxShadow: '0 4px 15px rgba(217, 119, 6, 0.45)',
+              }}
+            >
+              <span>💖</span>
+              <span>Apadrinar sus 9 estrellas (5,00 €)</span>
+              <span>›</span>
+            </button>
+          </div>
+        )}
+
         {/* TARJETA 2 — COMPARTIR */}
         <div 
           className="rounded-[24px] border border-[rgba(255,255,255,0.65)] shadow-[0_12px_40px_rgba(30,10,50,0.15)] p-4 sm:p-[24px_20px] flex flex-col items-center overflow-hidden w-full max-w-[360px]"
@@ -1199,6 +1333,8 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
   const [realSlotsMap, setRealSlotsMap] = useState<Map<string, any>>(new Map());
   const [showPetProfile, setShowPetProfile] = useState(false);
   const [selectedPet, setSelectedPet] = useState<any>(null);
+  const [apadrinarPet, setApadrinarPet] = useState<ShelterPet | null>(null);
+  const [isApadrinarOpen, setIsApadrinarOpen] = useState(false);
 
   // Cargar los slots reales ocupados desde Supabase
   useEffect(() => {
@@ -1242,9 +1378,38 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
               thumbnail_url: slot.thumbnail_url,
               isMainSlot: isMain,
               x: slot.x,
-              y: slot.y
+              y: slot.y,
+              isShelter: Boolean(slot.memorial_id?.startsWith('shelter_')),
             });
           });
+
+          // 3. Añadir angelitos piloto de protectoras (MVP) en coordenadas visibles cerca del centro
+          const pilotShelters = [
+            { x: 479, y: 494, pet: DEFAULT_SHELTER_PETS[0] }, // Juliette (3x3)
+            { x: 518, y: 494, pet: DEFAULT_SHELTER_PETS[1] }, // Rocky (3x3)
+            { x: 498, y: 516, pet: DEFAULT_SHELTER_PETS[2] }, // Galleta (3x3)
+          ];
+
+          pilotShelters.forEach(({ x, y, pet }) => {
+            if (!realSlots.has(`${x},${y}`)) {
+              for (let dx = 0; dx < 3; dx++) {
+                for (let dy = 0; dy < 3; dy++) {
+                  realSlots.set(`${x + dx},${y + dy}`, {
+                    status: 'occupied',
+                    plan_type: 'recuerdo_eterno',
+                    memorial_id: pet.id,
+                    thumbnail_url: pet.photoUrl,
+                    isMainSlot: dx === 0 && dy === 0,
+                    x: x + dx,
+                    y: y + dy,
+                    isShelter: true,
+                    shelterPet: pet,
+                  });
+                }
+              }
+            }
+          });
+
           setRealSlotsMap(realSlots);
         }
       } catch (err) {
@@ -1463,6 +1628,43 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
                     ctx.restore();
                   }
 
+                  const isShelterSlot = Boolean(realSlot?.isShelter || realSlot?.memorial_id?.startsWith('shelter_'));
+                  if (isShelterSlot) {
+                    ctx.save();
+                    // Aureola dorada suave pulsante
+                    const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 500);
+                    ctx.shadowBlur = 12 * pulse + 6;
+                    ctx.shadowColor = 'rgba(245, 158, 11, 0.9)';
+                    ctx.strokeStyle = 'rgba(251, 191, 36, 0.95)';
+                    ctx.lineWidth = Math.max(1.8, fullSize * 0.035);
+                    rr(sx, sy, fullSize, fullSize, radius);
+                    ctx.stroke();
+
+                    // Distintivo alado 🪽 en la esquina superior derecha
+                    if (fullSize >= 18) {
+                      const badgeD = Math.max(16, Math.min(28, fullSize * 0.28));
+                      const bX = sx + fullSize - badgeD - 2;
+                      const bY = sy + 2;
+
+                      ctx.shadowBlur = 4;
+                      ctx.shadowColor = 'rgba(0,0,0,0.35)';
+                      ctx.fillStyle = '#F59E0B';
+                      ctx.strokeStyle = '#FFFFFF';
+                      ctx.lineWidth = 1.2;
+                      ctx.beginPath();
+                      ctx.arc(bX + badgeD/2, bY + badgeD/2, badgeD/2, 0, Math.PI * 2);
+                      ctx.fill();
+                      ctx.stroke();
+
+                      ctx.font = `${Math.round(badgeD * 0.62)}px "Segoe UI Emoji", "Apple Color Emoji", sans-serif`;
+                      ctx.textAlign = 'center';
+                      ctx.textBaseline = 'middle';
+                      ctx.fillStyle = '#FFFFFF';
+                      ctx.fillText('🪽', bX + badgeD/2, bY + badgeD/2 + 1);
+                    }
+                    ctx.restore();
+                  }
+
                   imageDrawn = true;
                 }
               }
@@ -1664,6 +1866,8 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
           memorial_id: realSlot.memorial_id,
           plan_type: realSlot.plan_type,
           thumbnail_url: realSlot.thumbnail_url,
+          isShelter: realSlot.isShelter || Boolean(realSlot.memorial_id?.startsWith('shelter_')),
+          shelterPet: realSlot.shelterPet,
         });
         setShowPetProfile(true);
         return; // NO abrir drawer de compra
@@ -1742,12 +1946,30 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
           memorialId={selectedPet.memorial_id}
           planType={selectedPet.plan_type}
           thumbnailUrl={selectedPet.thumbnail_url}
+          isShelter={selectedPet.isShelter}
+          shelterPet={selectedPet.shelterPet}
           onClose={() => {
             setShowPetProfile(false);
             setSelectedPet(null);
           }}
+          onApadrinar={(pet) => {
+            setShowPetProfile(false);
+            setSelectedPet(null);
+            setApadrinarPet(pet);
+            setIsApadrinarOpen(true);
+          }}
         />
       )}
+
+      {/* DRAWER DE APADRINAMIENTO SOLIDARIO (9 ESTRELLAS - ESTILO MURAL DRAWER) */}
+      <ApadrinarDrawer 
+        isOpen={isApadrinarOpen}
+        onClose={() => {
+          setIsApadrinarOpen(false);
+          setApadrinarPet(null);
+        }}
+        preSelectedPet={apadrinarPet}
+      />
     </div>
   );
 });

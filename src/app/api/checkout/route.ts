@@ -10,7 +10,26 @@ export async function POST(req: NextRequest) {
   let currentPlan: string | undefined
   let currentPriceId: string | undefined
   try {
-    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication, shareOnSocials } = await req.json()
+    const { 
+      plan, 
+      slotId, 
+      petName, 
+      email, 
+      photoUrl, 
+      thumbnailUrl, 
+      petDate, 
+      species, 
+      breed, 
+      birthDate, 
+      location, 
+      dedication, 
+      shareOnSocials,
+      isSponsorship,
+      sponsorName,
+      sponsorPetName,
+      shelterName,
+      sponsoredPetId
+    } = await req.json()
     currentPlan = plan
 
     const planCfg = getPlan(plan)
@@ -52,6 +71,11 @@ export async function POST(req: NextRequest) {
         location: (location || '').slice(0, 100),
         dedication: (dedication || '').slice(0, 490),
         shareOnSocials: shareOnSocials === 'true' || shareOnSocials === true ? 'true' : 'false',
+        isSponsorship: isSponsorship ? 'true' : 'false',
+        sponsorName: (sponsorName || '').slice(0, 100),
+        sponsorPetName: (sponsorPetName || '').slice(0, 100),
+        shelterName: (shelterName || '').slice(0, 100),
+        sponsoredPetId: (sponsoredPetId || '').slice(0, 100),
       },
     })
 

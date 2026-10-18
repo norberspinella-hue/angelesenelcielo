@@ -32,7 +32,26 @@ export async function POST(req: NextRequest) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object as Stripe.Checkout.Session
-    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication, shareOnSocials } = session.metadata!
+    const { 
+      plan, 
+      slotId, 
+      petName, 
+      email, 
+      photoUrl, 
+      thumbnailUrl, 
+      petDate, 
+      species, 
+      breed, 
+      birthDate, 
+      location, 
+      dedication, 
+      shareOnSocials,
+      isSponsorship,
+      sponsorName,
+      sponsorPetName,
+      shelterName,
+      sponsoredPetId
+    } = session.metadata!
 
     const isShareOnSocialsAllowed = shareOnSocials === 'true'
 
@@ -160,6 +179,13 @@ export async function POST(req: NextRequest) {
           dedication: dedication || '',
           slot_assigned: slotAssignedStr,
           moderation_notes: isShareOnSocialsAllowed ? '[autoriza_redes_sociales]' : null,
+          story_answers: isSponsorship === 'true' ? {
+            isSponsorship: true,
+            sponsorName: sponsorName || '',
+            sponsorPetName: sponsorPetName || '',
+            shelterName: shelterName || '',
+            sponsoredPetId: sponsoredPetId || '',
+          } : {},
         })
         .select()
         .single()
