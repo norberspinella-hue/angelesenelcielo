@@ -445,6 +445,12 @@ export async function GET(req: NextRequest) {
       dedication: session.metadata?.dedication || '',
       slug: existingMemorial?.profile_slug || '',
       slotId: finalSlotId,
+      sponsorName: session.metadata?.sponsorName || session.customer_details?.name || 'Familia Gómez Martí',
+      shelterName: session.metadata?.shelterName || 'Refugio Nueva Vida',
+      shelterPetName: session.metadata?.shelterPetName || 'Juliette',
+      isSponsorship: session.metadata?.isSponsorship === 'true' || 
+        session.metadata?.plan?.toLowerCase().includes('corazon') || 
+        session.metadata?.plan?.toLowerCase().includes('apadrinamiento'),
     })
   } catch (error) {
     return NextResponse.json(

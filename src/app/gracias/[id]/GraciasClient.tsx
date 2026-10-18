@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import PostalStoryShareModal from '@/components/ui/PostalStoryShareModal'
+import SponsorshipCertificateA4 from '@/components/certificates/SponsorshipCertificateA4'
 
 interface GraciasClientProps {
   sessionId: string
@@ -22,6 +23,10 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
   const [dedication, setDedication] = useState<string>('')
   const [profileSlug, setProfileSlug] = useState<string>('')
   const [isShareModalOpen, setIsShareModalOpen] = useState(false)
+  const [sponsorName, setSponsorName] = useState<string>('Familia Gómez Martí')
+  const [shelterName, setShelterName] = useState<string>('Refugio Nueva Vida')
+  const [shelterPetName, setShelterPetName] = useState<string>('Juliette')
+  const [isSponsorship, setIsSponsorship] = useState<boolean>(false)
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return ''
@@ -52,6 +57,10 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
           } else if (data.thumbnailUrl) {
             setPetPhotoUrl(data.thumbnailUrl)
           }
+          if (data.sponsorName) setSponsorName(data.sponsorName)
+          if (data.shelterName) setShelterName(data.shelterName)
+          if (data.shelterPetName) setShelterPetName(data.shelterPetName)
+          if (data.isSponsorship) setIsSponsorship(true)
         }
       } catch (err) {
         console.error('Error obteniendo datos de sesión:', err)
@@ -298,6 +307,36 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
             </div>
 
           </div>
+
+          {/* RECONOCIMIENTO OFICIAL CORAZÓN DE ÁNGEL (Para apadrinamientos) */}
+          {!loading && isSponsorship && (
+            <div className="w-full max-w-[580px] mt-6 p-5 sm:p-6 rounded-[24px] bg-gradient-to-br from-white/95 to-[#FFF5F8]/95 backdrop-blur-md border border-pink-200/90 shadow-[0_16px_40px_rgba(244,114,182,0.20)] flex flex-col gap-4 z-20">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl select-none">📜</span>
+                  <div>
+                    <h3 className="font-bold text-sm sm:text-base text-[#1E2A78] leading-tight">
+                      Reconocimiento Oficial «Corazón de Ángel»
+                    </h3>
+                    <p className="text-xs text-[#706A95]">
+                      Tu diploma conmemorativo de apadrinamiento de 9 estrellas
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-pink-100 text-pink-800 border border-pink-200 shrink-0">
+                  Oficial ✨
+                </span>
+              </div>
+
+              <SponsorshipCertificateA4 
+                data={{
+                  sponsorName,
+                  petName: shelterPetName || petName,
+                  shelterName,
+                }}
+              />
+            </div>
+          )}
 
           {/* BLOQUE VIRAL POST-COMPRA (F04 & O07) */}
           {!loading && (
