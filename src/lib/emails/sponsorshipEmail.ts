@@ -8,6 +8,7 @@ export interface SponsorshipEmailParams {
   muralUrl: string;
   diplomaUrl: string;
   dateStr?: string;
+  badgeImageUrl?: string;
 }
 
 /**
@@ -24,12 +25,14 @@ export function generateSponsorshipEmailHtml({
   muralUrl,
   diplomaUrl,
   dateStr,
+  badgeImageUrl,
 }: SponsorshipEmailParams): string {
   const cleanDate = dateStr || new Date().toLocaleDateString('es-ES', { 
     day: 'numeric', 
     month: 'long', 
     year: 'numeric' 
   });
+  const badgeImg = badgeImageUrl || 'https://todaslasmascotasvanalcielo.com/images/icons/badge-alas-angel.png';
 
   return `<!DOCTYPE html>
 <html lang="es">
@@ -42,7 +45,7 @@ export function generateSponsorshipEmailHtml({
 
 <!-- Preheader oculto para clientes de correo -->
 <div style="display:none;font-size:1px;color:#e8e0f0;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
-  Has encendido las 9 estrellas perpetuas de ${petName}. 5,00 € van destinados a ${shelterName}. Descarga tu Diploma Oficial Corazón de Ángel.
+  Hola, ${sponsorName || 'Padrino de Corazón'}. Tienes Corazón de perrito, gracias por ser el ángel de la guarda de ${petName}. 5,00 € van destinados a ${shelterName}. Descarga tu Diploma Oficial Corazón de Ángel.
 </div>
 
 <!-- Contenedor Exterior -->
@@ -79,13 +82,14 @@ export function generateSponsorshipEmailHtml({
             </table>
 
             <!-- Saludo personalizado -->
-            <p style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#706A95;margin:0 0 8px 0;">
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#706A95;margin:0 0 10px 0;">
               Hola, <strong style="color:#25335F;">${sponsorName || 'Padrino de Corazón'}</strong>:
             </p>
 
             <!-- Título Principal Emocional -->
-            <h1 style="font-family:Georgia,'Times New Roman',serif;font-size:26px;color:#25335F;line-height:1.3;margin:0 0 16px 0;font-weight:700;">
-              Gracias por ser el ángel<br>de la guarda de ${petName} 🐾
+            <h1 style="font-family:Georgia,'Times New Roman',serif;font-size:26px;color:#25335F;line-height:1.35;margin:0 0 18px 0;font-weight:700;">
+              Tienes Corazón de perrito,<br>
+              gracias por ser el ángel de la guarda de ${petName} 🐾
             </h1>
 
             <!-- Párrafo central -->
@@ -104,37 +108,53 @@ export function generateSponsorshipEmailHtml({
             </p>
             `}
 
-            <!-- 3. LA CINTA NOBLE DEL PADRINO (IDÉNTICA AL MURAL Y TARJETA 2) -->
+            <!-- 3. LA CINTA NOBLE DEL PADRINO (DISEÑO VISOR CORAZÓN GHIBLI) -->
             <table width="100%" cellpadding="0" cellspacing="0" 
-                   style="background:linear-gradient(180deg, #FFE6EB 0%, #FAC8D7 100%);border:1px solid #FFFFFF;border-radius:18px;margin:0 0 28px 0;box-shadow:0 8px 24px rgba(30,10,50,0.06);">
+                   style="background:linear-gradient(180deg, #FFFDFE 0%, #FFF5F8 100%);border:1.5px solid #FBCFE8;border-radius:22px;margin:0 0 28px 0;box-shadow:0 10px 28px rgba(244,114,182,0.16);">
               <tr>
-                <td style="padding:22px 24px;text-align:center;">
-                  <span style="font-size:26px;display:block;margin-bottom:6px;">💖</span>
-                  <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#4A3F6B;font-weight:700;margin:0 0 6px 0;line-height:1.4;">
+                <td align="center" style="padding:26px 24px;text-align:center;">
+                  <!-- Emblema Corazón Ghibli con Alas (Mismo del Visor Corazón Ghibli) -->
+                  <table cellpadding="0" cellspacing="0" style="margin:0 auto 14px auto;">
+                    <tr>
+                      <td align="center" style="background:#FFF0F5;border:1px solid #FBCFE8;border-radius:20px;padding:8px;box-shadow:0 4px 14px rgba(244,114,182,0.20);">
+                        <img src="${badgeImg}" 
+                             alt="Corazón de Ángel · Studio Ghibli" 
+                             width="64" height="64"
+                             style="display:block;width:64px;height:64px;object-fit:contain;border:0;">
+                      </td>
+                    </tr>
+                  </table>
+                  <p style="font-family:Georgia,'Times New Roman',serif;font-size:17px;color:#1E2A78;font-weight:700;margin:0 0 6px 0;line-height:1.45;">
                     «Apadrinado con amor por ${sponsorName}${sponsorPetName ? ` en memoria de su ángel ${sponsorPetName}` : ''} 🐾»
                   </p>
-                  <p style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#7B6F9A;margin:0;">
-                    ${shelterName} · <strong>Constelación de 9 estrellas perpetuas</strong>
+                  <p style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#706A95;margin:0;line-height:1.5;">
+                    ${shelterName} · <strong style="color:#BE185D;">Constelación de 9 estrellas perpetuas</strong>
                   </p>
                 </td>
               </tr>
             </table>
 
-            <!-- 4. BLOQUE DESTACADO DEL DIPLOMA OFICIAL A4 -->
+            <!-- 4. BLOQUE DESTACADO DEL DIPLOMA OFICIAL A4 (DISEÑO VISOR CORAZÓN GHIBLI) -->
             <table width="100%" cellpadding="0" cellspacing="0"
-                   style="background:#FFFDF7;border:1.5px solid #FCD34D;border-radius:18px;margin:0 0 28px 0;box-shadow:0 6px 20px rgba(245,158,11,0.10);">
+                   style="background:linear-gradient(180deg, #FFFDFE 0%, #FFF5F8 100%);border:1.5px solid #FBCFE8;border-radius:22px;margin:0 0 28px 0;box-shadow:0 10px 28px rgba(244,114,182,0.16);">
               <tr>
-                <td style="padding:26px 24px;text-align:center;">
-                  <span style="font-size:32px;display:block;margin-bottom:8px;">📜</span>
-                  <p style="font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#92400E;font-weight:700;margin:0 0 8px 0;">
+                <td align="center" style="padding:28px 24px;text-align:center;">
+                  <table cellpadding="0" cellspacing="0" style="margin:0 auto 12px auto;">
+                    <tr>
+                      <td align="center" style="background:#FFF0F5;border:1px solid #FBCFE8;border-radius:18px;width:44px;height:44px;font-size:22px;line-height:44px;box-shadow:0 4px 12px rgba(244,114,182,0.20);">
+                        📜
+                      </td>
+                    </tr>
+                  </table>
+                  <p style="font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#1E2A78;font-weight:700;margin:0 0 8px 0;">
                     Tu Reconocimiento Oficial «Corazón de Ángel»
                   </p>
-                  <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#78350F;line-height:1.6;margin:0 0 18px 0;">
+                  <p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#706A95;line-height:1.6;margin:0 0 20px 0;">
                     Ya tienes asignado tu diploma de honor con el Sello de las 9 Estrellas y la dedicatoria <em>«Tienes corazón de perrito»</em>. En formato horizontal A4 a 300 DPI, listo para impresión y enmarcado.
                   </p>
                   <a href="${diplomaUrl}" 
                      target="_blank"
-                     style="display:inline-block;background:linear-gradient(135deg, #F472B6 0%, #EC4899 100%);color:#FFFFFF;padding:13px 30px;border-radius:999px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(236,72,153,0.38);letter-spacing:0.3px;">
+                     style="display:inline-block;background:linear-gradient(135deg, #F472B6 0%, #EC4899 100%);border:1px solid rgba(255,255,255,0.45);color:#FFFFFF;padding:13px 32px;border-radius:999px;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(244,114,182,0.45);letter-spacing:0.3px;">
                     Ver y Descargar Diploma Oficial (A4) 📄
                   </a>
                 </td>
