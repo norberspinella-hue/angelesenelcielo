@@ -1536,37 +1536,6 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
             });
           });
 
-          // 3. Añadir angelitos piloto de protectoras (MVP) sólo si no están bloqueados ni ocultados
-          const pilotShelters = [
-            { x: 497, y: 495, pet: DEFAULT_SHELTER_PETS[0] }, // Juliette (3x3 en 497, 495)
-            { x: 518, y: 494, pet: DEFAULT_SHELTER_PETS[1] }, // Rocky (3x3)
-            { x: 498, y: 516, pet: DEFAULT_SHELTER_PETS[2] }, // Galleta (3x3)
-          ];
-
-          pilotShelters.forEach(({ x, y, pet }) => {
-            if (hiddenPetNames.has(pet.name.toLowerCase().trim())) return;
-            if (blockedCoords.has(`${x},${y}`)) return;
-
-            if (!realSlots.has(`${x},${y}`)) {
-              for (let dx = 0; dx < 3; dx++) {
-                for (let dy = 0; dy < 3; dy++) {
-                  if (blockedCoords.has(`${x + dx},${y + dy}`)) continue;
-                  realSlots.set(`${x + dx},${y + dy}`, {
-                    status: 'occupied',
-                    plan_type: 'recuerdo_eterno',
-                    memorial_id: pet.id,
-                    thumbnail_url: pet.photoUrl,
-                    isMainSlot: dx === 0 && dy === 0,
-                    x: x + dx,
-                    y: y + dy,
-                    isShelter: true,
-                    shelterPet: pet,
-                  });
-                }
-              }
-            }
-          });
-
           setRealSlotsMap(realSlots);
         }
       } catch (err) {
