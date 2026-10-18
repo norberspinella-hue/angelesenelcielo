@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
       payment_method_types: ['card'],
       mode: mode,
       line_items: [{ price: priceId, quantity: 1 }],
+      allow_promotion_codes: true,
       success_url: `${process.env.NEXT_PUBLIC_URL}/gracias/{CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_URL}/mural-global`,
       customer_email: email,

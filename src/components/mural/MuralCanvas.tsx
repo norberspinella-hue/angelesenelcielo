@@ -1302,6 +1302,21 @@ function PetProfileCard({
             </div>
 
           </div>
+
+          {/* Enlace directo a la página de memorial completo */}
+          {petData?.profile_slug && (
+            <div className="mt-4 pt-3 border-t border-white/40 w-full flex justify-center">
+              <a
+                href={`/memorial/${petData.profile_slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-full text-xs font-bold text-[#1E2A78] bg-white/90 hover:bg-white border border-pink-300 shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>🕊️ Visitar memorial público de {nombre}</span>
+                <span className="text-pink-600 font-bold">↗</span>
+              </a>
+            </div>
+          )}
         </div>
 
       </div>
