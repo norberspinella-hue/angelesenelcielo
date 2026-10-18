@@ -228,7 +228,7 @@ export async function POST(req: NextRequest) {
         photo_url: photoUrl || '/images/placeholders/first.webp',
         death_date: new Date().toISOString().split('T')[0],
         dedication: storyPreview.trim() || 'Esperando en el cielo con amor eterno.',
-        plan_type: 'corazon_eterno',
+        plan_type: 'recuerdo_eterno',
         slots_count: 9,
         price_paid: 0,
         currency: 'EUR',
@@ -268,7 +268,7 @@ export async function POST(req: NextRequest) {
           y: block.y + dy,
           status: 'occupied',
           memorial_id: memorial.id,
-          plan_type: 'corazon_eterno',
+          plan_type: 'recuerdo_eterno',
           thumbnail_url: thumbnailUrl || photoUrl || '/images/placeholders/first.webp',
         });
       }

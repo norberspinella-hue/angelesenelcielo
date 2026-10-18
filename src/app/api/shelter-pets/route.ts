@@ -29,7 +29,6 @@ export async function GET(req: NextRequest) {
 
     // Filtrar los que pertenecen a protectoras
     const dbShelterMemorials = (memorials || []).filter((m: any) => 
-      m.plan_type === 'corazon_eterno' ||
       m.story_answers?.isShelter === true ||
       Boolean(m.story_answers?.shelterName)
     );
