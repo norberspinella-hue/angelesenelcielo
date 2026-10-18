@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 
 export interface ShelterPet {
@@ -73,6 +74,22 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
   const [dedication, setDedication] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Bloquear el scroll del fondo cuando el drawer está abierto
+  useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
 
   // Cargar angelitos dinámicos desde la base de datos
   useEffect(() => {
@@ -109,7 +126,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
     }
   }, [preSelectedPet]);
 
-  if (!isOpen) return null;
+  if (!mounted || !isOpen || typeof document === 'undefined') return null;
 
   const handleClose = () => {
     setTimeout(() => {
@@ -169,11 +186,11 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[100] pointer-events-none flex justify-end">
+  return createPortal(
+    <div className="fixed inset-0 z-[99999] pointer-events-none flex justify-end">
       {/* Overlay oscuro difuminado detrás del drawer */}
       <div 
-        className="absolute inset-0 bg-[#394B87]/20 backdrop-blur-[2px] pointer-events-auto transition-opacity duration-300" 
+        className="absolute inset-0 bg-[#0B071A]/60 backdrop-blur-sm pointer-events-auto transition-opacity duration-300" 
         onClick={handleClose}
       />
       
@@ -567,6 +584,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

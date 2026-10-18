@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ApadrinarDrawer } from '@/components/solidario/ApadrinarDrawer'
@@ -14,6 +15,21 @@ export function CorazonesDeAngelSection() {
   const [shelterCity, setShelterCity] = useState('')
   const [shelterContact, setShelterContact] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (isShelterModalOpen || isSocialDemoOpen) {
+      const originalOverflow = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = originalOverflow
+      }
+    }
+  }, [isShelterModalOpen, isSocialDemoOpen])
 
   const handleSubmitShelter = (e: React.FormEvent) => {
     e.preventDefault()
@@ -387,7 +403,7 @@ export function CorazonesDeAngelSection() {
       </div>
 
       {/* MODAL 1: REGISTRO DE PROTECTORA PILOTO */}
-      {isShelterModalOpen && (
+      {mounted && isShelterModalOpen && typeof document !== 'undefined' && createPortal(
         <div 
           className="fixed inset-0 z-[99999] flex items-center justify-center p-4"
           style={{ background: 'rgba(15, 10, 30, 0.75)', backdropFilter: 'blur(6px)' }}
@@ -479,11 +495,12 @@ export function CorazonesDeAngelSection() {
               </form>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* MODAL 2: DIPLOMA CONMEMORATIVO OFICIAL A4 */}
-      {isSocialDemoOpen && (
+      {mounted && isSocialDemoOpen && typeof document !== 'undefined' && createPortal(
         <div 
           className="fixed inset-0 z-[99999] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
           onClick={(e) => {
@@ -522,7 +539,8 @@ export function CorazonesDeAngelSection() {
               }}
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* DRAWER DE APADRINAMIENTO SOLIDARIO (9 ESTRELLAS - ESTILO MURAL DRAWER) */}
