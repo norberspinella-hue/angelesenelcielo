@@ -27,7 +27,7 @@ export function Header({ hasTopBanner = false }: { hasTopBanner?: boolean }) {
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-5 lg:gap-8 whitespace-nowrap">
-        <Link href="/#el-mural" className="heaven-nav-link text-sm">El Mural</Link>
+        <Link href="/mural-global" className="heaven-nav-link text-sm">El Mural</Link>
         <Link href="/#como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
         <Link href="/#planes" className="heaven-nav-link text-sm">Opciones</Link>
         <Link 
@@ -81,7 +81,7 @@ export function Header({ hasTopBanner = false }: { hasTopBanner?: boolean }) {
       {isMenuOpen && (
         <div className="absolute top-[calc(100%+10px)] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-[24px] border border-white/80 shadow-[0_16px_40px_rgba(30,42,120,0.18)] p-6 flex flex-col gap-4 items-center md:hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <Link 
-            href="/#el-mural" 
+            href="/mural-global" 
             onClick={() => setIsMenuOpen(false)}
             className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
           >
