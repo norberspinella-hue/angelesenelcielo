@@ -1,9 +1,9 @@
 export const FOUNDER_CONFIG = {
-  maxFounders: 1000,
+  maxFounders: 2000,
   zone: {
-    columns: 34,
-    rows: 30,
-    totalSlots: 1020,
+    columns: 48,
+    rows: 42,
+    totalSlots: 2016,
   },
   glowColor: '#7B4FAF',
 };

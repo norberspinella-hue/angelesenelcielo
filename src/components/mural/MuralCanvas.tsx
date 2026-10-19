@@ -2017,7 +2017,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
         setShowPremiumBadge(true);
       }
 
-      const isPremiumSlot = col >= 483 && col < 517 && row >= 485 && row < 515;
+      const isPremiumSlot = inPremiumZone;
       if (onSelectSlot) {
         onSelectSlot({ col, row, isPremiumSlot });
       }

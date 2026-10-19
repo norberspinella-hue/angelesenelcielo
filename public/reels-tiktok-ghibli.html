@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Reels & TikToks · Visor Corazón Ghibli | Ángeles en el Cielo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Pinyon+Script&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: linear-gradient(135deg, #0D1026 0%, #15193B 50%, #090B1A 100%);
+      color: #F8FAFC;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      padding: 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .header-bar {
+      max-width: 1200px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 18px;
+      border-radius: 9999px;
+      background: rgba(244, 114, 182, 0.15);
+      border: 1px solid rgba(244, 114, 182, 0.4);
+      color: #F472B6;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      color: #FFFDFE;
+      margin-bottom: 8px;
+    }
+    p.subtitle {
+      color: #94A3B8;
+      font-size: 15px;
+      max-width: 750px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* TABS SELECTOR DE REELS */
+    .reels-nav {
+      display: flex;
+      gap: 12px;
+      margin: 24px 0 32px 0;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 1000px;
+    }
+    .reel-tab-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #CBD5E1;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .reel-tab-btn:hover {
+      background: rgba(244, 114, 182, 0.15);
+      border-color: rgba(244, 114, 182, 0.4);
+      color: #FFF;
+    }
+    .reel-tab-btn.active {
+      background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%);
+      border-color: #F472B6;
+      color: #FFF;
+      box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .main-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      max-width: 1400px;
+      width: 100%;
+    }
+
+    .reel-section {
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+    .reel-section.active {
+      display: flex;
+    }
+
+    .reel-info-bar {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 18px 28px;
+      max-width: 900px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .reel-info-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #F472B6;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .reel-info-desc {
+      font-size: 13px;
+      color: #CBD5E1;
+      line-height: 1.6;
+    }
+    .reel-info-audio {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #FBBF24;
+      background: rgba(251, 191, 36, 0.12);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      align-self: flex-start;
+    }
+
+    /* GRILLA DE SLIDES 9:16 */
+    .slides-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 320px));
+      gap: 28px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .slide-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-header-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* TARJETA 9:16 VERTICAL (Escala UI 320x568.8, Exporta a 1080x1920) */
+    .reel-card {
+      width: 320px;
+      height: 569px;
+      border-radius: 36px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 2px rgba(251, 207, 232, 0.4);
+      background: radial-gradient(ellipse at 50% 20%, #FFFDFE 0%, #FFF5F8 45%, #FCE7F3 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 36px 24px;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* ELEMENTOS GHIBLI DECORATIVOS */
+    .ghibli-glow-top {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(244, 114, 182, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .ghibli-sparkles {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(1.5px 1.5px at 20% 30%, rgba(217, 119, 6, 0.6) 100%, transparent),
+        radial-gradient(2px 2px at 80% 25%, rgba(236, 72, 153, 0.5) 100%, transparent),
+        radial-gradient(1.5px 1.5px at 70% 65%, rgba(217, 119, 6, 0.6) 100%, transparent),
+        radial-gradient(2px 2px at 30% 75%, rgba(236, 72, 153, 0.4) 100%, transparent);
+      pointer-events: none;
+    }
+
+    /* TOP BAR SLIDE */
+    .slide-top-brand {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .slide-brand-logo {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+    .slide-brand-text {
+      font-size: 11px;
+      font-weight: 800;
+      color: #1E2A78;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* CONTENIDO CENTRAL */
+    .slide-main-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin: auto 0;
+    }
+
+    .emblem-wings-heart {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 20px rgba(244, 114, 182, 0.45));
+      animation: floatSlow 4s ease-in-out infinite;
+    }
+
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-6px) scale(1.03); }
+    }
+
+    .slide-title-primary {
+      font-family: 'Playfair Display', serif;
+      font-size: 23px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: #1E2A78;
+      max-width: 270px;
+    }
+    .slide-title-primary .highlight {
+      background: linear-gradient(135deg, #EC4899 0%, #BE185D 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-pinyon {
+      font-family: 'Pinyon Script', cursive;
+      font-size: 26px;
+      color: #C9A961;
+      margin-top: -8px;
+    }
+
+    .slide-desc {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.55;
+      color: #4A3F6B;
+      max-width: 260px;
+    }
+
+    /* TARJETA INTERNA GHIBLI (MOCKUP VISOR CORAZÓN) */
+    .visor-card-mockup {
+      background: #FFFFFF;
+      border: 2px solid #FBCFE8;
+      border-radius: 24px;
+      padding: 16px 14px;
+      width: 100%;
+      max-width: 260px;
+      box-shadow: 0 12px 30px -8px rgba(244, 114, 182, 0.25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+    .visor-photo-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 9999px;
+      border: 3px solid #FBCFE8;
+      overflow: hidden;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .visor-photo-circle img {
+      width: 100%;
+      height: 100%;
+      object-cover: cover;
+    }
+    .visor-pet-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 900;
+      color: #1E2A78;
+    }
+    .visor-pet-dedication {
+      font-size: 11px;
+      font-style: italic;
+      color: #64748B;
+      line-height: 1.45;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .visor-stars-pill {
+      background: #FFF5F8;
+      border: 1px solid #FBCFE8;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #BE185D;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* FOOTER SLIDE */
+    .slide-footer-cta {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .slide-btn-cta {
+      padding: 9px 22px;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 6px 18px rgba(236, 72, 153, 0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .slide-url {
+      font-size: 10px;
+      font-weight: 700;
+      color: #706A95;
+      letter-spacing: 0.5px;
+    }
+
+    /* BOTONES DE DESCARGA */
+    .download-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #F8FAFC;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .download-btn:hover {
+      background: #EC4899;
+      border-color: #EC4899;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+    }
+
+    .batch-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .download-batch-btn {
+      background: linear-gradient(135deg, #F472B6 0%, #EC4899 100%);
+      border: none;
+      color: #FFFFFF;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(236, 72, 153, 0.4);
+    }
+    .download-batch-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(236, 72, 153, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header-bar">
+    <div class="badge-top">
+      <span>🎬</span> Studio de Contenidos TikTok & Reels 9:16
+    </div>
+    <h1>Generador de Reels · Visor Corazón Ghibli</h1>
+    <p class="subtitle">
+      Plantillas verticales de alta conversión visual (1080x1920) diseñadas con la paleta suave del 
+      <strong>Visor Corazón Ghibli</strong>, alas angélicas, insignias doradas e iconos oficiales. 
+      Descarga en 1 clic y súbelas con tu música favorita a TikTok e Instagram.
+    </p>
+
+    <!-- SELECTOR DE REELS -->
+    <nav class="reels-nav">
+      <button class="reel-tab-btn active" onclick="switchReel('reel1')">
+        🕊️ Reel 1: ¿A dónde van?
+      </button>
+      <button class="reel-tab-btn" onclick="switchReel('reel2')">
+        🕯️ Reel 2: 27 de Octubre
+      </button>
+      <button class="reel-tab-btn" onclick="switchReel('reel3')">
+        🌟 Reel 3: Un millón de Ángeles
+      </button>
+      <button class="reel-tab-btn" onclick="switchReel('reel4')">
+        💖 Reel 4: Corazones de Ángel (Protectoras)
+      </button>
+    </nav>
+  </header>
+
+  <main class="main-layout">
+
+    <!-- ========================================== -->
+    <!-- REEL 1: ¿A DÓNDE VAN CUANDO SE APAGAN SUS OJITOS? -->
+    <!-- ========================================== -->
+    <section id="reel1" class="reel-section active">
+      <div class="reel-info-bar">
+        <div class="reel-info-title">
+          <span>🎬 Reel 1 · Gancho Emocional Máximo: «¿A dónde van cuando se apagan sus ojitos?»</span>
+        </div>
+        <div class="reel-info-desc">
+          <strong>Estructura:</strong> Slide 1 (Pregunta que conecta con el dolor del duelo) ➔ Slide 2 (La promesa del cielo infinito) ➔ Slide 3 (El memorial individual en el Visor Ghibli) ➔ Slide 4 (Llamada para este 27 de octubre).
+        </div>
+        <div class="reel-info-audio">
+          🎵 <strong>Audio viral sugerido:</strong> FKJ - Ylang Ylang / Married Life (Up) versión piano lento.
+        </div>
+      </div>
+
+      <div class="slides-grid">
+        <!-- R1 - SLIDE 1 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">1. El Gancho</div>
+          <div id="r1_s1" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/logo-angeles-en-el-cielo.png" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Ángeles en el Cielo</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/corazon-de-angel.png" class="emblem-wings-heart" alt="Corazón Ghibli">
+              <h2 class="slide-title-primary">
+                ¿A dónde van cuando se apagan <span class="highlight">sus ojitos?</span>
+              </h2>
+              <div class="slide-pinyon">Un amor que nunca termina</div>
+              <p class="slide-desc">
+                Hay almas que nos dieron todo sin pedir nada a cambio. Su viaje no termina aquí...
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Desliza para ver ✨</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r1_s1', 'Reel1_Slide1_Gancho')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R1 - SLIDE 2 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">2. La Revelación</div>
+          <div id="r1_s2" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/Badgefundadores.svg" class="slide-brand-logo" alt="Badge">
+              <span class="slide-brand-text">Mural Global de las Estrellas</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/plans/icon-plan-eterno.svg" style="width: 72px; height: 72px;" alt="Estrella">
+              <h2 class="slide-title-primary">
+                Creamos un cielo de <span class="highlight">1.000.000 de estrellas</span>
+              </h2>
+              <p class="slide-desc">
+                Un santuario digital interactivo donde cada perrito y gatito tiene su luz perpetua visible desde cualquier rincón del mundo.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Encuentra su estrella 🌟</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r1_s2', 'Reel1_Slide2_Mural')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R1 - SLIDE 3 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">3. El Visor Corazón Ghibli</div>
+          <div id="r1_s3" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/logo-angeles-en-el-cielo.png" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Recuerdo Eterno</span>
+            </div>
+            <div class="slide-main-content">
+              <div class="visor-card-mockup">
+                <div class="visor-photo-circle">
+                  <img src="https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/juliette_1791706558194.jpg" alt="Juliette">
+                </div>
+                <div class="visor-pet-name">Juliette 🕊️</div>
+                <div class="visor-stars-pill">⭐ 9 Estrellas Perpetuas</div>
+                <div class="visor-pet-dedication">
+                  "Me cambiaste como nadie lo ha hecho en toda mi vida. Contigo aprendí a ser buena persona... Te amo mi niña."
+                </div>
+              </div>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Guarda sus recuerdos 💖</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r1_s3', 'Reel1_Slide3_VisorGhibli')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R1 - SLIDE 4 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">4. Llamada a la Acción</div>
+          <div id="r1_s4" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/Badgefundadores.svg" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Ángeles en el Cielo</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/corazon-de-angel.png" class="emblem-wings-heart" alt="Alas">
+              <h2 class="slide-title-primary">
+                Enciende su estrella para este <span class="highlight">27 de Octubre</span>
+              </h2>
+              <div class="slide-pinyon">Un millón Ángeles, un solo cielo</div>
+              <p class="slide-desc">
+                Las primeras estrellas brillarán en el centro como Ángeles Fundadores. Inmortaliza su recuerdo hoy.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Enlace en la biografía 🐾</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r1_s4', 'Reel1_Slide4_CTA')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+      </div>
+
+      <div class="batch-actions">
+        <button class="download-batch-btn" onclick="downloadBatch(['r1_s1', 'r1_s2', 'r1_s3', 'r1_s4'], 'Reel_1_Donde_Van')">
+          📦 Descargar Reel 1 Completo (4 Diapositivas HD)
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- REEL 2: 27 DE OCTUBRE (DÍA DE LOS MUERTOS DE MASCOTAS) -->
+    <!-- ========================================== -->
+    <section id="reel2" class="reel-section">
+      <div class="reel-info-bar">
+        <div class="reel-info-title">
+          <span>🕯️ Reel 2 · Conexión Cultural: «La Noche del 27 de Octubre»</span>
+        </div>
+        <div class="reel-info-desc">
+          <strong>Estructura:</strong> Slide 1 (La tradición del 27 de octubre) ➔ Slide 2 (El regreso por el Puente del Arcoíris) ➔ Slide 3 (Cómo prepararte: vela, agua y su estrella) ➔ Slide 4 (Pregunta viral para comentarios: ¿Cómo se llamaba tu peludo?).
+        </div>
+        <div class="reel-info-audio">
+          🎵 <strong>Audio viral sugerido:</strong> Ludovico Einaudi - Experience / Jacob's Piano - In the Sky.
+        </div>
+      </div>
+
+      <div class="slides-grid">
+        <!-- R2 - SLIDE 1 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">1. El Momento</div>
+          <div id="r2_s1" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/logo-angeles-en-el-cielo.png" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Tradición Celestial</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/corazon-de-angel.png" class="emblem-wings-heart" alt="Alas">
+              <h2 class="slide-title-primary">
+                Por qué el <span class="highlight">27 de Octubre</span> es tan especial
+              </h2>
+              <div class="slide-pinyon">La noche de las almas fieles</div>
+              <p class="slide-desc">
+                Si alguna vez perdiste a un perrito o gatito, esta es la fecha más hermosa y emotiva del año.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Descubre el porqué 🕊️</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r2_s1', 'Reel2_Slide1_Tradicion')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R2 - SLIDE 2 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">2. La Historia</div>
+          <div id="r2_s2" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/plans/pawrosa.svg" class="slide-brand-logo" alt="Paw">
+              <span class="slide-brand-text">El Puente del Arcoíris</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/plans/icon-plan-eterno.svg" style="width: 70px; height: 70px;" alt="Luz">
+              <h2 class="slide-title-primary">
+                Esa noche cruzan para <span class="highlight">visitarnos en casa</span>
+              </h2>
+              <p class="slide-desc">
+                La tradición cuenta que vuelven para comprobar que no los hemos olvidado, beber de su platito de agua y sentir nuestro calor.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Guía su regreso ✨</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r2_s2', 'Reel2_Slide2_Puente')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R2 - SLIDE 3 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">3. Cómo prepararte</div>
+          <div id="r2_s3" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/logo-angeles-en-el-cielo.png" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Homenaje Vivo</span>
+            </div>
+            <div class="slide-main-content">
+              <div class="visor-card-mockup">
+                <div style="font-size: 30px;">🕯️🐾✨</div>
+                <div class="visor-pet-name">3 Gestos de Amor</div>
+                <div class="visor-pet-dedication" style="-webkit-line-clamp: 5; text-align: left; font-style: normal;">
+                  1. Pon un cuenco con agua limpia.<br>
+                  2. Enciende una pequeña vela blanca.<br>
+                  3. Enciende su estrella en el Mural de Ángeles para guiar su camino a casa.
+                </div>
+              </div>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Enciende su estrella 🌟</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r2_s3', 'Reel2_Slide3_Preparate')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R2 - SLIDE 4 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">4. Disparador Viral</div>
+          <div id="r2_s4" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/Badgefundadores.svg" class="slide-brand-logo" alt="Badge">
+              <span class="slide-brand-text">Comunidad de Amor</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/corazon-de-angel.png" class="emblem-wings-heart" alt="Alas">
+              <h2 class="slide-title-primary">
+                ¿Cómo se llamaba tu <span class="highlight">angelito?</span>
+              </h2>
+              <div class="slide-pinyon">Déjanos su nombre</div>
+              <p class="slide-desc">
+                Escríbelo en comentarios para encender una vela por él y recordarlo juntos esta noche. 🤍
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Comenta abajo 👇💬</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r2_s4', 'Reel2_Slide4_Comentarios')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+      </div>
+
+      <div class="batch-actions">
+        <button class="download-batch-btn" onclick="downloadBatch(['r2_s1', 'r2_s2', 'r2_s3', 'r2_s4'], 'Reel_2_Tradicion_27_Octubre')">
+          📦 Descargar Reel 2 Completo (4 Diapositivas HD)
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- REEL 3: UN MILLÓN DE ÁNGELES, UN SOLO CIELO -->
+    <!-- ========================================== -->
+    <section id="reel3" class="reel-section">
+      <div class="reel-info-bar">
+        <div class="reel-info-title">
+          <span>🌟 Reel 3 · Manifiesto de Marca: «Un millón de Ángeles, un solo Cielo»</span>
+        </div>
+        <div class="reel-info-desc">
+          <strong>Estructura:</strong> Slide 1 (El lema de marca) ➔ Slide 2 (La zona de Ángeles Fundadores duplicada) ➔ Slide 3 (La tarjeta 3D y el Diploma para enmarcar) ➔ Slide 4 (Inmortalización).
+        </div>
+        <div class="reel-info-audio">
+          🎵 <strong>Audio viral sugerido:</strong> The Cinematic Orchestra - Arrival of the Birds / Piano celestial.
+        </div>
+      </div>
+
+      <div class="slides-grid">
+        <!-- R3 - SLIDE 1 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">1. El Manifiesto</div>
+          <div id="r3_s1" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/logo-angeles-en-el-cielo.png" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Ángeles en el Cielo</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/corazon-de-angel.png" class="emblem-wings-heart" alt="Alas">
+              <h2 class="slide-title-primary">
+                Un millón Ángeles, <span class="highlight">un solo cielo.</span>
+              </h2>
+              <div class="slide-pinyon">Santuario de Recuerdo Eterno</div>
+              <p class="slide-desc">
+                No hay despedida para aquellos que viven por siempre en nuestro corazón.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Visita el Mural 🌌</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r3_s1', 'Reel3_Slide1_Lema')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R3 - SLIDE 2 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">2. Ángeles Fundadores</div>
+          <div id="r3_s2" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/Badgefundadores.svg" class="slide-brand-logo" alt="Badge">
+              <span class="slide-brand-text">Zona de Honor Premium</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/Badgefundadores.svg" style="width: 76px; height: 76px;" alt="Fundadores">
+              <h2 class="slide-title-primary">
+                Las primeras estrellas serán <span class="highlight">Fundadoras</span>
+              </h2>
+              <p class="slide-desc">
+                Ubicadas en el centro resplandeciente del cielo, protegidas por mariposas doradas e insignias conmemorativas perpetuas.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Reserva en el centro ⭐</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r3_s2', 'Reel3_Slide2_Fundadores')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R3 - SLIDE 3 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">3. Certificado y Tarjeta</div>
+          <div id="r3_s3" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/logo-angeles-en-el-cielo.png" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Edición de Colección</span>
+            </div>
+            <div class="slide-main-content">
+              <div class="visor-card-mockup">
+                <div style="font-size: 26px;">📜✨🖼️</div>
+                <div class="visor-pet-name">Diploma Oficial</div>
+                <div class="visor-stars-pill">Sello Solidario de Oro</div>
+                <div class="visor-pet-dedication">
+                  Diploma A4 en papel texturado con coordenadas exactas en el cielo, listo para imprimir y enmarcar en casa.
+                </div>
+              </div>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Tu recuerdo enmarcado 🤍</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r3_s3', 'Reel3_Slide3_Diploma')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R3 - SLIDE 4 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">4. Cierre</div>
+          <div id="r3_s4" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/logo-angeles-en-el-cielo.png" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Inauguración Oficial</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/corazon-de-angel.png" class="emblem-wings-heart" alt="Alas">
+              <h2 class="slide-title-primary">
+                Un rincón que nunca se pierde en la galería
+              </h2>
+              <div class="slide-pinyon">Siempre a un toque de tus dedos</div>
+              <p class="slide-desc">
+                Entra hoy a la web y dale el homenaje que su lealtad merece.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Visitar ahora 🐾</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r3_s4', 'Reel3_Slide4_Cierre')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+      </div>
+
+      <div class="batch-actions">
+        <button class="download-batch-btn" onclick="downloadBatch(['r3_s1', 'r3_s2', 'r3_s3', 'r3_s4'], 'Reel_3_Un_Millon_Angeles')">
+          📦 Descargar Reel 3 Completo (4 Diapositivas HD)
+        </button>
+      </div>
+    </section>
+
+
+    <!-- ========================================== -->
+    <!-- REEL 4: CORAZONES DE ÁNGEL (PROTECTORAS) -->
+    <!-- ========================================== -->
+    <section id="reel4" class="reel-section">
+      <div class="reel-info-bar">
+        <div class="reel-info-title">
+          <span>💖 Reel 4 · Causa Solidaria: «Corazones de Ángel (Protectoras)»</span>
+        </div>
+        <div class="reel-info-desc">
+          <strong>Estructura:</strong> Slide 1 (Animales que partieron sin hogar) ➔ Slide 2 (50% de donación directa a refugios) ➔ Slide 3 (Ficha solidaria de Vaiana) ➔ Slide 4 (Tienes corazón de perrito).
+        </div>
+        <div class="reel-info-audio">
+          🎵 <strong>Audio viral sugerido:</strong> Coldplay - Sparks / A gentle acoustic guitar melody.
+        </div>
+      </div>
+
+      <div class="slides-grid">
+        <!-- R4 - SLIDE 1 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">1. La Causa</div>
+          <div id="r4_s1" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/logo-angeles-en-el-cielo.png" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Causa Solidaria</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/corazon-de-angel.png" class="emblem-wings-heart" alt="Alas">
+              <h2 class="slide-title-primary">
+                El amor por tu mascota puede <span class="highlight">salvar otra vida</span>
+              </h2>
+              <div class="slide-pinyon">Corazones de Ángel</div>
+              <p class="slide-desc">
+                Muchos animales partieron en refugios esperando una familia. Hoy nosotros somos su hogar.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Conoce el proyecto 🐾</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r4_s1', 'Reel4_Slide1_Causa')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R4 - SLIDE 2 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">2. La Donación</div>
+          <div id="r4_s2" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/plans/pawrosa.svg" class="slide-brand-logo" alt="Paw">
+              <span class="slide-brand-text">Impacto Real</span>
+            </div>
+            <div class="slide-main-content">
+              <div style="font-size: 42px;">💖🤝🐶</div>
+              <h2 class="slide-title-primary">
+                El 50% va directo a <span class="highlight">refugios de animales</span>
+              </h2>
+              <p class="slide-desc">
+                Pienso, veterinarios y rescates para aquellos peludos que hoy siguen esperando una segunda oportunidad en la tierra.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">50% Donación Solidaria 🥣</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r4_s2', 'Reel4_Slide2_Donacion')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R4 - SLIDE 3 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">3. Angelito de Protectora</div>
+          <div id="r4_s3" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/logo-angeles-en-el-cielo.png" class="slide-brand-logo" alt="Logo">
+              <span class="slide-brand-text">Refugio Nueva Vida</span>
+            </div>
+            <div class="slide-main-content">
+              <div class="visor-card-mockup">
+                <div class="visor-photo-circle">
+                  <img src="https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/shelter_1792348293948.jpg" alt="Vaiana">
+                </div>
+                <div class="visor-pet-name">Vaiana 🐾</div>
+                <div class="visor-stars-pill">💖 Refugio Nueva Vida</div>
+                <div class="visor-pet-dedication">
+                  "Noble compañera de mirada dulce que cruzó el arcoíris arropada por su familia de acogida en Valencia."
+                </div>
+              </div>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Apadrina sus estrellas ⭐</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r4_s3', 'Reel4_Slide3_Vaiana')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+
+        <!-- R4 - SLIDE 4 -->
+        <div class="slide-wrapper">
+          <div class="slide-header-label">4. El Reconocimiento</div>
+          <div id="r4_s4" class="reel-card">
+            <div class="ghibli-glow-top"></div>
+            <div class="ghibli-sparkles"></div>
+            <div class="slide-top-brand">
+              <img src="/images/icons/Badgefundadores.svg" class="slide-brand-logo" alt="Badge">
+              <span class="slide-brand-text">Corazón de Ángel</span>
+            </div>
+            <div class="slide-main-content">
+              <img src="/images/icons/corazon-de-angel.png" class="emblem-wings-heart" alt="Alas">
+              <h2 class="slide-title-primary">
+                Tienes corazón <span class="highlight">de perrito.</span>
+              </h2>
+              <div class="slide-pinyon">Gracias por no mirar hacia otro lado</div>
+              <p class="slide-desc">
+                Honra la memoria de tu compañero siendo luz y esperanza para los que aún esperan.
+              </p>
+            </div>
+            <div class="slide-footer-cta">
+              <div class="slide-btn-cta">Únete a la causa 🤍</div>
+              <span class="slide-url">Todaslasmascotasvanalcielo.com</span>
+            </div>
+          </div>
+          <button class="download-btn" onclick="downloadCard('r4_s4', 'Reel4_Slide4_Reconocimiento')">
+            ⬇ Descargar HD
+          </button>
+        </div>
+      </div>
+
+      <div class="batch-actions">
+        <button class="download-batch-btn" onclick="downloadBatch(['r4_s1', 'r4_s2', 'r4_s3', 'r4_s4'], 'Reel_4_Protectoras_Solidario')">
+          📦 Descargar Reel 4 Completo (4 Diapositivas HD)
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    function switchReel(reelId) {
+      document.querySelectorAll('.reel-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.reel-tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      const targetSec = document.getElementById(reelId);
+      if (targetSec) targetSec.classList.add('active');
+
+      const tabs = document.querySelectorAll('.reel-tab-btn');
+      if (reelId === 'reel1') tabs[0].classList.add('active');
+      if (reelId === 'reel2') tabs[1].classList.add('active');
+      if (reelId === 'reel3') tabs[2].classList.add('active');
+      if (reelId === 'reel4') tabs[3].classList.add('active');
+    }
+
+    async function downloadCard(elementId, filename) {
+      const card = document.getElementById(elementId);
+      if (!card) return;
+
+      try {
+        // html2canvas con scale 3.375 para exportar 320x569 a 1080x1920 nativo HD
+        const canvas = await html2canvas(card, {
+          scale: 3.375,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null,
+          logging: false
+        });
+
+        const link = document.createElement('a');
+        link.download = `${filename}_1080x1920.png`;
+        link.href = canvas.toDataURL('image/png', 1.0);
+        link.click();
+      } catch (err) {
+        console.error('Error generando imagen:', err);
+        alert('Hubo un error al generar la imagen. Inténtalo de nuevo.');
+      }
+    }
+
+    async function downloadBatch(elementIds, batchName) {
+      for (let i = 0; i < elementIds.length; i++) {
+        await downloadCard(elementIds[i], `${batchName}_Slide_${i + 1}`);
+        await new Promise(r => setTimeout(r, 600)); // pausa entre descargas
+      }
+    }
+  </script>
+</body>
+</html>
