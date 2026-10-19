@@ -86,7 +86,7 @@ export function MuralPreview() {
           <h3 className="text-[#1E2A78] font-bold text-lg sm:text-xl mb-4 sm:mb-6 flex items-center gap-1.5 sm:gap-2 flex-wrap">
             <span>Fundadores <span className="text-[#C9A961] text-base">★</span></span>
             <span className="text-[#706A95] text-xs sm:text-[15px] font-normal">
-              (1000 primeros ángeles de 4 patas)
+              (2.000 primeros ángeles de 4 patas)
             </span>
           </h3>
           <div className="grid grid-cols-4 gap-2 sm:gap-4">
@@ -124,7 +124,7 @@ export function MuralPreview() {
               ))
             ) : (
               <p style={{ fontSize: 12, color: '#706A95', fontFamily: 'sans-serif', gridColumn: 'span 4' }}>
-                Conviértete en uno de los 1000 Ángeles Fundadores ⭐
+                Conviértete en uno de los 2.000 Ángeles Fundadores ⭐
               </p>
             )}
           </div>

@@ -42,10 +42,10 @@ export default function AngelesEnElCieloLanding() {
           {/* Sección Banner Ángeles Fundadores */}
           <section className="w-full pt-16 pb-6 text-center">
             <div className="mx-auto w-[min(1120px,calc(100%-32px))] mb-8">
-              <h2 className="section-title">Se uno de los primeros 1000 Ángelitos en el Cielo</h2>
+              <h2 className="section-title">Sé uno de los primeros 2.000 Ángeles Fundadores en el Cielo</h2>
               <div className="text-[#706A95] space-y-1.5 max-w-2xl mx-auto mt-4 section-subtitle">
                 <p>Tu peque siempre estará en el centro del mural, siempre será visible.</p>
-                <p>Además recibirás el certificado de Ángelito Fundador.</p>
+                <p>Además recibirás el certificado oficial de Ángel Fundador.</p>
               </div>
             </div>
 
@@ -64,7 +64,7 @@ export default function AngelesEnElCieloLanding() {
             </a>
 
             <p className="font-semibold text-[#1E2A78] mt-6 text-sm md:text-base">
-              Elige la opción de Corazón Eterno y el espacio en zona Ángeles Fundadores.
+              Elige la opción de Corazón Eterno (o cualquiera de los planes superiores) y tu espacio en la zona central de Ángeles Fundadores.
             </p>
           </section>
 
