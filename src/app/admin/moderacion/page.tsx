@@ -62,6 +62,7 @@ export default function AdminModeracionPage() {
   const [editingItem, setEditingItem] = useState<MemorialItem | null>(null);
   const [editDedication, setEditDedication] = useState<string>('');
   const [editPetName, setEditPetName] = useState<string>('');
+  const [editSocialHandle, setEditSocialHandle] = useState<string>('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   // Verificar PIN guardado
@@ -172,11 +173,12 @@ export default function AdminModeracionPage() {
     }
   };
 
-  // Guardar edición rápida de dedicatoria / nombre
+  // Guardar edición rápida de dedicatoria / nombre / usuario redes
   const handleSaveEdit = async () => {
     if (!editingItem) return;
     try {
       setUpdatingId(editingItem.id);
+      const cleanHandle = editSocialHandle.replace(/^@/, '').trim();
       const res = await fetch('/api/admin/moderacion', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -184,6 +186,7 @@ export default function AdminModeracionPage() {
           id: editingItem.id,
           pet_name: editPetName.trim(),
           dedication: editDedication.trim(),
+          socialHandle: cleanHandle,
         }),
       });
 
@@ -192,7 +195,15 @@ export default function AdminModeracionPage() {
         setMemorials((prev) =>
           prev.map((m) =>
             m.id === editingItem.id
-              ? { ...m, pet_name: editPetName.trim(), dedication: editDedication.trim() }
+              ? { 
+                  ...m, 
+                  pet_name: editPetName.trim(), 
+                  dedication: editDedication.trim(),
+                  story_answers: {
+                    ...(m.story_answers || {}),
+                    socialHandle: cleanHandle,
+                  }
+                }
               : m
           )
         );
@@ -489,10 +500,11 @@ export default function AdminModeracionPage() {
                         setEditingItem(item);
                         setEditPetName(item.pet_name);
                         setEditDedication(item.dedication || '');
+                        setEditSocialHandle(item.story_answers?.socialHandle ? item.story_answers.socialHandle.replace(/^@/, '') : '');
                       }}
                       className="text-[10px] font-bold text-[#EC4899] hover:underline mt-1 block not-italic"
                     >
-                      ✏️ Editar texto
+                      ✏️ Editar datos
                     </button>
                   </div>
 
@@ -612,6 +624,22 @@ export default function AdminModeracionPage() {
                 onChange={(e) => setEditDedication(e.target.value)}
                 className="w-full p-3 rounded-xl border border-pink-200 focus:border-[#EC4899] outline-hidden text-xs sm:text-sm text-slate-800"
               />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-[#706A95] block mb-1">
+                Usuario Instagram / TikTok <span className="text-gray-400 font-normal">(opcional)</span>
+              </label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">@</span>
+                <input
+                  type="text"
+                  placeholder="usuario_redes"
+                  value={editSocialHandle}
+                  onChange={(e) => setEditSocialHandle(e.target.value.replace(/^@/, '').trim())}
+                  className="w-full pl-8 pr-3.5 py-2.5 rounded-xl border border-pink-200 focus:border-[#EC4899] outline-hidden text-sm font-semibold text-[#1E2A78]"
+                />
+              </div>
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-2">

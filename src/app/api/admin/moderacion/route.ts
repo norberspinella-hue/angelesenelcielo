@@ -92,7 +92,7 @@ export async function PATCH(req: NextRequest) {
     const supabase = createAdminClient();
     const body = await req.json();
 
-    const { id, visibility, moderation_status, dedication, pet_name } = body;
+    const { id, visibility, moderation_status, dedication, pet_name, socialHandle } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'El ID del memorial es obligatorio' }, { status: 400 });
@@ -117,6 +117,19 @@ export async function PATCH(req: NextRequest) {
     if (dbModeration !== undefined) updatePayload.moderation_status = dbModeration;
     if (dedication !== undefined) updatePayload.dedication = dedication;
     if (pet_name !== undefined) updatePayload.pet_name = pet_name;
+
+    if (socialHandle !== undefined) {
+      const { data: current } = await (supabase
+        .from('memorials') as any)
+        .select('story_answers')
+        .eq('id', id)
+        .single();
+      const currentStoryAnswers = current?.story_answers || {};
+      updatePayload.story_answers = {
+        ...currentStoryAnswers,
+        socialHandle: socialHandle ? socialHandle.replace(/^@/, '').trim() : '',
+      };
+    }
 
     // 1. Actualizar la tabla memorials
     const { data: updated, error } = await (supabase
