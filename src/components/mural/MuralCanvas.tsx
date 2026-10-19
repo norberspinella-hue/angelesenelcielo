@@ -955,6 +955,29 @@ function PetProfileCard({
                 {petData?.dedication || 'Sin dedicatoria'}
               </div>
 
+              {/* Usuario de redes sociales si fue proporcionado */}
+              {petData?.story_answers?.socialHandle && (
+                <div 
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '5px',
+                    margin: '6px 0 2px',
+                    padding: '2px 10px',
+                    borderRadius: 999,
+                    background: 'rgba(255, 255, 255, 0.75)',
+                    border: '1px solid rgba(244, 114, 182, 0.4)',
+                    boxShadow: '0 2px 6px rgba(100, 70, 150, 0.08)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <span style={{ fontSize: '11px', color: '#BE185D', fontWeight: 600, fontFamily: 'sans-serif' }}>
+                    @{petData.story_answers.socialHandle.replace(/^@/, '')}
+                  </span>
+                </div>
+              )}
+
               {/* Texto Siempre en nuestro corazón */}
               <p style={{
                 fontSize: 11.5,

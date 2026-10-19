@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       location, 
       dedication, 
       shareOnSocials,
+      socialHandle,
       isSponsorship,
       sponsorName,
       sponsorPetName,
@@ -191,6 +192,7 @@ export async function POST(req: NextRequest) {
             sponsoredPetId,
             sponsoredAt: new Date().toISOString(),
             starsCount: 9,
+            socialHandle: socialHandle ? socialHandle.replace(/^@/, '').trim() : (existingShelter.story_answers?.socialHandle || ''),
           };
 
           const { data: updated, error: updateErr } = await (supabase.from('memorials') as any)
@@ -254,7 +256,11 @@ export async function POST(req: NextRequest) {
               sponsoredPetId: sponsoredPetId || '',
               sponsoredAt: new Date().toISOString(),
               starsCount: 9,
-            } : {},
+              socialHandle: socialHandle ? socialHandle.replace(/^@/, '').trim() : '',
+            } : {
+              socialHandle: socialHandle ? socialHandle.replace(/^@/, '').trim() : '',
+              shareOnSocials: isShareOnSocialsAllowed,
+            },
           })
           .select()
           .single();

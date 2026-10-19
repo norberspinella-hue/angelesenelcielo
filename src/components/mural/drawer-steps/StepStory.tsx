@@ -96,6 +96,26 @@ export function StepStory({ onNext, onBack, draftData, setDraftData }: StepStory
             />
           </div>
 
+          {/* Campo opcional: Usuario de Instagram o TikTok */}
+          <div className="mt-1">
+            <label className="block text-xs font-bold text-[#1E2A78] mb-1">
+              Tu usuario de Instagram o TikTok <span className="text-[#9B8FB0] font-normal">(opcional)</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#9B8FB0] font-semibold">@</span>
+              <input 
+                type="text"
+                placeholder="tu_usuario"
+                value={draftData.socialHandle || ''}
+                onChange={(e) => setDraftData({ ...draftData, socialHandle: e.target.value.replace(/^@/, '').trim() })}
+                className="w-full border border-gray-200 rounded-lg pl-8 pr-4 py-2 text-sm text-[#1E2A78] focus:border-[#C9A961] focus:ring-1 focus:ring-[#C9A961] outline-none"
+              />
+            </div>
+            <p className="text-[11px] text-[#9B8FB0] mt-1 leading-snug">
+              Para poder mencionarte y etiquetarte si compartimos el homenaje de tu angelito en nuestras redes sociales 🐾
+            </p>
+          </div>
+
           {/* Casilla obligatoria: Derechos y políticas */}
           <label className="flex items-start gap-2.5 cursor-pointer mt-4 bg-gray-50 p-3 rounded-xl border border-gray-200 hover:border-gray-300 transition-colors">
             <input 

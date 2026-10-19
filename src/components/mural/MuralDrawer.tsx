@@ -25,7 +25,8 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounder
     species: 'perro',
     breed: '',
     birthDate: '',
-    location: ''
+    location: '',
+    socialHandle: ''
   });
 
   if (!isOpen) return null;
@@ -47,7 +48,8 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounder
         species: 'perro',
         breed: '',
         birthDate: '',
-        location: ''
+        location: '',
+        socialHandle: ''
       });
     }, 300);
     onClose();

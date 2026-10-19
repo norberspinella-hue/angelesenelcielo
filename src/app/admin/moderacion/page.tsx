@@ -26,6 +26,8 @@ interface MemorialItem {
     isSponsored?: boolean;
     sponsorName?: string;
     sponsorPetName?: string;
+    socialHandle?: string;
+    [key: string]: any;
   };
 }
 
@@ -462,6 +464,11 @@ export default function AdminModeracionPage() {
                         {item.slot_assigned && (
                           <span className="text-[10px] text-gray-400 font-mono">
                             Slot ({item.slot_assigned})
+                          </span>
+                        )}
+                        {item.story_answers?.socialHandle && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-[#7C3AED] border border-purple-200">
+                            📱 @{item.story_answers.socialHandle.replace(/^@/, '')}
                           </span>
                         )}
                       </div>
