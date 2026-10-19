@@ -18,7 +18,7 @@ export async function GET() {
     .from('memorials') as any)
     .select('id', { count: 'exact', head: true })
     .eq('payment_status', 'paid')
-    .eq('plan_type', 'recuerdo_eterno')
+    .in('plan_type', ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'])
 
   const total = 1000000
   const free = total - (occupied || 0)

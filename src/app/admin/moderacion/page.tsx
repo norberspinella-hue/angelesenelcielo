@@ -451,7 +451,12 @@ export default function AdminModeracionPage() {
                           </span>
                         ) : (
                           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
-                            {item.plan_type === 'recuerdo_eterno' ? '⭐ 9 estrellas' : item.plan_type === 'estrella_anual' ? '⭐ 4 estrellas' : '⭐ 1 estrella'}
+                            {item.plan_type === 'vinculo_infinito' ? '♾️ 36 estrellas (6x6)' :
+                             item.plan_type === 'galaxia_amor' ? '💫 25 estrellas (5x5)' :
+                             item.plan_type === 'angelito_protector' ? '🌟 16 estrellas (4x4)' :
+                             item.plan_type === 'recuerdo_eterno' || item.plan_type === 'corazon_eterno' ? '⭐ 9 estrellas (3x3)' : 
+                             item.plan_type === 'estrella_anual' || item.plan_type === 'estrella_brillante' ? '⭐ 4 estrellas (2x2)' : 
+                             '⭐ 1 estrella (1x1)'}
                           </span>
                         )}
                         {item.slot_assigned && (

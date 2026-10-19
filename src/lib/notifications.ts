@@ -144,7 +144,7 @@ export async function notifyNeighborsOfNewPet(data: NewPetNotificationData) {
           neighborBreed: newBreed,
           neighborDedication: newDedication,
           neighborPhotoUrl: newPhotoUrl,
-          isFounder: planType === 'recuerdo_eterno' || planType === 'corazon_eterno',
+          isFounder: ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(planType),
           muralUrl: muralLink,
           unsubscribeUrl: unsubscribeLink,
         });

@@ -20,7 +20,7 @@ export async function GET() {
     .from('memorials')
     .select('id, pet_name, photo_url, profile_slug')
     .eq('payment_status', 'paid')
-    .eq('plan_type', 'recuerdo_eterno')
+    .in('plan_type', ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'])
     .eq('visibility', 'public')
     .order('created_at', { ascending: false })
     .limit(8)

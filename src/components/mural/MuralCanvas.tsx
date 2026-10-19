@@ -253,8 +253,7 @@ function PetProfileCard({
     memorialId?.startsWith('shelter_') || 
     petData?.story_answers?.isSponsorship ||
     petData?.story_answers?.isShelter ||
-    petData?.story_answers?.shelterName ||
-    petData?.plan_type === 'corazon_eterno'
+    petData?.story_answers?.shelterName
   );
 
   const matchedShelterPet: ShelterPet = shelterPet || 
@@ -336,9 +335,9 @@ function PetProfileCard({
 
   // Render plan badge conditionally
   const planBadgeSrc = 
-    petData?.plan_type === 'recuerdo_eterno' 
+    ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(petData?.plan_type || '') 
       ? '/images/icons/plans/icon-plan-eterno.svg'
-      : petData?.plan_type === 'estrella_anual'
+      : petData?.plan_type === 'estrella_anual' || petData?.plan_type === 'estrella_brillante'
       ? '/images/icons/plans/icon-plan-estrella.svg'
       : '/images/icons/plans/icon-plan-inicial.svg';
 
@@ -1805,10 +1804,12 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
                 }
               }
 
+              const isGoldenPlan = ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(realSlot.plan_type);
+
               if (!imageDrawn) {
-                if (realSlot.plan_type === 'recuerdo_eterno') {
+                if (isGoldenPlan) {
                   ctx.fillStyle = 'rgba(201,169,97,0.85)';
-                } else if (realSlot.plan_type === 'estrella_anual') {
+                } else if (realSlot.plan_type === 'estrella_anual' || realSlot.plan_type === 'estrella_brillante') {
                   ctx.fillStyle = 'rgba(180,140,220,0.85)';
                 } else {
                   ctx.fillStyle = 'rgba(236,111,163,0.85)';
@@ -1837,7 +1838,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
                 } else {
                   rr(sx, sy, cell, cell, radius);
                 }
-                ctx.strokeStyle = realSlot.plan_type === 'recuerdo_eterno' ? 'rgba(255,215,0,0.4)' : 'rgba(255,255,255,0.2)';
+                ctx.strokeStyle = isGoldenPlan ? 'rgba(255,215,0,0.4)' : 'rgba(255,255,255,0.2)';
                 ctx.lineWidth = 0.5;
                 ctx.stroke();
               }

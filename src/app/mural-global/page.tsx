@@ -498,8 +498,11 @@ export default function MuralGlobalPage() {
                       fontFamily: 'sans-serif',
                       textTransform: 'capitalize',
                     }}>
-                      {pet.plan_type === 'recuerdo_eterno' ? 'Corazón Eterno' : 
-                       pet.plan_type === 'estrella_anual' ? 'Estrella Anual' : 
+                      {pet.plan_type === 'recuerdo_eterno' || pet.plan_type === 'corazon_eterno' ? 'Corazón Eterno' : 
+                       pet.plan_type === 'angelito_protector' ? 'Ángelito Protector' :
+                       pet.plan_type === 'galaxia_amor' ? 'Galaxia de Amor' :
+                       pet.plan_type === 'vinculo_infinito' ? 'Vínculo Infinito' :
+                       pet.plan_type === 'estrella_anual' || pet.plan_type === 'estrella_brillante' ? 'Estrella Brillante' : 
                        'Huellita'}
                     </p>
                   </div>

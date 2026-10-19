@@ -28,10 +28,11 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
   const [founderInfo, setFounderInfo] = useState<{ count: number; maxFounders: number; available: boolean } | null>(null);
 
   useEffect(() => {
-    if (isFounderSlot) {
+    const isFounderEligible = ['corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(selectedPlan);
+    if (isFounderSlot && !isFounderEligible) {
       setSelectedPlan('corazon_eterno');
     }
-  }, [isFounderSlot, setSelectedPlan]);
+  }, [isFounderSlot, selectedPlan, setSelectedPlan]);
 
   useEffect(() => {
     fetch('/api/mural/founders')
@@ -55,17 +56,20 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
         {isFounderSlot && (
           <div className="p-4 bg-gradient-to-r from-[#FFF9E6] via-[#FFEBB3] to-[#FFF1CC] rounded-2xl border-2 border-[#D4AF37] shadow-[0_4px_12px_rgba(212,175,55,0.15)] flex items-center gap-4 animate-in fade-in zoom-in-95 duration-300">
             <div className="w-12 h-12 bg-white/80 rounded-full flex items-center justify-center shadow-md shrink-0 border border-[#D4AF37]/30">
-              <img src="/images/icons/plans/icon-plan-eterno.svg" alt="Corazón Eterno" className="w-8 h-8 object-contain" />
+              <img src="/images/icons/plans/icon-plan-eterno.svg" alt="Ángeles Fundadores" className="w-8 h-8 object-contain" />
             </div>
             <div>
               <h4 className="font-bold text-[#8A6D1C] text-sm font-serif">Espacio de Ángel Fundador</h4>
-              <p className="text-xs text-[#9B7D3B] mt-0.5 leading-relaxed">Este espacio está en la zona premium reservada para los Ángeles Fundadores, por lo que requiere obligatoriamente el plan Corazón Eterno.</p>
+              <p className="text-xs text-[#9B7D3B] mt-0.5 leading-relaxed">
+                Este espacio está en la zona premium reservada para los Ángeles Fundadores. Requiere como mínimo el plan Corazón Eterno o cualquiera de los planes superiores (Ángelito Protector, Galaxia de Amor o Vínculo Infinito).
+              </p>
             </div>
           </div>
         )}
 
         {plans.map((plan) => {
-          const isDisabled = isFounderSlot && plan.id !== 'corazon_eterno';
+          const isFounderPlan = ['corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(plan.id);
+          const isDisabled = isFounderSlot && !isFounderPlan;
           return (
             <div 
               key={plan.id}
@@ -100,7 +104,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
           );
         })}
 
-        {selectedPlan === 'corazon_eterno' && founderInfo?.available && (
+        {['corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(selectedPlan) && founderInfo?.available && (
           <div className="mt-2 p-3 bg-gradient-to-r from-[#FFF8E7] to-[#FCE7BA] rounded-xl border border-[#E5C88A] shadow-sm flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#C9A961] shrink-0">
               <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />

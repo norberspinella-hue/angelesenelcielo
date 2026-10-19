@@ -15,7 +15,7 @@ export async function GET() {
       .from('memorials') as any)
       .select('id', { count: 'exact', head: true })
       .eq('payment_status', 'paid')
-      .eq('plan_type', 'recuerdo_eterno');
+      .in('plan_type', ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito']);
 
     if (error) {
       console.error('Error fetching founders count:', error);
