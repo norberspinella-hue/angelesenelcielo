@@ -31,7 +31,7 @@ export const DEFAULT_SHELTER_PETS: ShelterPet[] = [
     shelterCity: 'Valencia',
     photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/1792342318721_vaiana.png',
     storyPreview: 'Noble compañera de mirada dulce que cruzó el arcoíris arropada por su familia de acogida.',
-    starsCount: 9,
+    starsCount: 1,
     isSponsored: false,
     muralCoords: { x: 476, y: 494 },
   },

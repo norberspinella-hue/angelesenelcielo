@@ -335,7 +335,9 @@ function PetProfileCard({
 
   // Render plan badge conditionally
   const planBadgeSrc = 
-    ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(petData?.plan_type || '') 
+    isShelterPet && !isSponsored
+      ? '/images/icons/plans/icon-plan-inicial.svg'
+      : ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(petData?.plan_type || '') 
       ? '/images/icons/plans/icon-plan-eterno.svg'
       : petData?.plan_type === 'estrella_anual' || petData?.plan_type === 'estrella_brillante'
       ? '/images/icons/plans/icon-plan-estrella.svg'
@@ -1064,7 +1066,7 @@ function PetProfileCard({
             <div className="flex items-center justify-center gap-2 mb-2 px-3 py-1 rounded-full bg-[#FFF0F5] border border-pink-200/80 shadow-xs">
               <img src="/images/icons/badge-alas-angel.webp" alt="Alas" className="w-5 h-5 object-contain" />
               <span className="text-[11px] font-extrabold text-[#BE185D] tracking-wider uppercase">
-                Angelito de Protectora
+                Esperando Padrino · 1 Estrella
               </span>
               <img src="/images/icons/badge-alas-angel.webp" alt="Alas" className="w-5 h-5 object-contain" />
             </div>
@@ -1073,7 +1075,7 @@ function PetProfileCard({
               <strong className="text-[#1E2A78] text-[13px]">{matchedShelterPet.shelterName}</strong> {matchedShelterPet.shelterCity ? <span className="text-[#BE185D]">· {matchedShelterPet.shelterCity}</span> : ''}
               <br />
               <span className="text-[11.5px] text-[#706A95] mt-1.5 block">
-                ¡Sé su ángel de la guarda! Al apadrinar sus 9 estrellas, el <strong className="text-[#BE185D] font-bold">50% del importe (5,00 €)</strong> se dona directamente a su refugio.
+                Actualmente tiene <strong className="text-[#BE185D]">1 sola estrella</strong> en el cielo. ¡Apadrínalo para transformar su recuerdo en una <strong className="text-[#1E2A78]">constelación de 9 estrellas (3x3)</strong>! Además el <strong className="text-[#BE185D] font-bold">50% del importe (5,00 €)</strong> se dona directamente a su refugio.
               </span>
             </p>
 
@@ -1522,6 +1524,10 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
               slot.memorials?.story_answers?.isShelter ||
               slot.memorials?.story_answers?.shelterName
             );
+            const isSponsored = Boolean(
+              slot.memorials?.story_answers?.isSponsored || 
+              (slot.memorials?.story_answers?.isSponsorship && slot.memorials?.story_answers?.sponsorName)
+            );
             
             realSlots.set(key, {
               status: 'occupied',
@@ -1532,6 +1538,9 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
               x: slot.x,
               y: slot.y,
               isShelter: isDbShelter,
+              isSponsored: isSponsored,
+              minX: mins?.minX ?? slot.x,
+              minY: mins?.minY ?? slot.y,
             });
           });
 
@@ -1709,10 +1718,114 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
           } else if (realSlot) {
             const thumbnailUrl = realSlot.thumbnail_url;
             const isMainSlot = realSlot.isMainSlot;
+            const isShelterSlot = Boolean(realSlot.isShelter || realSlot.memorial_id?.startsWith('shelter_'));
+            const isSponsored = Boolean(realSlot.isSponsored);
+            const isShelterUnsponsored = isShelterSlot && !isSponsored;
 
-            if (thumbnailUrl && !isMainSlot) {
+            // Determinar si es un perrito de protectora en espera de padrino (1x1)
+            const minX = realSlot.minX ?? realSlot.x;
+            const minY = realSlot.minY ?? realSlot.y;
+            const is3x3ShelterBlock = isShelterSlot && (realSlot.plan_type === 'recuerdo_eterno' || realSlot.plan_type === 'corazon_eterno');
+            const shelterCenterCol = is3x3ShelterBlock ? minX + 1 : minX;
+            const shelterCenterRow = is3x3ShelterBlock ? minY + 1 : minY;
+            const isShelterPhotoSlot = (col === shelterCenterCol && row === shelterCenterRow);
+            const isShelterOrigin = (col === minX && row === minY);
+
+            if (thumbnailUrl && !isMainSlot && !isShelterUnsponsored) {
               // slot cubierto por la foto del principal
               // no hacer nada en absoluto
+            } else if (isShelterUnsponsored) {
+              // 1. DIBUJAR PERRO DE PROTECTORA EN ESPERA DE PADRINO (TAMAÑO 1x1 EN EL CENTRO)
+              if (isShelterPhotoSlot) {
+                let imageDrawn = false;
+                if (thumbnailUrl) {
+                  const img = loadImage(thumbnailUrl, () => {
+                    requestAnimationFrame(render);
+                  });
+                  if (img) {
+                    const fullSize = slotSize;
+                    const radius = Math.max(2, fullSize * 0.12);
+                    ctx.save();
+                    ctx.beginPath();
+                    rr(sx, sy, fullSize, fullSize, radius);
+                    ctx.clip();
+                    ctx.drawImage(img, sx, sy, fullSize, fullSize);
+                    ctx.restore();
+
+                    // Aureola suave pulsante con tono rosa cálido Ghibli
+                    ctx.save();
+                    const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 400);
+                    ctx.shadowBlur = 10 * pulse + 4;
+                    ctx.shadowColor = 'rgba(244, 114, 182, 0.95)';
+                    ctx.strokeStyle = '#F472B6';
+                    ctx.lineWidth = Math.max(1.8, fullSize * 0.04);
+                    rr(sx, sy, fullSize, fullSize, radius);
+                    ctx.stroke();
+
+                    // Mini badge de alas de ángel en la esquina
+                    if (fullSize >= 14) {
+                      const badgeD = Math.max(14, Math.min(26, fullSize * 0.38));
+                      const bX = sx + fullSize - badgeD + 2;
+                      const bY = sy - 2;
+                      const badgeImg = loadImage('/images/icons/badge-alas-angel.webp', () => {
+                        requestAnimationFrame(render);
+                      });
+                      if (badgeImg) {
+                        ctx.shadowBlur = 6;
+                        ctx.shadowColor = 'rgba(244, 114, 182, 0.8)';
+                        ctx.drawImage(badgeImg, bX, bY, badgeD, badgeD);
+                      }
+                    }
+                    ctx.restore();
+
+                    imageDrawn = true;
+                  }
+                }
+
+                if (!imageDrawn) {
+                  ctx.fillStyle = 'rgba(244, 114, 182, 0.85)';
+                  rr(sx, sy, cell, cell, radius);
+                  ctx.fill();
+                }
+
+                const isHighlighted = realSlot?.memorial_id === highlightedMemorialId;
+                if (isHighlighted) {
+                  ctx.save();
+                  ctx.shadowBlur = 20;
+                  ctx.shadowColor = 'rgba(255,220,60,0.95)';
+                  ctx.strokeStyle = 'rgba(255,220,60,1)';
+                  ctx.lineWidth = 3;
+                  rr(sx, sy, cell, cell, radius);
+                  ctx.stroke();
+                  ctx.restore();
+                }
+              } else {
+                // 2. DIBUJAR LAS OTRAS 8 ESTRELLAS EN ESPERA DE LA CONSTELACIÓN
+                const cx = sx + cell / 2;
+                const cy = sy + cell / 2;
+                const phase = (col * 3 + row * 7) % (Math.PI * 2);
+                const starPulse = 0.6 + 0.4 * Math.sin(Date.now() / 500 + phase);
+                ctx.save();
+                ctx.fillStyle = `rgba(251, 182, 206, ${0.45 * starPulse + 0.25})`;
+                ctx.shadowBlur = 8 * starPulse;
+                ctx.shadowColor = 'rgba(244, 114, 182, 0.85)';
+                ctx.beginPath();
+                ctx.arc(cx, cy, Math.max(2, cell * 0.16), 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // Si es la celda superior izquierda del cuadrante 3x3, dibujar silueta punteada de la constelación
+                if (isShelterOrigin && is3x3ShelterBlock && slotSize > 4) {
+                  const fullBlock = slotSize * 3;
+                  ctx.save();
+                  ctx.setLineDash([4, 4]);
+                  ctx.strokeStyle = 'rgba(244, 114, 182, 0.35)';
+                  ctx.lineWidth = 1;
+                  rr(sx, sy, fullBlock, fullBlock, Math.max(4, fullBlock * 0.04));
+                  ctx.stroke();
+                  ctx.restore();
+                }
+              }
             } else {
               let imageDrawn = false;
 

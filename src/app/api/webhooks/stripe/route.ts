@@ -197,6 +197,8 @@ export async function POST(req: NextRequest) {
             .update({
               story_answers: updatedAnswers,
               dedication: dedication || undefined,
+              slots_count: 9,
+              plan_type: 'recuerdo_eterno',
             })
             .eq('id', existingShelter.id)
             .select()

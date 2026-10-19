@@ -229,7 +229,7 @@ export async function POST(req: NextRequest) {
         death_date: new Date().toISOString().split('T')[0],
         dedication: storyPreview.trim() || 'Esperando en el cielo con amor eterno.',
         plan_type: 'recuerdo_eterno',
-        slots_count: 9,
+        slots_count: isSponsored ? 9 : 1,
         price_paid: 0,
         currency: 'EUR',
         payment_status: 'paid',
