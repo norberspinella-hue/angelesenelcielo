@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from '@/lib/supabase/server';
 import { FOUNDER_CONFIG } from '@/lib/founderConfig';
 
 export const dynamic = 'force-dynamic';
@@ -7,26 +7,26 @@ export const revalidate = 0;
 
 export async function GET() {
   try {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createAdminClient();
 
-    const { count, error } = await (supabase
+    const { data: foundersData, error } = await (supabase
       .from('memorials') as any)
-      .select('id', { count: 'exact', head: true })
+      .select('id, story_answers')
       .eq('payment_status', 'paid')
-      .in('plan_type', ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito']);
+      .in('plan_type', ['recuerdo_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito']);
 
     if (error) {
       console.error('Error fetching founders count:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    const count = (foundersData || []).filter((p: any) => !p.story_answers?.isShelter).length;
+
     return NextResponse.json(
       {
-        count: count || 0,
+        count,
         maxFounders: FOUNDER_CONFIG.maxFounders,
-        available: (count || 0) < FOUNDER_CONFIG.maxFounders
+        available: count < FOUNDER_CONFIG.maxFounders
       },
       {
         headers: {
