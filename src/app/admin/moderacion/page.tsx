@@ -278,6 +278,20 @@ export default function AdminModeracionPage() {
               🐾 Alta Protectoras
             </Link>
             <Link
+              href="/reels-tiktok"
+              target="_blank"
+              className="px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-[#F472B6] to-[#EC4899] text-white hover:opacity-90 transition-all shadow-xs"
+            >
+              🎬 Reels TikTok ↗
+            </Link>
+            <Link
+              href="/carrusel-27-octubre.html"
+              target="_blank"
+              className="px-4 py-2 rounded-full text-xs font-bold bg-pink-50 text-[#BE185D] hover:bg-pink-100 border border-pink-300 transition-all"
+            >
+              📸 Carrusel IG ↗
+            </Link>
+            <Link
               href="/mural-global"
               target="_blank"
               className="px-4 py-2 rounded-full text-xs font-bold bg-[#1E2A78] text-white hover:bg-[#151D54] transition-all shadow-xs"
