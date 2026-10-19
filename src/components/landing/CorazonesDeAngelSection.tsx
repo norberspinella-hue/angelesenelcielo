@@ -116,7 +116,7 @@ export function CorazonesDeAngelSection() {
             }}
           >
             {/* 6 MARIPOSAS REPARTIDAS POR LA TARJETA */}
-            <div className="absolute top-3 left-[92px] sm:left-[96px] w-7 h-7 -rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-95 group-hover:scale-110 group-hover:rotate-0 transition-transform duration-500">
+            <div className="absolute top-3 left-[135px] sm:left-[150px] w-7 h-7 -rotate-12 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(236,72,153,0.30)] opacity-95 group-hover:scale-110 group-hover:rotate-0 transition-transform duration-500">
               <Image src="/images/icons/butterfly1.svg" alt="Mariposa" width={28} height={28} className="w-full h-full object-contain" />
             </div>
             <div className="absolute top-4 right-3 w-6 h-6 rotate-15 pointer-events-none select-none filter drop-shadow-[0_2px_4px_rgba(245,158,11,0.30)] opacity-85 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
@@ -136,15 +136,15 @@ export function CorazonesDeAngelSection() {
             </div>
 
             <div className="relative z-10">
-              {/* Encabezado: Logo Casa en la esquina izquierda */}
-              <div className="flex items-center justify-start w-full mb-3">
-                <div className="w-20 h-20 relative flex items-center justify-center shrink-0">
+              {/* Encabezado: Logo Casa en la esquina izquierda (aumentada 100% · 160px igual que tarjeta 2 y 3) */}
+              <div className="flex items-center justify-start w-full mb-2">
+                <div className="w-36 h-36 sm:w-40 sm:h-40 relative flex items-center justify-center shrink-0 -ml-3 -mt-2">
                   <Image 
                     src="/images/solidario/icon-casa-protectoras.svg" 
                     alt="Casa Protectoras" 
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-contain filter drop-shadow-[0_4px_10px_rgba(200,160,180,0.30)] hover:scale-105 transition-transform"
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-contain filter drop-shadow-[0_6px_16px_rgba(200,160,180,0.35)] hover:scale-105 transition-transform"
                   />
                 </div>
               </div>
@@ -387,24 +387,9 @@ export function CorazonesDeAngelSection() {
               {/* Imagen Ilustrativa Tarjeta 3 (220x220) con suave opacidad y cintillo de Ejemplo */}
               <div className="w-full flex justify-center my-3">
                 <div className="w-full max-w-[220px] aspect-square rounded-2xl overflow-hidden border border-[#FDE68A]/70 shadow-md relative bg-white/60 backdrop-blur-xs group/img">
-                  {/* Cintillo diagonal "EJEMPLO" */}
-                  <div className="absolute top-0 right-0 w-24 h-24 overflow-hidden pointer-events-none z-20">
-                    <div 
-                      className="absolute top-4 -right-9 w-32 py-1 text-center text-white font-extrabold text-[10px] tracking-widest uppercase shadow-md rotate-45 select-none"
-                      style={{
-                        background: 'linear-gradient(135deg, #F59E0B 0%, #EC4899 100%)',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.45)',
-                        borderTop: '1px solid rgba(255, 255, 255, 0.6)',
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
-                      }}
-                    >
-                      EJEMPLO
-                    </div>
-                  </div>
-
                   <Image 
                     src="/images/solidario/tarjeta3-220x220.webp" 
-                    alt="Reconocimiento Corazón de Ángel (Ejemplo)" 
+                    alt="Reconocimiento Corazón de Ángel" 
                     width={220} 
                     height={220} 
                     className="w-full h-full object-cover opacity-90 group-hover/img:opacity-100 transition-opacity duration-500" 
