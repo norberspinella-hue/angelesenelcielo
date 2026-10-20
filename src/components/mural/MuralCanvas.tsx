@@ -1089,7 +1089,7 @@ function PetProfileCard({
             <div className="flex items-center justify-center gap-2 mb-2 px-3 py-1 rounded-full bg-[#FFF0F5] border border-pink-200/80 shadow-xs">
               <img src="/images/icons/badge-alas-angel.webp" alt="Alas" className="w-5 h-5 object-contain" />
               <span className="text-[11px] font-extrabold text-[#BE185D] tracking-wider uppercase">
-                Esperando Padrino · 1 Estrella
+                Esperando mi Corazón de Ángel
               </span>
               <img src="/images/icons/badge-alas-angel.webp" alt="Alas" className="w-5 h-5 object-contain" />
             </div>
