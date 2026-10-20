@@ -38,7 +38,7 @@ export function Header({
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-5 lg:gap-8 whitespace-nowrap relative z-20">
         <Link href="/mural-global" className="heaven-nav-link text-sm">El Mural</Link>
-        <Link href="/#como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
+        <Link href="/como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
         <Link href="/#planes" className="heaven-nav-link text-sm">Opciones</Link>
         <Link 
           href="/desde-el-corazon" 
@@ -98,7 +98,7 @@ export function Header({
             El Mural
           </Link>
           <Link 
-            href="/#como-funciona" 
+            href="/como-funciona" 
             onClick={() => setIsMenuOpen(false)}
             className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
           >
