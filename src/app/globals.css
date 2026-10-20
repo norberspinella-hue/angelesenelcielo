@@ -1448,30 +1448,4 @@ p,
   }
 }
 
-/* =========================================
-   GUIRNALDA DE PAPEL PICADO (27 OCTUBRE)
-   ========================================= */
-@keyframes papel-picado-breeze {
-  0% {
-    transform: rotate(calc(var(--base-rot, 0deg) - 2deg));
-  }
-  100% {
-    transform: rotate(calc(var(--base-rot, 0deg) + 2deg));
-  }
-}
-
-.papel-flag-group {
-  transform-origin: top center;
-  animation: papel-picado-breeze 5.5s ease-in-out infinite alternate;
-}
-
-.papel-flag-group:nth-child(2n) {
-  animation-duration: 4.6s;
-  animation-delay: -1.6s;
-}
-
-.papel-flag-group:nth-child(3n) {
-  animation-duration: 6.2s;
-  animation-delay: -3.2s;
-}
 

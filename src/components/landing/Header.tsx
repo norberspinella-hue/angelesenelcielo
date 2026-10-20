@@ -23,7 +23,7 @@ export function Header({
       {/* Guirnalda tradicional de Papel Picado en 'U' con la huella canina */}
       {showGarland && <PapelPicadoGarland />}
 
-      <Link href="/" className="flex items-center gap-2 select-none">
+      <Link href="/" className="flex items-center gap-2 select-none relative z-20">
         <img 
           src="/images/icons/Logoheart.svg" 
           alt="Ángeles en el Cielo" 
@@ -36,7 +36,7 @@ export function Header({
       </Link>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center gap-5 lg:gap-8 whitespace-nowrap">
+      <nav className="hidden md:flex items-center gap-5 lg:gap-8 whitespace-nowrap relative z-20">
         <Link href="/mural-global" className="heaven-nav-link text-sm">El Mural</Link>
         <Link href="/#como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
         <Link href="/#planes" className="heaven-nav-link text-sm">Opciones</Link>
@@ -73,7 +73,7 @@ export function Header({
       {/* Mobile Hamburger Button */}
       <button 
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="md:hidden p-2 rounded-full text-[#1E2A78] hover:bg-white/50 transition-colors focus:outline-none"
+        className="md:hidden p-2 rounded-full text-[#1E2A78] hover:bg-white/50 transition-colors focus:outline-none relative z-20"
         aria-label="Abrir menú"
       >
         {isMenuOpen ? (

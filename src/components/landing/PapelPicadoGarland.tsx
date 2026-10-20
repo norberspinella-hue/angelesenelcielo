@@ -3,10 +3,9 @@
 export function PapelPicadoGarland({ className = '' }: { className?: string }) {
   return (
     <div 
-      className={`absolute left-1/2 -translate-x-1/2 pointer-events-none select-none z-[-1] overflow-visible ${className}`}
+      className={`absolute left-0 right-0 w-full pointer-events-none select-none z-[5] overflow-visible ${className}`}
       style={{
-        top: 'calc(100% - 22px)',
-        width: 'min(980px, calc(100% + 20px))',
+        top: 'calc(100% - 20px)',
         height: '140px',
       }}
       aria-hidden="true"
@@ -71,7 +70,7 @@ export function PapelPicadoGarland({ className = '' }: { className?: string }) {
           </g>
         </defs>
 
-        {/* Cuerda / Hilo rústico colgando en curva parabólica en U */}
+        {/* Cuerda rústica colgando en arco en 'U' a lo largo de todo el menú */}
         <path 
           d="M 30,12 Q 500,98 970,12" 
           fill="none" 
@@ -81,150 +80,142 @@ export function PapelPicadoGarland({ className = '' }: { className?: string }) {
           strokeDasharray="6,2"
         />
 
-        {/* 8 Banderines de papel picado colgando a lo largo de la U */}
+        {/* 8 Banderines de papel picado distribuidos a lo largo del menú */}
 
-        {/* Banderín 1 (Izquierda superior): Violeta - Flor */}
-        <g 
-          className="papel-flag-group" 
-          style={{ ['--base-rot' as any]: '14deg' }} 
-          transform="translate(75, 23) rotate(14)"
-        >
-          <path d="M -26,0 L 26,0 L 26,60 Q 20,66 13,60 Q 6,66 0,60 Q -6,66 -13,60 Q -20,66 -26,60 Z" fill="#8B5CF6" filter="url(#papel-paper-shadow)"/>
-          <circle cx="-20" cy="8" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-20" cy="20" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-20" cy="32" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-20" cy="45" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="20" cy="8" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="20" cy="20" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="20" cy="32" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="20" cy="45" r="1.5" fill="white" opacity="0.85"/>
-          <use href="#papel-cutout-flower" x="0" y="28"/>
+        {/* Banderín 1 (Izquierda superior ~7.5%): Violeta - Flor */}
+        <g transform="translate(75, 23)">
+          <g transform="rotate(14)">
+            <animateTransform attributeName="transform" type="rotate" values="12; 16; 12" dur="5.2s" repeatCount="indefinite" />
+            <path d="M -26,0 L 26,0 L 26,60 Q 20,66 13,60 Q 6,66 0,60 Q -6,66 -13,60 Q -20,66 -26,60 Z" fill="#8B5CF6" filter="url(#papel-paper-shadow)"/>
+            <circle cx="-20" cy="8" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-20" cy="20" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-20" cy="32" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-20" cy="45" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="20" cy="8" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="20" cy="20" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="20" cy="32" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="20" cy="45" r="1.5" fill="white" opacity="0.85"/>
+            <use href="#papel-cutout-flower" x="0" y="28"/>
+          </g>
         </g>
 
-        {/* Banderín 2: Naranja Cempasúchil - HUELLA DE PERRITO 🐾 */}
-        <g 
-          className="papel-flag-group" 
-          style={{ ['--base-rot' as any]: '10deg' }} 
-          transform="translate(195, 46) rotate(10)"
-        >
-          <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#F97316" filter="url(#papel-paper-shadow)"/>
-          <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <use href="#papel-cutout-paw" x="0" y="31"/>
+        {/* Banderín 2 (~19.5%): Naranja Cempasúchil - HUELLA DE PERRITO 🐾 */}
+        <g transform="translate(195, 46)">
+          <g transform="rotate(10)">
+            <animateTransform attributeName="transform" type="rotate" values="8; 12; 8" dur="4.6s" repeatCount="indefinite" />
+            <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#F97316" filter="url(#papel-paper-shadow)"/>
+            <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <use href="#papel-cutout-paw" x="0" y="31"/>
+          </g>
         </g>
 
-        {/* Banderín 3: Rosa Mexicano - Alas de Ángel y Corazón */}
-        <g 
-          className="papel-flag-group" 
-          style={{ ['--base-rot' as any]: '5deg' }} 
-          transform="translate(320, 64) rotate(5)"
-        >
-          <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#EC4899" filter="url(#papel-paper-shadow)"/>
-          <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <use href="#papel-cutout-angel-heart" x="0" y="31"/>
+        {/* Banderín 3 (~32%): Rosa Mexicano - Alas de Ángel y Corazón */}
+        <g transform="translate(320, 64)">
+          <g transform="rotate(5)">
+            <animateTransform attributeName="transform" type="rotate" values="3; 7; 3" dur="5.8s" repeatCount="indefinite" />
+            <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#EC4899" filter="url(#papel-paper-shadow)"/>
+            <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <use href="#papel-cutout-angel-heart" x="0" y="31"/>
+          </g>
         </g>
 
-        {/* Banderín 4 (CENTRO DE LA U - MÁS BAJO): Amarillo Oro / Flor Cempasúchil - Estrella Celestial */}
-        <g 
-          className="papel-flag-group" 
-          style={{ ['--base-rot' as any]: '0deg' }} 
-          transform="translate(450, 76) rotate(0)"
-        >
-          <path d="M -28,0 L 28,0 L 28,66 Q 22,72 14,66 Q 7,72 0,66 Q -7,72 -14,66 Q -22,72 -28,66 Z" fill="#F59E0B" filter="url(#papel-paper-shadow)"/>
-          <circle cx="-22" cy="10" r="1.6" fill="white" opacity="0.9"/>
-          <circle cx="-22" cy="25" r="1.6" fill="white" opacity="0.9"/>
-          <circle cx="-22" cy="39" r="1.6" fill="white" opacity="0.9"/>
-          <circle cx="-22" cy="53" r="1.6" fill="white" opacity="0.9"/>
-          <circle cx="22" cy="10" r="1.6" fill="white" opacity="0.9"/>
-          <circle cx="22" cy="25" r="1.6" fill="white" opacity="0.9"/>
-          <circle cx="22" cy="39" r="1.6" fill="white" opacity="0.9"/>
-          <circle cx="22" cy="53" r="1.6" fill="white" opacity="0.9"/>
-          <use href="#papel-cutout-star" x="0" y="33"/>
+        {/* Banderín 4 (CENTRO DE LA U - MÁS BAJO ~45%): Amarillo Oro - Estrella Celestial */}
+        <g transform="translate(450, 76)">
+          <g transform="rotate(0)">
+            <animateTransform attributeName="transform" type="rotate" values="-2; 2; -2" dur="4.9s" repeatCount="indefinite" />
+            <path d="M -28,0 L 28,0 L 28,66 Q 22,72 14,66 Q 7,72 0,66 Q -7,72 -14,66 Q -22,72 -28,66 Z" fill="#F59E0B" filter="url(#papel-paper-shadow)"/>
+            <circle cx="-22" cy="10" r="1.6" fill="white" opacity="0.9"/>
+            <circle cx="-22" cy="25" r="1.6" fill="white" opacity="0.9"/>
+            <circle cx="-22" cy="39" r="1.6" fill="white" opacity="0.9"/>
+            <circle cx="-22" cy="53" r="1.6" fill="white" opacity="0.9"/>
+            <circle cx="22" cy="10" r="1.6" fill="white" opacity="0.9"/>
+            <circle cx="22" cy="25" r="1.6" fill="white" opacity="0.9"/>
+            <circle cx="22" cy="39" r="1.6" fill="white" opacity="0.9"/>
+            <circle cx="22" cy="53" r="1.6" fill="white" opacity="0.9"/>
+            <use href="#papel-cutout-star" x="0" y="33"/>
+          </g>
         </g>
 
-        {/* Banderín 5: Morado Violeta - Huella de perrito 🐾 */}
-        <g 
-          className="papel-flag-group" 
-          style={{ ['--base-rot' as any]: '-2deg' }} 
-          transform="translate(580, 74) rotate(-2)"
-        >
-          <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#7C3AED" filter="url(#papel-paper-shadow)"/>
-          <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <use href="#papel-cutout-paw" x="0" y="31"/>
+        {/* Banderín 5 (~58%): Morado Violeta - Huella de perrito 🐾 */}
+        <g transform="translate(580, 74)">
+          <g transform="rotate(-2)">
+            <animateTransform attributeName="transform" type="rotate" values="-4; 0; -4" dur="5.4s" repeatCount="indefinite" />
+            <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#7C3AED" filter="url(#papel-paper-shadow)"/>
+            <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <use href="#papel-cutout-paw" x="0" y="31"/>
+          </g>
         </g>
 
-        {/* Banderín 6: Rosa Fucsia - Flor tradicional */}
-        <g 
-          className="papel-flag-group" 
-          style={{ ['--base-rot' as any]: '-6deg' }} 
-          transform="translate(705, 62) rotate(-6)"
-        >
-          <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#DB2777" filter="url(#papel-paper-shadow)"/>
-          <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <use href="#papel-cutout-flower" x="0" y="31"/>
+        {/* Banderín 6 (~70.5%): Rosa Fucsia - Flor tradicional */}
+        <g transform="translate(705, 62)">
+          <g transform="rotate(-6)">
+            <animateTransform attributeName="transform" type="rotate" values="-8; -4; -8" dur="4.7s" repeatCount="indefinite" />
+            <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#DB2777" filter="url(#papel-paper-shadow)"/>
+            <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <use href="#papel-cutout-flower" x="0" y="31"/>
+          </g>
         </g>
 
-        {/* Banderín 7: Naranja Cempasúchil - Alas y Corazón */}
-        <g 
-          className="papel-flag-group" 
-          style={{ ['--base-rot' as any]: '-11deg' }} 
-          transform="translate(825, 43) rotate(-11)"
-        >
-          <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#F97316" filter="url(#papel-paper-shadow)"/>
-          <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
-          <use href="#papel-cutout-angel-heart" x="0" y="31"/>
+        {/* Banderín 7 (~82.5%): Naranja Cempasúchil - Alas y Corazón */}
+        <g transform="translate(825, 43)">
+          <g transform="rotate(-11)">
+            <animateTransform attributeName="transform" type="rotate" values="-13; -9; -13" dur="5.6s" repeatCount="indefinite" />
+            <path d="M -27,0 L 27,0 L 27,64 Q 21,70 14,64 Q 7,70 0,64 Q -7,70 -14,64 Q -21,70 -27,64 Z" fill="#F97316" filter="url(#papel-paper-shadow)"/>
+            <circle cx="-21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="9" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="23" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="36" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="21" cy="49" r="1.5" fill="white" opacity="0.85"/>
+            <use href="#papel-cutout-angel-heart" x="0" y="31"/>
+          </g>
         </g>
 
-        {/* Banderín 8 (Derecha superior): Morado Púrpura - Flor */}
-        <g 
-          className="papel-flag-group" 
-          style={{ ['--base-rot' as any]: '-15deg' }} 
-          transform="translate(935, 20) rotate(-15)"
-        >
-          <path d="M -26,0 L 26,0 L 26,60 Q 20,66 13,60 Q 6,66 0,60 Q -6,66 -13,60 Q -20,66 -26,60 Z" fill="#6D28D9" filter="url(#papel-paper-shadow)"/>
-          <circle cx="-20" cy="8" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-20" cy="20" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-20" cy="32" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="-20" cy="45" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="20" cy="8" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="20" cy="20" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="20" cy="32" r="1.5" fill="white" opacity="0.85"/>
-          <circle cx="20" cy="45" r="1.5" fill="white" opacity="0.85"/>
-          <use href="#papel-cutout-flower" x="0" y="28"/>
+        {/* Banderín 8 (Derecha superior ~93.5%): Morado Púrpura - Flor */}
+        <g transform="translate(935, 20)">
+          <g transform="rotate(-15)">
+            <animateTransform attributeName="transform" type="rotate" values="-17; -13; -17" dur="5.1s" repeatCount="indefinite" />
+            <path d="M -26,0 L 26,0 L 26,60 Q 20,66 13,60 Q 6,66 0,60 Q -6,66 -13,60 Q -20,66 -26,60 Z" fill="#6D28D9" filter="url(#papel-paper-shadow)"/>
+            <circle cx="-20" cy="8" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-20" cy="20" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-20" cy="32" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="-20" cy="45" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="20" cy="8" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="20" cy="20" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="20" cy="32" r="1.5" fill="white" opacity="0.85"/>
+            <circle cx="20" cy="45" r="1.5" fill="white" opacity="0.85"/>
+            <use href="#papel-cutout-flower" x="0" y="28"/>
+          </g>
         </g>
       </svg>
     </div>
