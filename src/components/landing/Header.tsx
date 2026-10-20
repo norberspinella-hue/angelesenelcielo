@@ -3,8 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { CurrencySelector } from '@/components/ui/CurrencySelector';
+import { PapelPicadoGarland } from '@/components/landing/PapelPicadoGarland';
 
-export function Header({ hasTopBanner = false }: { hasTopBanner?: boolean }) {
+export function Header({ 
+  hasTopBanner = false,
+  showGarland = true,
+}: { 
+  hasTopBanner?: boolean;
+  showGarland?: boolean;
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -13,6 +20,9 @@ export function Header({ hasTopBanner = false }: { hasTopBanner?: boolean }) {
         hasTopBanner ? '!top-[62px] sm:!top-[72px] md:!top-[78px]' : ''
       }`}
     >
+      {/* Guirnalda tradicional de Papel Picado en 'U' con la huella canina */}
+      {showGarland && <PapelPicadoGarland />}
+
       <Link href="/" className="flex items-center gap-2 select-none">
         <img 
           src="/images/icons/Logoheart.svg" 
