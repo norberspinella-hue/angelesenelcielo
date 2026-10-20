@@ -272,12 +272,23 @@ export default function ComoFuncionaPage() {
 
                 <div className="bg-white rounded-2xl p-5 border border-[#EFEAF4] shadow-sm">
                   <div className="font-bold text-[#1E2A78] text-base flex items-center justify-between gap-3">
-                    <span>¿Cómo funciona la ayuda a protectoras (Corazones de Ángel)?</span>
+                    <span>¿Cómo ayuda el mural a las protectoras y a los peluditos sin hogar?</span>
                     <Image src="/images/icons/plans/pawrosa.svg" alt="Huella" width={16} height={16} className="w-4 h-4 object-contain shrink-0" />
                   </div>
-                  <p className="text-sm sm:text-base text-[#554D6C] mt-2.5 pt-2.5 border-t border-dashed border-[#EDE8F4] leading-relaxed">
-                    Al elegir la modalidad de apadrinamiento solidario, el <strong>50% del importe</strong> se destina íntegramente a protectoras de animales registradas, ayudando a alimentar y cuidar a perritos y gatitos que aún no han encontrado familia.
-                  </p>
+                  <div className="text-sm sm:text-base text-[#554D6C] mt-2.5 pt-2.5 border-t border-dashed border-[#EDE8F4] leading-relaxed space-y-3">
+                    <p>
+                      Creemos con el corazón que el amor que nuestros angelitos nos dejaron no debe quedarse solo en el recuerdo, sino convertirse en un <strong>puente de vida y esperanza</strong> para quienes todavía están en la tierra esperando una oportunidad.
+                    </p>
+                    <p>
+                      Por eso, <strong>de todos los ingresos que recibimos de cada peludito en los planes de 2x2 en adelante</strong>, realizamos <strong>aportaciones mensuales directas a las protectoras y refugios inscritos</strong>. Cada vez que una familia honra a su peque en el cielo, ayuda a llenar comederos, costear tratamientos veterinarios y ofrecer abrigo a animales rescatados.
+                    </p>
+                    <p>
+                      Además, a través de nuestra iniciativa especial <strong>Corazones de Ángel</strong>, puedes apadrinar directamente a un perrito que espera en un refugio, donde el <strong>50% de la recaudación</strong> se destina íntegramente a su asociación para cuidarlo mientras llega su hogar definitivo.
+                    </p>
+                    <p className="font-playfair italic text-[#8A2B53] text-sm sm:text-base pt-1">
+                      «Así, la huella de amor de quien tanto quisiste se transforma en alimento, medicina y cobijo para un alma que hoy lo necesita de verdad.»
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
