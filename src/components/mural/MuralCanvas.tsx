@@ -1334,10 +1334,17 @@ function PetProfileCard({
                 href={`/memorial/${petData.profile_slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 rounded-full text-xs font-bold text-[#1E2A78] bg-white/90 hover:bg-white border border-pink-300 shadow-xs hover:shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2.5 text-white font-bold text-xs sm:text-sm rounded-full transition-all duration-200 cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] select-none text-center"
+                style={{
+                  background: 'linear-gradient(135deg, rgb(244, 114, 182) 0%, rgb(236, 72, 153) 100%)',
+                  border: '1px solid rgba(255, 255, 255, 0.45)',
+                  borderRadius: '999px',
+                  padding: '11px 24px',
+                  boxShadow: 'rgba(244, 114, 182, 0.45) 0px 4px 16px',
+                }}
               >
                 <span>🕊️ Visitar memorial público de {nombre}</span>
-                <span className="text-pink-600 font-bold">↗</span>
+                <span className="font-bold text-white/95">↗</span>
               </a>
             </div>
           )}
