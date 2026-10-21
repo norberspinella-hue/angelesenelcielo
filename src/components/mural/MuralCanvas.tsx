@@ -1334,7 +1334,7 @@ function PetProfileCard({
                 href={`/memorial/${petData.profile_slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2.5 text-white font-bold text-xs sm:text-sm rounded-full transition-all duration-200 cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] select-none text-center"
+                className="inline-flex items-center justify-center gap-2 text-white font-bold text-xs sm:text-sm rounded-full transition-all duration-200 cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98] select-none text-center"
                 style={{
                   background: 'linear-gradient(135deg, rgb(244, 114, 182) 0%, rgb(236, 72, 153) 100%)',
                   border: '1px solid rgba(255, 255, 255, 0.45)',
@@ -1343,8 +1343,13 @@ function PetProfileCard({
                   boxShadow: 'rgba(244, 114, 182, 0.45) 0px 4px 16px',
                 }}
               >
-                <span>🕊️ Visitar memorial público de {nombre}</span>
-                <span className="font-bold text-white/95">↗</span>
+                <img 
+                  src="/images/icons/plans/icon-plan-eterno.svg" 
+                  alt="" 
+                  className="w-4 h-4 sm:w-5 sm:h-5 object-contain" 
+                  aria-hidden="true"
+                />
+                <span>Visitar memorial público de {nombre}</span>
               </a>
             </div>
           )}
