@@ -17,6 +17,16 @@ interface LetterItem {
 
 const PRELOADED_LETTERS: LetterItem[] = [
   {
+    id: 'letter-poppy',
+    petName: 'Poppy',
+    species: 'perro',
+    years: '11 meses de puro amor',
+    family: 'Almas de 4 patas (@almas.de.4.patas)',
+    message: 'Te rescatamos y tenías un tumor, no me daban mucha esperanza por tu edad. Pero la operación salió bien y me diste 11 meses de pura alegría, encanto y amor puro. Me enseñaste lo que significa el amor, tú que habías sufrido tanto y perdonaste a todos. Tu encanto era transmitir felicidad allí donde estabas. Te fuiste rodeada de amor. Me acordaré de ti toda mi vida.',
+    photoUrl: '/images/memorial/poppy_mural.png',
+    slot: '470, 494 (4x4)',
+  },
+  {
     id: 'letter-bro',
     petName: 'Bro',
     species: 'perro',
@@ -88,6 +98,7 @@ interface LiveCandle {
 }
 
 const INITIAL_CANDLES: LiveCandle[] = [
+  { id: 'c-poppy', name: 'Poppy', species: '🌟 Ángelito Protector (4x4)', timeAgo: 'ahora mismo', isNew: true },
   { id: 'c0', name: 'Bro', species: '🐾 Fundador #0007', timeAgo: 'ahora mismo', isNew: true },
   { id: 'c1', name: 'Nano', species: '🐾 Perrito', timeAgo: 'hace 2 min' },
   { id: 'c2', name: 'Chloe', species: '✨ Gatita', timeAgo: 'hace 4 min' },
@@ -99,6 +110,40 @@ const INITIAL_CANDLES: LiveCandle[] = [
   { id: 'c8', name: 'Luna', species: '✨ Gatita blanca', timeAgo: 'hace 28 min' },
 ];
 
+interface ShelterAngelItem {
+  id: string;
+  name: string;
+  shelterName: string;
+  badge: string;
+  badgeColor: string;
+  history: string;
+  photoUrl: string;
+  fallbackPhotoUrl: string;
+}
+
+const SHELTER_ANGELS: ShelterAngelItem[] = [
+  {
+    id: 'poppy',
+    name: 'Poppy',
+    shelterName: 'Almas de 4 patas (Málaga)',
+    badge: '🌟 Ángelito Protector (4x4)',
+    badgeColor: 'bg-rose-400 text-stone-950',
+    history: '«Te rescatamos y tenías un tumor. La operación salió bien y nos diste 11 meses de pura alegría y amor puro. Nos enseñaste lo que significa amar de verdad. Te fuiste rodeada de amor.»',
+    photoUrl: '/images/memorial/poppy_mural.png',
+    fallbackPhotoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/poppy_1792879672293.png',
+  },
+  {
+    id: 'vaiana',
+    name: 'Vaiana',
+    shelterName: 'Almas de 4 patas (Málaga)',
+    badge: '👑 Fundadora #0005',
+    badgeColor: 'bg-amber-400 text-stone-950',
+    history: '«Vaiana era solo un bebé cuando la rescatamos. Conoció el amor y la calidez de una familia de acogida antes de partir. Hoy sus estrellas brillan para siempre en el mural.»',
+    photoUrl: '/images/solidario/vaiana_real_mural.jpg',
+    fallbackPhotoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/shelter_1792348293948.jpg',
+  },
+];
+
 export default function LiveTikTokClient() {
   // Escena activa: 1 = Cielo de luces, 2 = Carta al cielo (Visor Ghibli), 3 = Luz del refugio
   const [activeScene, setActiveScene] = useState<1 | 2 | 3>(1);
@@ -106,6 +151,7 @@ export default function LiveTikTokClient() {
   // Cartas y navegación
   const [letters] = useState<LetterItem[]>(PRELOADED_LETTERS);
   const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(0);
+  const [currentShelterIndex, setCurrentShelterIndex] = useState<number>(0);
 
   // Velas comunitarias
   const [candles, setCandles] = useState<LiveCandle[]>(INITIAL_CANDLES);
@@ -536,49 +582,67 @@ export default function LiveTikTokClient() {
           {/* ---------------------------------------------------- */}
           {/* VISTA 3: LUZ DEL REFUGIO (CORAZÓN DE ÁNGEL GHIBLI)   */}
           {/* ---------------------------------------------------- */}
-          {activeScene === 3 && (
+          {activeScene === 3 && (() => {
+            const currentAngel = SHELTER_ANGELS[currentShelterIndex];
+            return (
             <div className="flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-500">
               
               {/* TARJETA SOLIDARIA CORAZONES DE ÁNGEL EN PALETA CIELO DE LUCES */}
               <div className="w-full max-w-[350px] bg-gradient-to-b from-[#2B1038] via-[#21092F] to-[#150420] border-2 border-[#F3D5E4]/40 rounded-3xl p-5 sm:p-6 shadow-2xl relative overflow-hidden text-center">
                 
+                {/* Selector rápido de angelito de refugio */}
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  {SHELTER_ANGELS.map((angel, idx) => (
+                    <button
+                      key={angel.id}
+                      onClick={() => setCurrentShelterIndex(idx)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all ${
+                        currentShelterIndex === idx
+                          ? 'bg-amber-400 text-stone-950 shadow-md scale-105'
+                          : 'bg-white/10 text-pink-200 hover:bg-white/20'
+                      }`}
+                    >
+                      {angel.name}
+                    </button>
+                  ))}
+                </div>
+
                 {/* Emblema superior Corazones de Ángel */}
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#FFF0F6] text-[#8C3F71] border border-[#F0BED6] mb-3 shadow-xs">
                   🐾 Reconocimiento Corazón de Ángel
                 </div>
 
-                {/* Retrato Arqueado Ghibli de Vaiana */}
+                {/* Retrato Arqueado Ghibli */}
                 <div className="relative mx-auto mb-3">
-                  <div className="relative w-[92px] h-[116px] mx-auto rounded-t-full rounded-b-2xl overflow-hidden bg-pink-100 border-3 border-amber-400 shadow-xl ring-3 ring-pink-400/40">
+                  <div className="relative w-[96px] h-[118px] mx-auto rounded-t-full rounded-b-2xl overflow-hidden bg-pink-100 border-3 border-amber-400 shadow-xl ring-3 ring-pink-400/40">
                     <img
-                      src="/images/solidario/vaiana_real_mural.jpg"
-                      alt="Vaiana"
+                      src={currentAngel.photoUrl}
+                      alt={currentAngel.name}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/shelter_1792348293948.jpg';
+                        (e.target as HTMLImageElement).src = currentAngel.fallbackPhotoUrl;
                       }}
                     />
                   </div>
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-amber-400 text-stone-950 text-[9px] font-black px-2.5 py-0.5 rounded-full shadow-xs whitespace-nowrap">
-                    👑 Fundadora #0005
+                  <div className={`absolute -bottom-2.5 left-1/2 -translate-x-1/2 ${currentAngel.badgeColor} text-[9px] font-black px-2.5 py-0.5 rounded-full shadow-xs whitespace-nowrap`}>
+                    {currentAngel.badge}
                   </div>
                 </div>
 
                 {/* Nombre y Protectora */}
                 <div className="mt-3">
                   <h2 className="text-2xl sm:text-3xl font-black font-serif text-[#FFFDFB]">
-                    Vaiana 🐾
+                    {currentAngel.name} 🐾
                   </h2>
                   <p className="text-xs font-bold text-amber-300 mt-0.5">
-                    Almas de 4 patas (Málaga)
+                    {currentAngel.shelterName}
                   </p>
                 </div>
 
-                {/* Historia conmovedora (extraída de cielo-lleno-de-luces) */}
+                {/* Historia conmovedora */}
                 <div className="bg-white/10 border border-white/15 rounded-2xl p-3.5 my-3 shadow-xs">
                   <p className="font-serif italic text-xs sm:text-[13px] text-pink-100 leading-relaxed">
-                    «Vaiana era solo un bebé cuando la rescatamos. Conoció el amor y la calidez de una familia de acogida antes de partir. Hoy sus 9 estrellas brillan para siempre en el mural.»
+                    {currentAngel.history}
                   </p>
                 </div>
 
@@ -589,7 +653,8 @@ export default function LiveTikTokClient() {
               </div>
 
             </div>
-          )}
+            );
+          })()}
 
         </div>
 

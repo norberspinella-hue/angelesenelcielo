@@ -330,8 +330,9 @@ function PetProfileCard({
         ? `${birthStr}` 
         : '';
 
-  const slotsCount = petData?.slots_count ||
-    (getPlanByDbName(planType)?.slotsCount ?? 1);
+  const slotsCount = 
+    getPlanByDbName(petData?.plan_type || planType)?.slotsCount ||
+    petData?.slots_count || 1;
 
   // Render plan badge conditionally
   const planBadgeSrc = 
