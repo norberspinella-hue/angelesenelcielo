@@ -38,6 +38,8 @@ export function Header({
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-5 lg:gap-8 whitespace-nowrap relative z-20">
         <Link href="/mural-global" className="heaven-nav-link text-sm">El Mural</Link>
+        <Link href="/comunidad" className="heaven-nav-link text-sm">Cartas al Cielo</Link>
+        <Link href="/cielo-lleno-de-luces" className="heaven-nav-link text-sm">Vela semanal</Link>
         <Link href="/como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
         <Link href="/#planes" className="heaven-nav-link text-sm">Opciones</Link>
         <Link 
@@ -96,6 +98,20 @@ export function Header({
             className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
           >
             El Mural
+          </Link>
+          <Link 
+            href="/comunidad" 
+            onClick={() => setIsMenuOpen(false)}
+            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
+          >
+            Cartas al Cielo
+          </Link>
+          <Link 
+            href="/cielo-lleno-de-luces" 
+            onClick={() => setIsMenuOpen(false)}
+            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
+          >
+            Vela semanal
           </Link>
           <Link 
             href="/como-funciona" 

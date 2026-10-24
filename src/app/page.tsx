@@ -92,6 +92,58 @@ export default function AngelesEnElCieloLanding() {
           
           <PricingSection />
           <CorazonesDeAngelSection />
+
+          {/* Sección Puente a la Comunidad y Cartas al Cielo */}
+          <section className="w-full pt-10 pb-6 text-center">
+            <div className="mx-auto w-[min(1120px,calc(100%-32px))] rounded-[28px] p-7 sm:p-10 relative overflow-hidden shadow-[0_20px_50px_rgba(140,63,113,0.08)] border border-[#F6DCE9] bg-gradient-to-br from-[#FFF9F6] via-[#FAF2F8] to-[#FFF3E8] flex flex-col md:flex-row items-center justify-between gap-8 text-left">
+              <div className="flex-1 space-y-3 relative z-10">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 border border-[#F0CFE1] text-[#9E457C] text-xs font-bold tracking-wide shadow-sm">
+                  <span>🕊️</span>
+                  <span>Espacio Abierto y Gratuito</span>
+                </div>
+                <h2 className="font-playfair text-2xl sm:text-3xl font-bold text-[#2D0F31] leading-tight">
+                  Cartas al Cielo · El Libro de los Ángeles
+                </h2>
+                <p className="text-sm sm:text-base text-[#5E4D64] leading-relaxed max-w-xl">
+                  Un rincón cálido donde dedicar unas palabras a tu compañero eterno, encender una vela virtual sin coste y leer las cartas de amor de otras familias que también recuerdan a sus ángeles.
+                </p>
+                <div className="pt-2 flex flex-wrap items-center gap-3">
+                  <a
+                    href="/comunidad"
+                    className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-sm font-bold text-white shadow-[0_8px_24px_rgba(164,80,155,0.35)] hover:shadow-[0_12px_28px_rgba(164,80,155,0.45)] hover:-translate-y-0.5 transition-all cursor-pointer"
+                    style={{
+                      background: 'linear-gradient(135deg, #A4509B 0%, #C85998 50%, #9B3D75 100%)',
+                    }}
+                  >
+                    <span>Escribir una carta o encender una vela</span>
+                    <span>→</span>
+                  </a>
+                  <a
+                    href="/comunidad#galeria-recuerdos"
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold text-[#8C3F71] bg-white hover:bg-[#FFF6FB] border border-[#E9C5DB] transition-all"
+                  >
+                    <span>Abrir el libro de cartas</span>
+                    <span>📖</span>
+                  </a>
+                </div>
+              </div>
+
+              <div className="relative w-full max-w-[280px] sm:max-w-[320px] aspect-[4/3] rounded-2xl overflow-hidden shadow-lg border-2 border-white flex-shrink-0">
+                <Image
+                  src="/images/comunidad/bridge-frame.webp"
+                  alt="Cartas al Cielo"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2D0F31]/60 via-transparent to-transparent flex items-end p-4">
+                  <span className="text-white text-xs font-semibold drop-shadow">
+                    📖 El Libro de los Ángeles · Cartas al Cielo
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+
           <RainbowBridge />
           <Testimonials />
  
