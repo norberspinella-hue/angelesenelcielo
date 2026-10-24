@@ -23,20 +23,20 @@ export function Header({
       {/* Guirnalda tradicional de Papel Picado en 'U' con la huella canina */}
       {showGarland && <PapelPicadoGarland />}
 
-      <Link href="/" className="flex items-center gap-2 select-none relative z-20">
+      <Link href="/" className="flex items-center gap-2 select-none relative z-20 shrink-0">
         <img 
           src="/images/icons/Logoheart.svg" 
           alt="Ángeles en el Cielo" 
           className="h-[52px] sm:h-[72px] md:h-[90px] -my-1 sm:-my-2 object-contain" 
         />
-        <div className="flex flex-col font-serif text-[#1E2A78] text-sm sm:text-base md:text-xl font-bold leading-tight justify-center">
+        <div className="flex flex-col font-serif text-[#1E2A78] text-sm sm:text-base md:text-xl font-bold leading-tight justify-center whitespace-nowrap">
           <span>Ángeles en</span>
           <span>el Cielo</span>
         </div>
       </Link>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center gap-5 lg:gap-8 whitespace-nowrap relative z-20">
+      <nav className="hidden md:flex items-center gap-3.5 lg:gap-5 xl:gap-7 whitespace-nowrap relative z-20">
         <Link href="/mural-global" className="heaven-nav-link text-sm">El Mural</Link>
         <Link href="/como-funciona" className="heaven-nav-link text-sm">Cómo funciona</Link>
         <Link href="/#planes" className="heaven-nav-link text-sm">Opciones</Link>
@@ -67,6 +67,7 @@ export function Header({
           </span>
           <span className="heaven-nav-link text-sm opacity-80 group-hover:opacity-100 transition-opacity">Tienda</span>
         </div>
+        <Link href="/comunidad" className="heaven-nav-link text-sm">Cartas al Cielo</Link>
         <CurrencySelector size="sm" className="ml-1" />
       </nav>
 
@@ -145,6 +146,14 @@ export function Header({
               <span>Muy pronto</span>
             </span>
           </div>
+
+          <Link 
+            href="/comunidad" 
+            onClick={() => setIsMenuOpen(false)}
+            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
+          >
+            Cartas al Cielo
+          </Link>
 
           <div className="pt-3 border-t border-gray-100 w-full flex justify-center">
             <CurrencySelector size="sm" />

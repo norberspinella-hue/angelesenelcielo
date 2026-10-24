@@ -123,7 +123,7 @@ export default function AngelesEnElCieloLanding() {
                     className="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold text-[#8C3F71] bg-white hover:bg-[#FFF6FB] border border-[#E9C5DB] transition-all"
                   >
                     <span>Abrir el libro de cartas</span>
-                    <span>📖</span>
+                    <span>→</span>
                   </a>
                 </div>
               </div>
@@ -137,7 +137,7 @@ export default function AngelesEnElCieloLanding() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2D0F31]/60 via-transparent to-transparent flex items-end p-4">
                   <span className="text-white text-xs font-semibold drop-shadow">
-                    📖 El Libro de los Ángeles · Cartas al Cielo
+                    El Libro de los Ángeles · Cartas al Cielo
                   </span>
                 </div>
               </div>
