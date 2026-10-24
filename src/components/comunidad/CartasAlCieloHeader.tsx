@@ -49,14 +49,7 @@ export function CartasAlCieloHeader({
           Cartas al Cielo
         </Link>
 
-        {/* 3. Vela semanal */}
-        <Link 
-          href="/cielo-lleno-de-luces" 
-          className="heaven-nav-link text-sm"
-          title="Vela semanal"
-        >
-          Vela semanal
-        </Link>
+
 
         {/* 4. Desde el Corazón con el icono heart flotante encima */}
         <Link 
@@ -120,14 +113,7 @@ export function CartasAlCieloHeader({
             Cartas al Cielo
           </Link>
 
-          {/* 3. Vela semanal */}
-          <Link 
-            href="/cielo-lleno-de-luces" 
-            onClick={() => setIsMenuOpen(false)}
-            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
-          >
-            Vela semanal
-          </Link>
+
 
           {/* 4. Desde el Corazón con el icono */}
           <Link 
