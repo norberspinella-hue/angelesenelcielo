@@ -31,7 +31,7 @@ const PRELOADED_LETTERS: LetterItem[] = [
     petName: 'Bro',
     species: 'perro',
     years: 'Abril 2017 — 26 Oct 2025',
-    family: 'Familia yaritcar',
+    family: 'Familia yaritcar (@nala68271)',
     message: 'Para siempre en el cielo, siempre en nuestro corazón. Tu alegría, tu nobleza y tu amor incondicional vivirán eternamente en cada estrella.',
     photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/bro_1792878753050.jpg',
     slot: '503, 495',
@@ -99,7 +99,7 @@ interface LiveCandle {
 
 const INITIAL_CANDLES: LiveCandle[] = [
   { id: 'c-poppy', name: 'Poppy', species: '🌟 Ángelito Protector (4x4)', timeAgo: 'ahora mismo', isNew: true },
-  { id: 'c0', name: 'Bro', species: '🐾 Fundador #0007', timeAgo: 'ahora mismo', isNew: true },
+  { id: 'c0', name: 'Bro', species: '🐾 Fundador #0007 (@nala68271)', timeAgo: 'ahora mismo', isNew: true },
   { id: 'c1', name: 'Nano', species: '🐾 Perrito', timeAgo: 'hace 2 min' },
   { id: 'c2', name: 'Chloe', species: '✨ Gatita', timeAgo: 'hace 4 min' },
   { id: 'c3', name: 'House', species: '🐾 Perrito', timeAgo: 'hace 7 min' },
