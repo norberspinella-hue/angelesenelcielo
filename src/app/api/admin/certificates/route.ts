@@ -13,6 +13,7 @@ const FOUNDER_SPECS = [
   { slug: 'juliette-1791706558194', petName: 'Juliette', number: 4, email: 'norber.spinella@gmail.com', slot: '497,495' },
   { slug: 'protectora-vaiana-1792348295633', petName: 'Vaiana', number: 5, email: 'protectoras@todaslasmascotasvanalcielo.com', slot: '476,494' },
   { slug: 'nano-1792605318398', petName: 'Nano', number: 6, email: 'davidcerro1976@gmail.com', slot: '503,499' },
+  { slug: 'bro-1792879210062', petName: 'Bro', number: 7, email: 'yaritcar@gmail.com', slot: '503,495' },
 ];
 
 export async function GET(req: NextRequest) {
