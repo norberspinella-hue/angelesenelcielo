@@ -123,16 +123,6 @@ interface ShelterAngelItem {
 
 const SHELTER_ANGELS: ShelterAngelItem[] = [
   {
-    id: 'poppy',
-    name: 'Poppy',
-    shelterName: 'Almas de 4 patas (Málaga)',
-    badge: '🌟 Ángelito Protector (4x4)',
-    badgeColor: 'bg-rose-400 text-stone-950',
-    history: '«Te rescatamos y tenías un tumor. La operación salió bien y nos diste 11 meses de pura alegría y amor puro. Nos enseñaste lo que significa amar de verdad. Te fuiste rodeada de amor.»',
-    photoUrl: '/images/memorial/poppy_mural.png',
-    fallbackPhotoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/poppy_1792879672293.png',
-  },
-  {
     id: 'vaiana',
     name: 'Vaiana',
     shelterName: 'Almas de 4 patas (Málaga)',
