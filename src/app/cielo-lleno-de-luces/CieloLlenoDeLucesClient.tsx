@@ -701,7 +701,7 @@ export default function CieloLlenoDeLucesClient() {
             </div>
           </div>
           <Link
-            href="/desde-el-corazon"
+            href="/#planes"
             className="shrink-0 w-full sm:w-auto text-center px-5 py-2.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#D9629B] to-[#9B3F77] shadow-sm hover:shadow transition-all flex items-center justify-center"
           >
             Ver Planes & Apadrinar →
@@ -1199,7 +1199,7 @@ export default function CieloLlenoDeLucesClient() {
                 <div className="p-3 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A] text-[11px] text-[#92400E] flex items-center gap-2 text-left">
                   <Image src="/images/icons/plans/icon-plan-estrella.svg" alt="Estrella" width={16} height={16} className="w-4 h-4 object-contain shrink-0" />
                   <span>
-                    <strong>¿Quieres que su llama nunca se apague?</strong> Al <Link href="/desde-el-corazon" className="underline font-bold">apadrinar o escoger un plan en Ángeles en el Cielo</Link>, su vela brillará encendida para siempre.
+                    <strong>¿Quieres que su llama nunca se apague?</strong> Al <Link href="/#planes" className="underline font-bold">apadrinar o escoger un plan en Ángeles en el Cielo</Link>, su vela brillará encendida para siempre.
                   </span>
                 </div>
 
