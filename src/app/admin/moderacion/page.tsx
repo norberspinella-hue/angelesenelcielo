@@ -285,6 +285,12 @@ export default function AdminModeracionPage() {
 
           <div className="flex items-center gap-2.5 flex-wrap">
             <Link
+              href="/admin/certificados"
+              className="px-4 py-2 rounded-full text-xs font-bold bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-300 transition-all shadow-xs"
+            >
+              📜 Certificados & Fundadores
+            </Link>
+            <Link
               href="/admin/onboarding-protectoras"
               className="px-4 py-2 rounded-full text-xs font-bold bg-pink-50 text-[#BE185D] hover:bg-pink-100 border border-pink-300 transition-all"
             >

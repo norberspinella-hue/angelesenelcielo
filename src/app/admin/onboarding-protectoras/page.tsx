@@ -193,15 +193,29 @@ export default function OnboardingProtectorasPage() {
             </div>
           </div>
 
-          {/* Enlace al mural */}
-          <Link
-            href="/mural-global"
-            target="_blank"
-            className="px-4 py-2.5 rounded-full text-xs font-bold text-[#1E2A78] bg-pink-50 hover:bg-pink-100 border border-pink-300 shadow-xs transition-all flex items-center gap-1.5 shrink-0"
-          >
-            <span>🌌 Ver Mural Global</span>
-            <span>↗</span>
-          </Link>
+          {/* Enlaces de administración */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link
+              href="/admin/certificados"
+              className="px-4 py-2.5 rounded-full text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-300 shadow-xs transition-all flex items-center gap-1.5 shrink-0"
+            >
+              <span>📜 Certificados & Fundadores</span>
+            </Link>
+            <Link
+              href="/admin/moderacion"
+              className="px-4 py-2.5 rounded-full text-xs font-bold text-[#BE185D] bg-pink-50 hover:bg-pink-100 border border-pink-300 shadow-xs transition-all flex items-center gap-1.5 shrink-0"
+            >
+              <span>🛡️ Moderación</span>
+            </Link>
+            <Link
+              href="/mural-global"
+              target="_blank"
+              className="px-4 py-2.5 rounded-full text-xs font-bold text-[#1E2A78] bg-pink-50 hover:bg-pink-100 border border-pink-300 shadow-xs transition-all flex items-center gap-1.5 shrink-0"
+            >
+              <span>🌌 Ver Mural Global</span>
+              <span>↗</span>
+            </Link>
+          </div>
         </header>
 
         {/* Mensajes de Estado */}
