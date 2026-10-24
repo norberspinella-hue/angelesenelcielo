@@ -168,36 +168,80 @@ export default function LiveTikTokClient() {
 
       {/* ESTILOS DE LLAMA, RESPLANDOR Y ACUARELA GHIBLI */}
       <style jsx global>{`
-        @keyframes ghibliFlame {
+        @keyframes realisticFlameSway {
           0%, 100% {
-            transform: scale(1) rotate(-1deg);
-            opacity: 0.96;
-            filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.9)) drop-shadow(0 0 45px rgba(244, 114, 182, 0.5));
+            transform: rotate(-1.2deg) skewX(-0.8deg) scale(1, 1);
+            filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.95)) drop-shadow(0 0 38px rgba(245, 158, 11, 0.65)) drop-shadow(0 0 75px rgba(234, 88, 12, 0.4));
           }
-          25% {
-            transform: scale(1.05, 0.95) rotate(1.8deg);
+          20% {
+            transform: rotate(2deg) skewX(1.2deg) scale(1.04, 0.96);
+            filter: drop-shadow(0 0 22px rgba(251, 191, 36, 1)) drop-shadow(0 0 48px rgba(244, 114, 182, 0.55)) drop-shadow(0 0 85px rgba(245, 158, 11, 0.5));
+          }
+          45% {
+            transform: rotate(-1.8deg) skewX(-1.5deg) scale(0.96, 1.05);
+            filter: drop-shadow(0 0 18px rgba(251, 191, 36, 0.9)) drop-shadow(0 0 40px rgba(234, 88, 12, 0.6)) drop-shadow(0 0 70px rgba(234, 88, 12, 0.35));
+          }
+          68% {
+            transform: rotate(1.2deg) skewX(0.8deg) scale(1.02, 0.98);
+            filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.95)) drop-shadow(0 0 44px rgba(245, 158, 11, 0.65));
+          }
+          85% {
+            transform: rotate(-0.5deg) skewX(-0.5deg) scale(0.99, 1.01);
+            filter: drop-shadow(0 0 17px rgba(251, 191, 36, 0.9)) drop-shadow(0 0 38px rgba(245, 158, 11, 0.55));
+          }
+        }
+
+        @keyframes flameCoreJitter {
+          0%, 100% {
+            opacity: 0.96;
+            transform: scale(1) translateY(0);
+          }
+          20% {
             opacity: 1;
-            filter: drop-shadow(0 0 28px rgba(251, 191, 36, 1)) drop-shadow(0 0 55px rgba(236, 72, 153, 0.6));
+            transform: scale(1.06, 0.94) translateY(-1px);
+          }
+          40% {
+            opacity: 0.88;
+            transform: scale(0.95, 1.03) translateY(1px);
+          }
+          70% {
+            opacity: 0.98;
+            transform: scale(1.03, 0.97) translateY(-0.5px);
+          }
+        }
+
+        @keyframes waxInternalGlow {
+          0%, 100% {
+            opacity: 0.7;
+            filter: brightness(1);
           }
           50% {
-            transform: scale(0.96, 1.04) rotate(-1.5deg);
-            opacity: 0.92;
-            filter: drop-shadow(0 0 22px rgba(251, 191, 36, 0.85)) drop-shadow(0 0 48px rgba(245, 158, 11, 0.5));
+            opacity: 0.95;
+            filter: brightness(1.2);
           }
-          75% {
-            transform: scale(1.03, 0.98) rotate(1deg);
-            opacity: 0.98;
-            filter: drop-shadow(0 0 26px rgba(251, 191, 36, 0.95)) drop-shadow(0 0 52px rgba(244, 114, 182, 0.55));
+        }
+
+        @keyframes smokeWisp {
+          0% {
+            transform: translateY(0px) translateX(0px) scale(0.8);
+            opacity: 0;
+          }
+          25% {
+            opacity: 0.45;
+          }
+          100% {
+            transform: translateY(-90px) translateX(15px) scale(2.2);
+            opacity: 0;
           }
         }
 
         @keyframes auraBreath {
           0%, 100% {
             transform: scale(1);
-            opacity: 0.7;
+            opacity: 0.65;
           }
           50% {
-            transform: scale(1.18);
+            transform: scale(1.15);
             opacity: 0.95;
           }
         }
@@ -209,11 +253,6 @@ export default function LiveTikTokClient() {
           50% {
             transform: translateY(-5px) scale(1.02);
           }
-        }
-
-        .animate-ghibli-flame {
-          animation: ghibliFlame 2.8s ease-in-out infinite;
-          transform-origin: bottom center;
         }
 
         .animate-aura-breath {
@@ -291,28 +330,76 @@ export default function LiveTikTokClient() {
           {activeScene === 1 && (
             <div className="flex flex-col items-center text-center space-y-4 animate-in fade-in zoom-in-95 duration-500">
               
-              {/* LA VELA CENTRAL MAJESTUOSA EN LA PARTE SUPERIOR */}
-              <div className="relative flex flex-col items-center pt-1 pb-3">
-                {/* Aura de resplandor áureo y rosa celestial */}
-                <div className="absolute -top-16 w-56 h-56 rounded-full bg-gradient-to-r from-amber-400/30 via-[#EC4899]/20 to-orange-500/25 blur-3xl animate-aura-breath pointer-events-none" />
+              {/* LA VELA CENTRAL REALISTA EN VIVO */}
+              <div className="relative flex flex-col items-center pt-2 pb-4">
+                {/* 1. Halo de resplandor áureo y rosa celestial sincronizado */}
+                <div className="absolute -top-20 w-64 h-64 rounded-full bg-gradient-to-r from-amber-400/35 via-[#EC4899]/18 to-orange-500/30 blur-3xl animate-aura-breath pointer-events-none" />
 
-                {/* Llama Ghibli viva */}
-                <div className="relative z-20 animate-ghibli-flame mb-0.5">
-                  <div className="w-[36px] h-[75px] bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-100 rounded-full shadow-[0_0_36px_rgba(251,191,36,1)]" />
-                  <div className="absolute top-6 left-2 w-[18px] h-[38px] bg-white/95 rounded-full blur-[1px]" />
+                {/* 2. Micro humo etéreo / estela de luz ascendente */}
+                <div className="absolute -top-16 w-3 h-12 bg-gradient-to-t from-white/20 to-transparent rounded-full blur-[2px] pointer-events-none animate-[smokeWisp_5s_ease-out_infinite]" />
+
+                {/* 3. Llama Hiperrealista viva multicapa */}
+                <div className="relative z-20 flex flex-col items-center animate-[realisticFlameSway_3.2s_ease-in-out_infinite] origin-bottom mb-[-3px]">
+                  
+                  {/* Cuerpo exterior de la llama en lágrima orgánica */}
+                  <div className="relative w-[38px] h-[82px] rounded-[50%_50%_35%_35%/60%_60%_40%_40%] bg-gradient-to-t from-[#2563EB]/40 via-[#F59E0B] to-[#FEF08A] shadow-[0_0_20px_rgba(251,191,36,0.9),0_0_45px_rgba(245,158,11,0.6),0_0_80px_rgba(234,88,12,0.35)] flex items-center justify-center overflow-hidden">
+                    
+                    {/* Halo de borde cálido naranja-rojizo */}
+                    <div className="absolute inset-0 rounded-[inherit] bg-gradient-to-t from-[#EA580C]/85 via-transparent to-transparent pointer-events-none" />
+                    
+                    {/* Núcleo interno incandescente brillante (blanco / limón intenso) */}
+                    <div className="w-[18px] h-[52px] rounded-[50%_50%_40%_40%/65%_65%_35%_35%] bg-gradient-to-t from-[#FBBF24] via-[#FEF9C3] to-[#FFFFFF] shadow-[0_0_15px_#FFFFFF] blur-[0.6px] mt-4 animate-[flameCoreJitter_1.8s_ease-in-out_infinite]" />
+
+                    {/* Base de combustión azulada pura */}
+                    <div className="absolute bottom-0 inset-x-2 h-4 rounded-b-full bg-gradient-to-t from-[#0284C7]/90 via-[#38BDF8]/60 to-transparent blur-[0.5px]" />
+                  </div>
+
+                  {/* Mecha de algodón con brasa incandescente en la punta */}
+                  <div className="relative flex flex-col items-center -mt-1 z-30">
+                    {/* Brasa incandescente roja/ámbar en la punta de ignición */}
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444] shadow-[0_0_6px_#F87171] -mb-0.5 animate-pulse" />
+                    {/* Hilo de mecha negro carbón ligeramente curvado */}
+                    <div className="w-[3px] h-[14px] bg-gradient-to-b from-[#1C1917] to-[#292524] rounded-sm transform rotate-[-3deg]" />
+                  </div>
                 </div>
 
-                {/* Mecha */}
-                <div className="w-[3px] h-[12px] bg-stone-900 -mt-1.5 z-10" />
-
-                {/* Vaso de cristal con cera cálida marfil */}
-                <div className="w-[96px] h-[116px] bg-gradient-to-b from-[#FFFDF9] via-[#FDF3E7] to-[#F5DEC3] rounded-t-xl rounded-b-3xl shadow-2xl relative border-2 border-amber-200/70 ring-4 ring-[#B83C7E]/20 flex flex-col justify-between p-2.5 overflow-hidden">
-                  <div className="w-full h-3.5 bg-amber-100/70 rounded-full blur-[1px]" />
-                  <div className="w-full text-center pb-1">
-                    <span className="text-[10px] font-serif font-black text-[#5C3C58] tracking-widest uppercase block">
-                      Llama Eterna
-                    </span>
+                {/* 4. Cuerpo de la Vela Realista (Vaso de Altar de Cristal y Cera Líquida) */}
+                <div className="relative z-10 w-[114px] flex flex-col items-center">
+                  
+                  {/* Piscina de cera líquida superior con reflejo brillante (Elipse 3D) */}
+                  <div className="relative w-full h-[22px] rounded-[50%] bg-gradient-to-r from-[#FDE68A] via-[#FFFBEB] to-[#FCD34D] border border-amber-200/90 shadow-[inset_0_2px_4px_rgba(180,83,9,0.35),0_1px_3px_rgba(0,0,0,0.4)] z-20 flex items-center justify-center overflow-hidden">
+                    {/* Depresión central donde nace la mecha */}
+                    <div className="w-7 h-2.5 rounded-full bg-amber-900/30 blur-[1px]" />
+                    {/* Reflejo especular de la llama en el líquido */}
+                    <div className="absolute top-1 left-7 w-6 h-1.5 rounded-full bg-white/90 blur-[0.8px] transform rotate-[-8deg]" />
                   </div>
+
+                  {/* Cilindro de cera con translucidez interna (Subsurface Scattering) */}
+                  <div className="relative w-full h-[122px] -mt-[11px] rounded-b-[28px] bg-gradient-to-b from-[#FFFDF9] via-[#FDF3E7] to-[#EAD1B3] border-x-2 border-b-2 border-amber-200/70 shadow-[0_20px_45px_rgba(0,0,0,0.65),inset_0_0_25px_rgba(245,158,11,0.18)] overflow-hidden flex flex-col justify-between">
+                    
+                    {/* Luz interna translúcida que emite la llama a través de la cera superior */}
+                    <div className="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-amber-400/45 via-amber-300/20 to-transparent blur-md pointer-events-none animate-[waxInternalGlow_3s_ease-in-out_infinite]" />
+
+                    {/* Reflejos de cristal verticales a ambos lados (Vidrio de catedral) */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/35 via-transparent to-white/20 pointer-events-none" />
+
+                    {/* Filete de oro satinado decorativo */}
+                    <div className="relative z-10 mt-6 mx-3 py-0.5 border-y border-amber-300/50 text-center">
+                      <span className="text-[8.5px] font-serif font-black text-[#5C3C58] tracking-[2px] uppercase block drop-shadow-xs">
+                        ★ Llama Eterna ★
+                      </span>
+                    </div>
+
+                    {/* Base sombreada de la cera con degradado suave */}
+                    <div className="relative z-10 w-full pb-2.5 text-center">
+                      <span className="text-[9px] text-amber-900/60 font-serif italic block">
+                        Ángeles en el Cielo
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 5. Sombra de contacto suave realista en la base */}
+                  <div className="w-32 h-4 -mt-2 rounded-[50%] bg-black/60 blur-[3px] pointer-events-none" />
                 </div>
               </div>
 
