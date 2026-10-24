@@ -155,7 +155,7 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication, socialHandle } = session.metadata || {}
+    const { plan, slotId, petName, email, photoUrl, thumbnailUrl, petDate, species, breed, birthDate, location, dedication, socialHandle, instagram, tiktok } = session.metadata || {}
 
     const supabase = createAdminClient()
 
@@ -359,9 +359,13 @@ export async function GET(req: NextRequest) {
                 sponsoredPetId: sponsoredPetIdVal,
                 sponsoredAt: new Date().toISOString(),
                 starsCount: 9,
-                socialHandle: socialHandle ? socialHandle.replace(/^@/, '').trim() : '',
+                socialHandle: socialHandle ? socialHandle.replace(/^@/, '').trim() : (tiktok || instagram || ''),
+                instagram: instagram ? instagram.replace(/^@/, '').trim() : '',
+                tiktok: tiktok ? tiktok.replace(/^@/, '').trim() : '',
               } : {
-                socialHandle: socialHandle ? socialHandle.replace(/^@/, '').trim() : '',
+                socialHandle: socialHandle ? socialHandle.replace(/^@/, '').trim() : (tiktok || instagram || ''),
+                instagram: instagram ? instagram.replace(/^@/, '').trim() : '',
+                tiktok: tiktok ? tiktok.replace(/^@/, '').trim() : '',
               },
             })
             .select()

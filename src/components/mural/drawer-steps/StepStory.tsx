@@ -96,22 +96,61 @@ export function StepStory({ onNext, onBack, draftData, setDraftData }: StepStory
             />
           </div>
 
-          {/* Campo opcional: Usuario de Instagram o TikTok */}
+          {/* Redes Sociales: Instagram y TikTok (opcionales) */}
           <div className="mt-1">
-            <label className="block text-xs font-bold text-[#1E2A78] mb-1">
-              Tu usuario de Instagram o TikTok <span className="text-[#9B8FB0] font-normal">(opcional)</span>
+            <label className="block text-xs font-bold text-[#1E2A78] mb-1.5">
+              Tus redes sociales <span className="text-[#9B8FB0] font-normal">(opcional)</span>
             </label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#9B8FB0] font-semibold">@</span>
-              <input 
-                type="text"
-                placeholder="tu_usuario"
-                value={draftData.socialHandle || ''}
-                onChange={(e) => setDraftData({ ...draftData, socialHandle: e.target.value.replace(/^@/, '').trim() })}
-                className="w-full border border-gray-200 rounded-lg pl-8 pr-4 py-2 text-sm text-[#1E2A78] focus:border-[#C9A961] focus:ring-1 focus:ring-[#C9A961] outline-none"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {/* Instagram */}
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center text-[#9E3D6F]">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                  </svg>
+                </span>
+                <input 
+                  type="text"
+                  placeholder="Instagram (@usuario)"
+                  value={draftData.instagram || ''}
+                  onChange={(e) => {
+                    const clean = e.target.value.replace(/^@/, '').trim();
+                    setDraftData({ 
+                      ...draftData, 
+                      instagram: clean,
+                      socialHandle: clean || draftData.tiktok || '' 
+                    });
+                  }}
+                  className="w-full border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-xs text-[#1E2A78] focus:border-[#C9A961] focus:ring-1 focus:ring-[#C9A961] outline-none bg-white"
+                />
+              </div>
+
+              {/* TikTok */}
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center text-[#472242]">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68a6.34 6.34 0 0 0 10.86 4.47 6.27 6.27 0 0 0 1.88-4.48V8.78a8.28 8.28 0 0 0 4.85 1.56V6.89a4.84 4.84 0 0 1-1-.2z"/>
+                  </svg>
+                </span>
+                <input 
+                  type="text"
+                  placeholder="TikTok (@usuario)"
+                  value={draftData.tiktok || ''}
+                  onChange={(e) => {
+                    const clean = e.target.value.replace(/^@/, '').trim();
+                    setDraftData({ 
+                      ...draftData, 
+                      tiktok: clean,
+                      socialHandle: draftData.instagram || clean || '' 
+                    });
+                  }}
+                  className="w-full border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-xs text-[#1E2A78] focus:border-[#C9A961] focus:ring-1 focus:ring-[#C9A961] outline-none bg-white"
+                />
+              </div>
             </div>
-            <p className="text-[11px] text-[#9B8FB0] mt-1 leading-snug">
+            <p className="text-[11px] text-[#9B8FB0] mt-1.5 leading-snug">
               Para poder mencionarte y etiquetarte si compartimos el homenaje de tu angelito en nuestras redes sociales 🐾
             </p>
           </div>

@@ -52,6 +52,8 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
           dedication: (draftData.message || '').slice(0, 490),
           shareOnSocials: draftData.shareOnSocials ? 'true' : 'false',
           socialHandle: draftData.socialHandle ?? '',
+          instagram: draftData.instagram ?? '',
+          tiktok: draftData.tiktok ?? '',
         }),
       })
 

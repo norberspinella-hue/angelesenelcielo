@@ -26,6 +26,8 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounder
     breed: '',
     birthDate: '',
     location: '',
+    instagram: '',
+    tiktok: '',
     socialHandle: ''
   });
 
@@ -49,8 +51,10 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounder
         breed: '',
         birthDate: '',
         location: '',
-        socialHandle: ''
-      });
+        instagram: '',
+    tiktok: '',
+    socialHandle: ''
+  });
     }, 300);
     onClose();
   };
