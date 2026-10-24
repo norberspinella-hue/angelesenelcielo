@@ -283,7 +283,7 @@ export default function LiveTikTokClient() {
         {/* ======================================================== */}
         {/* ZONA CENTRAL ACTIVA (LAS 3 VISTAS GHIBLI / CIELO DE LUCES)*/}
         {/* ======================================================== */}
-        <div className="relative z-10 flex-1 flex flex-col justify-center px-5 py-2">
+        <div className="relative z-10 flex-1 flex flex-col justify-start pt-3 sm:pt-6 px-5 pb-2">
 
           {/* ---------------------------------------------------- */}
           {/* VISTA 1: CIELO DE LUCES (ALTAR DE VELAS EN VIVO)     */}
@@ -291,25 +291,25 @@ export default function LiveTikTokClient() {
           {activeScene === 1 && (
             <div className="flex flex-col items-center text-center space-y-4 animate-in fade-in zoom-in-95 duration-500">
               
-              {/* LA VELA CENTRAL CON ESTILO Y COLORES DE CIELO DE LUCES */}
-              <div className="relative flex flex-col items-center pt-2">
+              {/* LA VELA CENTRAL MAJESTUOSA EN LA PARTE SUPERIOR */}
+              <div className="relative flex flex-col items-center pt-1 pb-3">
                 {/* Aura de resplandor áureo y rosa celestial */}
-                <div className="absolute -top-14 w-48 h-48 rounded-full bg-gradient-to-r from-amber-400/30 via-[#EC4899]/20 to-orange-500/25 blur-2xl animate-aura-breath pointer-events-none" />
+                <div className="absolute -top-16 w-56 h-56 rounded-full bg-gradient-to-r from-amber-400/30 via-[#EC4899]/20 to-orange-500/25 blur-3xl animate-aura-breath pointer-events-none" />
 
                 {/* Llama Ghibli viva */}
-                <div className="relative z-10 animate-ghibli-flame">
-                  <div className="w-8 h-18 bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-100 rounded-full shadow-[0_0_32px_rgba(251,191,36,0.95)]" />
-                  <div className="absolute top-6 left-2 w-4 h-9 bg-white/95 rounded-full blur-[1px]" />
+                <div className="relative z-20 animate-ghibli-flame mb-0.5">
+                  <div className="w-[36px] h-[75px] bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-100 rounded-full shadow-[0_0_36px_rgba(251,191,36,1)]" />
+                  <div className="absolute top-6 left-2 w-[18px] h-[38px] bg-white/95 rounded-full blur-[1px]" />
                 </div>
 
                 {/* Mecha */}
-                <div className="w-1 h-3.5 bg-stone-800 -mt-1" />
+                <div className="w-[3px] h-[12px] bg-stone-900 -mt-1.5 z-10" />
 
                 {/* Vaso de cristal con cera cálida marfil */}
-                <div className="w-22 h-26 bg-gradient-to-b from-[#FFFDF9] via-[#FDF3E7] to-[#F5DEC3] rounded-t-xl rounded-b-3xl shadow-2xl relative overflow-hidden border-2 border-amber-200/60 ring-2 ring-[#B83C7E]/20">
-                  <div className="absolute top-0 inset-x-0 h-3.5 bg-amber-100/70 rounded-full blur-[1px]" />
-                  <div className="absolute bottom-2.5 inset-x-0 text-center">
-                    <span className="text-[10px] font-serif font-black text-[#5C3C58] tracking-widest uppercase">
+                <div className="w-[96px] h-[116px] bg-gradient-to-b from-[#FFFDF9] via-[#FDF3E7] to-[#F5DEC3] rounded-t-xl rounded-b-3xl shadow-2xl relative border-2 border-amber-200/70 ring-4 ring-[#B83C7E]/20 flex flex-col justify-between p-2.5 overflow-hidden">
+                  <div className="w-full h-3.5 bg-amber-100/70 rounded-full blur-[1px]" />
+                  <div className="w-full text-center pb-1">
+                    <span className="text-[10px] font-serif font-black text-[#5C3C58] tracking-widest uppercase block">
                       Llama Eterna
                     </span>
                   </div>
@@ -317,7 +317,7 @@ export default function LiveTikTokClient() {
               </div>
 
               {/* Título de Cielo de Luces con caligrafía serena y curva rosa */}
-              <div className="space-y-1">
+              <div className="space-y-1.5 z-10 pt-1">
                 <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[#FFFDFB] leading-tight">
                   Un cielo lleno <span className="text-[#F472B6]">de luces ✨</span>
                 </h1>
@@ -327,7 +327,7 @@ export default function LiveTikTokClient() {
               </div>
 
               {/* LISTA DINÁMICA DE VELAS (ESTILO TARJETAS DE CIELO DE LUCES) */}
-              <div className="w-full max-w-[340px] bg-white/10 backdrop-blur-md border border-[#F3D5E4]/30 rounded-3xl p-4 shadow-xl space-y-2">
+              <div className="w-full max-w-[340px] bg-white/10 backdrop-blur-md border border-[#F3D5E4]/30 rounded-3xl p-4 shadow-xl space-y-2 z-10">
                 <div className="flex items-center justify-between text-[11px] font-bold text-amber-200 border-b border-white/10 pb-2">
                   <span className="flex items-center gap-1.5">
                     <span>🕯️</span> Velas encendidas esta semana
@@ -380,7 +380,7 @@ export default function LiveTikTokClient() {
 
                 {/* Retrato Arqueado Ghibli con borde dorado y halo rosa */}
                 <div className="relative mx-auto mb-3">
-                  <div className="relative w-22 h-26 mx-auto rounded-t-full rounded-b-2xl overflow-hidden bg-pink-100 border-3 border-amber-300 shadow-lg ring-3 ring-pink-200/70">
+                  <div className="relative w-[92px] h-[116px] mx-auto rounded-t-full rounded-b-2xl overflow-hidden bg-pink-100 border-3 border-amber-300 shadow-lg ring-3 ring-pink-200/70">
                     <img
                       src={currentLetter.photoUrl}
                       alt={currentLetter.petName}
@@ -451,7 +451,7 @@ export default function LiveTikTokClient() {
 
                 {/* Retrato Arqueado Ghibli de Vaiana */}
                 <div className="relative mx-auto mb-3">
-                  <div className="relative w-22 h-26 mx-auto rounded-t-full rounded-b-2xl overflow-hidden bg-pink-100 border-3 border-amber-400 shadow-xl ring-3 ring-pink-400/40">
+                  <div className="relative w-[92px] h-[116px] mx-auto rounded-t-full rounded-b-2xl overflow-hidden bg-pink-100 border-3 border-amber-400 shadow-xl ring-3 ring-pink-400/40">
                     <img
                       src="/images/solidario/vaiana_real_mural.jpg"
                       alt="Vaiana"
