@@ -12,6 +12,20 @@ export const dynamic = 'force-dynamic';
 
 const SEED_MEMORIES: CommunityMemory[] = [
   {
+    id: 'seed-chloe',
+    petName: 'Chloe',
+    species: 'perro',
+    photoUrl: '/images/comunidad/chloe.jpg',
+    message: 'Te fuiste como llegaste de manera inesperada, pero nos llenaste de vida y de amor. Nos enseñaste a querer de nuevo, nos curaste heridas que no sabíamos que se podían curar. Te agradecemos todo lo que nos diste pequeñita. Te echaremos de menos siempre.',
+    authorName: 'Familia de Chloe',
+    yearsOrDates: '2014 - 2026',
+    tiktok: 'jupiter_sp',
+    candlesCount: 156,
+    supportCount: 48,
+    hugsCount: 72,
+    createdAt: '2026-10-23T18:44:56Z',
+  },
+  {
     id: 'seed-max',
     petName: 'Max',
     species: 'perro',
@@ -370,25 +384,44 @@ async function getCommunityMemories(): Promise<CommunityMemory[]> {
       return SEED_MEMORIES;
     }
 
-    const dbMemories: CommunityMemory[] = data.map((m: any) => ({
-      id: m.id,
-      petName: m.pet_name,
-      species: m.species === 'gato' ? 'gato' : m.species === 'perro' ? 'perro' : 'otro',
-      photoUrl: m.photo_url || '/images/comunidad/pet-max.webp',
-      message: m.dedication,
-      authorName: m.story_answers?.authorName || `Familia de ${m.pet_name}`,
-      yearsOrDates: m.story_answers?.yearsOrDates || '',
-      instagram: m.story_answers?.instagram || '',
-      tiktok: m.story_answers?.tiktok || '',
-      candlesCount: m.story_answers?.candlesCount || 1,
-      supportCount: m.story_answers?.supportCount || 0,
-      hugsCount: m.story_answers?.hugsCount || 0,
-      profileSlug: m.profile_slug,
-      createdAt: m.created_at,
-    }));
+    const dbMemories: CommunityMemory[] = data.map((m: any) => {
+      const isChloe = m.pet_name?.toLowerCase() === 'chloe';
+      return {
+        id: m.id,
+        petName: m.pet_name,
+        species: m.species === 'gato' ? 'gato' : m.species === 'perro' ? 'perro' : 'otro',
+        photoUrl: isChloe ? (m.photo_url || '/images/comunidad/chloe.jpg') : (m.photo_url || '/images/comunidad/pet-max.webp'),
+        message: isChloe && (!m.dedication || m.dedication.length < 30)
+          ? 'Te fuiste como llegaste de manera inesperada, pero nos llenaste de vida y de amor. Nos enseñaste a querer de nuevo, nos curaste heridas que no sabíamos que se podían curar. Te agradecemos todo lo que nos diste pequeñita. Te echaremos de menos siempre.'
+          : m.dedication,
+        authorName: m.story_answers?.authorName || `Familia de ${m.pet_name}`,
+        yearsOrDates: isChloe ? (m.story_answers?.yearsOrDates || '2014 - 2026') : (m.story_answers?.yearsOrDates || ''),
+        instagram: m.story_answers?.instagram || '',
+        tiktok: isChloe ? (m.story_answers?.tiktok || 'jupiter_sp') : (m.story_answers?.tiktok || ''),
+        candlesCount: m.story_answers?.candlesCount || 1,
+        supportCount: m.story_answers?.supportCount || 0,
+        hugsCount: m.story_answers?.hugsCount || 0,
+        profileSlug: m.profile_slug,
+        createdAt: m.created_at,
+      };
+    });
 
-    // Combine DB memories first, then SEED memories that aren't duplicates
-    return [...dbMemories, ...SEED_MEMORIES];
+    // Deduplicar memorias de la BD (por ejemplo registros duplicados) y luego combinar con semillas
+    const seenNames = new Set<string>();
+    const uniqueDbMemories: CommunityMemory[] = [];
+    for (const mem of dbMemories) {
+      const key = `${mem.petName.toLowerCase()}-${mem.authorName?.toLowerCase()}`;
+      if (!seenNames.has(key)) {
+        seenNames.add(key);
+        uniqueDbMemories.push(mem);
+      }
+    }
+
+    const uniqueSeedMemories = SEED_MEMORIES.filter(
+      seed => !seenNames.has(`${seed.petName.toLowerCase()}-${seed.authorName?.toLowerCase()}`)
+    );
+
+    return [...uniqueDbMemories, ...uniqueSeedMemories];
   } catch (err) {
     console.error('Error fetching community memories for page:', err);
     return SEED_MEMORIES;

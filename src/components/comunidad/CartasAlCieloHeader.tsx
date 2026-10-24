@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { PapelPicadoGarland } from '@/components/landing/PapelPicadoGarland';
 
 interface CartasAlCieloHeaderProps {
@@ -14,6 +15,8 @@ export function CartasAlCieloHeader({
   showGarland = true,
 }: CartasAlCieloHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const isCieloLuces = pathname?.startsWith('/cielo-lleno-de-luces');
 
   return (
     <header 
@@ -25,13 +28,13 @@ export function CartasAlCieloHeader({
       {showGarland && <PapelPicadoGarland />}
 
       {/* Brand: Logo heart + Ángeles en el Cielo (Idéntico a landing) */}
-      <Link href="/" className="flex items-center gap-2 select-none relative z-20">
+      <Link href="/" className="flex items-center gap-2 select-none relative z-20 shrink-0">
         <img 
           src="/images/icons/Logoheart.svg" 
           alt="Ángeles en el Cielo" 
           className="h-[52px] sm:h-[72px] md:h-[90px] -my-1 sm:-my-2 object-contain" 
         />
-        <div className="flex flex-col font-serif text-[#1E2A78] text-sm sm:text-base md:text-xl font-bold leading-tight justify-center">
+        <div className="flex flex-col font-serif text-[#1E2A78] text-sm sm:text-base md:text-xl font-bold leading-tight justify-center whitespace-nowrap">
           <span>Ángeles en</span>
           <span>el Cielo</span>
         </div>
@@ -44,12 +47,13 @@ export function CartasAlCieloHeader({
           El Mural
         </Link>
 
-        {/* 2. Cartas al Cielo */}
-        <Link href="/comunidad" className="heaven-nav-link text-sm">
-          Cartas al Cielo
+        {/* 2. Cielo de Luces (o Cartas al Cielo si ya está en Cielo de Luces) */}
+        <Link 
+          href={isCieloLuces ? "/comunidad" : "/cielo-lleno-de-luces"} 
+          className="heaven-nav-link text-sm"
+        >
+          {isCieloLuces ? "Cartas al Cielo" : "Cielo de Luces"}
         </Link>
-
-
 
         {/* 4. Desde el Corazón con el icono heart flotante encima */}
         <Link 
@@ -104,16 +108,14 @@ export function CartasAlCieloHeader({
             El Mural
           </Link>
 
-          {/* 2. Cartas al Cielo */}
+          {/* 2. Cielo de Luces (o Cartas al Cielo si ya está en Cielo de Luces) */}
           <Link 
-            href="/comunidad" 
+            href={isCieloLuces ? "/comunidad" : "/cielo-lleno-de-luces"} 
             onClick={() => setIsMenuOpen(false)}
             className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
           >
-            Cartas al Cielo
+            {isCieloLuces ? "Cartas al Cielo" : "Cielo de Luces"}
           </Link>
-
-
 
           {/* 4. Desde el Corazón con el icono */}
           <Link 

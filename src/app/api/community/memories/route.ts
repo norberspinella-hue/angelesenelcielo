@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
       id: m.id,
       petName: m.pet_name,
       species: m.species,
-      photoUrl: m.photo_url || '/images/placeholders/first.webp',
+      photoUrl: m.pet_name === 'Chloe' ? (m.photo_url || '/images/comunidad/chloe.jpg') : (m.photo_url || '/images/placeholders/first.webp'),
       message: m.dedication,
       authorName: m.story_answers?.authorName || `Familia de ${m.pet_name}`,
       yearsOrDates: m.story_answers?.yearsOrDates || '',

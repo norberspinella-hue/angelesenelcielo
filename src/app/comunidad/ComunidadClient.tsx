@@ -619,6 +619,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
             src={m.photoUrl}
             alt={m.petName}
             fill
+            unoptimized
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
           
@@ -1718,6 +1719,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                 src={selectedMemoryForRead.photoUrl}
                 alt={selectedMemoryForRead.petName}
                 fill
+                unoptimized
                 className="object-cover"
               />
               <div 
