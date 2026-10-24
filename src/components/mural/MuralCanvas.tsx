@@ -956,7 +956,7 @@ function PetProfileCard({
               </div>
 
               {/* Usuario de redes sociales si fue proporcionado */}
-              {petData?.story_answers?.socialHandle && (
+              {(petData?.story_answers?.socialHandle || petData?.story_answers?.tiktok) && (
                 <div 
                   style={{
                     display: 'flex',
@@ -973,7 +973,7 @@ function PetProfileCard({
                   }}
                 >
                   <span style={{ fontSize: '11px', color: '#BE185D', fontWeight: 600, fontFamily: 'sans-serif' }}>
-                    @{petData.story_answers.socialHandle.replace(/^@/, '')}
+                    @{(petData.story_answers.socialHandle || petData.story_answers.tiktok).replace(/^@/, '')}
                   </span>
                 </div>
               )}

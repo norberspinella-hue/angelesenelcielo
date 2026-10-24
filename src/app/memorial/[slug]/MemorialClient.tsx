@@ -18,6 +18,12 @@ interface Memorial {
   photo_url: string
   plan_type: string
   profile_slug: string
+  story_answers?: {
+    socialHandle?: string
+    tiktok?: string
+    instagram?: string
+    [key: string]: any
+  }
 }
 
 export default function MemorialClient({ slug }: { slug: string }) {
@@ -368,6 +374,16 @@ export default function MemorialClient({ slug }: { slug: string }) {
               “{memorial.dedication || 'Siempre serás mi lugar favorito en el mundo.'}”
             </blockquote>
           </div>
+
+          {/* USUARIO DE REDES SOCIALES (TIKTOK / INSTAGRAM) */}
+          {(memorial.story_answers?.tiktok || memorial.story_answers?.socialHandle || memorial.story_answers?.instagram) && (
+            <div className="mb-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 border border-pink-200/80 shadow-xs">
+              <span className="text-xs">📱</span>
+              <span className="text-xs font-semibold text-[#BE185D]">
+                @{(memorial.story_answers?.tiktok || memorial.story_answers?.socialHandle || memorial.story_answers?.instagram)?.replace(/^@/, '')}
+              </span>
+            </div>
+          )}
 
           {/* SU LUZ YA FORMA PARTE DEL MURAL */}
           <p className="text-[11px] sm:text-xs text-[#7C3AED] font-medium mb-3.5 sm:mb-4 flex items-center justify-center gap-1.5">
