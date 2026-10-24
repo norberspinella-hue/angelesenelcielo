@@ -485,7 +485,7 @@ export function CorazonesDeAngelSection() {
                     Entendido, muchas gracias
                   </button>
                   <a
-                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Hola, acabo de enviar la solicitud del programa piloto para la protectora ${shelterName} en ${shelterCity}.`)}`}
+                    href={`https://wa.me/34610319143?text=${encodeURIComponent(`Hola, acabo de enviar la solicitud del programa piloto para la protectora ${shelterName} en ${shelterCity}.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2.5 rounded-full bg-white hover:bg-emerald-100 text-emerald-800 font-semibold text-xs border border-emerald-300 transition-colors inline-flex items-center justify-center gap-1.5"

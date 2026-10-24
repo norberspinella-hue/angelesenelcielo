@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 
 export function WhatsAppButton() {
   const pathname = usePathname();
-  const phoneNumber = '34690196207';
+  const phoneNumber = '34610319143';
   const defaultMessage = 'Hola, tengo una consulta sobre el memorial de Ángeles en el Cielo 🐾';
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(defaultMessage)}`;
 
