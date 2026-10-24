@@ -297,6 +297,14 @@ export default function AdminModeracionPage() {
               🐾 Alta Protectoras
             </Link>
             <Link
+              href="/live-tiktok"
+              target="_blank"
+              className="px-4 py-2 rounded-full text-xs font-black bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:opacity-95 transition-all shadow-xs flex items-center gap-1"
+            >
+              <span>🔴 TikTok LIVE</span>
+              <span>↗</span>
+            </Link>
+            <Link
               href="/reels-tiktok"
               target="_blank"
               className="px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r from-[#F472B6] to-[#EC4899] text-white hover:opacity-90 transition-all shadow-xs"

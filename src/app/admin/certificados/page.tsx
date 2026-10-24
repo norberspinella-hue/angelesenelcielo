@@ -322,6 +322,14 @@ export default function AdminCertificadosPage() {
               🐾 Alta Protectoras
             </Link>
             <Link
+              href="/live-tiktok"
+              target="_blank"
+              className="px-4 py-2 rounded-full text-xs font-black bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:opacity-95 transition-all shadow-xs flex items-center gap-1"
+            >
+              <span>🔴 TikTok LIVE Studio</span>
+              <span>↗</span>
+            </Link>
+            <Link
               href="/mural-global"
               target="_blank"
               className="px-4 py-2 rounded-full text-xs font-bold bg-[#1E2A78] text-white hover:bg-[#151D54] transition-all shadow-xs"
