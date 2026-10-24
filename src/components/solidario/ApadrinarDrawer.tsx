@@ -27,10 +27,10 @@ export const DEFAULT_SHELTER_PETS: ShelterPet[] = [
   {
     id: 'shelter_vaiana',
     name: 'Vaiana',
-    shelterName: 'Refugio Nueva Vida',
-    shelterCity: 'Valencia',
-    photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/1792342318721_vaiana.png',
-    storyPreview: 'Noble compañera de mirada dulce que cruzó el arcoíris arropada por su familia de acogida.',
+    shelterName: 'Almas de 4 patas',
+    shelterCity: 'Málaga',
+    photoUrl: '/images/solidario/vaiana_real_mural.jpg',
+    storyPreview: 'Vaiana solo era un bebe recien nacida, cuando la dejaron abandonada en medio de la nada, pero encontró Un Corazón de Ángel, Amaya. Ella le dió todo el amor del mundo. Vaiana se fue a los pocos días, pero conoció lo que es el cariño y calidez de una mamá perruna.',
     starsCount: 1,
     isSponsored: false,
     muralCoords: { x: 476, y: 494 },
@@ -346,8 +346,11 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                       >
                         <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-pink-300 shrink-0 shadow-xs relative">
                           <img 
-                            src={pet.photoUrl} 
+                            src={pet.photoUrl || '/images/solidario/vaiana_real_mural.jpg'} 
                             alt={pet.name} 
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = '/images/solidario/vaiana_real_mural.jpg';
+                            }}
                             className="w-full h-full object-cover" 
                           />
                         </div>
@@ -423,7 +426,14 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
               {/* Ficha Resumen del Angelito Seleccionado */}
               <div className="bg-gradient-to-r from-pink-50/80 via-purple-50/50 to-amber-50/50 border border-pink-200/90 rounded-2xl p-3 flex items-center gap-3 mb-4 shadow-xs">
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-pink-300 shrink-0 relative">
-                  <img src={selectedPet.photoUrl} alt={selectedPet.name} className="w-full h-full object-cover" />
+                  <img 
+                    src={selectedPet.photoUrl || '/images/solidario/vaiana_real_mural.jpg'} 
+                    alt={selectedPet.name} 
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = '/images/solidario/vaiana_real_mural.jpg';
+                    }}
+                    className="w-full h-full object-cover" 
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-0.5">
