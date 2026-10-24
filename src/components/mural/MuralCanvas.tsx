@@ -1536,13 +1536,14 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
             return true;
           });
 
-          // 1. Agrupar por memorial_id para encontrar el slot de origen (x mínimo y y mínimo)
+          // 1. Agrupar por memorial_id (o thumbnail_url + plan_type) para encontrar el slot de origen (x mínimo y y mínimo)
           const minsMap = new Map<string, { minX: number; minY: number }>();
           validSlots.forEach((slot: any) => {
-            if (!slot.memorial_id) return;
-            const current = minsMap.get(slot.memorial_id);
+            const groupKey = slot.memorial_id || (slot.thumbnail_url && slot.plan_type ? `${slot.thumbnail_url}_${slot.plan_type}` : null);
+            if (!groupKey) return;
+            const current = minsMap.get(groupKey);
             if (!current) {
-              minsMap.set(slot.memorial_id, { minX: slot.x, minY: slot.y });
+              minsMap.set(groupKey, { minX: slot.x, minY: slot.y });
             } else {
               current.minX = Math.min(current.minX, slot.x);
               current.minY = Math.min(current.minY, slot.y);
@@ -1553,8 +1554,10 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
           const realSlots = new Map<string, any>();
           validSlots.forEach((slot: any) => {
             const key = `${slot.x},${slot.y}`;
-            const mins = slot.memorial_id ? minsMap.get(slot.memorial_id) : null;
-            const isMain = mins ? (slot.x === mins.minX && slot.y === mins.minY) : true;
+            const groupKey = slot.memorial_id || (slot.thumbnail_url && slot.plan_type ? `${slot.thumbnail_url}_${slot.plan_type}` : null);
+            const mins = groupKey ? minsMap.get(groupKey) : null;
+            const planSize = getPlanByDbName(slot.plan_type)?.size ?? 1;
+            const isMain = mins ? (slot.x === mins.minX && slot.y === mins.minY) : (planSize === 1);
             const isDbShelter = Boolean(
               slot.memorial_id?.startsWith('shelter_') ||
               slot.memorials?.story_answers?.isShelter ||

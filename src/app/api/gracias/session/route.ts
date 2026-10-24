@@ -343,7 +343,7 @@ export async function GET(req: NextRequest) {
               location: location || '',
               photo_url: photoUrl || '',
               death_date: petDate || new Date().toISOString().split('T')[0],
-              slots_count: planCfg.slotsCount,
+              slots_count: [1, 4, 9].includes(planCfg.slotsCount) ? planCfg.slotsCount : 9,
               profile_slug: `${petName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`,
               visibility: 'public',
               publication_status: 'published',
