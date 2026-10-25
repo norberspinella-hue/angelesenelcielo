@@ -1303,7 +1303,9 @@ export default function ComunidadClient({ initialMemories }: Props) {
             <div className="inline-flex items-center gap-2 bg-[#FFF1F7] border border-[#ECCEDB] px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold text-[#843969]">
               <span className="font-semibold text-[#8C3F71]">
                 {filteredMemories.length > 0 
-                  ? `Página ${safePage} de ${totalPages} · Mostrando ${startIndex + 1}–${Math.min(startIndex + cardsPerPage, filteredMemories.length)} de ${filteredMemories.length} ángeles`
+                  ? (totalPages > 1
+                      ? `Página ${safePage} de ${totalPages} · Mostrando ${startIndex + 1}–${Math.min(startIndex + cardsPerPage, filteredMemories.length)} de ${filteredMemories.length} ángeles`
+                      : `Mostrando ${filteredMemories.length} cartas al cielo en memoria de nuestros ángeles`)
                   : 'Sin ángeles registrados'}
               </span>
             </div>
