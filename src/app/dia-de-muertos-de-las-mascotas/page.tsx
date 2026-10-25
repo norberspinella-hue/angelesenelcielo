@@ -205,17 +205,17 @@ export default function DiaDeLasMascotasLanding() {
           {/* Logotipo oficial */}
           <Link 
             href="/" 
-            className="flex items-center gap-2.5 group select-none shrink-0"
+            className="flex items-center gap-2 group select-none shrink-0"
             title="Ángeles en el Cielo · Inicio"
           >
             <img 
               src="/images/icons/Logoheart.svg" 
               alt="Logotipo de Ángeles en el Cielo" 
-              className="h-10 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105" 
+              className="h-9 sm:h-12 w-auto object-contain transition-transform group-hover:scale-105" 
             />
-            <div className="flex flex-col font-serif leading-none">
-              <span className="text-[#6B1D34] text-base sm:text-lg font-bold tracking-tight">Ángeles en</span>
-              <span className="text-[#6B1D34] text-base sm:text-lg font-bold tracking-tight">el Cielo</span>
+            <div className="flex flex-col font-serif leading-tight">
+              <span className="text-[#6B1D34] text-sm sm:text-base md:text-lg font-bold tracking-tight">Ángeles en</span>
+              <span className="text-[#6B1D34] text-sm sm:text-base md:text-lg font-bold tracking-tight">el Cielo</span>
             </div>
           </Link>
 
@@ -345,7 +345,7 @@ export default function DiaDeLasMascotasLanding() {
 
               {/* H1 Principal */}
               <h1 
-                className="text-3xl sm:text-5xl lg:text-[56px] font-bold text-[#6B1D34] leading-[1.12] tracking-tight"
+                className="text-2xl sm:text-4xl lg:text-[54px] font-bold text-[#6B1D34] leading-[1.18] tracking-tight break-words"
                 style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
               >
                 Hay amores que siempre encuentran el camino de vuelta <span className="text-[#EA580C] font-normal inline-block">♡</span>
@@ -666,7 +666,7 @@ export default function DiaDeLasMascotasLanding() {
                         }
                       }}
                       placeholder="Ej: Chloe, Toby, Nara..."
-                      className={`w-full px-4 py-3 rounded-xl bg-white border text-[#3D314A] placeholder-gray-400 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#EA580C] transition-all ${
+                      className={`w-full px-4 py-3 rounded-xl bg-white border text-[#3D314A] placeholder-gray-400 text-base min-h-[44px] focus:outline-none focus:ring-2 focus:ring-[#EA580C] transition-all ${
                         errors.petName ? 'border-red-400 bg-red-50/20' : 'border-[#E8D7C6]'
                       }`}
                     />
@@ -763,7 +763,7 @@ export default function DiaDeLasMascotasLanding() {
                         }
                       }}
                       placeholder="Escribe aquí tu mensaje, recuerdos de su vida o lo que siempre vivirá en ti..."
-                      className={`w-full px-4 py-3 rounded-xl bg-white border text-[#3D314A] placeholder-gray-400 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#EA580C] transition-all leading-relaxed ${
+                      className={`w-full px-4 py-3 rounded-xl bg-white border text-[#3D314A] placeholder-gray-400 text-base focus:outline-none focus:ring-2 focus:ring-[#EA580C] transition-all leading-relaxed ${
                         errors.dedication ? 'border-red-400 bg-red-50/20' : 'border-[#E8D7C6]'
                       }`}
                     />
