@@ -59,7 +59,7 @@ export function OctubreBanner({ onVisibilityChange }: OctubreBannerProps) {
         
         {/* Lado izquierdo: Avatar miniatura de perritos + Textos conmemorativos */}
         <Link 
-          href="/dia-de-muertos" 
+          href="/dia-de-muertos-de-las-mascotas" 
           className="flex items-center gap-2.5 sm:gap-3.5 overflow-hidden group cursor-pointer"
         >
           <div className="relative h-[42px] sm:h-[48px] w-[66px] sm:w-[76px] shrink-0 rounded overflow-hidden shadow-inner border border-[#F5C842]/30">
@@ -94,7 +94,7 @@ export function OctubreBanner({ onVisibilityChange }: OctubreBannerProps) {
         {/* Lado derecho: Botón CTA y Cerrar */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <Link 
-            href="/dia-de-muertos" 
+            href="/dia-de-muertos-de-las-mascotas" 
             className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold text-[#180A2D] flex items-center gap-1.5 shadow-md hover:scale-105 active:scale-95 transition-all whitespace-nowrap"
             style={{ background: 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 100%)' }}
           >

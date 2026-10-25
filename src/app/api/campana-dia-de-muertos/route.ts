@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
           </div>
 
           <p style="font-size: 11px; color: #64748B; margin-top: 20px; text-align: center;">
-            Enviado desde el formulario oficial de campaña en todaslasmascotasvanalcielo.com/dia-de-muertos · ${timestamp}
+            Enviado desde el formulario oficial de campaña en todaslasmascotasvanalcielo.com/dia-de-muertos-de-las-mascotas · ${timestamp}
           </p>
         </div>
       `,
