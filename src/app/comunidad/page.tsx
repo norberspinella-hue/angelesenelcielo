@@ -107,33 +107,32 @@ const SEED_MEMORIES: CommunityMemory[] = [
     createdAt: '2026-10-20T14:00:00Z',
   },
   {
-    id: 'seed-max',
-    petName: 'Max',
+    id: 'seed-vaiana',
+    petName: 'Vaiana',
     species: 'perro',
-    photoUrl: '/images/comunidad/pet-max.webp',
-    message: 'Gracias por enseñarme lo que es la lealtad pura. Tu colita moviéndose al verme llegar era mi momento favorito de cada día.',
-    authorName: 'Familia de Max',
-    yearsOrDates: '2012 - 2024',
-    instagram: 'max_el_golden',
+    photoUrl: '/images/solidario/vaiana_real_mural.jpg',
+    message: 'Vaiana solo era un bebé recién nacida cuando la dejaron abandonada, pero conoció el amor y la calidez de una mamá de acogida antes de partir. Aunque te fuiste a los pocos días, dejaste una huella imborrable.',
+    authorName: 'Almas de 4 patas',
+    yearsOrDates: '2026',
+    instagram: 'almas.de.4.patas',
+    tiktok: 'almas.de.4.patas',
     candlesCount: 98,
     supportCount: 28,
     hugsCount: 45,
-    createdAt: '2026-10-20T10:00:00Z',
+    createdAt: '2026-10-18T18:31:35Z',
   },
   {
-    id: 'seed-luna',
-    petName: 'Luna',
-    species: 'gato',
-    photoUrl: '/images/comunidad/pet-luna.webp',
-    message: 'Fuiste mi compañera de cada día. Tu ronroneo suave y tu mirada tranquila seguirán iluminando mi vida.',
-    authorName: 'Mamá de Luna',
-    yearsOrDates: '2016 - 2025',
-    instagram: 'luna_gatita',
-    tiktok: 'lunagatos',
+    id: 'seed-nara',
+    petName: 'Nara',
+    species: 'perro',
+    photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/1792881259532.jpg',
+    message: 'Nara provenía del sinhogarismo, su antiguo papá no pudo hacerse cargo de ella y entró en Canópolis donde vivió libre, rodeada de naturaleza y pasó sus últimos días rodeada de amor.',
+    authorName: 'Familia Spinella',
+    yearsOrDates: '2026',
     candlesCount: 92,
     supportCount: 26,
     hugsCount: 42,
-    createdAt: '2026-10-20T11:00:00Z',
+    createdAt: '2026-10-24T22:40:19Z',
   },
   {
     id: 'seed-coco',
@@ -213,19 +212,24 @@ async function getCommunityMemories(): Promise<CommunityMemory[]> {
       };
     });
 
-    // Deduplicar memorias de la BD (por ejemplo registros duplicados) y luego combinar con semillas
-    const seenNames = new Set<string>();
+    // Deduplicar por nombre de mascota para evitar CUALQUIER duplicado (por ejemplo Chloe en DB y en semillas)
+    const seenPetNames = new Set<string>();
     const uniqueDbMemories: CommunityMemory[] = [];
     for (const mem of dbMemories) {
-      const key = `${mem.petName.toLowerCase()}-${mem.authorName?.toLowerCase()}`;
-      if (!seenNames.has(key)) {
-        seenNames.add(key);
+      const petKey = mem.petName.toLowerCase().trim();
+      if (!seenPetNames.has(petKey)) {
+        seenPetNames.add(petKey);
+        // Si es Chloe, asegurar que el autor sea Familia Spinella
+        if (petKey === 'chloe') {
+          mem.authorName = 'Familia Spinella';
+        }
         uniqueDbMemories.push(mem);
       }
     }
 
+    // Filtrar semillas que no estén ya en la base de datos
     const uniqueSeedMemories = SEED_MEMORIES.filter(
-      seed => !seenNames.has(`${seed.petName.toLowerCase()}-${seed.authorName?.toLowerCase()}`)
+      seed => !seenPetNames.has(seed.petName.toLowerCase().trim())
     );
 
     return [...uniqueDbMemories, ...uniqueSeedMemories].slice(0, 12);
