@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { Caveat } from 'next/font/google';
 import { 
   RibbonTag, 
   CornerPapelPicado, 
@@ -10,6 +11,12 @@ import {
   ShareNodeIcon, 
   PostcardPaperTag 
 } from '@/components/campana/DiaDeLasMascotasAssets';
+
+const caveat = Caveat({
+  subsets: ['latin'],
+  weight: ['600', '700'],
+  display: 'swap',
+});
 
 export default function DiaDeLasMascotasLanding() {
   // Mobile Nav Drawer
@@ -305,15 +312,30 @@ export default function DiaDeLasMascotasLanding() {
           <div className="absolute inset-0 bg-gradient-to-b from-[#FFFDF9]/85 via-transparent to-transparent sm:hidden pointer-events-none" />
         </div>
 
-        {/* Frase poética en la parte superior derecha de Chloé (texto a mano alzada como en el mockup) */}
-        <div className="absolute top-12 right-10 lg:right-24 z-10 hidden md:block select-none pointer-events-none text-right">
+        {/* Frase poética en la zona de nubes encima de las velas de la derecha idéntica a media_1792943992647_fe6f1fc7.png */}
+        <div className="absolute top-[26%] sm:top-[28%] lg:top-[26%] xl:top-[24%] right-4 sm:right-8 md:right-12 lg:right-16 xl:right-24 z-20 select-none pointer-events-none text-right -rotate-3 sm:-rotate-6">
           <p 
-            className="text-sm lg:text-base text-[#7A1B38] leading-tight drop-shadow-xs"
-            style={{ fontFamily: 'cursive, Georgia, serif' }}
+            className={`${caveat.className} text-xl sm:text-2xl md:text-3xl lg:text-[32px] text-[#7A1B38] leading-[1.08] drop-shadow-[0_1.5px_4px_rgba(255,255,255,0.9)] font-bold tracking-wide`}
           >
-            Nuestro amor<br />
-            también celebra<br />
-            la vida ♡
+            <span className="block">Nuestro amor</span>
+            <span className="block">también celebra</span>
+            <span className="inline-flex items-center justify-end gap-1">
+              <span>la vida</span>
+              <svg 
+                className="w-5 h-6 sm:w-6 sm:h-7 text-[#7A1B38] inline-block -mt-1 ml-0.5" 
+                viewBox="0 0 24 28" 
+                fill="none"
+                aria-hidden="true"
+              >
+                <path 
+                  d="M 12 25 C 9 18 2 12 3 6 C 4 2 9 2 12 7 C 15 2 20 2 21 6 C 22 12 15 18 12 25 Z" 
+                  stroke="currentColor" 
+                  strokeWidth="2.2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
           </p>
         </div>
 
