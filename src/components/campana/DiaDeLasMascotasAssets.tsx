@@ -2,85 +2,21 @@
 
 import React from 'react';
 
-// 1. Tag Ribbon "27 de octubre · Día de las mascotas" idéntico a media_1792932568649_69c20f42.png
+// 1. Tag Ribbon "27 de octubre · Día de las mascotas" recreado fielmente a partir de la referencia original
 export function RibbonTag({ className = '' }: { className?: string }) {
   return (
     <div className={`relative inline-block w-full max-w-[460px] select-none ${className}`}>
-      <svg 
-        viewBox="0 0 460 56" 
-        className="w-full h-auto drop-shadow-[0_4px_12px_rgba(217,119,6,0.30)]"
-        fill="none" 
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          {/* Degradado ámbar-miel cálido idéntico a la imagen */}
-          <linearGradient id="ribbon-amber-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#E28925" />
-            <stop offset="35%" stopColor="#EEA236" />
-            <stop offset="70%" stopColor="#E8952B" />
-            <stop offset="100%" stopColor="#DF811E" />
-          </linearGradient>
-
-          {/* Sombra de los pliegues traseros */}
-          <linearGradient id="ribbon-fold-shadow" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#8A4308" />
-            <stop offset="100%" stopColor="#5F2B04" />
-          </linearGradient>
-        </defs>
-
-        {/* Cola izquierda con corte de golondrina */}
-        <path d="M 46 16 L 12 16 L 24 29 L 12 42 L 46 42 Z" fill="#C96E14" />
-        <path d="M 46 42 L 36 52 L 46 52 Z" fill="url(#ribbon-fold-shadow)" />
-
-        {/* Cola derecha con corte de golondrina */}
-        <path d="M 414 16 L 448 16 L 436 29 L 448 42 L 414 42 Z" fill="#C96E14" />
-        <path d="M 414 42 L 424 52 L 414 52 Z" fill="url(#ribbon-fold-shadow)" />
-
-        {/* Cuerpo principal de la cinta con bordes curvados hacia atrás */}
-        <path 
-          d="M 44 8 C 44 8, 48 6, 54 6 L 406 6 C 412 6, 416 8, 416 8 C 420 12, 424 20, 424 29 C 424 38, 420 46, 416 50 C 412 50, 406 52, 406 52 L 54 52 C 54 52, 48 50, 44 50 C 40 46, 36 38, 36 29 C 36 20, 40 12, 44 8 Z" 
-          fill="url(#ribbon-amber-gradient)" 
+      <picture>
+        <source srcSet="/images/campanas/lazo-27-octubre-hero.webp" type="image/webp" />
+        <img
+          src="/images/campanas/lazo-27-octubre-hero.png"
+          alt="27 de octubre · Día de las mascotas"
+          width="840"
+          height="120"
+          className="w-full h-auto drop-shadow-[0_4px_14px_rgba(217,119,6,0.30)] object-contain"
+          loading="eager"
         />
-
-        {/* Línea de brillo sutil en el borde superior */}
-        <path 
-          d="M 48 9 L 412 9" 
-          stroke="#FEF3C7" 
-          strokeWidth="1.2" 
-          strokeLinecap="round" 
-          opacity="0.65" 
-        />
-
-        {/* Huella canina izquierda (más grande y proporcionada que quepa dentro del tag) */}
-        <g transform="translate(68, 28) scale(1.2)" fill="#FFFFFF">
-          {/* Almohadilla central */}
-          <ellipse cx="0" cy="4" rx="7.2" ry="5.6" />
-          {/* Dedos */}
-          <ellipse cx="-6.8" cy="-5" rx="2.6" ry="4" transform="rotate(-15 -6.8 -5)" />
-          <ellipse cx="-2.3" cy="-8.2" rx="2.5" ry="4.2" transform="rotate(-5 -2.3 -8.2)" />
-          <ellipse cx="2.3" cy="-8.2" rx="2.5" ry="4.2" transform="rotate(5 2.3 -8.2)" />
-          <ellipse cx="6.8" cy="-5" rx="2.6" ry="4" transform="rotate(15 6.8 -5)" />
-        </g>
-
-        {/* Huella canina derecha (más grande y proporcionada que quepa dentro del tag) */}
-        <g transform="translate(392, 28) scale(1.2)" fill="#FFFFFF">
-          <ellipse cx="0" cy="4" rx="7.2" ry="5.6" />
-          <ellipse cx="-6.8" cy="-5" rx="2.6" ry="4" transform="rotate(-15 -6.8 -5)" />
-          <ellipse cx="-2.3" cy="-8.2" rx="2.5" ry="4.2" transform="rotate(-5 -2.3 -8.2)" />
-          <ellipse cx="2.3" cy="-8.2" rx="2.5" ry="4.2" transform="rotate(5 2.3 -8.2)" />
-          <ellipse cx="6.8" cy="-5" rx="2.6" ry="4" transform="rotate(15 6.8 -5)" />
-        </g>
-      </svg>
-
-      {/* Texto centrado en serif idéntico al mockup */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <span 
-          className="text-white font-medium text-[13px] sm:text-[15px] tracking-wide drop-shadow-[0_1.5px_2px_rgba(120,53,15,0.45)]"
-          style={{ fontFamily: 'Georgia, Cambria, "Times New Roman", serif' }}
-        >
-          27 de octubre · Día de las mascotas
-        </span>
-      </div>
+      </picture>
     </div>
   );
 }
