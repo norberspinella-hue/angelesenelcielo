@@ -14,7 +14,7 @@ import {
 
 const caveat = Caveat({
   subsets: ['latin'],
-  weight: ['600', '700'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 
@@ -165,9 +165,6 @@ export default function DiaDeLasMascotasLanding() {
   return (
     <div className="min-h-screen bg-[#FFFDF9] text-[#3D314A] font-inter relative selection:bg-[#FDE68A] selection:text-[#6B1D34]">
       
-      {/* 3. Papel Picado en la esquina superior derecha */}
-      <CornerPapelPicado />
-
       {/* Fondo global suave con nubes y flores */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-25">
         <picture>
@@ -184,9 +181,9 @@ export default function DiaDeLasMascotasLanding() {
       </div>
 
       {/* =========================================================================
-          CABECERA OFICIAL
+          CABECERA OFICIAL (TRANSPARENTE SOBRE EL HERO PARA NO CORTAR LA IMAGEN)
          ========================================================================= */}
-      <header className="sticky top-0 z-40 bg-[#FFFDFB]/90 backdrop-blur-md border-b border-[#F7E6CE] shadow-[0_2px_12px_rgba(107,29,52,0.04)]">
+      <header className="absolute top-0 left-0 right-0 z-40 bg-transparent border-none">
         <div className="max-w-[1240px] mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
           
           <Link 
@@ -238,7 +235,7 @@ export default function DiaDeLasMascotasLanding() {
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl text-[#6B1D34] hover:bg-[#FDF2E9] focus:outline-none focus:ring-2 focus:ring-[#EA580C]"
+              className="md:hidden p-2 rounded-xl text-[#6B1D34] hover:bg-[#FFFDFB]/60 focus:outline-none focus:ring-2 focus:ring-[#EA580C]"
               aria-label="Abrir menú de navegación"
               aria-expanded={mobileMenuOpen}
             >
@@ -290,7 +287,7 @@ export default function DiaDeLasMascotasLanding() {
       {/* =========================================================================
           1, 2 & 3. HERO SECTION (IMAGEN DE FONDO DE SECCIÓN COMPLETA SIN TARJETA)
          ========================================================================= */}
-      <section className="relative w-full min-h-[580px] sm:min-h-[660px] lg:min-h-[740px] flex items-center overflow-hidden mb-12 sm:mb-16">
+      <section className="relative w-full min-h-[580px] sm:min-h-[660px] lg:min-h-[740px] pt-20 sm:pt-24 md:pt-28 flex items-center overflow-hidden mb-12 sm:mb-16">
         
         {/* 2. Imagen de fondo del Hero extendida en toda la sección sin caja contenedora */}
         <div className="absolute inset-0 z-0">
@@ -312,10 +309,13 @@ export default function DiaDeLasMascotasLanding() {
           <div className="absolute inset-0 bg-gradient-to-b from-[#FFFDF9]/85 via-transparent to-transparent sm:hidden pointer-events-none" />
         </div>
 
-        {/* Frase poética en la zona de nubes encima de las velas de la derecha idéntica a media_1792943992647_fe6f1fc7.png */}
-        <div className="absolute top-[26%] sm:top-[28%] lg:top-[26%] xl:top-[24%] right-4 sm:right-8 md:right-12 lg:right-16 xl:right-24 z-20 select-none pointer-events-none text-right -rotate-3 sm:-rotate-6">
+        {/* 3. Papel Picado en la esquina superior derecha colgando hacia el lado derecho */}
+        <CornerPapelPicado />
+
+        {/* Frase poética en la zona de nubes encima de las velas de la derecha idéntica a media_1792943992647_fe6f1fc7.png (no en negrita) */}
+        <div className="hidden sm:block absolute top-[28%] sm:top-[30%] lg:top-[28%] xl:top-[26%] right-3 sm:right-6 md:right-10 lg:right-14 xl:right-20 z-20 select-none pointer-events-none text-right -rotate-3 sm:-rotate-6">
           <p 
-            className={`${caveat.className} text-xl sm:text-2xl md:text-3xl lg:text-[32px] text-[#7A1B38] leading-[1.08] drop-shadow-[0_1.5px_4px_rgba(255,255,255,0.9)] font-bold tracking-wide`}
+            className={`${caveat.className} text-lg sm:text-2xl md:text-3xl lg:text-[32px] text-[#7A1B38] leading-[1.08] drop-shadow-[0_1.5px_4px_rgba(255,255,255,0.9)] font-normal tracking-wide`}
           >
             <span className="block">Nuestro amor</span>
             <span className="block">también celebra</span>
@@ -330,7 +330,7 @@ export default function DiaDeLasMascotasLanding() {
                 <path 
                   d="M 12 25 C 9 18 2 12 3 6 C 4 2 9 2 12 7 C 15 2 20 2 21 6 C 22 12 15 18 12 25 Z" 
                   stroke="currentColor" 
-                  strokeWidth="2.2" 
+                  strokeWidth="1.8" 
                   strokeLinecap="round" 
                   strokeLinejoin="round"
                 />
