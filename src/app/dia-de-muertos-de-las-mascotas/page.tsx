@@ -279,7 +279,7 @@ export default function DiaDeLasMascotasLanding() {
       {/* =========================================================================
           1, 2 & 3. HERO SECTION (IMAGEN DE FONDO DE SECCIÓN COMPLETA SIN TARJETA)
          ========================================================================= */}
-      <section className="relative w-full min-h-[580px] sm:min-h-[660px] lg:min-h-[740px] pt-20 sm:pt-24 md:pt-28 flex items-center overflow-hidden mb-12 sm:mb-16">
+      <section className="relative w-full min-h-[640px] sm:min-h-[760px] md:min-h-[840px] lg:min-h-[920px] xl:min-h-[980px] pt-24 sm:pt-28 md:pt-32 flex items-center overflow-hidden mb-12 sm:mb-16">
         
         {/* 2. Imagen de fondo del Hero extendida en toda la sección sin caja contenedora */}
         <div className="absolute inset-0 z-0">
@@ -291,7 +291,7 @@ export default function DiaDeLasMascotasLanding() {
               src="/images/campanas/hero-movil-480x600.webp"
               alt=""
               aria-hidden="true"
-              className="w-full h-full object-cover object-right sm:object-center"
+              className="w-full h-full object-cover object-[center_top]"
               loading="eager"
             />
           </picture>
