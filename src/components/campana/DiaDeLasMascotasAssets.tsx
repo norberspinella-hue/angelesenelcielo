@@ -21,146 +21,23 @@ export function RibbonTag({ className = '' }: { className?: string }) {
   );
 }
 
-// 2. Picado tradicional en la esquina superior derecha idéntico a media_1792943992647_fe6f1fc7.png
+// 2. Picado tradicional en la esquina superior derecha idéntico a media_1792949018646_36549112.png
 export function CornerPapelPicado({ className = '' }: { className?: string }) {
   return (
     <div 
-      className={`absolute top-0 right-0 w-36 sm:w-52 md:w-64 lg:w-72 xl:w-[310px] pointer-events-none z-30 select-none ${className}`}
+      className={`absolute top-0 right-0 w-48 sm:w-64 md:w-80 lg:w-[380px] xl:w-[420px] pointer-events-none z-20 select-none ${className}`}
       aria-hidden="true"
     >
-      <svg 
-        viewBox="0 0 240 160" 
-        className="w-full h-auto drop-shadow-[0_4px_14px_rgba(76,29,149,0.24)]"
-        fill="none" 
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <filter id="picado-purple-shadow" x="-20%" y="-10%" width="140%" height="130%">
-            <feDropShadow dx="1.5" dy="3.5" stdDeviation="2.5" floodColor="#3B0764" floodOpacity="0.28" />
-          </filter>
-          <filter id="picado-orange-shadow" x="-20%" y="-10%" width="140%" height="130%">
-            <feDropShadow dx="1.5" dy="3.5" stdDeviation="2.5" floodColor="#7C2D12" floodOpacity="0.28" />
-          </filter>
-        </defs>
-
-        {/* Cuerda dorada rústica que cuelga desde la parte de arriba derecha y sube hacia el borde derecho */}
-        <path 
-          d="M 0 20 Q 95 38 240 4" 
-          stroke="#CA8A04" 
-          strokeWidth="3.2" 
-          strokeLinecap="round" 
+      <picture>
+        <source srcSet="/images/campanas/guirnalda-papel-picado-oficial.webp?v=3" type="image/webp" />
+        <img 
+          src="/images/campanas/guirnalda-papel-picado-oficial.png?v=3" 
+          alt="" 
+          aria-hidden="true"
+          className="w-full h-auto object-contain object-right-top drop-shadow-[0_6px_20px_rgba(76,29,149,0.18)]"
+          loading="eager"
         />
-
-        {/* Bandera 1: Papel Picado Violeta con silueta de huella canina */}
-        <g transform="translate(14, 23) rotate(-1.5)" filter="url(#picado-purple-shadow)">
-          <path 
-            d="M 0 0 L 74 0 L 74 94 C 74 94 68 100 62 95 C 56 90 50 100 44 95 C 38 90 32 100 26 95 C 20 90 14 100 8 95 C 3 91 0 94 0 94 Z" 
-            fill="#9333EA" 
-          />
-          <g fill="#FFFDFB" opacity="0.95">
-            {/* Hilera superior de calados circulares */}
-            <circle cx="9" cy="9" r="2.2" />
-            <circle cx="17" cy="9" r="2.2" />
-            <circle cx="25" cy="9" r="2.2" />
-            <circle cx="33" cy="9" r="2.2" />
-            <circle cx="41" cy="9" r="2.2" />
-            <circle cx="49" cy="9" r="2.2" />
-            <circle cx="57" cy="9" r="2.2" />
-            <circle cx="65" cy="9" r="2.2" />
-
-            {/* Bordes laterales de encaje tradicional */}
-            <polygon points="9,20 12,24 9,28 6,24" />
-            <polygon points="9,36 12,40 9,44 6,40" />
-            <polygon points="9,52 12,56 9,60 6,56" />
-            <polygon points="9,68 12,72 9,76 6,72" />
-
-            <polygon points="65,20 68,24 65,28 62,24" />
-            <polygon points="65,36 68,40 65,44 62,40" />
-            <polygon points="65,52 68,56 65,60 62,56" />
-            <polygon points="65,68 68,72 65,76 62,72" />
-
-            {/* Huella canina grande en el centro */}
-            <g transform="translate(37, 47)">
-              <path d="M -12 8 C -14 3, -9 -5, 0 -3 C 9 -5, 14 3, 12 8 C 9 14, -9 14, -12 8 Z" />
-              <ellipse cx="-12" cy="-9" rx="3.8" ry="5.8" transform="rotate(-20 -12 -9)" />
-              <ellipse cx="-4" cy="-15" rx="3.8" ry="6.2" transform="rotate(-6 -4 -15)" />
-              <ellipse cx="4" cy="-15" rx="3.8" ry="6.2" transform="rotate(6 4 -15)" />
-              <ellipse cx="12" cy="-9" rx="3.8" ry="5.8" transform="rotate(20 12 -9)" />
-            </g>
-
-            {/* Calados decorativos en las esquinas y ondas inferiores */}
-            <circle cx="20" cy="22" r="1.8" />
-            <circle cx="54" cy="22" r="1.8" />
-            <circle cx="15" cy="83" r="2.2" />
-            <circle cx="27" cy="83" r="2.2" />
-            <circle cx="39" cy="83" r="2.2" />
-            <circle cx="51" cy="83" r="2.2" />
-            <circle cx="63" cy="83" r="2.2" />
-          </g>
-        </g>
-
-        {/* Bandera 2: Papel Picado Naranja Cempasúchil con silueta de huella canina */}
-        <g transform="translate(94, 28) rotate(4)" filter="url(#picado-orange-shadow)">
-          <path 
-            d="M 0 0 L 74 0 L 74 94 C 74 94 68 100 62 95 C 56 90 50 100 44 95 C 38 90 32 100 26 95 C 20 90 14 100 8 95 C 3 91 0 94 0 94 Z" 
-            fill="#EA580C" 
-          />
-          <g fill="#FFFDFB" opacity="0.95">
-            <circle cx="9" cy="9" r="2.2" />
-            <circle cx="17" cy="9" r="2.2" />
-            <circle cx="25" cy="9" r="2.2" />
-            <circle cx="33" cy="9" r="2.2" />
-            <circle cx="41" cy="9" r="2.2" />
-            <circle cx="49" cy="9" r="2.2" />
-            <circle cx="57" cy="9" r="2.2" />
-            <circle cx="65" cy="9" r="2.2" />
-
-            <polygon points="9,20 12,24 9,28 6,24" />
-            <polygon points="9,36 12,40 9,44 6,40" />
-            <polygon points="9,52 12,56 9,60 6,56" />
-            <polygon points="9,68 12,72 9,76 6,72" />
-
-            <polygon points="65,20 68,24 65,28 62,24" />
-            <polygon points="65,36 68,40 65,44 62,40" />
-            <polygon points="65,52 68,56 65,60 62,56" />
-            <polygon points="65,68 68,72 65,76 62,72" />
-
-            <g transform="translate(37, 47)">
-              <path d="M -12 8 C -14 3, -9 -5, 0 -3 C 9 -5, 14 3, 12 8 C 9 14, -9 14, -12 8 Z" />
-              <ellipse cx="-12" cy="-9" rx="3.8" ry="5.8" transform="rotate(-20 -12 -9)" />
-              <ellipse cx="-4" cy="-15" rx="3.8" ry="6.2" transform="rotate(-6 -4 -15)" />
-              <ellipse cx="4" cy="-15" rx="3.8" ry="6.2" transform="rotate(6 4 -15)" />
-              <ellipse cx="12" cy="-9" rx="3.8" ry="5.8" transform="rotate(20 12 -9)" />
-            </g>
-
-            <circle cx="20" cy="22" r="1.8" />
-            <circle cx="54" cy="22" r="1.8" />
-            <circle cx="15" cy="83" r="2.2" />
-            <circle cx="27" cy="83" r="2.2" />
-            <circle cx="39" cy="83" r="2.2" />
-            <circle cx="51" cy="83" r="2.2" />
-            <circle cx="63" cy="83" r="2.2" />
-          </g>
-        </g>
-
-        {/* Bandera 3: Tercera bandera parcial naranja-ámbar en el extremo derecho */}
-        <g transform="translate(174, 15) rotate(9)" filter="url(#picado-orange-shadow)">
-          <path 
-            d="M 0 0 L 70 0 L 70 94 C 70 94 64 100 58 95 C 52 90 46 100 40 95 C 34 90 28 100 22 95 C 16 90 10 100 4 95 L 0 94 Z" 
-            fill="#F97316" 
-          />
-          <g fill="#FFFDFB" opacity="0.95">
-            <circle cx="9" cy="9" r="2.2" />
-            <circle cx="17" cy="9" r="2.2" />
-            <circle cx="25" cy="9" r="2.2" />
-            <circle cx="33" cy="9" r="2.2" />
-            <polygon points="9,20 12,24 9,28 6,24" />
-            <polygon points="9,36 12,40 9,44 6,40" />
-            <polygon points="9,52 12,56 9,60 6,56" />
-            <polygon points="9,68 12,72 9,76 6,72" />
-          </g>
-        </g>
-      </svg>
+      </picture>
     </div>
   );
 }
