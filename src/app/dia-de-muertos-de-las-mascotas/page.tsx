@@ -555,13 +555,29 @@ export default function DiaDeLasMascotasLanding() {
         )}
 
         {/* =========================================================================
-            6 & 7. COMPARTE SU RECUERDO & POSTAL PARA COMPARTIR (2 COLUMNAS)
+            6 & 7. COMPARTE SU RECUERDO & POSTAL PARA COMPARTIR (2 COLUMNAS CON FONDOS ADAPTATIVOS)
            ========================================================================= */}
         <section className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
-          {/* 6. Columna Izquierda: Formulario idéntico a imagen 5 */}
-          <div className="lg:col-span-7 rounded-3xl bg-[#FFFDFB]/95 border border-[#F5E1CB] shadow-[0_8px_30px_rgba(107,29,52,0.06)] p-6 sm:p-8 relative overflow-hidden">
+          {/* 6. Columna Izquierda: Formulario idéntico a imagen 5 con fondo adaptativo */}
+          <div className="lg:col-span-7 rounded-3xl border border-[#F5E1CB] shadow-[0_8px_30px_rgba(107,29,52,0.06)] p-6 sm:p-8 relative overflow-hidden bg-[#FFFDFB]">
             
+            {/* Imagen de fondo adaptativa: PC (1024x576), Tablet (1024x768), Móvil (768x1152) */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
+              <picture>
+                <source media="(min-width: 1024px)" srcSet="/images/campanas/fondo-nubes-flores-sin-perrito-pc-1024x576.webp" />
+                <source media="(min-width: 640px)" srcSet="/images/campanas/fondo-nubes-flores-sin-perrito-tablet-1024x768.webp" />
+                <img
+                  src="/images/campanas/fondo-nubes-flores-sin-perrito-movil-768x1152.webp"
+                  alt=""
+                  aria-hidden="true"
+                  className="w-full h-full object-cover object-center"
+                  loading="lazy"
+                />
+              </picture>
+              <div className="absolute inset-0 bg-[#FFFDFB]/85 backdrop-blur-[1px]" />
+            </div>
+
             <div className="relative z-10 space-y-6">
               
               {/* Encabezado con Lápiz idéntico a imagen 5 */}
@@ -778,83 +794,106 @@ export default function DiaDeLasMascotasLanding() {
             </div>
           </div>
 
-          {/* 7. Columna Derecha: "Postal para compartir" inclinada estilo polaroid */}
-          <div className="lg:col-span-5 rounded-3xl bg-[#FFFDFB]/95 border border-[#F5E1CB] shadow-[0_8px_30px_rgba(107,29,52,0.06)] p-6 sm:p-8 flex flex-col justify-between space-y-6">
+          {/* 7. Columna Derecha: "Postal para compartir" inclinada estilo polaroid con fondo adaptativo */}
+          <div className="lg:col-span-5 rounded-3xl border border-[#F5E1CB] shadow-[0_8px_30px_rgba(107,29,52,0.06)] p-6 sm:p-8 relative overflow-hidden flex flex-col justify-between bg-[#FFFDFB]">
             
-            <div className="space-y-1">
-              <div className="flex items-center gap-2.5 text-[#6B1D34]">
-                <ShareNodeIcon className="w-6 h-6" />
-                <h2 
-                  className="text-2xl sm:text-3xl font-bold text-[#6B1D34]"
-                  style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
-                >
-                  Postal para compartir
-                </h2>
-              </div>
-              <p className="text-sm sm:text-base text-[#6B5A7A]">
-                Si activamos la generación gratuita.
-              </p>
+            {/* Imagen de fondo adaptativa: PC vertical (1024x1536), Tablet (1024x768), Móvil (768x1152) */}
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
+              <picture>
+                <source media="(min-width: 1024px)" srcSet="/images/campanas/fondo-nubes-flores-sin-perrito-original-vertical-1024x1536.webp" />
+                <source media="(min-width: 640px)" srcSet="/images/campanas/fondo-nubes-flores-sin-perrito-tablet-1024x768.webp" />
+                <img
+                  src="/images/campanas/fondo-nubes-flores-sin-perrito-movil-768x1152.webp"
+                  alt=""
+                  aria-hidden="true"
+                  className="w-full h-full object-cover object-center"
+                  loading="lazy"
+                />
+              </picture>
+              <div className="absolute inset-0 bg-[#FFFDFB]/85 backdrop-blur-[1px]" />
             </div>
 
-            {/* 7. Presentación de la foto de Chloe inclinada hacia la izquierda estilo polaroid */}
-            <div className="relative flex justify-center items-center my-4 py-2">
+            <div className="relative z-10 flex flex-col justify-between h-full space-y-6">
               
-              {/* Contenedor de foto cuadrada inclinada hacia la izquierda */}
-              <div className="relative -rotate-3 hover:rotate-0 transition-transform duration-300 w-full max-w-[280px] sm:max-w-[300px] bg-white p-3 rounded-2xl shadow-[0_10px_25px_rgba(107,29,52,0.12)] border border-[#F5E1CB]">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2.5 text-[#6B1D34]">
+                  <ShareNodeIcon className="w-6 h-6" />
+                  <h2 
+                    className="text-2xl sm:text-3xl font-bold text-[#6B1D34]"
+                    style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
+                  >
+                    Postal para compartir
+                  </h2>
+                </div>
+                <p className="text-sm sm:text-base text-[#6B5A7A]">
+                  Si activamos la generación gratuita.
+                </p>
+              </div>
+
+              {/* 7. Presentación de la foto de Chloe inclinada hacia la izquierda estilo polaroid */}
+              <div className="relative flex justify-center items-center my-4 py-2">
                 
-                {/* Imagen de Chloe */}
-                <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FFF2E2]">
-                  <img
-                    src="/images/campanas/postal-grande-1000x1500.webp"
-                    alt="Postal de Chloe"
-                    className="w-full h-full object-cover object-top"
-                  />
-                  
-                  {/* Texto al pie de la foto dentro del marco matching mockup */}
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-3 text-center">
-                    <p className="text-white text-xs sm:text-sm font-serif italic leading-tight drop-shadow-md">
-                      Hay amores<br />
-                      que siempre encuentran<br />
-                      el camino de vuelta<br />
-                      <span className="text-sm">♡</span>
+                {/* Contenedor relativo centrado para la foto y sus detalles */}
+                <div className="relative">
+                  {/* Foto cuadrada inclinada hacia la izquierda */}
+                  <div className="relative -rotate-3 hover:rotate-0 transition-transform duration-300 w-[240px] xs:w-[260px] sm:w-[280px] bg-white p-3 rounded-2xl shadow-[0_10px_25px_rgba(107,29,52,0.12)] border border-[#F5E1CB]">
+                    
+                    {/* Imagen de Chloe */}
+                    <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FFF2E2]">
+                      <img
+                        src="/images/campanas/postal-grande-1000x1500.webp"
+                        alt="Postal de Chloe"
+                        className="w-full h-full object-cover object-top"
+                      />
+                      
+                      {/* Texto al pie de la foto dentro del marco matching mockup */}
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-3 text-center">
+                        <p className="text-white text-xs sm:text-sm font-serif italic leading-tight drop-shadow-md">
+                          Hay amores<br />
+                          que siempre encuentran<br />
+                          el camino de vuelta<br />
+                          <span className="text-sm">♡</span>
+                        </p>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* 7. Tag 27 OCT dentro de recuadro de papel en la esquina superior derecha */}
+                  <div className="absolute -top-3 -right-2 sm:-right-4 z-20">
+                    <PostcardPaperTag />
+                  </div>
+
+                  {/* 7. Texto "Comparte su luz en el mundo ♡" a mano alzada */}
+                  <div className="absolute -right-14 sm:-right-16 bottom-4 text-right select-none pointer-events-none hidden md:block">
+                    <p 
+                      className="text-xs sm:text-sm text-[#7A1B38] leading-tight"
+                      style={{ fontFamily: 'cursive, Georgia, serif' }}
+                    >
+                      Compartes<br />
+                      su luz<br />
+                      en el mundo<br />
+                      <span className="text-base text-[#EA580C]">♡</span>
                     </p>
                   </div>
                 </div>
 
               </div>
 
-              {/* 7. Tag 27 OCT dentro de recuadro de papel en la esquina superior derecha */}
-              <div className="absolute -top-2 right-2 sm:right-4 z-20">
-                <PostcardPaperTag />
-              </div>
-
-              {/* 7. Texto "Comparte su luz en el mundo ♡" a mano alzada */}
-              <div className="absolute -right-1 sm:right-2 bottom-6 text-right select-none pointer-events-none hidden sm:block">
-                <p 
-                  className="text-xs sm:text-sm text-[#7A1B38] leading-tight"
-                  style={{ fontFamily: 'cursive, Georgia, serif' }}
+              {/* 7. CTA de Descargar Postal IDÉNTICO al mockup (Rosa pastel con bandeja de descarga) */}
+              <div className="pt-2">
+                <a
+                  href="/images/campanas/postal-grande-1000x1500.webp"
+                  download="Postal-Recuerdo-Dia-de-las-Mascotas.webp"
+                  className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm font-semibold text-[#831843] bg-[#FCE7F3] hover:bg-[#FBCFE8] border border-[#F472B6]/40 shadow-xs hover:shadow-sm active:scale-[0.99] transition-all"
                 >
-                  Compartes<br />
-                  su luz<br />
-                  en el mundo<br />
-                  <span className="text-base text-[#EA580C]">♡</span>
-                </p>
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                  </svg>
+                  <span>Descargar postal</span>
+                </a>
               </div>
 
-            </div>
-
-            {/* 7. CTA de Descargar Postal IDÉNTICO al mockup (Rosa pastel con bandeja de descarga) */}
-            <div className="pt-2">
-              <a
-                href="/images/campanas/postal-grande-1000x1500.webp"
-                download="Postal-Recuerdo-Dia-de-las-Mascotas.webp"
-                className="w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm font-semibold text-[#831843] bg-[#FCE7F3] hover:bg-[#FBCFE8] border border-[#F472B6]/40 shadow-xs hover:shadow-sm active:scale-[0.99] transition-all"
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
-                </svg>
-                <span>Descargar postal</span>
-              </a>
             </div>
 
           </div>
