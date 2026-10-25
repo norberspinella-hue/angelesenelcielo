@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Caveat } from 'next/font/google';
 import { 
   RibbonTag, 
-  CornerPapelPicado, 
   ClapperCameraIcon, 
   PencilIcon, 
   ShareNodeIcon, 
@@ -308,9 +307,6 @@ export default function DiaDeLasMascotasLanding() {
           <div className="absolute inset-0 bg-gradient-to-r from-[#FFFDF9]/95 via-[#FFFDF9]/80 to-transparent sm:w-2/3 lg:w-3/5 pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#FFFDF9]/85 via-transparent to-transparent sm:hidden pointer-events-none" />
         </div>
-
-        {/* 3. Papel Picado en la esquina superior derecha colgando hacia el lado derecho */}
-        <CornerPapelPicado />
 
         {/* Frase poética en la zona de nubes encima de las velas de la derecha idéntica a media_1792943992647_fe6f1fc7.png (no en negrita) */}
         <div className="hidden sm:block absolute top-[28%] sm:top-[30%] lg:top-[28%] xl:top-[26%] right-3 sm:right-6 md:right-10 lg:right-14 xl:right-20 z-20 select-none pointer-events-none text-right -rotate-3 sm:-rotate-6">
