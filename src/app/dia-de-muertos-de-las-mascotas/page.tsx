@@ -326,19 +326,32 @@ export default function DiaDeLasMascotasLanding() {
               <RibbonTag />
             </div>
 
-            {/* 3. Título idéntico al mockup (3 líneas con trazo de corazón alzada) */}
+            {/* 3. Título idéntico al mockup (3 líneas con trazo de corazón a mano alzada idéntico a media_1792940574111_ac794658.png) */}
             <h1 
               className="text-3xl sm:text-5xl lg:text-[54px] font-bold text-[#6B1D34] leading-[1.12] tracking-tight"
               style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
             >
               <span className="block">Hay amores que</span>
               <span className="block">siempre encuentran</span>
-              <span className="inline-flex items-center flex-wrap gap-2">
+              <span className="inline-flex items-center flex-wrap gap-x-2 gap-y-1">
                 <span className="text-[#5B162C]">el camino</span>
-                <span className="text-[#9E5B3D] font-normal">de vuelta</span>
-                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-[#C45A77] inline-block -mt-1 ml-0.5" viewBox="0 0 36 36" fill="none">
-                  <path d="M 4 24 Q 16 32 24 20 C 26 16 29 13 32 16 C 35 19 31 24 27 27 C 24 29 21 24 24 21 C 26 19 28 20 27 22" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <span className="text-[#9E5B3D] font-normal inline-flex items-baseline">
+                  <span>de vuelta</span>
+                  <svg 
+                    className="w-12 h-9 sm:w-16 sm:h-12 inline-block -mb-1 ml-0.5 text-[#8C2440] select-none pointer-events-none" 
+                    viewBox="0 0 100 70" 
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path 
+                      d="M 2 52 C 16 55 32 52 44 44 C 48 41 51 38 52 36 C 45 27 36 20 39 12 C 41 7 48 8 52 19 C 55 11 60 5 64 7 C 69 9 68 17 64 25 C 59 32 55 35 52 36 C 49 37 54 39 60 40.5 C 65 41.5 70 41.5 76 41" 
+                      stroke="currentColor" 
+                      strokeWidth="2.4" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                    />
+                  </svg>
+                </span>
               </span>
             </h1>
 
