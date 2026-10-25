@@ -30,7 +30,7 @@ export interface DoradoEternoCertificateData {
   certificateType: CertificateType;
   certificateTitle?: string;         // override del título si se necesita
   planName: string;
-  slotsCount: 1 | 4 | 9;
+  slotsCount: number;
   slotLabel: string;
   creationDate: string;              // "22·05·2026"
   memoryCode: string;                // "AEC-000126"

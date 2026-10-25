@@ -521,7 +521,21 @@ export default function AdminCertificadosPage() {
                         {/* Coordenadas en mural y plan */}
                         <div className="flex items-center gap-2 pt-0.5 flex-wrap">
                           <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-purple-50 text-[#7B5EA9] border border-purple-200">
-                            ✨ {item.plan === 'recuerdo_eterno' ? 'Corazón Eterno (9 estrellas)' : item.plan}
+                            ✨ {
+                              item.plan === 'recuerdo_eterno' || item.plan === 'corazon_eterno'
+                                ? 'Corazón Eterno (9 estrellas, 3×3)'
+                                : item.plan === 'angelito_protector'
+                                ? 'Ángelito Protector (16 estrellas, 4×4)'
+                                : item.plan === 'galaxia_amor'
+                                ? 'Galaxia de Amor (25 estrellas, 5×5)'
+                                : item.plan === 'vinculo_infinito'
+                                ? 'Vínculo Infinito (36 estrellas, 6×6)'
+                                : item.plan === 'estrella_anual' || item.plan === 'estrella_brillante'
+                                ? 'Estrella Brillante (4 estrellas, 2×2)'
+                                : item.plan === 'recuerdo_inicial' || item.plan === 'huellita'
+                                ? 'Huellita (1 estrella)'
+                                : item.plan
+                            }
                           </span>
                           {item.slot_code && (
                             <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-800 border border-indigo-200">
