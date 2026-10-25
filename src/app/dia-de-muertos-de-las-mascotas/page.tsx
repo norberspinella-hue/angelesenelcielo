@@ -10,6 +10,7 @@ import {
   ShareNodeIcon, 
   PostcardPaperTag 
 } from '@/components/campana/DiaDeLasMascotasAssets';
+import { Footer } from '@/components/landing/Footer';
 
 const caveat = Caveat({
   subsets: ['latin'],
@@ -223,14 +224,6 @@ export default function DiaDeLasMascotasLanding() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Link
-              href="/#planes"
-              className="hidden sm:inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-white shadow-[0_4px_14px_rgba(234,88,12,0.30)] hover:scale-105 transition-all duration-200"
-              style={{ background: 'linear-gradient(135deg, #F59E0B 0%, #EA580C 100%)' }}
-            >
-              <span>⭐ Enciende su estrella</span>
-            </Link>
-
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -422,9 +415,24 @@ export default function DiaDeLasMascotasLanding() {
            ========================================================================= */}
         <section 
           id="pelicula-chloe" 
-          className="rounded-3xl bg-[#FFFDFB]/95 border border-[#F5E1CB] shadow-[0_8px_30px_rgba(107,29,52,0.06)] p-6 sm:p-10 lg:p-12"
+          className="rounded-3xl bg-[#FFFDFB] border border-[#F5E1CB] shadow-[0_8px_30px_rgba(107,29,52,0.06)] p-6 sm:p-10 lg:p-12 relative overflow-hidden"
         >
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Fondo adaptativo de nubes y flores idéntico a Comparte su recuerdo */}
+          <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden select-none">
+            <picture>
+              <source media="(min-width: 1024px)" srcSet="/images/campanas/fondo-nubes-flores-sin-perrito-pc-1024x576.webp" />
+              <source media="(min-width: 640px)" srcSet="/images/campanas/fondo-nubes-flores-sin-perrito-tablet-1024x768.webp" />
+              <img
+                src="/images/campanas/fondo-nubes-flores-sin-perrito-movil-768x1152.webp"
+                alt=""
+                aria-hidden="true"
+                className="w-full h-full object-cover opacity-60 mix-blend-multiply"
+              />
+            </picture>
+            <div className="absolute inset-0 bg-gradient-to-br from-white/75 via-[#FFFDFB]/60 to-[#FFF8F0]/70" />
+          </div>
+
+          <div className="relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* 4. Columna Izquierda: Información idéntica a imagen 3 */}
             <div className="lg:col-span-5 space-y-4">
@@ -467,9 +475,9 @@ export default function DiaDeLasMascotasLanding() {
                 onKeyDown={(e) => e.key === 'Enter' && setVideoModalOpen(true)}
                 aria-label="Reproducir Película de Chloe"
               >
-                {/* 2. Cintillo diagonal rosa "Pronto disponible" color rosa Ángeles en el Cielo */}
-                <div className="absolute top-0 left-0 overflow-hidden w-40 h-40 z-20 pointer-events-none">
-                  <div className="absolute top-7 -left-12 -rotate-45 bg-gradient-to-r from-[#F472B6] via-[#EC4899] to-[#DB2777] text-white text-[9px] sm:text-[10px] font-bold py-1 w-56 text-center shadow-md uppercase tracking-wider">
+                {/* 2. Cintillo diagonal rosa "Pronto disponible" con espacio holgado para que no se corte ninguna letra */}
+                <div className="absolute top-0 left-0 overflow-hidden w-48 sm:w-56 h-48 sm:h-56 z-20 pointer-events-none">
+                  <div className="absolute top-8 sm:top-9 -left-10 sm:-left-12 -rotate-45 bg-gradient-to-r from-[#F472B6] via-[#EC4899] to-[#DB2777] text-white text-[8.5px] sm:text-[10px] font-bold py-1 w-64 sm:w-72 text-center shadow-md uppercase tracking-wider whitespace-nowrap">
                     Pronto disponible
                   </div>
                 </div>
@@ -499,22 +507,31 @@ export default function DiaDeLasMascotasLanding() {
                   </div>
                 </div>
 
-                {/* 5. Texto de la derecha idéntico a imagen 4 */}
-                <div className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 text-right select-none pointer-events-none space-y-1">
+                {/* 5. Caligrafía idéntica recreada: Chloe (#6B1D34) + Siempre en nuestros corazones y corazón (blanco puro) */}
+                <div className="absolute right-3 sm:right-8 lg:right-12 top-[44%] -translate-y-1/2 text-center select-none pointer-events-none -rotate-6">
                   <p 
-                    className="text-3xl sm:text-4xl lg:text-5xl text-[#FDE68A] drop-shadow-md leading-none"
-                    style={{ fontFamily: 'cursive, "Brush Script MT", Georgia, serif' }}
+                    className="text-3xl xs:text-4xl sm:text-6xl lg:text-7xl font-bold text-[#6B1D34] leading-[0.9] tracking-wide drop-shadow-[0_1px_3px_rgba(255,255,255,0.7)]"
+                    style={{ fontFamily: "'Dancing Script', cursive" }}
                   >
                     Chloe
                   </p>
                   <p 
-                    className="text-xs sm:text-sm text-white/95 drop-shadow-md leading-tight"
-                    style={{ fontFamily: 'cursive, Georgia, serif' }}
+                    className="text-xs xs:text-sm sm:text-xl lg:text-2xl font-bold text-white leading-tight mt-1 sm:mt-1.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.75)]"
+                    style={{ fontFamily: "'Dancing Script', cursive" }}
                   >
                     Siempre en<br />nuestros corazones
                   </p>
-                  <div className="text-sm text-white/90 drop-shadow-sm pt-0.5">
-                    ♡
+                  <div className="flex justify-center mt-0.5 sm:mt-1">
+                    <svg className="w-4 h-4 sm:w-6 sm:h-6 drop-shadow-[0_2px_4px_rgba(0,0,0,0.75)]" viewBox="0 0 100 100" fill="none">
+                      <path 
+                        d="M 50 34 C 42 16, 24 14, 14 28 C 4 42, 18 60, 50 86 C 82 60, 96 42, 86 28 C 76 14, 58 16, 50 34 Z" 
+                        stroke="#FFFFFF" 
+                        strokeWidth="5" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        fill="none" 
+                      />
+                    </svg>
                   </div>
                 </div>
 
@@ -861,13 +878,13 @@ export default function DiaDeLasMascotasLanding() {
                 </p>
               </div>
 
-              {/* 7. Presentación de la foto de Chloe inclinada hacia la izquierda estilo polaroid */}
-              <div className="relative flex justify-center items-center my-4 py-2">
+              {/* 7. Presentación de la foto de Chloe inclinada hacia la izquierda con la etiqueta y texto a la derecha (sin tapar la foto) */}
+              <div className="relative flex justify-center items-center my-4 py-2 sm:-translate-x-10">
                 
-                {/* Contenedor relativo centrado para la foto y sus detalles */}
+                {/* Contenedor relativo para la foto */}
                 <div className="relative">
                   {/* Foto cuadrada inclinada hacia la izquierda */}
-                  <div className="relative -rotate-3 hover:rotate-0 transition-transform duration-300 w-[240px] xs:w-[260px] sm:w-[280px] bg-white p-3 rounded-2xl shadow-[0_10px_25px_rgba(107,29,52,0.12)] border border-[#F5E1CB]">
+                  <div className="relative -rotate-3 hover:rotate-0 transition-transform duration-300 w-[210px] sm:w-[240px] bg-white p-3 rounded-2xl shadow-[0_10px_25px_rgba(107,29,52,0.12)] border border-[#F5E1CB]">
                     
                     {/* Imagen de Chloe */}
                     <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FFF2E2]">
@@ -877,36 +894,42 @@ export default function DiaDeLasMascotasLanding() {
                         className="w-full h-full object-cover object-top"
                       />
                       
-                      {/* Texto al pie de la foto dentro del marco matching mockup */}
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-3 text-center">
-                        <p className="text-white text-xs sm:text-sm font-serif italic leading-tight drop-shadow-md">
+                      {/* Texto al pie de la foto dentro del marco: blanco negrita con Dancing Script */}
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent p-3 text-center">
+                        <p 
+                          className="text-white text-sm sm:text-base font-bold leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] tracking-wide"
+                          style={{ fontFamily: "'Dancing Script', cursive" }}
+                        >
                           Hay amores<br />
                           que siempre encuentran<br />
                           el camino de vuelta<br />
-                          <span className="text-sm">♡</span>
+                          <span className="text-base sm:text-lg inline-block mt-0.5">♡</span>
                         </p>
                       </div>
                     </div>
 
                   </div>
 
-                  {/* 7. Tag 27 OCT dentro de recuadro de papel en la esquina superior derecha */}
-                  <div className="absolute -top-3 -right-2 sm:-right-4 z-20">
-                    <PostcardPaperTag />
+                  {/* Elementos situados a la derecha de la foto (sin taparla en absoluto) */}
+                  <div className="absolute left-[103%] sm:left-[106%] top-2 flex flex-col items-center select-none pointer-events-none whitespace-nowrap z-20">
+                    {/* Tag 27 OCT inclinado -15% a la izquierda */}
+                    <div className="-rotate-[15deg] mb-3">
+                      <PostcardPaperTag />
+                    </div>
+
+                    {/* Texto "Comparte su luz con el mundo ♡" con color de "Película de Chloe" (#6B1D34), Dancing Script negrita e inclinación hacia arriba un 20% */}
+                    <div className="-rotate-[20deg] text-center pt-1">
+                      <p 
+                        className="text-sm sm:text-base lg:text-lg font-bold text-[#6B1D34] leading-tight drop-shadow-xs"
+                        style={{ fontFamily: "'Dancing Script', cursive" }}
+                      >
+                        Comparte su luz<br />
+                        con el mundo<br />
+                        <span className="text-lg sm:text-xl text-[#6B1D34] inline-block mt-0.5">♡</span>
+                      </p>
+                    </div>
                   </div>
 
-                  {/* 7. Texto "Comparte su luz en el mundo ♡" a mano alzada */}
-                  <div className="absolute -right-14 sm:-right-16 bottom-4 text-right select-none pointer-events-none hidden md:block">
-                    <p 
-                      className="text-xs sm:text-sm text-[#7A1B38] leading-tight"
-                      style={{ fontFamily: 'cursive, Georgia, serif' }}
-                    >
-                      Compartes<br />
-                      su luz<br />
-                      en el mundo<br />
-                      <span className="text-base text-[#EA580C]">♡</span>
-                    </p>
-                  </div>
                 </div>
 
               </div>
@@ -1013,11 +1036,15 @@ export default function DiaDeLasMascotasLanding() {
             <div className="absolute inset-0 bg-gradient-to-b from-[#FFFDF9]/90 via-[#FFFDF9]/40 to-transparent sm:hidden pointer-events-none" />
           </div>
 
-          <div className="absolute top-6 right-6 z-10 hidden lg:block select-none pointer-events-none text-right">
-            <p className="font-serif italic text-sm text-[#7A1B38] leading-tight">
+          {/* Texto caligráfico "El amor también vive aquí ♡" en Dancing Script, inclinado 20% hacia arriba */}
+          <div className="absolute top-5 right-5 sm:top-8 sm:right-10 z-10 select-none pointer-events-none text-right -rotate-[20deg]">
+            <p 
+              className="text-lg sm:text-2xl lg:text-3xl font-bold text-[#6B1D34] leading-tight drop-shadow-[0_1px_2px_rgba(255,255,255,0.7)]"
+              style={{ fontFamily: "'Dancing Script', cursive" }}
+            >
               El amor<br />
               también vive<br />
-              aquí ♡
+              aquí <span className="text-xl sm:text-2xl lg:text-3xl text-[#6B1D34] inline-block ml-0.5">♡</span>
             </p>
           </div>
 
@@ -1064,113 +1091,9 @@ export default function DiaDeLasMascotasLanding() {
       </main>
 
       {/* =========================================================================
-          9. PIE DE PÁGINA (CON INFORMACIÓN DE TODASLASMASCOTASVANALCIELO Y ÁNGELES EN EL CIELO)
+          9. PIE DE PÁGINA OFICIAL DE ÁNGELES EN EL CIELO (todaslasmascotasvanalcielo.com)
          ========================================================================= */}
-      <footer className="border-t border-[#F5E1CB] bg-[#FFF9F5] py-14 px-4 sm:px-6 relative z-10">
-        <div className="max-w-[1240px] mx-auto flex flex-col items-center text-center space-y-6">
-          
-          <nav 
-            className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs sm:text-sm font-medium text-[#7A6B8A]"
-            aria-label="Navegación del pie de página"
-          >
-            <Link href="/" className="hover:text-[#6B1D34] transition-colors">
-              Inicio
-            </Link>
-            <Link href="/mural-global" className="hover:text-[#6B1D34] transition-colors">
-              Mural
-            </Link>
-            <Link href="/comunidad" className="hover:text-[#6B1D34] transition-colors">
-              Historias
-            </Link>
-            <Link href="/como-funciona" className="hover:text-[#6B1D34] transition-colors">
-              Sobre nosotros
-            </Link>
-            <Link href="/contacto" className="hover:text-[#6B1D34] transition-colors">
-              Ayuda
-            </Link>
-            <Link href="/contacto" className="hover:text-[#6B1D34] transition-colors">
-              Contacto
-            </Link>
-            <Link href="/privacidad" className="hover:text-[#6B1D34] transition-colors">
-              Privacidad
-            </Link>
-            <Link href="/aviso-legal" className="hover:text-[#6B1D34] transition-colors">
-              Aviso legal
-            </Link>
-          </nav>
-
-          {/* 9. Logotipo oficial de la empresa e información institucional */}
-          <div className="flex flex-col items-center gap-2 pt-2">
-            <Link href="/" className="flex items-center gap-2 select-none group">
-              <img 
-                src="/images/icons/Logoheart.svg" 
-                alt="Logotipo Ángeles en el Cielo" 
-                className="h-10 w-auto object-contain transition-transform group-hover:scale-105" 
-              />
-              <div className="text-left font-serif leading-none">
-                <span className="text-[#6B1D34] text-xl font-bold block" style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}>
-                  Ángeles en el Cielo
-                </span>
-                <span className="text-[10px] text-[#A69AA8] font-sans font-medium tracking-wide">
-                  todaslasmascotasvanalcielo.com
-                </span>
-              </div>
-            </Link>
-            
-            <p className="text-[11px] uppercase tracking-widest text-[#B84A68] font-semibold pt-1">
-              PORQUE EL AMOR NUNCA SE DESPIDE
-            </p>
-
-            <p className="text-xs text-[#7A6B8A] max-w-md mx-auto pt-1 leading-relaxed">
-              <strong>Todas las mascotas van al cielo</strong> · <strong>Ángeles en el Cielo</strong><br />
-              Un santuario conmemorativo digital dedicado al amor eterno por nuestros compañeros de vida.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-4 text-[#8C3F54] pt-1">
-            <a 
-              href="https://instagram.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="p-2.5 rounded-full bg-white/80 hover:bg-white hover:text-[#6B1D34] shadow-xs transition-colors"
-              aria-label="Instagram"
-            >
-              <svg className="w-4 h-4 fill-none stroke-currentColor stroke-2" viewBox="0 0 24 24">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-              </svg>
-            </a>
-            <a 
-              href="https://facebook.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="p-2.5 rounded-full bg-white/80 hover:bg-white hover:text-[#6B1D34] shadow-xs transition-colors"
-              aria-label="Facebook"
-            >
-              <svg className="w-4 h-4 fill-currentColor" viewBox="0 0 24 24">
-                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-              </svg>
-            </a>
-            <a 
-              href="https://youtube.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="p-2.5 rounded-full bg-white/80 hover:bg-white hover:text-[#6B1D34] shadow-xs transition-colors"
-              aria-label="YouTube"
-            >
-              <svg className="w-4 h-4 fill-currentColor" viewBox="0 0 24 24">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-              </svg>
-            </a>
-          </div>
-
-          <p className="text-[11px] text-[#A69AA8]">
-            © {new Date().getFullYear()} Todas las mascotas van al cielo · Ángeles en el Cielo · Todos los derechos reservados.
-          </p>
-
-        </div>
-      </footer>
+      <Footer />
 
     </div>
   );
