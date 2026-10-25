@@ -126,9 +126,9 @@ export default function DiaDeMuertosPage() {
         <div className="max-w-4xl mx-auto text-center relative z-10">
           {/* Badge de Campaña */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-[#F59E0B]/20 to-[#EC4899]/20 border border-[#F5C842]/40 text-[#FDE68A] text-xs sm:text-sm font-semibold tracking-wide uppercase mb-6 backdrop-blur-sm">
-            <span>🕯️ Convocatoria Oficial 2026</span>
+            <span>🕯️ Campaña Especial Día de Muertos</span>
             <span className="text-[#F59E0B]">✦</span>
-            <span>25 de Octubre al 14 de Noviembre</span>
+            <span>25 de Octubre al 2 de Noviembre</span>
           </div>
 
           <h1 
@@ -153,7 +153,7 @@ export default function DiaDeMuertosPage() {
               className="w-full sm:w-auto px-8 py-4 rounded-full font-bold text-[#0B071A] text-base shadow-[0_0_25px_rgba(245,158,11,0.45)] hover:shadow-[0_0_35px_rgba(245,158,11,0.7)] hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2.5"
               style={{ background: 'linear-gradient(135deg, #FDE68A 0%, #F59E0B 100%)' }}
             >
-              <span>⭐ Enciende su estrella</span>
+              <span>⭐ Comparte su recuerdo</span>
               <span className="text-xs">›</span>
             </a>
 
@@ -311,10 +311,10 @@ export default function DiaDeMuertosPage() {
               Detrás de cada estrella hay una historia
             </h2>
             <p className="text-sm sm:text-base text-[#FDE68A]">
-              ¿Cómo se llamaba tu pequeño? Nos gustaría conocer su nombre, su mirada y aquello que hacía tan especial vuestra historia.
+              Nos gustaría conocer a quien dejó una huella eterna en tu vida. ¿Cómo se llamaba tu pequeño?
             </p>
             <p className="text-xs text-white/60 mt-1">
-              Participar en esta convocatoria es completamente gratuito. No es necesario comprar ningún espacio en el mural.
+              Participar en este homenaje conmemorativo es completamente gratuito. No requiere comprar ningún espacio en el mural.
             </p>
           </div>
 
@@ -547,8 +547,8 @@ export default function DiaDeMuertosPage() {
                   )}
                 </button>
 
-                <p className="text-[11px] text-center text-white/50">
-                  La selección editorial para los vídeos colectivos se realiza por orden de recepción. La convocatoria permanecerá abierta hasta el 14 de noviembre de 2026.
+                <p className="text-[11px] text-center text-white/60 leading-relaxed">
+                  Recibimos historias para optar al gran vídeo homenaje del 2 de noviembre hasta el <strong>30 de octubre a las 20:00 h</strong>. La posibilidad de compartir historias y participar en la comunidad de Ángeles en el Cielo permanece abierta todo el año.
                 </p>
 
               </form>
@@ -594,7 +594,7 @@ export default function DiaDeMuertosPage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="text-amber-400">✦</span>
-                    <span>Acción temporal especial hasta el 14 de noviembre</span>
+                    <span>Participación y recuerdo abierto todo el año</span>
                   </li>
                 </ul>
               </div>
