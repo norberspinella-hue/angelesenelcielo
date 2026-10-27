@@ -1434,7 +1434,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
   // Sync calculations for HTML overlays
   const slotSizeScreen = getSlotSize(viewport.zoom);
   const premiumCenterX = viewport.x + (PZ.x + PZ.w / 2) * slotSizeScreen;
-  const premiumCenterY = viewport.y + (PZ.y + PZ.h / 2) * slotSizeScreen;
+  const premiumTopY = viewport.y + PZ.y * slotSizeScreen;
 
   const onCanvasPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     setPointerDownPos({ x: e.clientX, y: e.clientY });
@@ -2202,8 +2202,8 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
         className="absolute flex flex-col items-center justify-center cursor-pointer"
         style={{
           left: premiumCenterX + 'px',
-          top: premiumCenterY + 'px',
-          transform: 'translate(-50%, -50%)',
+          top: premiumTopY + 'px',
+          transform: 'translate(-50%, -85%)',
           zIndex: 20,
           pointerEvents: showPremiumBadge ? 'auto' : 'none',
           opacity: showPremiumBadge ? 1 : 0,
@@ -2225,8 +2225,8 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
 
       <style>{`
         @keyframes levitate {
-          0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-          50% { transform: translate(-50%, -50%) translateY(-10px); }
+          0%, 100% { transform: translate(-50%, -85%) translateY(0); }
+          50% { transform: translate(-50%, -85%) translateY(-8px); }
         }
       `}</style>
 
