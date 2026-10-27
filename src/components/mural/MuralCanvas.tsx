@@ -1501,8 +1501,8 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
       try {
         const { data, error } = await supabase
           .from('mural_slots')
-          .select('x, y, status, plan_type, memorial_id, thumbnail_url, memorials(pet_name, story_answers, visibility, moderation_status)')
-          .in('status', ['occupied', 'blocked_admin']);
+          .select('x, y, status, plan_type, memorial_id, thumbnail_url, memorials(pet_name, photo_url, story_answers, visibility, moderation_status)')
+          .or('status.eq.occupied,status.eq.blocked_admin,memorial_id.not.is.null');
         
         if (error) {
           console.error('Error cargando slots:', error);
@@ -1572,7 +1572,7 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
               status: 'occupied',
               plan_type: slot.plan_type,
               memorial_id: slot.memorial_id,
-              thumbnail_url: slot.thumbnail_url,
+              thumbnail_url: slot.thumbnail_url || slot.memorials?.photo_url || '',
               isMainSlot: isMain,
               x: slot.x,
               y: slot.y,

@@ -24,7 +24,7 @@ export async function GET(request: Request) {
       .lte('x', maxCol)
       .gte('y', minRow)
       .lte('y', maxRow)
-      .in('status', ['reserved_pending_payment', 'occupied']); // Only return active blocks
+      .or('status.eq.occupied,status.eq.reserved_pending_payment,memorial_id.not.is.null'); // Return active blocks and assigned memorials
 
     if (error) {
       console.error('Error fetching mural slots:', error);
