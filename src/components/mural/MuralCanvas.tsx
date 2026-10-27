@@ -891,18 +891,23 @@ function PetProfileCard({
                 textAlign: 'center',
               }}
             >
-              {/* Icono Logoheart.svg */}
+              {/* Icono Logoheart.svg con tamaño adaptativo */}
               <img 
                 src="/images/icons/Logoheart.svg"
                 alt=""
-                style={{ width: 56, height: 56, marginBottom: 4, flexShrink: 0 }}
+                style={{ 
+                  width: (petData?.dedication?.length || 0) > 600 ? 42 : 56, 
+                  height: (petData?.dedication?.length || 0) > 600 ? 42 : 56, 
+                  marginBottom: (petData?.dedication?.length || 0) > 600 ? 2 : 4, 
+                  flexShrink: 0 
+                }}
               />
 
               {/* Título */}
               <h3 style={{
                 fontFamily: 'Georgia, serif',
                 fontStyle: 'italic',
-                fontSize: '17px',
+                fontSize: (petData?.dedication?.length || 0) > 600 ? '15px' : '17px',
                 fontWeight: 700,
                 color: '#4A3F6B',
                 marginBottom: '2px',
@@ -919,7 +924,7 @@ function PetProfileCard({
                   color: '#8A7B9B',
                   fontFamily: 'sans-serif',
                   fontWeight: 600,
-                  margin: '0 0 8px 0',
+                  margin: (petData?.dedication?.length || 0) > 600 ? '0 0 4px 0' : '0 0 8px 0',
                   lineHeight: 1.3,
                   textAlign: 'center',
                   flexShrink: 0,
@@ -928,33 +933,50 @@ function PetProfileCard({
                 </p>
               )}
 
-              {/* Dedicatoria — Ocupa todo el espacio disponible con ajuste armonioso */}
-              <div 
-                style={{
-                  fontSize: (petData?.dedication?.length || 0) > 340 
-                    ? '12px' 
-                    : (petData?.dedication?.length || 0) > 180 
-                      ? '13px' 
-                      : '14px',
-                  color: '#7B6F9A',
-                  lineHeight: (petData?.dedication?.length || 0) > 340 ? 1.55 : 1.65,
-                  fontFamily: 'Georgia, serif',
-                  fontStyle: 'italic',
-                  borderLeft: '3px solid rgba(236,111,163,0.45)',
-                  paddingLeft: '14px',
-                  paddingRight: '6px',
-                  textAlign: 'left',
-                  flex: 1,
-                  maxHeight: '280px',
-                  overflowY: 'auto',
-                  width: '100%',
-                  boxSizing: 'border-box',
-                  whiteSpace: 'pre-line',
-                }}
-                className="scrollbar-thin scrollbar-thumb-purple-200"
-              >
-                {petData?.dedication || 'Sin dedicatoria'}
-              </div>
+              {/* Dedicatoria — Escala tipográfica fluida para que entre completa en la descarga */}
+              {(() => {
+                const dedLen = petData?.dedication?.length || 0;
+                let fontSize = '14px';
+                let lineHeight = 1.65;
+                if (dedLen > 700) {
+                  fontSize = '9.5px';
+                  lineHeight = 1.38;
+                } else if (dedLen > 480) {
+                  fontSize = '10.5px';
+                  lineHeight = 1.45;
+                } else if (dedLen > 320) {
+                  fontSize = '12px';
+                  lineHeight = 1.52;
+                } else if (dedLen > 180) {
+                  fontSize = '13px';
+                  lineHeight = 1.6;
+                }
+
+                return (
+                  <div 
+                    style={{
+                      fontSize,
+                      color: '#7B6F9A',
+                      lineHeight,
+                      fontFamily: 'Georgia, serif',
+                      fontStyle: 'italic',
+                      borderLeft: '3px solid rgba(236,111,163,0.45)',
+                      paddingLeft: '14px',
+                      paddingRight: '6px',
+                      textAlign: 'left',
+                      flex: 1,
+                      maxHeight: '300px',
+                      overflowY: 'auto',
+                      width: '100%',
+                      boxSizing: 'border-box',
+                      whiteSpace: 'pre-line',
+                    }}
+                    className="scrollbar-thin scrollbar-thumb-purple-200"
+                  >
+                    {petData?.dedication || 'Sin dedicatoria'}
+                  </div>
+                );
+              })()}
 
               {/* Usuario de redes sociales si fue proporcionado */}
               {(petData?.story_answers?.socialHandle || petData?.story_answers?.tiktok) && (
