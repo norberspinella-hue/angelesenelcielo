@@ -9,6 +9,8 @@ interface RecentPet {
   photo_url: string | null;
   profile_slug: string;
   plan_type: string;
+  slot_assigned?: string | null;
+  story_answers?: any;
 }
 
 interface RecentAngelToastProps {
@@ -33,7 +35,7 @@ export function RecentAngelToast({ onSelectPet }: RecentAngelToastProps) {
         const supabase = createClient();
         const { data, error } = await supabase
           .from('memorials')
-          .select('id, pet_name, photo_url, profile_slug, plan_type')
+          .select('id, pet_name, photo_url, profile_slug, plan_type, slot_assigned, story_answers')
           .eq('publication_status', 'published')
           .eq('visibility', 'public')
           .order('created_at', { ascending: false })
@@ -96,6 +98,18 @@ export function RecentAngelToast({ onSelectPet }: RecentAngelToastProps) {
   const currentPet = pets[currentIndex];
   if (!currentPet) return null;
 
+  // Determinar si realmente es un Ángel Fundador (zona PREMIUM_ZONE x:476..523, y:479..520 o flag en story_answers)
+  const isFounder = (() => {
+    if (currentPet.story_answers?.isFounder || currentPet.story_answers?.founderBadge) return true;
+    if (currentPet.slot_assigned) {
+      const [x, y] = currentPet.slot_assigned.split(',').map(Number);
+      if (!isNaN(x) && !isNaN(y) && x >= 476 && x < 476 + 48 && y >= 479 && y < 479 + 42) {
+        return true;
+      }
+    }
+    return false;
+  })();
+
   return (
     <>
       {/* 1. VISTA ESCRITORIO (TARJETA CRISTAL TRANSLÚCIDA CON BADGE DE FUNDADORES) */}
@@ -136,17 +150,19 @@ export function RecentAngelToast({ onSelectPet }: RecentAngelToastProps) {
               />
             </div>
 
-            {/* Badge Fundadores Oficial */}
-            <div 
-              className="absolute -bottom-1.5 -right-2 z-20 w-7 h-7 pointer-events-none"
-              style={{ filter: 'drop-shadow(0 0 6px rgba(255,200,60,0.85))' }}
-            >
-              <img 
-                src="/images/icons/Badgefundadores.svg" 
-                alt="Badge Fundador" 
-                className="w-full h-full object-contain"
-              />
-            </div>
+            {/* Badge Fundadores Oficial (solo si es fundador) */}
+            {isFounder && (
+              <div 
+                className="absolute -bottom-1.5 -right-2 z-20 w-7 h-7 pointer-events-none"
+                style={{ filter: 'drop-shadow(0 0 6px rgba(255,200,60,0.85))' }}
+              >
+                <img 
+                  src="/images/icons/Badgefundadores.svg" 
+                  alt="Badge Fundador" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
 
             {/* Halo celestial fino */}
             <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-7 h-2 rounded-full border border-amber-300 bg-amber-200/60 blur-[0.5px] z-20"></div>
@@ -155,9 +171,15 @@ export function RecentAngelToast({ onSelectPet }: RecentAngelToastProps) {
           {/* Textos descriptivos */}
           <div className="flex-1 pr-4 min-w-0">
             <div className="flex items-center gap-1.5 mb-0.5">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold tracking-wider uppercase bg-amber-400/20 text-amber-200 border border-amber-300/40">
-                <span>⭐ Ángel Fundador</span>
-              </span>
+              {isFounder ? (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold tracking-wider uppercase bg-amber-400/20 text-amber-200 border border-amber-300/40">
+                  <span>⭐ Ángel Fundador</span>
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9.5px] font-bold tracking-wider uppercase bg-purple-400/20 text-purple-200 border border-purple-300/40">
+                  <span>✨ Nuevo Ángel</span>
+                </span>
+              )}
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             </div>
 
@@ -204,16 +226,19 @@ export function RecentAngelToast({ onSelectPet }: RecentAngelToastProps) {
                 style={{ width: 36, height: 36 }}
               />
             </div>
-            <div 
-              className="absolute -bottom-1 -right-1 w-4.5 h-4.5 drop-shadow-[0_0_5px_rgba(255,200,60,0.85)]"
-              style={{ width: 18, height: 18 }}
-            >
-              <img 
-                src="/images/icons/Badgefundadores.svg" 
-                alt="Badge" 
-                className="w-full h-full object-contain"
-              />
-            </div>
+            {/* Badge Fundadores móvil (solo si es fundador) */}
+            {isFounder && (
+              <div 
+                className="absolute -bottom-1 -right-1 w-4.5 h-4.5 drop-shadow-[0_0_5px_rgba(255,200,60,0.85)]"
+                style={{ width: 18, height: 18 }}
+              >
+                <img 
+                  src="/images/icons/Badgefundadores.svg" 
+                  alt="Badge" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
           </div>
 
           {/* Texto móvil */}
