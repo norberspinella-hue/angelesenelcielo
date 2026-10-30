@@ -108,16 +108,16 @@ export default function PostalStoryShareModal({
     if (!storyExportRef.current) return null
     const { toPng } = await import('html-to-image')
 
+    // Asegurar que todas las fuentes estén renderizadas antes de capturar
+    if (typeof document !== 'undefined' && document.fonts) {
+      await document.fonts.ready
+    }
+
     return await toPng(storyExportRef.current, {
       width: 1080,
       height: 1920,
       pixelRatio: 1,
       cacheBust: true,
-      style: {
-        transform: 'none',
-        visibility: 'visible',
-        display: 'flex',
-      },
     })
   }
 
@@ -335,7 +335,6 @@ export default function PostalStoryShareModal({
                     src={resolvedPhoto} 
                     alt={resolvedName} 
                     className="w-full h-full object-cover" 
-                    crossOrigin="anonymous"
                   />
                   {/* Fusión suave inferior con las nubes */}
                   <div 
@@ -517,20 +516,18 @@ export default function PostalStoryShareModal({
       </div>
 
       {/* ========================================================================= */}
-      {/* CONTENEDOR OCULTO DE ALTA RESOLUCIÓN: 1080 × 1920 PX                      */}
+      {/* CONTENEDOR DE EXPORTACIÓN EN ALTA RESOLUCIÓN: 1080 × 1920 PX             */}
       {/* ========================================================================= */}
       <div
         style={{
           position: 'fixed',
-          top: -99999,
-          left: -99999,
+          left: -9999,
+          top: 0,
           width: 1080,
           height: 1920,
-          overflow: 'hidden',
-          visibility: 'hidden',
-          zIndex: -1,
+          pointerEvents: 'none',
+          zIndex: -9999,
         }}
-        aria-hidden="true"
       >
         <div
           ref={storyExportRef}
@@ -685,7 +682,6 @@ export default function PostalStoryShareModal({
                 src={resolvedPhoto}
                 alt={resolvedName}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                crossOrigin="anonymous"
               />
               {/* Fusión suave inferior con las nubes */}
               <div
