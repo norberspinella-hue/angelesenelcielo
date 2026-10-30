@@ -330,15 +330,8 @@ function PetProfileCard({
     getPlanByDbName(petData?.plan_type || planType)?.slotsCount ||
     petData?.slots_count || 1;
 
-  // Render plan badge conditionally
-  const planBadgeSrc = 
-    isShelterPet && !isSponsored
-      ? '/images/icons/plans/icon-plan-inicial.svg'
-      : ['recuerdo_eterno', 'corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(petData?.plan_type || '') 
-      ? '/images/icons/plans/icon-plan-eterno.svg'
-      : petData?.plan_type === 'estrella_anual' || petData?.plan_type === 'estrella_brillante'
-      ? '/images/icons/plans/icon-plan-estrella.svg'
-      : '/images/icons/plans/icon-plan-inicial.svg';
+  // El distintivo en la tarjeta del mural siempre es el plan eterno
+  const planBadgeSrc = '/images/icons/plans/icon-plan-eterno.svg';
 
   // Handle closing modal
   const handleOverlayClick = (e: React.MouseEvent) => {
