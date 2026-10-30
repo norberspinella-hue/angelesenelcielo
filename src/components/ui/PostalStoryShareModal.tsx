@@ -28,15 +28,13 @@ export default function PostalStoryShareModal({
   planType,
   memorialUrl,
 }: PostalStoryShareModalProps) {
-  const [activeTab, setActiveTab] = useState<'story' | 'postal'>('story')
   const [isExporting, setIsExporting] = useState(false)
   const [copied, setCopied] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
 
-  // Ref de los contenedores de alta resolución ocultos
+  // Ref del contenedor de exportación en resolución completa 1080x1920
   const storyExportRef = useRef<HTMLDivElement>(null)
-  const postalExportRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -56,126 +54,82 @@ export default function PostalStoryShareModal({
   const resolvedName = petName?.trim() || 'Mi Ángel'
   const resolvedPhoto = photoUrl || '/images/placeholders/first.webp'
   const resolvedUrl = memorialUrl || (typeof window !== 'undefined' ? window.location.href : 'https://todaslasmascotasvanalcielo.com')
-
-  // Cálculo del tamaño de fuente dinámico para evitar que nombres largos (ej: Mary Margaret) salten de línea
-  const nameLen = resolvedName.length
-  let previewFontSize = 54
-  let exportFontSize = 76
-  if (nameLen > 16) {
-    previewFontSize = 26
-    exportFontSize = 38
-  } else if (nameLen > 13) {
-    previewFontSize = 32
-    exportFontSize = 46
-  } else if (nameLen > 10) {
-    previewFontSize = 38
-    exportFontSize = 56
-  } else if (nameLen > 7) {
-    previewFontSize = 46
-    exportFontSize = 66
-  }
-
-  const formatDate = (dateStr?: string | null) => {
-    if (!dateStr) return null
-    const trimmed = String(dateStr).trim()
-    if (!trimmed) return null
-    if (/^\d{4}$/.test(trimmed)) return trimmed
-
-    const parts = trimmed.split(/[-/T]/)
-    if (parts.length >= 3 && parts[0].length === 4) {
-      const year = parseInt(parts[0], 10)
-      const month = parseInt(parts[1], 10) - 1
-      const day = parseInt(parts[2], 10)
-      const localDate = new Date(year, month, day)
-      if (!isNaN(localDate.getTime())) {
-        return localDate.toLocaleDateString('es-ES', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })
-      }
-    }
-
-    const date = new Date(trimmed)
-    if (!isNaN(date.getTime())) {
-      return date.toLocaleDateString('es-ES', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
-    }
-    return trimmed
-  }
-
-  const birthDateFormatted = formatDate(birthDate)
-  const deathDateFormatted = formatDate(deathDate)
-  const datesText = birthDateFormatted && deathDateFormatted
-    ? `${birthDateFormatted} – ${deathDateFormatted}`
-    : deathDateFormatted
-      ? `${deathDateFormatted}`
-      : birthDateFormatted
-        ? `${birthDateFormatted}`
-        : null
-
   const resolvedDedication = dedication?.trim() || 'Siempre serás mi lugar favorito en el mundo.'
-  const resolvedHandle = socialHandle?.replace(/^@/, '') || null
 
+  // Dynamic font size for pet name
+  const nameLen = resolvedName.length
+  let previewNameSize = 44
+  let exportNameSize = 120
+  if (nameLen > 18) {
+    previewNameSize = 26
+    exportNameSize = 72
+  } else if (nameLen > 14) {
+    previewNameSize = 30
+    exportNameSize = 84
+  } else if (nameLen > 10) {
+    previewNameSize = 36
+    exportNameSize = 98
+  } else if (nameLen > 7) {
+    previewNameSize = 40
+    exportNameSize = 110
+  }
+
+  // Dynamic font size for dedication
   const dedLen = resolvedDedication.length
-  let exportDedSize = 25
+  let previewDedSize = 11.5
+  let previewDedLineHeight = 1.45
+  let exportDedSize = 32
   let exportDedLineHeight = 1.48
-  let previewDedSize = 8
-  let previewDedLineHeight = 1.35
 
-  if (dedLen > 450) {
-    exportDedSize = 16
-    exportDedLineHeight = 1.32
-    previewDedSize = 5.8
-    previewDedLineHeight = 1.18
-  } else if (dedLen > 280) {
-    exportDedSize = 18.5
-    exportDedLineHeight = 1.38
-    previewDedSize = 6.6
-    previewDedLineHeight = 1.22
-  } else if (dedLen > 150) {
-    exportDedSize = 21.5
-    exportDedLineHeight = 1.44
-    previewDedSize = 7.3
-    previewDedLineHeight = 1.28
+  if (dedLen > 300) {
+    previewDedSize = 8.5
+    previewDedLineHeight = 1.25
+    exportDedSize = 22
+    exportDedLineHeight = 1.30
+  } else if (dedLen > 180) {
+    previewDedSize = 9.5
+    previewDedLineHeight = 1.32
+    exportDedSize = 25
+    exportDedLineHeight = 1.36
+  } else if (dedLen > 100) {
+    previewDedSize = 10.5
+    previewDedLineHeight = 1.38
+    exportDedSize = 28
+    exportDedLineHeight = 1.42
   }
 
   const showToast = (msg: string) => {
     setToastMessage(msg)
-    setTimeout(() => setToastMessage(null), 3500)
+    setTimeout(() => setToastMessage(null), 3800)
   }
 
-  // Generar y descargar / compartir
-  const handleExport = async (mode: 'story' | 'postal') => {
-    const targetRef = mode === 'story' ? storyExportRef.current : postalExportRef.current
-    if (!targetRef) return
+  // Generación PNG a 1080 × 1920
+  const generatePngDataUrl = async (): Promise<string | null> => {
+    if (!storyExportRef.current) return null
+    const { toPng } = await import('html-to-image')
 
+    return await toPng(storyExportRef.current, {
+      width: 1080,
+      height: 1920,
+      pixelRatio: 1,
+      cacheBust: true,
+      style: {
+        transform: 'none',
+        visibility: 'visible',
+        display: 'flex',
+      },
+    })
+  }
+
+  // Compartir en Instagram (Web Share API o descarga directa con aviso)
+  const handleShareInstagram = async () => {
     try {
       setIsExporting(true)
-      const { toPng } = await import('html-to-image')
+      const dataUrl = await generatePngDataUrl()
+      if (!dataUrl) throw new Error('No se pudo generar la imagen')
 
-      const isStory = mode === 'story'
-      const width = 1080
-      const height = isStory ? 1920 : 1080
+      const filename = `angeles-en-el-cielo-${resolvedName.toLowerCase().replace(/\s+/g, '-')}-story.png`
 
-      const dataUrl = await toPng(targetRef, {
-        pixelRatio: 1,
-        width,
-        height,
-        cacheBust: true,
-        style: {
-          transform: 'none',
-          visibility: 'visible',
-          display: 'flex',
-        },
-      })
-
-      const filename = `${resolvedName.toLowerCase().replace(/\s+/g, '-')}-${isStory ? 'story-instagram' : 'postal-dedicatoria'}.png`
-
-      // Intentar compartir de forma nativa en móviles si está soportado
       if (typeof navigator !== 'undefined' && navigator.canShare) {
         try {
           const res = await fetch(dataUrl)
@@ -185,48 +139,66 @@ export default function PostalStoryShareModal({
           if (navigator.canShare({ files: [file] })) {
             await navigator.share({
               files: [file],
-              title: `${resolvedName} ya brilla en el cielo ✨`,
-              text: `Mi ángel ${resolvedName} ya tiene su lugar eterno en el cielo 🐾✨`,
+              title: `Story de ${resolvedName} · Ángeles en el Cielo`,
+              text: `En memoria de mi ángel ${resolvedName} 🐾✨`,
             })
-            showToast('¡Compartido con éxito! 🐾')
+            showToast('¡Listo para publicar en tu Story! 🐾✨')
             setIsExporting(false)
             return
           }
         } catch (shareErr) {
-          console.log('Compartir nativo cancelado o no disponible, procediendo a descarga:', shareErr)
+          console.log('Navegador canceló Web Share o no compatible con archivo, descargando:', shareErr)
         }
       }
 
-      // Descarga directa en navegador / escritorio
+      // Descarga directa
       const link = document.createElement('a')
       link.download = filename
       link.href = dataUrl
       link.click()
-
-      if (isStory) {
-        showToast('¡Story descargada! Ya puedes abrir Instagram y subirla ✨')
-      } else {
-        showToast('¡Postal con dedicatoria guardada en tu galería! 💌🖼️')
-      }
+      showToast('¡Story guardada en tu galería! Ya puedes abrir Instagram y publicarla ✨')
     } catch (err) {
-      console.error('Error generando imagen:', err)
+      console.error('Error generando Story:', err)
       showToast('No se pudo generar la imagen. Inténtalo de nuevo.')
     } finally {
       setIsExporting(false)
     }
   }
 
+  // Guardar imagen PNG 1080x1920
+  const handleSaveImage = async () => {
+    try {
+      setIsExporting(true)
+      const dataUrl = await generatePngDataUrl()
+      if (!dataUrl) throw new Error('No se pudo generar la imagen')
+
+      const filename = `angeles-en-el-cielo-${resolvedName.toLowerCase().replace(/\s+/g, '-')}-story.png`
+      const link = document.createElement('a')
+      link.download = filename
+      link.href = dataUrl
+      link.click()
+      showToast('¡Story descargada en alta resolución (1080×1920)! 💌🖼️')
+    } catch (err) {
+      console.error('Error guardando imagen:', err)
+      showToast('No se pudo guardar la imagen.')
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  // Compartir en WhatsApp
   const handleShareWhatsApp = () => {
-    const text = `Mi ángel ${resolvedName} ya brilla en el cielo 🐾✨\nPuedes visitar su recuerdo aquí:\n${resolvedUrl}`
+    const text = `Te comparto el recuerdo especial de mi angelito ${resolvedName} en Ángeles en el Cielo 🐾✨\nPuedes visitarlo aquí:\n${resolvedUrl}`
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank')
   }
 
+  // Copiar enlace del memorial
   const handleCopyLink = () => {
     if (typeof navigator !== 'undefined') {
       navigator.clipboard.writeText(resolvedUrl)
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)
-      showToast('¡Enlace copiado al portapapeles! 📋')
+      showToast('¡Enlace del memorial copiado al portapapeles! 📋✨')
     }
   }
 
@@ -234,9 +206,9 @@ export default function PostalStoryShareModal({
     <div 
       className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
       style={{
-        background: 'rgba(20, 15, 35, 0.70)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
+        background: 'rgba(25, 18, 38, 0.72)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
@@ -250,483 +222,452 @@ export default function PostalStoryShareModal({
         </div>
       )}
 
-      {/* Contenedor Modal: Visor Corazón Ghibli */}
+      {/* MODAL PRINCIPAL DE 2 COLUMNAS */}
       <div 
-        className="relative w-full max-w-2xl bg-gradient-to-b from-[#FFFDFE] via-[#FFF8FA] to-[#FFF5F8] border-2 border-[#FBCFE8] rounded-[32px] shadow-[0_25px_60px_-12px_rgba(190,24,93,0.18),0_0_0_1px_rgba(255,255,255,0.8)_inset] p-5 sm:p-7 flex flex-col items-center text-slate-800"
+        className="relative w-full max-w-[940px] bg-white rounded-[32px] sm:rounded-[36px] shadow-[0_24px_60px_rgba(74,31,110,0.22)] border border-white/80 p-5 sm:p-8 flex flex-col md:flex-row items-center gap-6 sm:gap-10 my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Botón cerrar */}
+        {/* BOTÓN X CERRAR */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-pink-100/80 hover:bg-pink-200 text-[#BE185D] hover:text-[#9D174D] flex items-center justify-center transition-all text-sm font-bold z-10 border border-pink-200 shadow-xs cursor-pointer"
-          aria-label="Cerrar"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 rounded-full bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#6B7280] hover:text-[#1F2937] flex items-center justify-center transition-colors z-20 text-sm font-bold"
+          title="Cerrar"
         >
           ✕
         </button>
 
-        {/* Cabecera */}
-        <div className="text-center max-w-md mb-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-[#BE185D] border border-pink-300 text-xs font-bold mb-2 shadow-xs">
-            <span>💖</span>
-            <span>Comparte su luz en el mundo</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-black font-serif italic text-[#1E2A78] tracking-wide">
-            Recuerdo de {resolvedName}
-          </h2>
-          <p className="text-xs sm:text-sm text-[#706A95] mt-1 font-medium">
-            {activeTab === 'story'
-              ? 'Sube la Story formateada a Instagram o WhatsApp con 1 clic.'
-              : 'Descarga la Postal conmemorativa con su dedicatoria de amor y fechas.'}
-          </p>
-        </div>
-
-        {/* Selector de Pestañas */}
-        <div className="flex items-center gap-2 p-1.5 bg-pink-50/80 border border-pink-200 rounded-full mb-5 w-full max-w-sm justify-center shadow-inner">
-          <button
-            onClick={() => setActiveTab('story')}
-            className={`flex-1 py-1.5 px-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-              activeTab === 'story'
-                ? 'bg-gradient-to-r from-[#F472B6] to-[#EC4899] text-white shadow-sm'
-                : 'text-[#706A95] hover:text-[#1E2A78]'
-            }`}
+        {/* COLUMNA IZQUIERDA: VISTA PREVIA STORY 9:16 (55-60%) */}
+        <div className="w-full md:w-[54%] flex justify-center items-center shrink-0">
+          <div 
+            className="relative w-full max-w-[310px] sm:max-w-[340px] aspect-[9/16] rounded-[24px] sm:rounded-[28px] overflow-hidden shadow-[0_16px_40px_rgba(168,85,247,0.25)] border-[2.5px] border-[#FCE7F3]"
+            style={{
+              backgroundImage: 'url(/images/memorial/story-heaven-bg-1080.webp)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
           >
-            <span>📱</span>
-            <span>Story 9:16</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('postal')}
-            className={`flex-1 py-1.5 px-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-              activeTab === 'postal'
-                ? 'bg-gradient-to-r from-[#F472B6] to-[#EC4899] text-white shadow-sm'
-                : 'text-[#706A95] hover:text-[#1E2A78]'
-            }`}
-          >
-            <span>💌</span>
-            <span>Postal con Dedicatoria 1:1</span>
-          </button>
-        </div>
+            {/* Contenido superpuesto de la Story */}
+            <div className="absolute inset-0 flex flex-col items-center justify-between p-4 sm:p-5 select-none pointer-events-none">
+              
+              {/* ZONA SUPERIOR: MI ANGELITO + NOMBRE */}
+              <div className="w-full flex flex-col items-center text-center mt-2">
+                <span 
+                  className="text-[10px] sm:text-[11px] font-bold tracking-[0.24em] text-[#4A3258] uppercase"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  MI ANGELITO
+                </span>
 
-        {/* ÁREA DE PREVISUALIZACIÓN EN VIVO (Escalada para que entre cómoda en cualquier pantalla) */}
-        <div className="w-full flex items-center justify-center my-2 overflow-hidden">
-          {activeTab === 'story' ? (
-            /* Vista previa Story 9:16 (escalada a 260px ancho) */
-            <div 
-              className="relative rounded-[22px] overflow-hidden shadow-xl border-2 border-[#FBCFE8] flex flex-col items-center justify-between select-none"
-              style={{
-                width: 250,
-                height: 444, // 9:16
-                background: 'radial-gradient(ellipse at 50% 30%, #FFFDFE 0%, #FFF5F8 50%, #FCE7F3 100%)',
-                padding: '16px 12px',
-              }}
-            >
-              {/* Estrellitas de fondo */}
-              <div className="absolute top-4 left-4 text-[11px] text-[#F59E0B] animate-pulse">✦</div>
-              <div className="absolute top-12 right-6 text-[9px] text-[#F59E0B]/70">✧</div>
-              <div className="absolute bottom-16 left-6 text-[10px] text-[#F59E0B]/80">⋆</div>
-              <div className="absolute bottom-20 right-5 text-[12px] text-[#F59E0B] animate-pulse">✦</div>
-
-              {/* Top badge */}
-              <div className="z-10 px-3.5 py-1 rounded-full bg-white/95 border-2 border-[#FBCFE8] text-[#BE185D] text-[9px] font-black tracking-wider uppercase text-center shadow-xs">
-                ✨ MI ÁNGEL YA BRILLA EN EL CIELO ✨
-              </div>
-
-              {/* Profile Card miniatura */}
-              <div 
-                className="relative rounded-[16px] overflow-hidden shadow-xl border-[1.5px] border-white/90 z-10"
-                style={{
-                  width: 200,
-                  height: 278,
-                  backgroundImage: "url('/images/mural-preview/profilecard-front.webp')",
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              >
-                {/* MI ANGELITO Arco */}
-                <div className="absolute top-[18px] left-0 right-0 flex justify-center pointer-events-none">
-                  <svg width="150" height="22" viewBox="0 0 260 38" fill="none">
-                    <path id="archTextMini" d="M 20,32 Q 130,8 240,32" fill="none" />
-                    <text fill="#584582" fontFamily="Georgia, serif" fontSize="22" fontWeight="700" letterSpacing="3" textAnchor="middle">
-                      <textPath href="#archTextMini" startOffset="50%">MI ANGELITO</textPath>
-                    </text>
-                  </svg>
-                </div>
-
-                {/* Nombre */}
-                <div 
-                  className="absolute top-[32px] left-0 right-0 h-[38px] flex items-center justify-center text-center px-2"
+                <h2 
+                  className="font-normal leading-tight mt-0.5 tracking-tight"
                   style={{
-                    fontFamily: "'Pinyon Script', cursive",
-                    fontSize: previewFontSize * 0.58,
-                    color: '#C29028',
-                    whiteSpace: 'nowrap',
-                    textOverflow: 'ellipsis',
-                    overflow: 'hidden',
+                    fontFamily: "'Allura', 'Pinyon Script', cursive",
+                    fontSize: `${previewNameSize}px`,
+                    color: '#B8860B',
+                    textShadow: '0 1px 2px rgba(255,255,255,0.9), 0 2px 8px rgba(184,134,11,0.28)',
                   }}
                 >
                   {resolvedName}
-                </div>
+                </h2>
 
-                {/* Corazón 3D */}
-                <div className="absolute top-[72px] left-1/2 -translate-x-1/2 z-10">
-                  <svg width="9" height="9" viewBox="0 0 24 24">
-                    <path fill="#C29028" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                {/* Línea ornamental fina con corazón dorado */}
+                <div className="flex items-center justify-center gap-2 w-32 -mt-1 opacity-80">
+                  <div className="h-[0.8px] flex-1 bg-[#D4AF37]"></div>
+                  <span className="text-[9px] text-[#D4AF37]">💛</span>
+                  <div className="h-[0.8px] flex-1 bg-[#D4AF37]"></div>
+                </div>
+              </div>
+
+              {/* ZONA CENTRAL: FOTO CON AUREOLA Y MARIPOSAS */}
+              <div className="relative flex flex-col items-center justify-center my-auto">
+                {/* Aureola dorada inclinada flotando sobre la cabeza */}
+                <div 
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 w-[110px] h-[30px] flex items-center justify-center pointer-events-none"
+                  style={{ transform: 'translateX(-50%) rotate(-4deg)' }}
+                >
+                  <svg width="100%" height="100%" viewBox="0 0 220 70" fill="none" style={{ overflow: 'visible' }}>
+                    <defs>
+                      <filter id="haloStoryPreviewGlow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+                        <feMerge>
+                          <feMergeNode in="blur" />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
+                      <linearGradient id="haloGoldGradPreview" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#FFA000" />
+                        <stop offset="25%" stopColor="#FFD54F" />
+                        <stop offset="50%" stopColor="#FFF9C4" />
+                        <stop offset="75%" stopColor="#FFD54F" />
+                        <stop offset="100%" stopColor="#FFA000" />
+                      </linearGradient>
+                    </defs>
+                    <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFD54F" strokeWidth="8" opacity="0.8" filter="url(#haloStoryPreviewGlow)" />
+                    <ellipse cx="110" cy="35" rx="95" ry="24" stroke="url(#haloGoldGradPreview)" strokeWidth="4.5" opacity="1.0" />
+                    <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFFFFF" strokeWidth="2.2" opacity="1.0" />
                   </svg>
                 </div>
 
-                {/* Halo */}
+                {/* Mariposas luminosas flotantes */}
+                <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-6 h-6 opacity-90">
+                  <img src="/images/icons/butterfly1.svg" alt="" className="w-full h-full object-contain -rotate-12 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
+                </div>
+                <div className="absolute -right-6 top-1/3 w-5 h-5 opacity-90">
+                  <img src="/images/icons/butterfly2.svg" alt="" className="w-full h-full object-contain rotate-15 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
+                </div>
+
+                {/* Resplandor cálido exterior */}
                 <div 
-                  className="absolute top-[85px] left-1/2 -translate-x-1/2 rounded-full border border-[#F5C842] shadow-[0_0_8px_#F5C842]"
-                  style={{ width: 66, height: 18 }}
+                  className="absolute -inset-3 rounded-full"
+                  style={{
+                    background: 'radial-gradient(circle, rgba(255, 235, 170, 0.65) 0%, rgba(254, 215, 226, 0.45) 50%, transparent 75%)',
+                    filter: 'blur(8px)',
+                  }}
                 />
 
-                {/* Foto circular */}
-                <div 
-                  className="absolute top-[102px] left-1/2 -translate-x-1/2 rounded-full overflow-hidden border border-[#C9A961] shadow-md bg-white"
-                  style={{ width: 95, height: 95 }}
-                >
+                {/* Círculo de la foto real */}
+                <div className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden border-[3px] border-[#FCE7F3] shadow-[0_8px_24px_rgba(180,140,80,0.30)] bg-white z-0">
                   <img 
                     src={resolvedPhoto} 
                     alt={resolvedName} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover" 
                     crossOrigin="anonymous"
                   />
                 </div>
-
-                {/* Frase */}
-                <div className="absolute bottom-[24px] left-0 right-0 px-2 text-center text-[8px] font-bold text-[#584582] font-serif">
-                  Siempre serás mi lugar favorito en el mundo
-                </div>
-
-                {/* Pie */}
-                <div className="absolute bottom-[8px] left-0 right-0 text-center text-[7px] font-semibold text-[#584582]/80">
-                  Ángeles en el Cielo
-                </div>
               </div>
 
-              {/* Bottom Branding */}
-              <div className="z-10 flex flex-col items-center text-center">
-                <span className="text-[10px] font-black text-[#1E2A78] tracking-wide">
-                  🐾 TodasLasMascotasVanAlCielo.com
-                </span>
-                <span className="text-[8.5px] text-[#BE185D] font-bold italic mt-0.5">
-                  Un millón Ángeles, un solo cielo.
-                </span>
-              </div>
-            </div>
-          ) : (
-            /* Vista previa Postal de Amor 1:1 (escalada a 270px) */
-            <div 
-              className="relative rounded-[22px] overflow-hidden shadow-xl border-2 border-[#FBCFE8] flex flex-col items-center justify-center select-none"
-              style={{
-                width: 270,
-                height: 270,
-                background: 'radial-gradient(ellipse at 50% 30%, #FFFDFE 0%, #FFF5F8 50%, #FCE7F3 100%)',
-                padding: '10px',
-              }}
-            >
-              {/* Estrellitas */}
-              <div className="absolute top-2.5 left-3 text-[10px] text-[#F59E0B]">✦</div>
-              <div className="absolute bottom-2.5 right-3 text-[10px] text-[#F59E0B]">✦</div>
-
-              {/* Contenedor central postal con fondo de dedicatoria */}
-              <div 
-                className="w-full h-full rounded-[16px] border border-white/90 p-2.5 flex flex-col items-center justify-between shadow-xs overflow-hidden relative"
-                style={{
-                  backgroundImage: "url('/images/mural-preview/profilecard-back.webp')",
-                  backgroundColor: '#fbf2f8',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              >
-                {/* Cabecera */}
-                <div className="text-center flex flex-col items-center">
-                  <div className="flex items-center justify-center gap-1">
-                    <img src="/images/icons/Logoheart.svg" alt="" className="w-3 h-3 object-contain" />
-                    <span className="text-[7.5px] font-bold text-[#4A3F6B] tracking-wider font-serif italic">
-                      HISTORIA DE AMOR
-                    </span>
-                  </div>
-                  <div 
-                    className="h-5 flex items-center justify-center -mt-0.5"
-                    style={{
-                      fontFamily: "'Pinyon Script', cursive",
-                      fontSize: previewFontSize * 0.44,
-                      color: '#C29028',
-                    }}
-                  >
-                    {resolvedName}
-                  </div>
-                </div>
-
-                {/* Foto circular con halo y medalla */}
-                <div className="relative flex flex-col items-center my-0.5">
-                  <div 
-                    className="absolute -top-1.5 left-1/2 -translate-x-1/2 rounded-full border border-[#F5C842] shadow-[0_0_5px_#F5C842]"
-                    style={{ width: 48, height: 13 }}
-                  />
-                  <div 
-                    className="w-14 h-14 rounded-full overflow-hidden border-[1.5px] border-[#C9A961] shadow-xs bg-white relative mt-0.5"
-                  >
-                    <img 
-                      src={resolvedPhoto} 
-                      alt={resolvedName} 
-                      className="w-full h-full object-cover" 
-                      crossOrigin="anonymous"
-                    />
-                  </div>
-                  {/* Fechas */}
-                  {datesText && (
-                    <div className="text-[6.5px] font-semibold text-[#8A7B9B] mt-0.5 leading-none tracking-tight">
-                      {datesText}
-                    </div>
-                  )}
-                </div>
-
-                {/* Dedicatoria real con marco pergamino */}
-                <div 
-                  className="w-full max-w-[230px] rounded-lg px-2 py-1 text-center my-0.5 border-l-2 border-r-2 border-[#EC6F9B]/50 bg-white/70 shadow-xs flex items-center justify-center"
+              {/* ZONA EMOCIONAL: DEDICATORIA */}
+              <div className="w-full text-center px-2 mb-2">
+                <p 
+                  className="font-serif italic text-[#3B2648] m-0 max-w-[280px] mx-auto line-clamp-4"
+                  style={{
+                    fontSize: `${previewDedSize}px`,
+                    lineHeight: previewDedLineHeight,
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    textShadow: '0 1px 2px rgba(255,255,255,0.85)',
+                  }}
                 >
-                  <p 
-                    className="font-serif italic text-[#4A3F6B] m-0 line-clamp-3"
-                    style={{
-                      fontSize: previewDedSize,
-                      lineHeight: previewDedLineHeight,
-                    }}
-                  >
-                    “{resolvedDedication}”
-                  </p>
+                  “{resolvedDedication}”
+                </p>
+
+                {/* Pequeño corazón dorado */}
+                <div className="mt-1.5 text-[9px] text-[#D4AF37]">
+                  💛
                 </div>
 
-                {/* Pie con usuario y marca */}
-                <div className="text-center flex flex-col items-center gap-0.5">
-                  {resolvedHandle && (
-                    <span className="text-[6px] font-bold text-[#BE185D] bg-white/80 px-2 py-0.5 rounded-full border border-pink-200">
-                      @{resolvedHandle}
-                    </span>
-                  )}
-                  <span className="text-[6px] text-[#7E6B8F] font-semibold font-serif">
-                    Ángeles en el Cielo · todaslasmascotasvanalcielo.com
+                {/* Frase fija */}
+                <p 
+                  className="text-[8.5px] sm:text-[9.5px] font-medium text-[#655C86] mt-1 tracking-wide"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  Tu recuerdo sigue brillando aquí.
+                </p>
+
+                {/* FIRMA OFICIAL */}
+                <div className="flex flex-col items-center mt-1.5">
+                  <span 
+                    className="text-[17px] sm:text-[19px] leading-tight text-[#B8860B]"
+                    style={{
+                      fontFamily: "'Allura', 'Pinyon Script', cursive",
+                      textShadow: '0 1px 2px rgba(255,255,255,0.9)',
+                    }}
+                  >
+                    Ángeles en el Cielo
+                  </span>
+                  
+                  {/* Trazo divisorio con corazón */}
+                  <div className="flex items-center justify-center gap-1.5 w-24 -mt-0.5 opacity-75">
+                    <div className="h-[0.6px] flex-1 bg-[#C29028]"></div>
+                    <span className="text-[7px] text-[#C29028]">♡</span>
+                    <div className="h-[0.6px] flex-1 bg-[#C29028]"></div>
+                  </div>
+
+                  <span className="text-[5.5px] sm:text-[6.5px] font-bold tracking-[0.24em] text-[#8B7B9E] uppercase mt-0.5">
+                    TODOS LOS PERROS VAN AL CIELO
                   </span>
                 </div>
               </div>
+
             </div>
-          )}
-        </div>
-
-        {/* ACCIONES Y BOTONES */}
-        <div className="w-full flex flex-col gap-2.5 mt-4 max-w-md">
-          {/* Botón Principal: Subir a Instagram Stories o Descargar Postal */}
-          <button
-            onClick={() => handleExport(activeTab)}
-            disabled={isExporting}
-            className="w-full py-3.5 px-6 rounded-full text-white text-sm sm:text-base font-extrabold flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md disabled:opacity-50 select-none cursor-pointer"
-            style={{
-              background: 'linear-gradient(135deg, #F86E9E 0%, #FA8994 50%, #FFB680 100%)',
-              boxShadow: 'inset 0 2px 3px rgba(255, 255, 255, 0.75), inset 0 -3px 6px rgba(255, 150, 100, 0.45), 0 0 0 1.5px rgba(255, 220, 130, 0.9), 0 4px 14px rgba(248, 110, 158, 0.35)',
-              letterSpacing: '0.3px',
-              textShadow: '0 1px 2px rgba(0, 0, 0, 0.12)',
-            }}
-          >
-            {isExporting ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Generando recuerdo en alta calidad...</span>
-              </>
-            ) : activeTab === 'story' ? (
-              <>
-                <span className="text-lg">📲</span>
-                <span>Subir a Instagram Stories (9:16)</span>
-              </>
-            ) : (
-              <>
-                <span className="text-lg">💌</span>
-                <span>Descargar Postal con Dedicatoria (1:1)</span>
-              </>
-            )}
-          </button>
-
-          {/* Botones secundarios */}
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              onClick={handleShareWhatsApp}
-              className="py-2.5 px-3 rounded-full text-xs font-bold bg-[#25D366] hover:bg-[#20ba59] text-white shadow-xs border border-[#16a34a]/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-            >
-              <span>💬</span>
-              <span>Enviar por WhatsApp</span>
-            </button>
-
-            <button
-              onClick={handleCopyLink}
-              className="py-2.5 px-3 rounded-full text-xs font-bold bg-white hover:bg-pink-50 text-[#1E2A78] border border-pink-200 shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-            >
-              <span>{copied ? '✓' : '📋'}</span>
-              <span>{copied ? '¡Copiado!' : 'Copiar enlace'}</span>
-            </button>
           </div>
         </div>
 
-        {/* Microcopy de apoyo */}
-        <p className="text-xs text-[#706A95] mt-4 text-center font-medium">
-          💡 En tu teléfono se abrirá la opción de publicar directamente en tu Historia de Instagram o guardarla en tus fotos.
-        </p>
+        {/* COLUMNA DERECHA: TEXTO Y BOTONES DE ACCIÓN (40-45%) */}
+        <div className="w-full md:w-[46%] flex flex-col justify-center items-start text-left">
+          
+          {/* BADGE SUPERIOR */}
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FDF2F8] border border-[#FBCFE8] shadow-xs mb-3">
+            <span className="text-xs">💗</span>
+            <span className="text-[11px] sm:text-xs font-bold text-[#BE185D] tracking-wide">
+              Su recuerdo ya está listo ✨
+            </span>
+          </div>
+
+          {/* TÍTULO PRINCIPAL */}
+          <h3 
+            className="text-xl sm:text-2xl font-bold text-[#1E1B4B] leading-snug mb-2 font-serif"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+          >
+            {resolvedName} tiene ahora una Story creada especialmente para él.
+          </h3>
+
+          {/* SUBTÍTULO */}
+          <p className="text-xs sm:text-sm text-[#6B7280] leading-relaxed mb-5">
+            Si quieres, ahora puedes compartir su recuerdo con quienes también le quisieron.
+          </p>
+
+          {/* BOTONES DE ACCIÓN */}
+          <div className="w-full flex flex-col gap-2.5 sm:gap-3">
+            
+            {/* BOTÓN 1: PRINCIPAL CTA (COMPARTIR STORY) */}
+            <button
+              onClick={handleShareInstagram}
+              disabled={isExporting}
+              className="w-full py-3 sm:py-3.5 px-5 rounded-full text-white font-bold text-xs sm:text-sm flex items-center justify-between shadow-[0_8px_20px_rgba(236,72,153,0.30)] hover:shadow-[0_12px_28px_rgba(236,72,153,0.40)] transition-all hover:scale-[1.01] active:scale-[0.99] group disabled:opacity-75"
+              style={{
+                background: 'linear-gradient(90deg, #F43F5E 0%, #EC4899 45%, #A855F7 100%)',
+              }}
+            >
+              <div className="flex items-center gap-2.5">
+                {/* Icono Instagram SVG */}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+                <span>{isExporting ? 'Generando Story...' : 'Compartir Story'}</span>
+              </div>
+              <span className="text-sm font-bold opacity-90 transition-transform group-hover:translate-x-1">→</span>
+            </button>
+
+            {/* BOTÓN 2: COMPARTIR POR WHATSAPP */}
+            <button
+              onClick={handleShareWhatsApp}
+              className="w-full py-2.5 sm:py-3 px-5 rounded-full bg-white hover:bg-[#F9FAFB] text-[#1F2937] font-semibold text-xs sm:text-sm flex items-center justify-between border border-[#E5E7EB] shadow-xs hover:shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] group"
+            >
+              <div className="flex items-center gap-2.5">
+                {/* Icono WhatsApp verde */}
+                <div className="w-5 h-5 rounded-full bg-[#22C55E] flex items-center justify-center text-white shrink-0 shadow-xs">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.144.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.112.551 4.095 1.517 5.823l-1.611 5.885 6.046-1.586c1.667.909 3.57 1.428 5.594 1.428 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                </div>
+                <span>Compartir por WhatsApp</span>
+              </div>
+              <span className="text-xs text-[#9CA3AF] transition-transform group-hover:translate-x-1">→</span>
+            </button>
+
+            {/* BOTÓN 3: GUARDAR IMAGEN */}
+            <button
+              onClick={handleSaveImage}
+              disabled={isExporting}
+              className="w-full py-2.5 sm:py-3 px-5 rounded-full bg-white hover:bg-[#F9FAFB] text-[#1F2937] font-semibold text-xs sm:text-sm flex items-center justify-between border border-[#E5E7EB] shadow-xs hover:shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] group disabled:opacity-75"
+            >
+              <div className="flex items-center gap-2.5">
+                {/* Icono Descargar */}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B5563" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span>Guardar imagen</span>
+              </div>
+              <span className="text-xs text-[#9CA3AF] transition-transform group-hover:translate-x-1">→</span>
+            </button>
+
+            {/* BOTÓN 4: COPIAR ENLACE */}
+            <button
+              onClick={handleCopyLink}
+              className="w-full py-2.5 sm:py-3 px-5 rounded-full bg-white hover:bg-[#F9FAFB] text-[#1F2937] font-semibold text-xs sm:text-sm flex items-center justify-between border border-[#E5E7EB] shadow-xs hover:shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] group"
+            >
+              <div className="flex items-center gap-2.5">
+                {/* Icono Enlace */}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B5563" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+                <span>{copied ? '✓ Enlace copiado' : 'Copiar enlace del memorial'}</span>
+              </div>
+              <span className="text-xs text-[#9CA3AF] transition-transform group-hover:translate-x-1">→</span>
+            </button>
+
+          </div>
+
+          {/* TARJETA INFERIOR DE PIE (LAVANDA EMOCIONAL) */}
+          <div className="w-full mt-5 p-3.5 rounded-2xl bg-[#F5F3FF] border border-[#DDD6FE]/60 flex items-center gap-3">
+            <span className="text-base text-[#8B5CF6] shrink-0">💜</span>
+            <p className="text-[11px] sm:text-xs text-[#584582] leading-relaxed m-0 font-medium">
+              Esta Story es un recuerdo especial de {resolvedName} para que su luz siga llegando a más corazones.
+            </p>
+          </div>
+
+        </div>
+
       </div>
 
-      {/* ============================================================== */}
-      {/* CONTENEDORES OCULTOS DE ALTA RESOLUCIÓN (1080×1920 y 1080×1080) */}
-      {/* ============================================================== */}
-      <div 
+      {/* ========================================================================= */}
+      {/* CONTENEDOR OCULTO DE ALTA RESOLUCIÓN: 1080 × 1920 PX                      */}
+      {/* ========================================================================= */}
+      <div
         style={{
           position: 'fixed',
-          top: 0,
+          top: -99999,
           left: -99999,
-          pointerEvents: 'none',
+          width: 1080,
+          height: 1920,
+          overflow: 'hidden',
+          visibility: 'hidden',
           zIndex: -1,
         }}
+        aria-hidden="true"
       >
-        {/* STORY 9:16 (1080 × 1920) */}
         <div
           ref={storyExportRef}
           style={{
             width: 1080,
             height: 1920,
+            backgroundImage: 'url(/images/memorial/story-heaven-bg-1080.png)',
+            backgroundSize: '1080px 1920px',
+            backgroundPosition: 'center',
+            position: 'relative',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '100px 60px',
-            background: 'radial-gradient(ellipse at 50% 30%, #FFFDFE 0%, #FFF5F8 50%, #FCE7F3 100%)',
-            position: 'relative',
+            alignItems: 'center',
+            padding: '70px 60px 80px 60px',
             boxSizing: 'border-box',
           }}
         >
-          {/* Estrellas decorativas */}
-          <div style={{ position: 'absolute', top: 120, left: 100, fontSize: 38, color: '#F59E0B' }}>✦</div>
-          <div style={{ position: 'absolute', top: 220, right: 120, fontSize: 30, color: 'rgba(245, 158, 11, 0.75)' }}>✧</div>
-          <div style={{ position: 'absolute', bottom: 350, left: 110, fontSize: 34, color: 'rgba(245, 158, 11, 0.85)' }}>⋆</div>
-          <div style={{ position: 'absolute', bottom: 420, right: 90, fontSize: 42, color: '#F59E0B' }}>✦</div>
-
-          {/* Top Pill */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '18px 48px',
-              borderRadius: 9999,
-              background: 'rgba(255, 255, 255, 0.95)',
-              border: '3.5px solid #FBCFE8',
-              color: '#BE185D',
-              fontSize: 26,
-              fontWeight: 900,
-              letterSpacing: 3,
-              boxShadow: '0 8px 30px rgba(190, 24, 93, 0.12)',
-            }}
-          >
-            ✨ MI ÁNGEL YA BRILLA EN EL CIELO ✨
-          </div>
-
-          {/* Tarjeta Frontal Oficial Escalada a 720 × 1000 */}
-          <div
-            style={{
-              position: 'relative',
-              width: 720,
-              height: 1000,
-              borderRadius: 48,
-              border: '5px solid rgba(255, 255, 255, 0.95)',
-              overflow: 'hidden',
-              backgroundImage: "url('/images/mural-preview/profilecard-front.webp')",
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              boxShadow: '0 30px 80px rgba(0,0,0,0.6)',
-              display: 'flex',
-              flexDirection: 'column',
-              boxSizing: 'border-box',
-            }}
-          >
-            {/* Arco MI ANGELITO */}
-            <div
+          {/* 1. TOP: MI ANGELITO + NOMBRE */}
+          <div style={{ width: '100%', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <span
               style={{
-                position: 'absolute',
-                top: 72,
-                left: 0,
-                right: 0,
-                display: 'flex',
-                justifyContent: 'center',
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontSize: 32,
+                fontWeight: 700,
+                letterSpacing: '0.24em',
+                color: '#4A3258',
+                textTransform: 'uppercase',
+                marginBottom: 8,
               }}
             >
-              <svg width="520" height="76" viewBox="0 0 260 38" fill="none">
-                <path id="archTextExp" d="M 20,32 Q 130,8 240,32" fill="none" />
-                <text fill="#584582" fontFamily="Georgia, serif" fontSize="21" fontWeight="700" letterSpacing="3" textAnchor="middle">
-                  <textPath href="#archTextExp" startOffset="50%">MI ANGELITO</textPath>
-                </text>
-              </svg>
-            </div>
+              MI ANGELITO
+            </span>
 
-            {/* Nombre con autoescala */}
-            <div
+            <h1
               style={{
-                position: 'absolute',
-                top: 130,
-                left: 0,
-                right: 0,
-                height: 130,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                fontFamily: "'Pinyon Script', cursive",
-                fontSize: exportFontSize * 1.8,
-                color: '#C29028',
-                padding: '0 40px',
-                whiteSpace: 'nowrap',
+                fontFamily: "'Allura', 'Pinyon Script', cursive",
+                fontSize: exportNameSize,
+                color: '#B8860B',
+                fontWeight: 400,
+                margin: 0,
+                lineHeight: 1.1,
+                textShadow: '0 2px 4px rgba(255,255,255,0.9), 0 4px 18px rgba(184,134,11,0.35)',
               }}
             >
               {resolvedName}
-            </div>
+            </h1>
 
-            {/* Corazón dorado 3D */}
+            {/* Línea ornamental fina con corazón dorado */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, width: 340, marginTop: -4, opacity: 0.85 }}>
+              <div style={{ height: 1.5, flex: 1, backgroundColor: '#D4AF37' }} />
+              <span style={{ fontSize: 24, color: '#D4AF37' }}>💛</span>
+              <div style={{ height: 1.5, flex: 1, backgroundColor: '#D4AF37' }} />
+            </div>
+          </div>
+
+          {/* 2. CENTRO: FOTO CIRCULAR PROTAGONISTA CON HALO Y MARIPOSAS */}
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 'auto 0' }}>
+            
+            {/* Halo celestial dorado a escala 1080 */}
             <div
               style={{
                 position: 'absolute',
-                top: 260,
+                top: -38,
                 left: '50%',
-                transform: 'translateX(-50%)',
+                transform: 'translateX(-50%) rotate(-4deg)',
+                width: 380,
+                height: 100,
+                zIndex: 10,
+                pointerEvents: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <svg width="30" height="30" viewBox="0 0 24 24">
-                <path fill="#C29028" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              <svg width="100%" height="100%" viewBox="0 0 220 70" fill="none" style={{ overflow: 'visible' }}>
+                <defs>
+                  <filter id="haloStoryExportGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <linearGradient id="haloGoldGradExport" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#FFA000" />
+                    <stop offset="25%" stopColor="#FFD54F" />
+                    <stop offset="50%" stopColor="#FFF9C4" />
+                    <stop offset="75%" stopColor="#FFD54F" />
+                    <stop offset="100%" stopColor="#FFA000" />
+                  </linearGradient>
+                </defs>
+                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFD54F" strokeWidth="8" opacity="0.85" filter="url(#haloStoryExportGlow)" />
+                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="url(#haloGoldGradExport)" strokeWidth="4.5" opacity="1.0" />
+                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFFFFF" strokeWidth="2.4" opacity="1.0" />
               </svg>
             </div>
 
-            {/* Halo celestial */}
-            <div
+            {/* Mariposas decorativas */}
+            <img 
+              src="/images/icons/butterfly1.svg" 
+              alt="" 
               style={{
                 position: 'absolute',
-                top: 310,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: 242,
-                height: 64,
-                borderRadius: '50%',
-                border: '6px solid #F5C842',
-                boxShadow: '0 0 25px #F5C842',
+                left: -70,
+                top: '45%',
+                width: 68,
+                height: 68,
+                transform: 'translateY(-50%) rotate(-12deg)',
+                filter: 'drop-shadow(0 0 16px rgba(255,255,255,0.95))',
+              }}
+            />
+            <img 
+              src="/images/icons/butterfly2.svg" 
+              alt="" 
+              style={{
+                position: 'absolute',
+                right: -70,
+                top: '35%',
+                width: 60,
+                height: 60,
+                transform: 'rotate(15deg)',
+                filter: 'drop-shadow(0 0 16px rgba(255,255,255,0.95))',
               }}
             />
 
-            {/* Foto Circular */}
+            {/* Resplandor cálido exterior */}
             <div
               style={{
                 position: 'absolute',
-                top: 380,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: 360,
-                height: 360,
-                borderRadius: 180,
+                inset: -20,
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(255, 235, 170, 0.70) 0%, rgba(254, 215, 226, 0.45) 50%, transparent 75%)',
+                filter: 'blur(20px)',
+              }}
+            />
+
+            {/* Marco circular de la foto */}
+            <div
+              style={{
+                width: 440,
+                height: 440,
+                borderRadius: '50%',
                 overflow: 'hidden',
-                border: '6px solid rgba(201, 169, 97, 0.85)',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
-                backgroundColor: '#ffffff',
+                border: '8px solid #FCE7F3',
+                boxShadow: '0 20px 60px rgba(180, 140, 80, 0.35)',
+                backgroundColor: '#FFFFFF',
+                position: 'relative',
               }}
             >
               <img
@@ -736,268 +677,81 @@ export default function PostalStoryShareModal({
                 crossOrigin="anonymous"
               />
             </div>
-
-            {/* Frase inferior */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 90,
-                left: 0,
-                right: 0,
-                textAlign: 'center',
-                fontFamily: 'Georgia, serif',
-                fontSize: 28,
-                fontWeight: 700,
-                color: '#584582',
-                padding: '0 40px',
-              }}
-            >
-              Siempre serás mi lugar favorito en el mundo
-            </div>
-
-            {/* Pie */}
-            <div
-              style={{
-                position: 'absolute',
-                bottom: 35,
-                left: 0,
-                right: 0,
-                textAlign: 'center',
-                fontFamily: 'Georgia, serif',
-                fontSize: 24,
-                fontWeight: 700,
-                color: '#584582',
-              }}
-            >
-              Ángeles en el Cielo
-            </div>
           </div>
 
-          {/* Footer Story Branding */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 10,
-            }}
-          >
-            <div
+          {/* 3. ZONA EMOCIONAL: DEDICATORIA + CIERRE */}
+          <div style={{ width: '100%', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <p
               style={{
-                fontSize: 34,
-                fontWeight: 900,
-                color: '#1E2A78',
-                letterSpacing: 2,
-              }}
-            >
-              🐾 TodasLasMascotasVanAlCielo.com
-            </div>
-            <div
-              style={{
-                fontSize: 24,
-                color: '#BE185D',
+                fontFamily: "'Playfair Display', Georgia, serif",
                 fontStyle: 'italic',
-                fontWeight: 700,
-                marginTop: 6,
+                fontSize: exportDedSize,
+                lineHeight: exportDedLineHeight,
+                color: '#3B2648',
+                margin: '0 auto 16px auto',
+                maxWidth: 820,
+                textShadow: '0 2px 4px rgba(255,255,255,0.9)',
               }}
             >
-              Un millón Ángeles, un solo cielo.
-            </div>
-          </div>
-        </div>
+              “{resolvedDedication}”
+            </p>
 
-        {/* POSTAL 1:1 (1080 × 1080) */}
-        <div
-          ref={postalExportRef}
-          style={{
-            width: 1080,
-            height: 1080,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 60,
-            background: 'radial-gradient(ellipse at 50% 30%, #FFFDFE 0%, #FFF5F8 50%, #FCE7F3 100%)',
-            position: 'relative',
-            boxSizing: 'border-box',
-          }}
-        >
-          {/* Estrellas decorativas */}
-          <div style={{ position: 'absolute', top: 50, left: 60, fontSize: 32, color: '#F59E0B' }}>✦</div>
-          <div style={{ position: 'absolute', bottom: 50, right: 60, fontSize: 32, color: '#F59E0B' }}>✦</div>
-
-          {/* Marco Postal con fondo celestial de dedicatoria */}
-          <div
-            style={{
-              width: 980,
-              height: 980,
-              borderRadius: 36,
-              border: '4px solid rgba(255, 255, 255, 0.95)',
-              overflow: 'hidden',
-              backgroundImage: "url('/images/mural-preview/profilecard-back.webp')",
-              backgroundColor: '#fbf2f8',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              boxShadow: '0 25px 70px rgba(120, 70, 160, 0.20)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '36px 40px 28px',
-              boxSizing: 'border-box',
-              position: 'relative',
-            }}
-          >
-            {/* Cabecera */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
-                <img
-                  src="/images/icons/Logoheart.svg"
-                  alt=""
-                  style={{ width: 44, height: 44, objectFit: 'contain' }}
-                />
-                <span
-                  style={{
-                    fontFamily: 'Georgia, serif',
-                    fontSize: 20,
-                    fontWeight: 700,
-                    fontStyle: 'italic',
-                    color: '#4A3F6B',
-                    letterSpacing: 3,
-                  }}
-                >
-                  HISTORIA DE AMOR
-                </span>
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Pinyon Script', cursive",
-                  fontSize: exportFontSize * 1.35,
-                  color: '#C29028',
-                  lineHeight: 1.1,
-                  margin: '2px 0',
-                }}
-              >
-                {resolvedName}
-              </div>
+            {/* Corazón dorado */}
+            <div style={{ fontSize: 28, color: '#D4AF37', marginBottom: 10 }}>
+              💛
             </div>
 
-            {/* Foto circular con Halo, Fechas y Medalla */}
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div
-                style={{
-                  width: 180,
-                  height: 46,
-                  borderRadius: '50%',
-                  border: '4.5px solid #F5C842',
-                  boxShadow: '0 0 18px #F5C842',
-                  marginBottom: -22,
-                  zIndex: 5,
-                }}
-              />
-              <div
-                style={{
-                  width: 220,
-                  height: 220,
-                  borderRadius: 110,
-                  overflow: 'hidden',
-                  border: '5px solid #C9A961',
-                  boxShadow: '0 10px 28px rgba(0,0,0,0.18)',
-                  backgroundColor: '#ffffff',
-                  position: 'relative',
-                }}
-              >
-                <img
-                  src={resolvedPhoto}
-                  alt={resolvedName}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  crossOrigin="anonymous"
-                />
-              </div>
-              {/* Fechas en español */}
-              {datesText && (
-                <div
-                  style={{
-                    fontFamily: 'sans-serif',
-                    fontSize: 19,
-                    fontWeight: 600,
-                    color: '#8A7B9B',
-                    marginTop: 10,
-                    letterSpacing: 0.5,
-                  }}
-                >
-                  {datesText}
-                </div>
-              )}
-            </div>
-
-            {/* Dedicatoria real con marco pergamino */}
-            <div
+            {/* Frase fija */}
+            <p
               style={{
-                width: '100%',
-                maxWidth: 880,
-                borderRadius: 20,
-                padding: '16px 36px',
-                textAlign: 'center',
-                margin: '8px auto',
-                borderLeft: '4.5px solid rgba(236,111,163,0.70)',
-                borderRight: '4.5px solid rgba(236,111,163,0.70)',
-                background: 'rgba(255, 255, 255, 0.75)',
-                boxShadow: '0 4px 20px rgba(180, 140, 190, 0.12)',
-                boxSizing: 'border-box',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontSize: 26,
+                fontWeight: 600,
+                color: '#655C86',
+                margin: '0 0 24px 0',
+                letterSpacing: 0.5,
               }}
             >
-              <div
+              Tu recuerdo sigue brillando aquí.
+            </p>
+
+            {/* FIRMA OFICIAL */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <span
                 style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  fontStyle: 'italic',
-                  fontSize: exportDedSize,
-                  lineHeight: exportDedLineHeight,
-                  color: '#4A3F6B',
-                  whiteSpace: 'pre-line',
+                  fontFamily: "'Allura', 'Pinyon Script', cursive",
+                  fontSize: 54,
+                  color: '#B8860B',
+                  lineHeight: 1,
+                  textShadow: '0 2px 4px rgba(255,255,255,0.9)',
                 }}
               >
-                “{resolvedDedication}”
+                Ángeles en el Cielo
+              </span>
+
+              {/* Trazo divisorio con corazón */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, width: 280, marginTop: 4, opacity: 0.8 }}>
+                <div style={{ height: 1.5, flex: 1, backgroundColor: '#C29028' }} />
+                <span style={{ fontSize: 18, color: '#C29028' }}>♡</span>
+                <div style={{ height: 1.5, flex: 1, backgroundColor: '#C29028' }} />
               </div>
+
+              <span
+                style={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  letterSpacing: '0.24em',
+                  color: '#8B7B9E',
+                  textTransform: 'uppercase',
+                  marginTop: 10,
+                }}
+              >
+                TODOS LOS PERROS VAN AL CIELO
+              </span>
             </div>
 
-            {/* Pie con usuario de redes sociales y firma */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-              {resolvedHandle && (
-                <div
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '4px 18px',
-                    borderRadius: 9999,
-                    background: 'rgba(255, 255, 255, 0.90)',
-                    border: '1.5px solid #FBCFE8',
-                    color: '#BE185D',
-                    fontSize: 16,
-                    fontWeight: 700,
-                    boxShadow: '0 2px 8px rgba(190, 24, 93, 0.10)',
-                  }}
-                >
-                  <span>@{resolvedHandle}</span>
-                </div>
-              )}
-              <div
-                style={{
-                  fontFamily: 'Georgia, serif',
-                  fontSize: 16,
-                  fontWeight: 600,
-                  color: '#7E6B8F',
-                  letterSpacing: 0.5,
-                }}
-              >
-                Ángeles en el Cielo · todaslasmascotasvanalcielo.com
-              </div>
-            </div>
           </div>
+
         </div>
       </div>
     </div>,

@@ -430,7 +430,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
                 }}
               >
                 <span>✨</span>
-                <span>Story de Instagram y Postal con Dedicatoria</span>
+                <span>Story de Instagram de {memorial.pet_name}</span>
                 <span className="text-xs opacity-90">›</span>
               </button>
             </div>
