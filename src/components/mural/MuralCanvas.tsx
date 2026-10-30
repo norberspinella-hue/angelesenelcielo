@@ -597,11 +597,11 @@ function PetProfileCard({
               <div 
                 style={{
                   position: 'absolute',
-                  top: '155px',
+                  top: '148px',
                   left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '121px',
-                  height: '32px',
+                  transform: 'translateX(-50%) rotate(-4deg)',
+                  width: '165px',
+                  height: '44px',
                   zIndex: 7,
                   pointerEvents: 'none',
                   display: 'flex',
@@ -681,8 +681,8 @@ function PetProfileCard({
                   alt="Plan"
                   style={{
                     position: 'absolute',
-                    top: 322,
-                    left: 189,
+                    top: 329,
+                    left: 194,
                     width: 72,
                     height: 72,
                     zIndex: 8,
@@ -694,11 +694,11 @@ function PetProfileCard({
               <div 
                 style={{
                   position: 'absolute',
-                  top: '190px',
+                  top: '180px',
                   left: '50%',
                   transform: 'translateX(-50%)',
-                  width: '180px',
-                  height: '180px',
+                  width: '198px',
+                  height: '198px',
                   borderRadius: '50%',
                   overflow: 'hidden',
                   border: '3px solid rgba(201,169,97,0.70)',
