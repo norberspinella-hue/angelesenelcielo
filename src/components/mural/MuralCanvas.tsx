@@ -144,10 +144,6 @@ function PetProfileCard({
 
   useEffect(() => {
     setMounted(true);
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap';
-    document.head.appendChild(link);
   }, []);
 
   useEffect(() => {
@@ -596,43 +592,6 @@ function PetProfileCard({
                   </h3>
                 );
               })()}
-
-              {/* CORAZÓN DORADO 3D */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '130px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  zIndex: 10,
-                  pointerEvents: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <svg 
-                  width="15" 
-                  height="15" 
-                  viewBox="0 0 24 24" 
-                  style={{
-                    filter: 'drop-shadow(0 1.5px 2px rgba(100,60,10,0.45)) drop-shadow(0 0 4px rgba(255,245,200,0.60))',
-                  }}
-                >
-                  <defs>
-                    <radialGradient id="heartGold3D" cx="38%" cy="32%" r="68%" fx="35%" fy="28%">
-                      <stop offset="0%" stopColor="#FFFBE6" />
-                      <stop offset="30%" stopColor="#F5D06A" />
-                      <stop offset="70%" stopColor="#C29028" />
-                      <stop offset="100%" stopColor="#7D4E08" />
-                    </radialGradient>
-                  </defs>
-                  <path 
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" 
-                    fill="url(#heartGold3D)" 
-                  />
-                </svg>
-              </div>
 
               {/* ELEMENTO 2: HALO CELESTIAL FINO Y RADIANTE */}
               <div 
