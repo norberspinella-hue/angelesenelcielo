@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 
 interface PostalStoryShareModalProps {
@@ -33,9 +33,6 @@ export default function PostalStoryShareModal({
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
 
-  // Ref del contenedor de exportación en resolución completa 1080x1920
-  const storyExportRef = useRef<HTMLDivElement>(null)
-
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -59,19 +56,19 @@ export default function PostalStoryShareModal({
   // Dynamic font size for pet name
   const nameLen = resolvedName.length
   let previewNameSize = 44
-  let exportNameSize = 120
+  let exportNameSize = 110
   if (nameLen > 18) {
     previewNameSize = 26
     exportNameSize = 72
   } else if (nameLen > 14) {
     previewNameSize = 30
-    exportNameSize = 84
+    exportNameSize = 82
   } else if (nameLen > 10) {
     previewNameSize = 36
-    exportNameSize = 98
+    exportNameSize = 94
   } else if (nameLen > 7) {
     previewNameSize = 40
-    exportNameSize = 110
+    exportNameSize = 102
   }
 
   // Dynamic font size for dedication
@@ -79,7 +76,7 @@ export default function PostalStoryShareModal({
   let previewDedSize = 11.5
   let previewDedLineHeight = 1.45
   let exportDedSize = 32
-  let exportDedLineHeight = 1.48
+  let exportDedLineHeight = 1.45
 
   if (dedLen > 300) {
     previewDedSize = 8.5
@@ -90,12 +87,12 @@ export default function PostalStoryShareModal({
     previewDedSize = 9.5
     previewDedLineHeight = 1.32
     exportDedSize = 25
-    exportDedLineHeight = 1.36
+    exportDedLineHeight = 1.35
   } else if (dedLen > 100) {
     previewDedSize = 10.5
     previewDedLineHeight = 1.38
     exportDedSize = 28
-    exportDedLineHeight = 1.42
+    exportDedLineHeight = 1.40
   }
 
   const showToast = (msg: string) => {
@@ -103,30 +100,328 @@ export default function PostalStoryShareModal({
     setTimeout(() => setToastMessage(null), 3800)
   }
 
-  // Generación PNG a 1080 × 1920
-  const generatePngDataUrl = async (): Promise<string | null> => {
-    if (!storyExportRef.current) return null
-    const { toPng } = await import('html-to-image')
+  // =========================================================================
+  // MOTOR DE COMPOSICIÓN CANVAS 2D DE ALTA RESOLUCIÓN (1080 × 1920 PX)
+  // Dibuja explícitamente todas las capas en orden exacto, garantizando 100%
+  // de fidelidad, sin depender de foreignObject ni sufrir problemas de CSS oculto.
+  // =========================================================================
+  const generatePngDataUrl = async (): Promise<string> => {
+    const width = 1080
+    const height = 1920
 
-    // Asegurar que todas las fuentes estén renderizadas antes de capturar
+    // 1. Esperar a que las fuentes caligráficas y de serif estén listas en el documento
     if (typeof document !== 'undefined' && document.fonts) {
-      await document.fonts.ready
+      try {
+        await document.fonts.ready
+      } catch (fontErr) {
+        console.warn('Advertencia cargando fuentes:', fontErr)
+      }
     }
 
-    return await toPng(storyExportRef.current, {
-      width: 1080,
-      height: 1920,
-      pixelRatio: 1,
-      cacheBust: true,
+    // 2. Helper para cargar y decodificar imágenes de forma segura
+    const loadImage = (src: string): Promise<HTMLImageElement> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image()
+        img.crossOrigin = 'anonymous'
+        img.onload = () => {
+          if (img.decode) {
+            img.decode().then(() => resolve(img)).catch(() => resolve(img))
+          } else {
+            resolve(img)
+          }
+        }
+        img.onerror = () => {
+          // Reintento sin crossOrigin en caso de conflicto de CORS de caché
+          const retryImg = new Image()
+          retryImg.onload = () => resolve(retryImg)
+          retryImg.onerror = (err) => reject(err)
+          retryImg.src = src
+        }
+        img.src = src
+      })
+    }
+
+    // Carga paralela de todos los recursos gráficos maestros
+    const [bgImg, photoImg, b1Img, b2Img] = await Promise.all([
+      loadImage('/images/memorial/story-heaven-bg-1080.png'),
+      loadImage(resolvedPhoto).catch(() => loadImage('/images/placeholders/first.webp')),
+      loadImage('/images/icons/butterfly1.svg').catch(() => null),
+      loadImage('/images/icons/butterfly2.svg').catch(() => null),
+    ])
+
+    if (!bgImg) throw new Error('No se pudo cargar el fondo celestial maestro.')
+    if (!photoImg) throw new Error('No se pudo cargar la fotografía de la mascota.')
+
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
+    const ctx = canvas.getContext('2d')
+    if (!ctx) throw new Error('No se pudo inicializar el contexto de Canvas 2D.')
+
+    // CAPA 1: FONDO CELESTIAL MAESTRO (1080 × 1920)
+    ctx.drawImage(bgImg, 0, 0, width, height)
+
+    // CAPA 2: CABECERA "MI ANGELITO"
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.font = '700 32px "Playfair Display", Georgia, serif'
+    ctx.fillStyle = '#4A3258'
+    try {
+      // @ts-ignore
+      ctx.letterSpacing = '8px'
+    } catch (e) {}
+    ctx.fillText('MI ANGELITO', width / 2, 160)
+    ctx.restore()
+
+    // CAPA 3: NOMBRE DE LA MASCOTA (CALIGRAFÍA DORADA)
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.font = `400 ${exportNameSize}px "Allura", "Pinyon Script", cursive`
+    ctx.fillStyle = '#B8860B'
+    ctx.shadowColor = 'rgba(184, 134, 11, 0.35)'
+    ctx.shadowBlur = 18
+    ctx.shadowOffsetY = 4
+    ctx.fillText(resolvedName, width / 2, 280)
+    ctx.restore()
+
+    // CAPA 4: CORAZÓN DORADO SUTIL BAJO EL NOMBRE
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.font = '28px sans-serif'
+    ctx.fillStyle = '#D4AF37'
+    ctx.fillText('💛', width / 2, 335)
+    ctx.restore()
+
+    // PARÁMETROS DEL RETRATO
+    const photoCenterX = width / 2
+    const photoCenterY = 720
+    const photoRadius = 225
+
+    // CAPA 5: RESPLANDOR EXTERIOR CÁLIDO DE LA FOTO
+    ctx.save()
+    const glowGrad = ctx.createRadialGradient(
+      photoCenterX, photoCenterY, photoRadius * 0.7,
+      photoCenterX, photoCenterY, photoRadius * 1.25
+    )
+    glowGrad.addColorStop(0, 'rgba(255, 235, 170, 0.75)')
+    glowGrad.addColorStop(0.6, 'rgba(254, 215, 226, 0.40)')
+    glowGrad.addColorStop(1, 'rgba(255, 255, 255, 0)')
+    ctx.fillStyle = glowGrad
+    ctx.beginPath()
+    ctx.arc(photoCenterX, photoCenterY, photoRadius * 1.25, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+
+    // CAPA 6: FOTOGRAFÍA CIRCULAR RECORTADA CON FUSIÓN INFERIOR DE NUBES
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(photoCenterX, photoCenterY, photoRadius, 0, Math.PI * 2)
+    ctx.closePath()
+    ctx.clip()
+
+    // Dibujar foto con ajuste centrado y proporcional (cover)
+    const pW = photoImg.naturalWidth || photoImg.width || 400
+    const pH = photoImg.naturalHeight || photoImg.height || 400
+    const minDim = Math.min(pW, pH)
+    const sx = (pW - minDim) / 2
+    const sy = (pH - minDim) / 2
+    ctx.drawImage(
+      photoImg,
+      sx, sy, minDim, minDim,
+      photoCenterX - photoRadius, photoCenterY - photoRadius, photoRadius * 2, photoRadius * 2
+    )
+
+    // Fusión suave inferior con las nubes
+    const mistGrad = ctx.createLinearGradient(
+      0, photoCenterY + photoRadius,
+      0, photoCenterY + photoRadius * 0.35
+    )
+    mistGrad.addColorStop(0, 'rgba(255, 245, 235, 0.85)')
+    mistGrad.addColorStop(0.5, 'rgba(255, 245, 235, 0.30)')
+    mistGrad.addColorStop(1, 'rgba(255, 245, 235, 0)')
+    ctx.fillStyle = mistGrad
+    ctx.fillRect(
+      photoCenterX - photoRadius,
+      photoCenterY + photoRadius * 0.35,
+      photoRadius * 2,
+      photoRadius * 0.65
+    )
+    ctx.restore()
+
+    // CAPA 7: MARCO DORADO RADIANTE DE LA FOTO
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(photoCenterX, photoCenterY, photoRadius, 0, Math.PI * 2)
+    ctx.lineWidth = 8
+    ctx.strokeStyle = 'rgba(254, 240, 138, 0.95)'
+    ctx.shadowColor = 'rgba(250, 204, 21, 0.55)'
+    ctx.shadowBlur = 30
+    ctx.stroke()
+    ctx.restore()
+
+    // CAPA 8: AUREOLA CELESTIAL INCLINADA (-4 GRADOS)
+    ctx.save()
+    ctx.translate(photoCenterX, photoCenterY - photoRadius - 10)
+    ctx.rotate(-4 * Math.PI / 180)
+
+    // 8a. Aura exterior difusa
+    ctx.beginPath()
+    ctx.ellipse(0, 0, 190, 48, 0, 0, Math.PI * 2)
+    ctx.lineWidth = 14
+    ctx.strokeStyle = 'rgba(255, 213, 79, 0.80)'
+    ctx.shadowColor = '#FFD54F'
+    ctx.shadowBlur = 25
+    ctx.stroke()
+
+    // 8b. Anillo dorado
+    const haloGrad = ctx.createLinearGradient(-190, 0, 190, 0)
+    haloGrad.addColorStop(0, '#FFA000')
+    haloGrad.addColorStop(0.25, '#FFD54F')
+    haloGrad.addColorStop(0.5, '#FFF9C4')
+    haloGrad.addColorStop(0.75, '#FFD54F')
+    haloGrad.addColorStop(1, '#FFA000')
+    ctx.beginPath()
+    ctx.ellipse(0, 0, 190, 48, 0, 0, Math.PI * 2)
+    ctx.lineWidth = 6
+    ctx.strokeStyle = haloGrad
+    ctx.shadowBlur = 0
+    ctx.stroke()
+
+    // 8c. Filamento blanco brillante
+    ctx.beginPath()
+    ctx.ellipse(0, 0, 190, 48, 0, 0, Math.PI * 2)
+    ctx.lineWidth = 2.6
+    ctx.strokeStyle = '#FFFFFF'
+    ctx.shadowColor = '#FFFFFF'
+    ctx.shadowBlur = 8
+    ctx.stroke()
+    ctx.restore()
+
+    // CAPA 9: MARIPOSAS LUMINOSAS
+    if (b1Img) {
+      ctx.save()
+      ctx.translate(photoCenterX - photoRadius - 35, photoCenterY + photoRadius * 0.4)
+      ctx.rotate(-12 * Math.PI / 180)
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.95)'
+      ctx.shadowBlur = 18
+      ctx.drawImage(b1Img, -38, -38, 76, 76)
+      ctx.restore()
+    }
+
+    if (b2Img) {
+      ctx.save()
+      ctx.translate(photoCenterX + photoRadius + 35, photoCenterY + photoRadius * 0.45)
+      ctx.rotate(15 * Math.PI / 180)
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.95)'
+      ctx.shadowBlur = 18
+      ctx.drawImage(b2Img, -35, -35, 70, 70)
+      ctx.restore()
+    }
+
+    // CAPA 10: DEDICATORIA REAL (AJUSTE AUTOMÁTICO DE LÍNEAS CENTRADAS)
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.font = `italic ${exportDedSize}px "Playfair Display", Georgia, serif`
+    ctx.fillStyle = '#3B2648'
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.9)'
+    ctx.shadowBlur = 6
+
+    const maxDedWidth = 840
+    const words = `“${resolvedDedication}”`.split(' ')
+    const lines: string[] = []
+    let currentLine = words[0] || ''
+
+    for (let i = 1; i < words.length; i++) {
+      const word = words[i]
+      const testLine = currentLine + ' ' + word
+      const metrics = ctx.measureText(testLine)
+      if (metrics.width > maxDedWidth) {
+        lines.push(currentLine)
+        currentLine = word
+      } else {
+        currentLine = testLine
+      }
+    }
+    lines.push(currentLine)
+
+    const dedLineHeightPx = exportDedSize * exportDedLineHeight
+    let startDedY = 1100
+    lines.forEach((l, idx) => {
+      ctx.fillText(l, width / 2, startDedY + idx * dedLineHeightPx)
     })
+    const endDedY = startDedY + (lines.length - 1) * dedLineHeightPx
+    ctx.restore()
+
+    // CAPA 11: CORAZÓN DORADO BAJO LA DEDICATORIA
+    const heartY = endDedY + 50
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.font = '28px sans-serif'
+    ctx.fillStyle = '#D4AF37'
+    ctx.fillText('💛', width / 2, heartY)
+    ctx.restore()
+
+    // CAPA 12: FRASE FIJA "Tu recuerdo sigue brillando aquí."
+    const fixedPhraseY = heartY + 48
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.font = '600 26px "Playfair Display", Georgia, serif'
+    ctx.fillStyle = '#655C86'
+    try {
+      // @ts-ignore
+      ctx.letterSpacing = '1px'
+    } catch (e) {}
+    ctx.fillText('Tu recuerdo sigue brillando aquí.', width / 2, fixedPhraseY)
+    ctx.restore()
+
+    // CAPA 13: FIRMA OFICIAL "Ángeles en el Cielo"
+    const signY = fixedPhraseY + 75
+    ctx.save()
+    ctx.textAlign = 'center'
+    ctx.font = '400 56px "Allura", "Pinyon Script", cursive'
+    ctx.fillStyle = '#B8860B'
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.9)'
+    ctx.shadowBlur = 6
+    ctx.fillText('Ángeles en el Cielo', width / 2, signY)
+
+    // Trazo divisorio con corazón: — ♡ —
+    const lineY = signY + 22
+    ctx.lineWidth = 1.5
+    ctx.strokeStyle = '#C29028'
+    ctx.globalAlpha = 0.8
+    ctx.beginPath()
+    ctx.moveTo(width / 2 - 130, lineY)
+    ctx.lineTo(width / 2 - 20, lineY)
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(width / 2 + 20, lineY)
+    ctx.lineTo(width / 2 + 130, lineY)
+    ctx.stroke()
+
+    ctx.font = '18px sans-serif'
+    ctx.fillStyle = '#C29028'
+    ctx.fillText('♡', width / 2, lineY + 6)
+    ctx.globalAlpha = 1.0
+
+    // Subtítulo oficial: "TODOS LOS PERROS VAN AL CIELO"
+    ctx.font = '700 16px sans-serif'
+    ctx.fillStyle = '#8B7B9E'
+    try {
+      // @ts-ignore
+      ctx.letterSpacing = '4px'
+    } catch (e) {}
+    ctx.fillText('TODOS LOS PERROS VAN AL CIELO', width / 2, lineY + 42)
+    ctx.restore()
+
+    return canvas.toDataURL('image/png')
   }
 
-  // Compartir en Instagram (Web Share API o descarga directa con aviso)
+  // Compartir en Instagram (Web Share API o descarga directa)
   const handleShareInstagram = async () => {
     try {
       setIsExporting(true)
       const dataUrl = await generatePngDataUrl()
-      if (!dataUrl) throw new Error('No se pudo generar la imagen')
 
       const filename = `angeles-en-el-cielo-${resolvedName.toLowerCase().replace(/\s+/g, '-')}-story.png`
 
@@ -147,7 +442,7 @@ export default function PostalStoryShareModal({
             return
           }
         } catch (shareErr) {
-          console.log('Navegador canceló Web Share o no compatible con archivo, descargando:', shareErr)
+          console.log('Web Share cancelado o no soportado en dispositivo, descargando:', shareErr)
         }
       }
 
@@ -159,18 +454,17 @@ export default function PostalStoryShareModal({
       showToast('¡Story guardada en tu galería! Ya puedes abrir Instagram y publicarla ✨')
     } catch (err) {
       console.error('Error generando Story:', err)
-      showToast('No se pudo generar la imagen. Inténtalo de nuevo.')
+      showToast('No se pudo generar la imagen completa. Inténtalo de nuevo.')
     } finally {
       setIsExporting(false)
     }
   }
 
-  // Guardar imagen PNG 1080x1920
+  // Guardar imagen PNG 1080x1920 (Utiliza el mismo motor exacto de generación)
   const handleSaveImage = async () => {
     try {
       setIsExporting(true)
       const dataUrl = await generatePngDataUrl()
-      if (!dataUrl) throw new Error('No se pudo generar la imagen')
 
       const filename = `angeles-en-el-cielo-${resolvedName.toLowerCase().replace(/\s+/g, '-')}-story.png`
       const link = document.createElement('a')
@@ -180,7 +474,7 @@ export default function PostalStoryShareModal({
       showToast('¡Story descargada en alta resolución (1080×1920)! 💌🖼️')
     } catch (err) {
       console.error('Error guardando imagen:', err)
-      showToast('No se pudo guardar la imagen.')
+      showToast('No se pudo guardar la imagen completa.')
     } finally {
       setIsExporting(false)
     }
@@ -306,7 +600,7 @@ export default function PostalStoryShareModal({
                   </svg>
                 </div>
 
-                {/* Mariposas luminosas flotantes (posicionadas a los lados del pecho como en el mockup) */}
+                {/* Mariposas luminosas flotantes */}
                 <div className="absolute -left-7 bottom-3 w-7 h-7 opacity-95 pointer-events-none">
                   <img src="/images/icons/butterfly1.svg" alt="" className="w-full h-full object-contain -rotate-12 drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]" />
                 </div>
@@ -513,265 +807,6 @@ export default function PostalStoryShareModal({
 
         </div>
 
-      </div>
-
-      {/* ========================================================================= */}
-      {/* CONTENEDOR DE EXPORTACIÓN EN ALTA RESOLUCIÓN: 1080 × 1920 PX             */}
-      {/* ========================================================================= */}
-      <div
-        style={{
-          position: 'fixed',
-          left: -9999,
-          top: 0,
-          width: 1080,
-          height: 1920,
-          pointerEvents: 'none',
-          zIndex: -9999,
-        }}
-      >
-        <div
-          ref={storyExportRef}
-          style={{
-            width: 1080,
-            height: 1920,
-            backgroundImage: 'url(/images/memorial/story-heaven-bg-1080.png)',
-            backgroundSize: '1080px 1920px',
-            backgroundPosition: 'center',
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '70px 60px 80px 60px',
-            boxSizing: 'border-box',
-          }}
-        >
-          {/* 1. TOP: MI ANGELITO + NOMBRE */}
-          <div style={{ width: '100%', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontSize: 32,
-                fontWeight: 700,
-                letterSpacing: '0.24em',
-                color: '#4A3258',
-                textTransform: 'uppercase',
-                marginBottom: 8,
-              }}
-            >
-              MI ANGELITO
-            </span>
-
-            <h1
-              style={{
-                fontFamily: "'Allura', 'Pinyon Script', cursive",
-                fontSize: exportNameSize,
-                color: '#B8860B',
-                fontWeight: 400,
-                margin: 0,
-                lineHeight: 1.1,
-                textShadow: '0 2px 4px rgba(255,255,255,0.9), 0 4px 18px rgba(184,134,11,0.35)',
-              }}
-            >
-              {resolvedName}
-            </h1>
-
-            {/* Corazón dorado sutil bajo el nombre (idéntico al mockup) */}
-            <div style={{ fontSize: 28, color: '#D4AF37', marginTop: 8 }}>
-              💛
-            </div>
-          </div>
-
-          {/* 2. CENTRO: FOTO CIRCULAR PROTAGONISTA CON HALO Y MARIPOSAS */}
-          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 'auto 0' }}>
-            
-            {/* Halo celestial dorado a escala 1080 */}
-            <div
-              style={{
-                position: 'absolute',
-                top: -42,
-                left: '50%',
-                transform: 'translateX(-50%) rotate(-4deg)',
-                width: 390,
-                height: 104,
-                zIndex: 10,
-                pointerEvents: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <svg width="100%" height="100%" viewBox="0 0 220 70" fill="none" style={{ overflow: 'visible' }}>
-                <defs>
-                  <filter id="haloStoryExportGlow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                  <linearGradient id="haloGoldGradExport" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#FFA000" />
-                    <stop offset="25%" stopColor="#FFD54F" />
-                    <stop offset="50%" stopColor="#FFF9C4" />
-                    <stop offset="75%" stopColor="#FFD54F" />
-                    <stop offset="100%" stopColor="#FFA000" />
-                  </linearGradient>
-                </defs>
-                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFD54F" strokeWidth="8" opacity="0.85" filter="url(#haloStoryExportGlow)" />
-                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="url(#haloGoldGradExport)" strokeWidth="4.5" opacity="1.0" />
-                <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFFFFF" strokeWidth="2.4" opacity="1.0" />
-              </svg>
-            </div>
-
-            {/* Mariposas decorativas a los lados */}
-            <img 
-              src="/images/icons/butterfly1.svg" 
-              alt="" 
-              style={{
-                position: 'absolute',
-                left: -76,
-                bottom: 30,
-                width: 76,
-                height: 76,
-                transform: 'rotate(-12deg)',
-                filter: 'drop-shadow(0 0 16px rgba(255,255,255,0.95))',
-                zIndex: 5,
-              }}
-            />
-            <img 
-              src="/images/icons/butterfly2.svg" 
-              alt="" 
-              style={{
-                position: 'absolute',
-                right: -76,
-                bottom: 45,
-                width: 70,
-                height: 70,
-                transform: 'rotate(15deg)',
-                filter: 'drop-shadow(0 0 16px rgba(255,255,255,0.95))',
-                zIndex: 5,
-              }}
-            />
-
-            {/* Resplandor cálido exterior */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: -24,
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(255, 235, 170, 0.75) 0%, rgba(254, 215, 226, 0.50) 50%, transparent 75%)',
-                filter: 'blur(22px)',
-              }}
-            />
-
-            {/* Marco circular de la foto con fusión inferior */}
-            <div
-              style={{
-                width: 440,
-                height: 440,
-                borderRadius: '50%',
-                overflow: 'hidden',
-                border: '8px solid rgba(254, 240, 138, 0.92)',
-                boxShadow: '0 0 45px rgba(250, 204, 21, 0.50), 0 25px 70px rgba(180, 140, 80, 0.35)',
-                backgroundColor: '#FFFFFF',
-                position: 'relative',
-              }}
-            >
-              <img
-                src={resolvedPhoto}
-                alt={resolvedName}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-              {/* Fusión suave inferior con las nubes */}
-              <div
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: '35%',
-                  background: 'linear-gradient(to top, rgba(255, 245, 235, 0.75) 0%, rgba(255, 245, 235, 0.20) 50%, transparent 100%)',
-                  pointerEvents: 'none',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* 3. ZONA EMOCIONAL: DEDICATORIA + CIERRE */}
-          <div style={{ width: '100%', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <p
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontStyle: 'italic',
-                fontSize: exportDedSize,
-                lineHeight: exportDedLineHeight,
-                color: '#3B2648',
-                margin: '0 auto 16px auto',
-                maxWidth: 820,
-                textShadow: '0 2px 4px rgba(255,255,255,0.9)',
-              }}
-            >
-              “{resolvedDedication}”
-            </p>
-
-            {/* Corazón dorado */}
-            <div style={{ fontSize: 28, color: '#D4AF37', marginBottom: 10 }}>
-              💛
-            </div>
-
-            {/* Frase fija */}
-            <p
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontSize: 26,
-                fontWeight: 600,
-                color: '#655C86',
-                margin: '0 0 24px 0',
-                letterSpacing: 0.5,
-              }}
-            >
-              Tu recuerdo sigue brillando aquí.
-            </p>
-
-            {/* FIRMA OFICIAL */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <span
-                style={{
-                  fontFamily: "'Allura', 'Pinyon Script', cursive",
-                  fontSize: 54,
-                  color: '#B8860B',
-                  lineHeight: 1,
-                  textShadow: '0 2px 4px rgba(255,255,255,0.9)',
-                }}
-              >
-                Ángeles en el Cielo
-              </span>
-
-              {/* Trazo divisorio con corazón */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, width: 280, marginTop: 4, opacity: 0.8 }}>
-                <div style={{ height: 1.5, flex: 1, backgroundColor: '#C29028' }} />
-                <span style={{ fontSize: 18, color: '#C29028' }}>♡</span>
-                <div style={{ height: 1.5, flex: 1, backgroundColor: '#C29028' }} />
-              </div>
-
-              <span
-                style={{
-                  fontSize: 16,
-                  fontWeight: 700,
-                  letterSpacing: '0.24em',
-                  color: '#8B7B9E',
-                  textTransform: 'uppercase',
-                  marginTop: 10,
-                }}
-              >
-                TODOS LOS PERROS VAN AL CIELO
-              </span>
-            </div>
-
-          </div>
-
-        </div>
       </div>
     </div>,
     document.body
