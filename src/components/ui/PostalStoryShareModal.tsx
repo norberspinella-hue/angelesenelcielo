@@ -270,11 +270,9 @@ export default function PostalStoryShareModal({
                   {resolvedName}
                 </h2>
 
-                {/* Línea ornamental fina con corazón dorado */}
-                <div className="flex items-center justify-center gap-2 w-32 -mt-1 opacity-80">
-                  <div className="h-[0.8px] flex-1 bg-[#D4AF37]"></div>
-                  <span className="text-[9px] text-[#D4AF37]">💛</span>
-                  <div className="h-[0.8px] flex-1 bg-[#D4AF37]"></div>
+                {/* Corazón dorado sutil bajo el nombre (idéntico al mockup) */}
+                <div className="mt-0.5 text-[11px] sm:text-[13px] text-[#D4AF37] select-none">
+                  💛
                 </div>
               </div>
 
@@ -282,7 +280,7 @@ export default function PostalStoryShareModal({
               <div className="relative flex flex-col items-center justify-center my-auto">
                 {/* Aureola dorada inclinada flotando sobre la cabeza */}
                 <div 
-                  className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 w-[110px] h-[30px] flex items-center justify-center pointer-events-none"
+                  className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 w-[116px] h-[32px] flex items-center justify-center pointer-events-none"
                   style={{ transform: 'translateX(-50%) rotate(-4deg)' }}
                 >
                   <svg width="100%" height="100%" viewBox="0 0 220 70" fill="none" style={{ overflow: 'visible' }}>
@@ -302,36 +300,49 @@ export default function PostalStoryShareModal({
                         <stop offset="100%" stopColor="#FFA000" />
                       </linearGradient>
                     </defs>
-                    <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFD54F" strokeWidth="8" opacity="0.8" filter="url(#haloStoryPreviewGlow)" />
+                    <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFD54F" strokeWidth="8" opacity="0.85" filter="url(#haloStoryPreviewGlow)" />
                     <ellipse cx="110" cy="35" rx="95" ry="24" stroke="url(#haloGoldGradPreview)" strokeWidth="4.5" opacity="1.0" />
                     <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFFFFF" strokeWidth="2.2" opacity="1.0" />
                   </svg>
                 </div>
 
-                {/* Mariposas luminosas flotantes */}
-                <div className="absolute -left-6 top-1/2 -translate-y-1/2 w-6 h-6 opacity-90">
-                  <img src="/images/icons/butterfly1.svg" alt="" className="w-full h-full object-contain -rotate-12 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
+                {/* Mariposas luminosas flotantes (posicionadas a los lados del pecho como en el mockup) */}
+                <div className="absolute -left-7 bottom-3 w-7 h-7 opacity-95 pointer-events-none">
+                  <img src="/images/icons/butterfly1.svg" alt="" className="w-full h-full object-contain -rotate-12 drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]" />
                 </div>
-                <div className="absolute -right-6 top-1/3 w-5 h-5 opacity-90">
-                  <img src="/images/icons/butterfly2.svg" alt="" className="w-full h-full object-contain rotate-15 drop-shadow-[0_0_8px_rgba(255,255,255,0.9)]" />
+                <div className="absolute -right-7 bottom-5 w-6 h-6 opacity-95 pointer-events-none">
+                  <img src="/images/icons/butterfly2.svg" alt="" className="w-full h-full object-contain rotate-15 drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]" />
                 </div>
 
                 {/* Resplandor cálido exterior */}
                 <div 
-                  className="absolute -inset-3 rounded-full"
+                  className="absolute -inset-4 rounded-full pointer-events-none"
                   style={{
-                    background: 'radial-gradient(circle, rgba(255, 235, 170, 0.65) 0%, rgba(254, 215, 226, 0.45) 50%, transparent 75%)',
-                    filter: 'blur(8px)',
+                    background: 'radial-gradient(circle, rgba(255, 235, 170, 0.70) 0%, rgba(254, 215, 226, 0.45) 50%, transparent 75%)',
+                    filter: 'blur(10px)',
                   }}
                 />
 
-                {/* Círculo de la foto real */}
-                <div className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden border-[3px] border-[#FCE7F3] shadow-[0_8px_24px_rgba(180,140,80,0.30)] bg-white z-0">
+                {/* Círculo de la foto real con fusión suave de nubes */}
+                <div 
+                  className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden bg-white z-0"
+                  style={{
+                    border: '3px solid rgba(254, 240, 138, 0.90)',
+                    boxShadow: '0 0 20px rgba(250, 204, 21, 0.45), 0 10px 30px rgba(180, 140, 80, 0.28)',
+                  }}
+                >
                   <img 
                     src={resolvedPhoto} 
                     alt={resolvedName} 
                     className="w-full h-full object-cover" 
                     crossOrigin="anonymous"
+                  />
+                  {/* Fusión suave inferior con las nubes */}
+                  <div 
+                    className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(to top, rgba(255, 245, 235, 0.70) 0%, rgba(255, 245, 235, 0.20) 50%, transparent 100%)',
+                    }}
                   />
                 </div>
               </div>
@@ -568,11 +579,9 @@ export default function PostalStoryShareModal({
               {resolvedName}
             </h1>
 
-            {/* Línea ornamental fina con corazón dorado */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, width: 340, marginTop: -4, opacity: 0.85 }}>
-              <div style={{ height: 1.5, flex: 1, backgroundColor: '#D4AF37' }} />
-              <span style={{ fontSize: 24, color: '#D4AF37' }}>💛</span>
-              <div style={{ height: 1.5, flex: 1, backgroundColor: '#D4AF37' }} />
+            {/* Corazón dorado sutil bajo el nombre (idéntico al mockup) */}
+            <div style={{ fontSize: 28, color: '#D4AF37', marginTop: 8 }}>
+              💛
             </div>
           </div>
 
@@ -583,11 +592,11 @@ export default function PostalStoryShareModal({
             <div
               style={{
                 position: 'absolute',
-                top: -38,
+                top: -42,
                 left: '50%',
                 transform: 'translateX(-50%) rotate(-4deg)',
-                width: 380,
-                height: 100,
+                width: 390,
+                height: 104,
                 zIndex: 10,
                 pointerEvents: 'none',
                 display: 'flex',
@@ -618,18 +627,19 @@ export default function PostalStoryShareModal({
               </svg>
             </div>
 
-            {/* Mariposas decorativas */}
+            {/* Mariposas decorativas a los lados */}
             <img 
               src="/images/icons/butterfly1.svg" 
               alt="" 
               style={{
                 position: 'absolute',
-                left: -70,
-                top: '45%',
-                width: 68,
-                height: 68,
-                transform: 'translateY(-50%) rotate(-12deg)',
+                left: -76,
+                bottom: 30,
+                width: 76,
+                height: 76,
+                transform: 'rotate(-12deg)',
                 filter: 'drop-shadow(0 0 16px rgba(255,255,255,0.95))',
+                zIndex: 5,
               }}
             />
             <img 
@@ -637,12 +647,13 @@ export default function PostalStoryShareModal({
               alt="" 
               style={{
                 position: 'absolute',
-                right: -70,
-                top: '35%',
-                width: 60,
-                height: 60,
+                right: -76,
+                bottom: 45,
+                width: 70,
+                height: 70,
                 transform: 'rotate(15deg)',
                 filter: 'drop-shadow(0 0 16px rgba(255,255,255,0.95))',
+                zIndex: 5,
               }}
             />
 
@@ -650,22 +661,22 @@ export default function PostalStoryShareModal({
             <div
               style={{
                 position: 'absolute',
-                inset: -20,
+                inset: -24,
                 borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(255, 235, 170, 0.70) 0%, rgba(254, 215, 226, 0.45) 50%, transparent 75%)',
-                filter: 'blur(20px)',
+                background: 'radial-gradient(circle, rgba(255, 235, 170, 0.75) 0%, rgba(254, 215, 226, 0.50) 50%, transparent 75%)',
+                filter: 'blur(22px)',
               }}
             />
 
-            {/* Marco circular de la foto */}
+            {/* Marco circular de la foto con fusión inferior */}
             <div
               style={{
                 width: 440,
                 height: 440,
                 borderRadius: '50%',
                 overflow: 'hidden',
-                border: '8px solid #FCE7F3',
-                boxShadow: '0 20px 60px rgba(180, 140, 80, 0.35)',
+                border: '8px solid rgba(254, 240, 138, 0.92)',
+                boxShadow: '0 0 45px rgba(250, 204, 21, 0.50), 0 25px 70px rgba(180, 140, 80, 0.35)',
                 backgroundColor: '#FFFFFF',
                 position: 'relative',
               }}
@@ -675,6 +686,18 @@ export default function PostalStoryShareModal({
                 alt={resolvedName}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 crossOrigin="anonymous"
+              />
+              {/* Fusión suave inferior con las nubes */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: '35%',
+                  background: 'linear-gradient(to top, rgba(255, 245, 235, 0.75) 0%, rgba(255, 245, 235, 0.20) 50%, transparent 100%)',
+                  pointerEvents: 'none',
+                }}
               />
             </div>
           </div>
