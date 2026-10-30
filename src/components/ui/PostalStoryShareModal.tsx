@@ -11,6 +11,8 @@ interface PostalStoryShareModalProps {
   birthDate?: string | null
   deathDate?: string | null
   dedication?: string | null
+  socialHandle?: string | null
+  planType?: string | null
   memorialUrl?: string
 }
 
@@ -22,6 +24,8 @@ export default function PostalStoryShareModal({
   birthDate,
   deathDate,
   dedication,
+  socialHandle,
+  planType,
   memorialUrl,
 }: PostalStoryShareModalProps) {
   const [activeTab, setActiveTab] = useState<'story' | 'postal'>('story')
@@ -71,6 +75,74 @@ export default function PostalStoryShareModal({
     exportFontSize = 66
   }
 
+  const formatDate = (dateStr?: string | null) => {
+    if (!dateStr) return null
+    const trimmed = String(dateStr).trim()
+    if (!trimmed) return null
+    if (/^\d{4}$/.test(trimmed)) return trimmed
+
+    const parts = trimmed.split(/[-/T]/)
+    if (parts.length >= 3 && parts[0].length === 4) {
+      const year = parseInt(parts[0], 10)
+      const month = parseInt(parts[1], 10) - 1
+      const day = parseInt(parts[2], 10)
+      const localDate = new Date(year, month, day)
+      if (!isNaN(localDate.getTime())) {
+        return localDate.toLocaleDateString('es-ES', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        })
+      }
+    }
+
+    const date = new Date(trimmed)
+    if (!isNaN(date.getTime())) {
+      return date.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    }
+    return trimmed
+  }
+
+  const birthDateFormatted = formatDate(birthDate)
+  const deathDateFormatted = formatDate(deathDate)
+  const datesText = birthDateFormatted && deathDateFormatted
+    ? `${birthDateFormatted} – ${deathDateFormatted}`
+    : deathDateFormatted
+      ? `${deathDateFormatted}`
+      : birthDateFormatted
+        ? `${birthDateFormatted}`
+        : null
+
+  const resolvedDedication = dedication?.trim() || 'Siempre serás mi lugar favorito en el mundo.'
+  const resolvedHandle = socialHandle?.replace(/^@/, '') || null
+
+  const dedLen = resolvedDedication.length
+  let exportDedSize = 25
+  let exportDedLineHeight = 1.48
+  let previewDedSize = 8
+  let previewDedLineHeight = 1.35
+
+  if (dedLen > 450) {
+    exportDedSize = 16
+    exportDedLineHeight = 1.32
+    previewDedSize = 5.8
+    previewDedLineHeight = 1.18
+  } else if (dedLen > 280) {
+    exportDedSize = 18.5
+    exportDedLineHeight = 1.38
+    previewDedSize = 6.6
+    previewDedLineHeight = 1.22
+  } else if (dedLen > 150) {
+    exportDedSize = 21.5
+    exportDedLineHeight = 1.44
+    previewDedSize = 7.3
+    previewDedLineHeight = 1.28
+  }
+
   const showToast = (msg: string) => {
     setToastMessage(msg)
     setTimeout(() => setToastMessage(null), 3500)
@@ -101,7 +173,7 @@ export default function PostalStoryShareModal({
         },
       })
 
-      const filename = `${resolvedName.toLowerCase().replace(/\s+/g, '-')}-${isStory ? 'story-instagram' : 'postal-recuerdo'}.png`
+      const filename = `${resolvedName.toLowerCase().replace(/\s+/g, '-')}-${isStory ? 'story-instagram' : 'postal-dedicatoria'}.png`
 
       // Intentar compartir de forma nativa en móviles si está soportado
       if (typeof navigator !== 'undefined' && navigator.canShare) {
@@ -134,7 +206,7 @@ export default function PostalStoryShareModal({
       if (isStory) {
         showToast('¡Story descargada! Ya puedes abrir Instagram y subirla ✨')
       } else {
-        showToast('¡Postal guardada en tu galería! 🖼️')
+        showToast('¡Postal con dedicatoria guardada en tu galería! 💌🖼️')
       }
     } catch (err) {
       console.error('Error generando imagen:', err)
@@ -202,12 +274,14 @@ export default function PostalStoryShareModal({
             Recuerdo de {resolvedName}
           </h2>
           <p className="text-xs sm:text-sm text-[#706A95] mt-1 font-medium">
-            Sube la Story formateada a Instagram con 1 clic o descarga la postal conmemorativa.
+            {activeTab === 'story'
+              ? 'Sube la Story formateada a Instagram o WhatsApp con 1 clic.'
+              : 'Descarga la Postal conmemorativa con su dedicatoria de amor y fechas.'}
           </p>
         </div>
 
         {/* Selector de Pestañas */}
-        <div className="flex items-center gap-2 p-1.5 bg-pink-50/80 border border-pink-200 rounded-full mb-5 w-full max-w-xs justify-center shadow-inner">
+        <div className="flex items-center gap-2 p-1.5 bg-pink-50/80 border border-pink-200 rounded-full mb-5 w-full max-w-sm justify-center shadow-inner">
           <button
             onClick={() => setActiveTab('story')}
             className={`flex-1 py-1.5 px-3 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
@@ -227,8 +301,8 @@ export default function PostalStoryShareModal({
                 : 'text-[#706A95] hover:text-[#1E2A78]'
             }`}
           >
-            <span>🖼️</span>
-            <span>Postal 1:1</span>
+            <span>💌</span>
+            <span>Postal con Dedicatoria 1:1</span>
           </button>
         </div>
 
@@ -340,59 +414,58 @@ export default function PostalStoryShareModal({
               </div>
             </div>
           ) : (
-            /* Vista previa Postal 1:1 (escalada a 270px) */
+            /* Vista previa Postal de Amor 1:1 (escalada a 270px) */
             <div 
-              className="relative rounded-[20px] overflow-hidden shadow-xl border-2 border-[#FBCFE8] flex flex-col items-center justify-center select-none"
+              className="relative rounded-[22px] overflow-hidden shadow-xl border-2 border-[#FBCFE8] flex flex-col items-center justify-center select-none"
               style={{
                 width: 270,
                 height: 270,
                 background: 'radial-gradient(ellipse at 50% 30%, #FFFDFE 0%, #FFF5F8 50%, #FCE7F3 100%)',
-                padding: '14px',
+                padding: '10px',
               }}
             >
               {/* Estrellitas */}
-              <div className="absolute top-3 left-3 text-[10px] text-[#F59E0B]">✦</div>
-              <div className="absolute bottom-3 right-3 text-[10px] text-[#F59E0B]">✦</div>
+              <div className="absolute top-2.5 left-3 text-[10px] text-[#F59E0B]">✦</div>
+              <div className="absolute bottom-2.5 right-3 text-[10px] text-[#F59E0B]">✦</div>
 
-              {/* Contenedor central postal */}
+              {/* Contenedor central postal con fondo de dedicatoria */}
               <div 
-                className="w-full h-full rounded-[14px] border border-white/80 p-3 flex flex-col items-center justify-between"
+                className="w-full h-full rounded-[16px] border border-white/90 p-2.5 flex flex-col items-center justify-between shadow-xs overflow-hidden relative"
                 style={{
-                  backgroundImage: "url('/images/mural-preview/profilecard-front.webp')",
+                  backgroundImage: "url('/images/mural-preview/profilecard-back.webp')",
+                  backgroundColor: '#fbf2f8',
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}
               >
-                <div className="text-center">
-                  <div className="text-[9px] font-bold text-[#584582] tracking-widest font-serif">
-                    MI ANGELITO
+                {/* Cabecera */}
+                <div className="text-center flex flex-col items-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <img src="/images/icons/Logoheart.svg" alt="" className="w-3 h-3 object-contain" />
+                    <span className="text-[7.5px] font-bold text-[#4A3F6B] tracking-wider font-serif italic">
+                      HISTORIA DE AMOR
+                    </span>
                   </div>
                   <div 
-                    className="h-6 flex items-center justify-center"
+                    className="h-5 flex items-center justify-center -mt-0.5"
                     style={{
                       fontFamily: "'Pinyon Script', cursive",
-                      fontSize: previewFontSize * 0.52,
+                      fontSize: previewFontSize * 0.44,
                       color: '#C29028',
                     }}
                   >
                     {resolvedName}
                   </div>
-                  {/* Corazón dorado */}
-                  <div className="flex items-center justify-center my-0.5">
-                    <svg width="10" height="10" viewBox="0 0 24 24">
-                      <path fill="#C29028" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
-                  </div>
                 </div>
 
                 {/* Foto circular con halo y medalla */}
-                <div className="relative">
+                <div className="relative flex flex-col items-center my-0.5">
                   <div 
-                    className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full border border-[#F5C842] shadow-[0_0_6px_#F5C842]"
-                    style={{ width: 62, height: 16 }}
+                    className="absolute -top-1.5 left-1/2 -translate-x-1/2 rounded-full border border-[#F5C842] shadow-[0_0_5px_#F5C842]"
+                    style={{ width: 48, height: 13 }}
                   />
                   <div 
-                    className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#C9A961] shadow-md bg-white mt-1 relative"
+                    className="w-14 h-14 rounded-full overflow-hidden border-[1.5px] border-[#C9A961] shadow-xs bg-white relative mt-0.5"
                   >
                     <img 
                       src={resolvedPhoto} 
@@ -401,20 +474,38 @@ export default function PostalStoryShareModal({
                       crossOrigin="anonymous"
                     />
                   </div>
-                  {/* Insignia corazón del plan */}
-                  <img
-                    src="/images/icons/plans/icon-plan-eterno.svg"
-                    alt="Corazón"
-                    className="absolute -bottom-1 -right-1 w-6 h-6 object-contain drop-shadow"
-                  />
+                  {/* Fechas */}
+                  {datesText && (
+                    <div className="text-[6.5px] font-semibold text-[#8A7B9B] mt-0.5 leading-none tracking-tight">
+                      {datesText}
+                    </div>
+                  )}
                 </div>
 
-                <div className="text-center">
-                  <p className="text-[7.5px] font-bold text-[#584582] font-serif leading-tight m-0">
-                    Siempre serás mi lugar favorito en el mundo
+                {/* Dedicatoria real con marco pergamino */}
+                <div 
+                  className="w-full max-w-[230px] rounded-lg px-2 py-1 text-center my-0.5 border-l-2 border-r-2 border-[#EC6F9B]/50 bg-white/70 shadow-xs flex items-center justify-center"
+                >
+                  <p 
+                    className="font-serif italic text-[#4A3F6B] m-0 line-clamp-3"
+                    style={{
+                      fontSize: previewDedSize,
+                      lineHeight: previewDedLineHeight,
+                    }}
+                  >
+                    “{resolvedDedication}”
                   </p>
-                  <span className="text-[7.5px] text-[#584582] font-bold font-serif opacity-90 mt-0.5 block">
-                    Ángeles en el Cielo
+                </div>
+
+                {/* Pie con usuario y marca */}
+                <div className="text-center flex flex-col items-center gap-0.5">
+                  {resolvedHandle && (
+                    <span className="text-[6px] font-bold text-[#BE185D] bg-white/80 px-2 py-0.5 rounded-full border border-pink-200">
+                      @{resolvedHandle}
+                    </span>
+                  )}
+                  <span className="text-[6px] text-[#7E6B8F] font-semibold font-serif">
+                    Ángeles en el Cielo · todaslasmascotasvanalcielo.com
                   </span>
                 </div>
               </div>
@@ -448,8 +539,8 @@ export default function PostalStoryShareModal({
               </>
             ) : (
               <>
-                <span className="text-lg">📥</span>
-                <span>Descargar Postal Cuadrada HD (1:1)</span>
+                <span className="text-lg">💌</span>
+                <span>Descargar Postal con Dedicatoria (1:1)</span>
               </>
             )}
           </button>
@@ -735,79 +826,83 @@ export default function PostalStoryShareModal({
           <div style={{ position: 'absolute', top: 50, left: 60, fontSize: 32, color: '#F59E0B' }}>✦</div>
           <div style={{ position: 'absolute', bottom: 50, right: 60, fontSize: 32, color: '#F59E0B' }}>✦</div>
 
-          {/* Marco Postal */}
+          {/* Marco Postal con fondo celestial de dedicatoria */}
           <div
             style={{
-              width: 960,
-              height: 960,
-              borderRadius: 40,
-              border: '4px solid rgba(255, 255, 255, 0.85)',
+              width: 980,
+              height: 980,
+              borderRadius: 36,
+              border: '4px solid rgba(255, 255, 255, 0.95)',
               overflow: 'hidden',
-              backgroundImage: "url('/images/mural-preview/profilecard-front.webp')",
+              backgroundImage: "url('/images/mural-preview/profilecard-back.webp')",
+              backgroundColor: '#fbf2f8',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
-              boxShadow: '0 25px 70px rgba(0,0,0,0.5)',
+              boxShadow: '0 25px 70px rgba(120, 70, 160, 0.20)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '60px 40px 40px 40px',
+              padding: '36px 40px 28px',
               boxSizing: 'border-box',
               position: 'relative',
             }}
           >
             {/* Cabecera */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div
-                style={{
-                  fontFamily: 'Georgia, serif',
-                  fontSize: 26,
-                  fontWeight: 700,
-                  color: '#584582',
-                  letterSpacing: 4,
-                  marginBottom: 6,
-                }}
-              >
-                MI ANGELITO
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 2 }}>
+                <img
+                  src="/images/icons/Logoheart.svg"
+                  alt=""
+                  style={{ width: 44, height: 44, objectFit: 'contain' }}
+                />
+                <span
+                  style={{
+                    fontFamily: 'Georgia, serif',
+                    fontSize: 20,
+                    fontWeight: 700,
+                    fontStyle: 'italic',
+                    color: '#4A3F6B',
+                    letterSpacing: 3,
+                  }}
+                >
+                  HISTORIA DE AMOR
+                </span>
               </div>
               <div
                 style={{
                   fontFamily: "'Pinyon Script', cursive",
-                  fontSize: exportFontSize * 1.5,
+                  fontSize: exportFontSize * 1.35,
                   color: '#C29028',
+                  lineHeight: 1.1,
+                  margin: '2px 0',
                 }}
               >
                 {resolvedName}
               </div>
-              {/* Corazón dorado 3D */}
-              <div style={{ marginTop: 4 }}>
-                <svg width="26" height="26" viewBox="0 0 24 24">
-                  <path fill="#C29028" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </div>
             </div>
 
-            {/* Foto circular con Halo y medalla corazón */}
+            {/* Foto circular con Halo, Fechas y Medalla */}
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <div
                 style={{
-                  width: 240,
-                  height: 60,
+                  width: 180,
+                  height: 46,
                   borderRadius: '50%',
-                  border: '5px solid #F5C842',
-                  boxShadow: '0 0 20px #F5C842',
-                  marginBottom: -25,
-                  zIndex: 2,
+                  border: '4.5px solid #F5C842',
+                  boxShadow: '0 0 18px #F5C842',
+                  marginBottom: -22,
+                  zIndex: 5,
                 }}
               />
               <div
                 style={{
-                  width: 320,
-                  height: 320,
-                  borderRadius: 160,
+                  width: 220,
+                  height: 220,
+                  borderRadius: 110,
                   overflow: 'hidden',
-                  border: '6px solid rgba(201, 169, 97, 0.85)',
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.25)',
+                  border: '5px solid #C9A961',
+                  boxShadow: '0 10px 28px rgba(0,0,0,0.18)',
                   backgroundColor: '#ffffff',
                   position: 'relative',
                 }}
@@ -819,48 +914,87 @@ export default function PostalStoryShareModal({
                   crossOrigin="anonymous"
                 />
               </div>
-              {/* Insignia corazón del plan */}
-              <img
-                src="/images/icons/plans/icon-plan-eterno.svg"
-                alt="Corazón"
-                style={{
-                  position: 'absolute',
-                  bottom: -10,
-                  right: -10,
-                  width: 84,
-                  height: 84,
-                  objectFit: 'contain',
-                  zIndex: 10,
-                  filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.25))',
-                }}
-              />
+              {/* Fechas en español */}
+              {datesText && (
+                <div
+                  style={{
+                    fontFamily: 'sans-serif',
+                    fontSize: 19,
+                    fontWeight: 600,
+                    color: '#8A7B9B',
+                    marginTop: 10,
+                    letterSpacing: 0.5,
+                  }}
+                >
+                  {datesText}
+                </div>
+              )}
             </div>
 
-            {/* Dedicatoria y cierre */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 6 }}>
+            {/* Dedicatoria real con marco pergamino */}
+            <div
+              style={{
+                width: '100%',
+                maxWidth: 880,
+                borderRadius: 20,
+                padding: '16px 36px',
+                textAlign: 'center',
+                margin: '8px auto',
+                borderLeft: '4.5px solid rgba(236,111,163,0.70)',
+                borderRight: '4.5px solid rgba(236,111,163,0.70)',
+                background: 'rgba(255, 255, 255, 0.75)',
+                boxShadow: '0 4px 20px rgba(180, 140, 190, 0.12)',
+                boxSizing: 'border-box',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <div
                 style={{
-                  fontFamily: 'Georgia, serif',
-                  fontSize: 26,
-                  fontWeight: 700,
-                  color: '#584582',
-                  maxWidth: 700,
-                  lineHeight: 1.35,
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  fontStyle: 'italic',
+                  fontSize: exportDedSize,
+                  lineHeight: exportDedLineHeight,
+                  color: '#4A3F6B',
+                  whiteSpace: 'pre-line',
                 }}
               >
-                Siempre serás mi lugar favorito en el mundo
+                “{resolvedDedication}”
               </div>
+            </div>
+
+            {/* Pie con usuario de redes sociales y firma */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              {resolvedHandle && (
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '4px 18px',
+                    borderRadius: 9999,
+                    background: 'rgba(255, 255, 255, 0.90)',
+                    border: '1.5px solid #FBCFE8',
+                    color: '#BE185D',
+                    fontSize: 16,
+                    fontWeight: 700,
+                    boxShadow: '0 2px 8px rgba(190, 24, 93, 0.10)',
+                  }}
+                >
+                  <span>@{resolvedHandle}</span>
+                </div>
+              )}
               <div
                 style={{
                   fontFamily: 'Georgia, serif',
-                  fontSize: 22,
-                  fontWeight: 700,
-                  color: '#584582',
-                  opacity: 0.9,
-                  marginTop: 2,
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: '#7E6B8F',
+                  letterSpacing: 0.5,
                 }}
               >
-                Ángeles en el Cielo
+                Ángeles en el Cielo · todaslasmascotasvanalcielo.com
               </div>
             </div>
           </div>

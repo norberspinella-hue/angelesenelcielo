@@ -430,7 +430,7 @@ export default function MemorialClient({ slug }: { slug: string }) {
                 }}
               >
                 <span>✨</span>
-                <span>Story de Instagram (9:16) y Postal</span>
+                <span>Story de Instagram y Postal con Dedicatoria</span>
                 <span className="text-xs opacity-90">›</span>
               </button>
             </div>
@@ -528,6 +528,8 @@ export default function MemorialClient({ slug }: { slug: string }) {
           birthDate={memorial.birth_date}
           deathDate={memorial.death_date}
           dedication={memorial.dedication}
+          socialHandle={memorial.story_answers?.tiktok || memorial.story_answers?.socialHandle || memorial.story_answers?.instagram}
+          planType={memorial.plan_type}
           memorialUrl={shareUrl}
         />
       )}
