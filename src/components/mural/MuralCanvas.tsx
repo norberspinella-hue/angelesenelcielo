@@ -597,7 +597,7 @@ function PetProfileCard({
               <div 
                 style={{
                   position: 'absolute',
-                  top: '148px',
+                  top: '138px',
                   left: '50%',
                   transform: 'translateX(-50%) rotate(-4deg)',
                   width: '165px',
@@ -681,7 +681,7 @@ function PetProfileCard({
                   alt="Plan"
                   style={{
                     position: 'absolute',
-                    top: 329,
+                    top: 319,
                     left: 194,
                     width: 72,
                     height: 72,
@@ -694,7 +694,7 @@ function PetProfileCard({
               <div 
                 style={{
                   position: 'absolute',
-                  top: '180px',
+                  top: '170px',
                   left: '50%',
                   transform: 'translateX(-50%)',
                   width: '198px',
