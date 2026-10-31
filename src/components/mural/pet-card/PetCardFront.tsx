@@ -75,28 +75,30 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
           data-download-ignore="true"
           style={{
             position: 'absolute',
-            top: 12,
-            left: 14,
+            top: 8,
+            left: '50%',
+            transform: 'translateX(-50%)',
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
-            padding: '3px 12px 3px 4px',
+            gap: '5px',
+            padding: '2px 12px 2px 6px',
             borderRadius: 999,
             background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(8px)',
             border: '1.5px solid #F472B6',
             boxShadow: '0 4px 14px rgba(244, 114, 182, 0.35)',
             zIndex: 30,
+            whiteSpace: 'nowrap',
           }}
         >
           <img
             src="/images/icons/badge-alas-angel.webp"
             alt="Corazón de Ángel"
-            style={{ width: 24, height: 24, objectFit: 'contain' }}
+            style={{ width: 18, height: 18, objectFit: 'contain' }}
           />
           <span
             style={{
-              fontSize: '10px',
+              fontSize: '9.5px',
               fontWeight: 800,
               color: '#BE185D',
               letterSpacing: '0.4px',
@@ -111,7 +113,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
       <div
         style={{
           position: 'absolute',
-          top: '28px',
+          top: isShelterPet ? '35px' : '26px',
           left: 0,
           right: 0,
           zIndex: 10,
@@ -125,7 +127,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
         <span
           style={{
             fontFamily: 'Georgia, serif',
-            fontSize: '14px',
+            fontSize: isShelterPet ? '12px' : '13.5px',
             fontWeight: 700,
             color: '#4A3258',
             letterSpacing: '4px',
@@ -141,10 +143,10 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
       <h3
         style={{
           position: 'absolute',
-          top: '46px',
+          top: isShelterPet ? '48px' : '44px',
           left: 0,
           right: 0,
-          height: '56px',
+          height: '54px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

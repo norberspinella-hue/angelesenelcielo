@@ -4,6 +4,11 @@ import { PetData } from './types';
 export async function ensureFontsLoaded(): Promise<void> {
   if (typeof document !== 'undefined' && document.fonts) {
     try {
+      await Promise.all([
+        document.fonts.load('400 135px Allura'),
+        document.fonts.load('700 46px Georgia'),
+        document.fonts.load('400 32px Georgia'),
+      ]);
       await document.fonts.ready;
     } catch (e) {
       console.warn('Advertencia cargando fuentes:', e);
@@ -33,6 +38,39 @@ export function loadSafeImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
+// Helper para dibujar imagen dentro de un marco circular aplicando object-fit: cover
+function drawCircularImageCover(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  cx: number,
+  cy: number,
+  radius: number
+) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
+  const aspect = iw / ih;
+
+  let sx = 0, sy = 0, sw = iw, sh = ih;
+  if (aspect > 1) {
+    // Imagen horizontal: recortar los laterales centrando
+    sw = ih;
+    sx = (iw - sw) / 2;
+  } else {
+    // Imagen vertical: recortar parte superior/inferior centrando
+    sh = iw;
+    sy = (ih - sh) / 2;
+  }
+
+  ctx.drawImage(img, sx, sy, sw, sh, cx - radius, cy - radius, radius * 2, radius * 2);
+  ctx.restore();
+}
+
 // =========================================================================
 // MOTOR DE EXPORTACIÓN CANVAS 2D DE ALTA RESOLUCIÓN: ANVERSO (RECUERDO)
 // Resolución: 1080 × 1500 px (proporción exacta de la tarjeta 360:500)
@@ -60,29 +98,29 @@ export async function generateFrontCardPng(petData: PetData, isShelterPet: boole
   // Dibujar Fondo Celestial
   ctx.drawImage(bgImg, 0, 0, width, height);
 
-  // Insignia Corazón de Ángel (si aplica)
+  // Insignia Corazón de Ángel (si es protectora, centrada en la parte superior para no colisionar)
   if (isShelterPet && shelterBadgeImg) {
     ctx.save();
-    const bx = 45;
-    const by = 40;
-    const bw = 320;
-    const bh = 76;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    const bw = 350;
+    const bh = 66;
+    const bx = (width - bw) / 2;
+    const by = 36;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.96)';
     ctx.strokeStyle = '#F472B6';
     ctx.lineWidth = 3;
-    ctx.shadowColor = 'rgba(244, 114, 182, 0.35)';
+    ctx.shadowColor = 'rgba(244, 114, 182, 0.40)';
     ctx.shadowBlur = 16;
     ctx.beginPath();
-    ctx.roundRect(bx, by, bw, bh, 38);
+    ctx.roundRect(bx, by, bw, bh, 33);
     ctx.fill();
     ctx.stroke();
     ctx.shadowBlur = 0;
-    ctx.drawImage(shelterBadgeImg, bx + 12, by + 10, 56, 56);
-    ctx.font = '800 24px sans-serif';
+    ctx.drawImage(shelterBadgeImg, bx + 14, by + 8, 50, 50);
+    ctx.font = '800 21px sans-serif';
     ctx.fillStyle = '#BE185D';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillText('CORAZÓN DE ÁNGEL', bx + 78, by + bh / 2 + 2);
+    ctx.fillText('CORAZÓN DE ÁNGEL', bx + 74, by + bh / 2 + 1);
     ctx.restore();
   }
 
@@ -90,7 +128,7 @@ export async function generateFrontCardPng(petData: PetData, isShelterPet: boole
   ctx.save();
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = '700 46px Georgia, serif';
+  ctx.font = isShelterPet ? '700 40px Georgia, serif' : '700 44px Georgia, serif';
   ctx.fillStyle = '#4A3258';
   ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
   ctx.shadowBlur = 8;
@@ -98,7 +136,7 @@ export async function generateFrontCardPng(petData: PetData, isShelterPet: boole
     // @ts-ignore
     ctx.letterSpacing = '8px';
   } catch (e) {}
-  ctx.fillText('MI ANGELITO', width / 2, 115);
+  ctx.fillText('MI ANGELITO', width / 2, isShelterPet ? 142 : 115);
   ctx.restore();
 
   // Nombre de la mascota en caligrafía Allura con ajuste automático
@@ -109,81 +147,51 @@ export async function generateFrontCardPng(petData: PetData, isShelterPet: boole
   else if (nameLen > 12) nameFontSize = 90;
   else if (nameLen > 8) nameFontSize = 110;
 
+  const nameY = isShelterPet ? 230 : 210;
+
   ctx.save();
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = `400 ${nameFontSize}px "Allura", "Pinyon Script", cursive`;
+  ctx.font = `400 ${nameFontSize}px "Allura", "Pinyon Script", "Great Vibes", cursive`;
   ctx.fillStyle = '#B8860B';
   ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
   ctx.shadowBlur = 12;
-  ctx.fillText(petName, width / 2, 220);
+  ctx.fillText(petName, width / 2, nameY);
   ctx.restore();
 
   // Corazón dorado ornamental bajo el nombre
+  const heartY = isShelterPet ? 292 : 272;
   ctx.save();
   ctx.textAlign = 'center';
-  ctx.font = '32px sans-serif';
+  ctx.font = '28px sans-serif';
   ctx.fillStyle = '#D4AF37';
   ctx.shadowColor = 'rgba(255, 215, 0, 0.6)';
   ctx.shadowBlur = 8;
-  ctx.fillText('💛', width / 2, 280);
+  ctx.fillText('💛', width / 2, heartY);
   ctx.restore();
 
   // Resplandor cálido central antes de la foto
+  const photoCenterX = width / 2;
+  const photoCenterY = 660;
+  const photoRadius = 260;
+
   ctx.save();
-  const auraGrad = ctx.createRadialGradient(width / 2, 590, 100, width / 2, 590, 380);
+  const auraGrad = ctx.createRadialGradient(photoCenterX, photoCenterY - 60, 80, photoCenterX, photoCenterY - 60, 360);
   auraGrad.addColorStop(0, 'rgba(255, 250, 220, 0.85)');
-  auraGrad.addColorStop(0.5, 'rgba(255, 240, 200, 0.45)');
+  auraGrad.addColorStop(0.5, 'rgba(255, 240, 200, 0.40)');
   auraGrad.addColorStop(1, 'rgba(255, 240, 190, 0)');
   ctx.fillStyle = auraGrad;
   ctx.beginPath();
-  ctx.arc(width / 2, 590, 380, 0, Math.PI * 2);
+  ctx.arc(photoCenterX, photoCenterY - 60, 360, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
-  // Aureola Celestial Dorada sobre la cabeza
-  const haloCenterX = width / 2;
-  const haloCenterY = 390;
-  const haloRx = 230;
-  const haloRy = 60;
-  ctx.save();
-  ctx.translate(haloCenterX, haloCenterY);
-  ctx.rotate((-4 * Math.PI) / 180);
-
-  // Aura difusa exterior del halo
-  ctx.beginPath();
-  ctx.ellipse(0, 0, haloRx, haloRy, 0, 0, Math.PI * 2);
-  ctx.strokeStyle = '#FFD54F';
-  ctx.lineWidth = 18;
-  ctx.shadowColor = 'rgba(255, 213, 79, 0.9)';
-  ctx.shadowBlur = 32;
-  ctx.stroke();
-
-  // Núcleo brillante blanco
-  ctx.beginPath();
-  ctx.ellipse(0, 0, haloRx, haloRy, 0, 0, Math.PI * 2);
-  ctx.strokeStyle = '#FFFFFF';
-  ctx.lineWidth = 6;
-  ctx.shadowColor = 'rgba(255, 255, 255, 1)';
-  ctx.shadowBlur = 10;
-  ctx.stroke();
-  ctx.restore();
-
-  // Fotografía de la Mascota en Marco Circular Protagonista
-  const photoCenterX = width / 2;
-  const photoCenterY = 650;
-  const photoRadius = 260;
-
+  // Fotografía de la Mascota en Marco Circular Protagonista (con object-fit cover sin distorsión)
   ctx.save();
   ctx.shadowColor = 'rgba(74, 31, 110, 0.25)';
   ctx.shadowBlur = 28;
   ctx.shadowOffsetY = 14;
-
-  ctx.beginPath();
-  ctx.arc(photoCenterX, photoCenterY, photoRadius, 0, Math.PI * 2);
-  ctx.closePath();
-  ctx.clip();
-  ctx.drawImage(photoImg, photoCenterX - photoRadius, photoCenterY - photoRadius, photoRadius * 2, photoRadius * 2);
+  drawCircularImageCover(ctx, photoImg, photoCenterX, photoCenterY, photoRadius);
   ctx.restore();
 
   // Borde perimetral dorado luminoso
@@ -197,12 +205,41 @@ export async function generateFrontCardPng(petData: PetData, isShelterPet: boole
   ctx.stroke();
   ctx.restore();
 
-  // Distintivo de Plan Eterno
+  // Aureola Celestial Dorada (-4°): corona exactamente la parte superior del marco circular
+  const haloCenterX = width / 2;
+  const haloCenterY = 385; // Borde superior del círculo está en 400 (660 - 260), la aureola corona suavemente
+  const haloRx = 210;
+  const haloRy = 55;
+
+  ctx.save();
+  ctx.translate(haloCenterX, haloCenterY);
+  ctx.rotate((-4 * Math.PI) / 180);
+
+  // Aura difusa exterior del halo
+  ctx.beginPath();
+  ctx.ellipse(0, 0, haloRx, haloRy, 0, 0, Math.PI * 2);
+  ctx.strokeStyle = '#FFD54F';
+  ctx.lineWidth = 14;
+  ctx.shadowColor = 'rgba(255, 213, 79, 0.95)';
+  ctx.shadowBlur = 28;
+  ctx.stroke();
+
+  // Núcleo brillante blanco cálido
+  ctx.beginPath();
+  ctx.ellipse(0, 0, haloRx, haloRy, 0, 0, Math.PI * 2);
+  ctx.strokeStyle = '#FFFFFF';
+  ctx.lineWidth = 5;
+  ctx.shadowColor = 'rgba(255, 255, 255, 1)';
+  ctx.shadowBlur = 8;
+  ctx.stroke();
+  ctx.restore();
+
+  // Distintivo de Plan Eterno en la esquina inferior derecha del marco circular
   if (planBadgeImg) {
     ctx.save();
     const pbSize = 160;
-    const pbx = photoCenterX + photoRadius - 70;
-    const pby = photoCenterY + photoRadius - 70;
+    const pbx = photoCenterX + photoRadius * 0.72 - pbSize / 2;
+    const pby = photoCenterY + photoRadius * 0.72 - pbSize / 2;
     ctx.shadowColor = 'rgba(0, 0, 0, 0.18)';
     ctx.shadowBlur = 12;
     ctx.drawImage(planBadgeImg, pbx, pby, pbSize, pbSize);
@@ -241,15 +278,15 @@ export async function generateFrontCardPng(petData: PetData, isShelterPet: boole
     // @ts-ignore
     ctx.letterSpacing = '5px';
   } catch (e) {}
-  ctx.fillText('TODOS LOS PERROS VAN AL CIELO', width / 2, 1310);
+  ctx.fillText('TODOS LOS PERROS VAN AL CIELO', width / 2, 1260);
   ctx.restore();
 
-  return canvas.toDataURL('image/png');
+  return canvas.toDataURL('image/png', 1.0);
 }
 
 // =========================================================================
-// MOTOR DE EXPORTACIÓN CANVAS 2D DE ALTA RESOLUCIÓN: REVERSO (DEDICATORIA)
-// Resolución: 1080 × 1500 px (proporción exacta de la tarjeta 360:500)
+// MOTOR DE EXPORTACIÓN CANVAS 2D DE ALTA RESOLUCIÓN: REVERSO (HISTORIA)
+// Resolución: 1080 × 1500 px (acabado pergamino luminoso celestial)
 // =========================================================================
 export async function generateBackCardPng(petData: PetData, datesStr: string = ''): Promise<string> {
   await ensureFontsLoaded();
@@ -262,6 +299,7 @@ export async function generateBackCardPng(petData: PetData, datesStr: string = '
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('No se pudo inicializar el contexto de Canvas 2D.');
 
+  // 1. Cargar recursos maestros
   const [bgImg, logoHeartImg, signatureImg] = await Promise.all([
     loadSafeImage('/images/mural-preview/card-heaven-back-master.webp'),
     loadSafeImage('/images/icons/Logoheart.svg').catch(() => null),
@@ -358,85 +396,62 @@ export async function generateBackCardPng(petData: PetData, datesStr: string = '
   const textX = boxX + marginX;
   let textY = boxY + 45;
   const maxTextW = boxW - marginX * 2; // 900 - 110 = 790px de ancho disponible
+  const maxY = boxY + boxH - 45;
 
-  const paragraphs = rawDedication.split('\n');
+  const paragraphs = rawDedication.split(/\n+/);
   for (const para of paragraphs) {
-    if (!para.trim()) {
-      textY += lineHeight * 0.55;
-      continue;
-    }
-    const words = para.split(' ');
+    const words = para.trim().split(/\s+/);
     let currentLine = '';
 
-    for (const word of words) {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
+    for (let i = 0; i < words.length; i++) {
+      const testLine = currentLine ? `${currentLine} ${words[i]}` : words[i];
       const metrics = ctx.measureText(testLine);
-      if (metrics.width > maxTextW && currentLine) {
-        ctx.fillText(currentLine, textX, textY);
-        textY += lineHeight;
-        currentLine = word;
+
+      if (metrics.width > maxTextW && currentLine !== '') {
+        if (textY + lineHeight <= maxY) {
+          ctx.fillText(currentLine, textX, textY);
+          textY += lineHeight;
+          currentLine = words[i];
+        } else {
+          currentLine += '...';
+          break;
+        }
       } else {
         currentLine = testLine;
       }
     }
-    if (currentLine) {
+
+    if (currentLine && textY + lineHeight <= maxY) {
       ctx.fillText(currentLine, textX, textY);
-      textY += lineHeight;
+      textY += lineHeight + Math.round(lineHeight * 0.4); // Salto entre párrafos
     }
-    textY += lineHeight * 0.35;
-    if (textY > boxY + boxH - 60) break;
   }
   ctx.restore();
 
-  // Usuario de redes sociales (si existe)
-  const socialUser = petData.story_answers?.socialHandle || petData.story_answers?.tiktok || petData.story_answers?.instagram;
-  if (socialUser) {
-    ctx.save();
-    const handleText = `@${socialUser.replace(/^@/, '')}`;
-    ctx.font = '700 26px sans-serif';
-    const hMetrics = ctx.measureText(handleText);
-    const pillW = hMetrics.width + 50;
-    const pillH = 50;
-    const pillX = (width - pillW) / 2;
-    const pillY = boxY + boxH + 20;
-
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-    ctx.strokeStyle = '#F472B6';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(pillX, pillY, pillW, pillH, 25);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = '#BE185D';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(handleText, width / 2, pillY + pillH / 2);
-    ctx.restore();
-  }
-
-  // Cierre inferior: "— Siempre en nuestro corazón 🐾"
-  ctx.save();
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.font = 'italic 600 30px Georgia, serif';
-  ctx.fillStyle = '#7B6F9A';
-  ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
-  ctx.shadowBlur = 6;
-  const bottomY = socialUser ? boxY + boxH + 105 : boxY + boxH + 55;
-  ctx.fillText('— Siempre en nuestro corazón 🐾', width / 2, bottomY);
-  ctx.restore();
-
-  // Firma Oficial de Ángeles en el Cielo al pie
+  // Zona Inferior del Reverso: Firma oficial y enlace
   if (signatureImg) {
     ctx.save();
-    const sigW = 340;
+    const sigW = 380;
     const sigH = (signatureImg.height / signatureImg.width) * sigW;
     const sigX = (width - sigW) / 2;
-    const sigY = bottomY + 35;
+    const sigY = 1110;
+    ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
+    ctx.shadowBlur = 6;
     ctx.drawImage(signatureImg, sigX, sigY, sigW, sigH);
     ctx.restore();
   }
 
-  return canvas.toDataURL('image/png');
+  // URL del memorial o mural global
+  const siteUrl = petData.profile_slug
+    ? `angelesenelcielo.com/memorial/${petData.profile_slug}`
+    : 'angelesenelcielo.com/mural-global';
+
+  ctx.save();
+  ctx.textAlign = 'center';
+  ctx.font = '600 22px sans-serif';
+  ctx.fillStyle = '#A08FB7';
+  ctx.fillText(siteUrl, width / 2, 1240);
+  ctx.restore();
+
+  return canvas.toDataURL('image/png', 1.0);
 }

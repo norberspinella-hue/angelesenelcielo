@@ -398,9 +398,11 @@ export function PetProfileCard({
 
       {/* CONTENEDOR PRINCIPAL DEL MODAL */}
       <div
-        className="relative w-full max-w-[860px] rounded-[32px] sm:rounded-[36px] shadow-[0_24px_60px_rgba(74,31,110,0.22)] border border-[#FCE7F3] p-5 sm:p-8 flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-8 my-auto"
+        className="relative w-full max-w-[860px] rounded-[32px] sm:rounded-[36px] shadow-[0_24px_60px_rgba(74,31,110,0.22)] border border-[#FCE7F3] p-5 sm:p-8 flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-8 my-auto overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, #FFF5F8 0%, #FDF2F8 50%, #FCE7F3 100%)',
+          background: 'linear-gradient(135deg, rgba(255, 245, 248, 0.90) 0%, rgba(253, 242, 248, 0.92) 50%, rgba(252, 231, 243, 0.92) 100%), url(/images/memorial/bg-memorial-heaven.webp) center/cover no-repeat',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
