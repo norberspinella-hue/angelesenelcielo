@@ -518,13 +518,16 @@ export default function PostalStoryShareModal({
 
       {/* MODAL PRINCIPAL DE 2 COLUMNAS */}
       <div 
-        className="relative w-full max-w-[940px] bg-white rounded-[32px] sm:rounded-[36px] shadow-[0_24px_60px_rgba(74,31,110,0.22)] border border-white/80 p-5 sm:p-8 flex flex-col md:flex-row items-center gap-6 sm:gap-10 my-auto"
+        className="relative w-full max-w-[940px] bg-[#FFF0F5] rounded-[32px] sm:rounded-[36px] shadow-[0_24px_60px_rgba(74,31,110,0.22)] border border-[#FCE7F3] p-5 sm:p-8 flex flex-col md:flex-row items-center gap-6 sm:gap-10 my-auto"
+        style={{
+          background: 'linear-gradient(135deg, #FFF5F8 0%, #FDF2F8 50%, #FCE7F3 100%)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* BOTÓN X CERRAR */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 rounded-full bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#6B7280] hover:text-[#1F2937] flex items-center justify-center transition-colors z-20 text-sm font-bold"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 rounded-full bg-[#FCE7F3] hover:bg-[#FBCFE8] text-[#BE185D] hover:text-[#9D174D] border border-[#FBCFE8] flex items-center justify-center transition-colors z-20 text-sm font-bold shadow-xs"
           title="Cerrar"
         >
           ✕
@@ -747,7 +750,7 @@ export default function PostalStoryShareModal({
             {/* BOTÓN 2: COMPARTIR POR WHATSAPP */}
             <button
               onClick={handleShareWhatsApp}
-              className="w-full py-2.5 sm:py-3 px-5 rounded-full bg-white hover:bg-[#F9FAFB] text-[#1F2937] font-semibold text-xs sm:text-sm flex items-center justify-between border border-[#E5E7EB] shadow-xs hover:shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] group"
+              className="w-full py-2.5 sm:py-3 px-5 rounded-full bg-white hover:bg-[#FFF5F8] text-[#1F2937] font-semibold text-xs sm:text-sm flex items-center justify-between border border-[#FCE7F3] shadow-xs hover:shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] group"
             >
               <div className="flex items-center gap-2.5">
                 {/* Icono WhatsApp verde */}
@@ -765,7 +768,7 @@ export default function PostalStoryShareModal({
             <button
               onClick={handleSaveImage}
               disabled={isExporting}
-              className="w-full py-2.5 sm:py-3 px-5 rounded-full bg-white hover:bg-[#F9FAFB] text-[#1F2937] font-semibold text-xs sm:text-sm flex items-center justify-between border border-[#E5E7EB] shadow-xs hover:shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] group disabled:opacity-75"
+              className="w-full py-2.5 sm:py-3 px-5 rounded-full bg-white hover:bg-[#FFF5F8] text-[#1F2937] font-semibold text-xs sm:text-sm flex items-center justify-between border border-[#FCE7F3] shadow-xs hover:shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] group disabled:opacity-75"
             >
               <div className="flex items-center gap-2.5">
                 {/* Icono Descargar */}
@@ -782,7 +785,7 @@ export default function PostalStoryShareModal({
             {/* BOTÓN 4: COPIAR ENLACE */}
             <button
               onClick={handleCopyLink}
-              className="w-full py-2.5 sm:py-3 px-5 rounded-full bg-white hover:bg-[#F9FAFB] text-[#1F2937] font-semibold text-xs sm:text-sm flex items-center justify-between border border-[#E5E7EB] shadow-xs hover:shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] group"
+              className="w-full py-2.5 sm:py-3 px-5 rounded-full bg-white hover:bg-[#FFF5F8] text-[#1F2937] font-semibold text-xs sm:text-sm flex items-center justify-between border border-[#FCE7F3] shadow-xs hover:shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99] group"
             >
               <div className="flex items-center gap-2.5">
                 {/* Icono Enlace */}
