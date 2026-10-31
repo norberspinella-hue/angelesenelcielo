@@ -398,14 +398,33 @@ export function PetProfileCard({
 
       {/* CONTENEDOR PRINCIPAL DEL MODAL */}
       <div
-        className="relative w-full max-w-[860px] rounded-[32px] sm:rounded-[36px] shadow-[0_24px_60px_rgba(74,31,110,0.22)] border border-[#FCE7F3] p-5 sm:p-8 flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-8 my-auto overflow-hidden"
+        className="relative w-full max-w-[860px] rounded-[32px] sm:rounded-[36px] border border-[#FCE7F3] p-5 sm:p-8 flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-8 my-auto overflow-hidden"
         style={{
-          background: 'linear-gradient(135deg, rgba(255, 245, 248, 0.90) 0%, rgba(253, 242, 248, 0.92) 50%, rgba(252, 231, 243, 0.92) 100%), url(/images/memorial/bg-memorial-heaven.webp) center/cover no-repeat',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
+          boxShadow: '0 24px 60px rgba(74,31,110,0.22), 0 0 30px rgba(255,255,255,0.40) inset',
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* 1. CAPA DE FONDO CELESTIAL REAL */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none select-none"
+          style={{
+            backgroundImage: "url('/images/memorial/bg-memorial-heaven.webp')",
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+
+        {/* 2. VELO ROSADO CELESTIAL TRANSLÚCIDO (Permite apreciar con claridad las nubes y el cielo) */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none select-none"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255, 245, 248, 0.45) 0%, rgba(253, 242, 248, 0.50) 50%, rgba(252, 231, 243, 0.55) 100%)',
+            backdropFilter: 'blur(2px)',
+            WebkitBackdropFilter: 'blur(2px)',
+          }}
+        />
+
         {/* Botón X de cerrar en la esquina del modal */}
         <button
           onClick={onClose}
@@ -416,7 +435,7 @@ export function PetProfileCard({
         </button>
 
         {/* COLUMNA IZQUIERDA: TARJETA 3D MEMORIAL (ANVERSO / REVERSO) */}
-        <div className="flex flex-col items-center justify-center shrink-0">
+        <div className="relative z-10 flex flex-col items-center justify-center shrink-0">
           <div
             onClick={() => setIsFlipped(!isFlipped)}
             style={{
@@ -470,7 +489,7 @@ export function PetProfileCard({
         </div>
 
         {/* COLUMNA DERECHA: PANELES DE ACCIÓN, COMPARTIR Y SOLIDARIDAD */}
-        <div className="w-full md:w-[420px] flex flex-col items-center gap-4 shrink-0">
+        <div className="relative z-10 w-full md:w-[420px] flex flex-col items-center gap-4 shrink-0">
           {/* Panel solidario si es mascota de protectora */}
           {isShelterPet && (
             <PetCardSolidarityPanel
