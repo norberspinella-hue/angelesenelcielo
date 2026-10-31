@@ -25,7 +25,8 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
   const nombre = loading ? '' : petData?.pet_name || 'Ángel';
   const nameLen = nombre.trim().length;
 
-  let dynamicFontSize = 66;
+  // Ajuste dinámico del tamaño de fuente en caligrafía Allura
+  let dynamicFontSize = 64;
   if (nameLen > 16) dynamicFontSize = 32;
   else if (nameLen > 13) dynamicFontSize = 38;
   else if (nameLen > 10) dynamicFontSize = 46;
@@ -37,7 +38,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
   return (
     <div
       ref={frontRef}
-      className="rounded-[28px] border-[2.5px] border-white/90 shadow-[0_16px_50px_rgba(100,70,150,0.22)] flex flex-col select-none"
+      className="rounded-[28px] border-[2.5px] border-white/90 shadow-[0_16px_50px_rgba(100,70,150,0.22)] flex flex-col select-none relative"
       style={{
         position: 'absolute',
         top: 0,
@@ -55,7 +56,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
         MozOsxFontSmoothing: 'grayscale',
       }}
     >
-      {/* 1. Botón X de cerrar (Estilo rosado de lujo) */}
+      {/* 1. Botón X de cerrar en la esquina (Rosado premium) */}
       <button
         data-download-ignore="true"
         onClick={(e) => {
@@ -110,7 +111,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
       <div
         style={{
           position: 'absolute',
-          top: '32px',
+          top: '28px',
           left: 0,
           right: 0,
           zIndex: 10,
@@ -124,26 +125,26 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
         <span
           style={{
             fontFamily: 'Georgia, serif',
-            fontSize: '15px',
+            fontSize: '14px',
             fontWeight: 700,
             color: '#4A3258',
             letterSpacing: '4px',
             textTransform: 'uppercase',
-            textShadow: '0 1px 3px rgba(255,255,255,0.9)',
+            textShadow: '0 1px 3px rgba(255,255,255,0.95)',
           }}
         >
           MI ANGELITO
         </span>
       </div>
 
-      {/* 4. Nombre de la mascota en caligrafía Allura con ajuste automático */}
+      {/* 4. Nombre de la mascota en caligrafía Allura */}
       <h3
         style={{
           position: 'absolute',
-          top: '52px',
+          top: '46px',
           left: 0,
           right: 0,
-          height: '60px',
+          height: '56px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -157,7 +158,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
           textOverflow: 'ellipsis',
           zIndex: 10,
           color: '#B8860B',
-          textShadow: '0 1px 2px rgba(255,255,255,0.95), 0 2px 8px rgba(184,134,11,0.25)',
+          textShadow: '0 1px 2px rgba(255,255,255,0.95), 0 2px 8px rgba(184,134,11,0.30)',
           padding: '0 20px',
           margin: 0,
         }}
@@ -165,15 +166,15 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
         {nombre}
       </h3>
 
-      {/* Pequeño corazón dorado sutil bajo el nombre */}
+      {/* Pequeño corazón dorado ornamental */}
       <div
         style={{
           position: 'absolute',
-          top: '110px',
+          top: '100px',
           left: 0,
           right: 0,
           textAlign: 'center',
-          fontSize: '12px',
+          fontSize: '11px',
           zIndex: 10,
           color: '#D4AF37',
         }}
@@ -185,11 +186,11 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
       <div
         style={{
           position: 'absolute',
-          top: '100px',
+          top: '95px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '280px',
-          height: '140px',
+          width: '270px',
+          height: '135px',
           background: 'radial-gradient(ellipse at center, rgba(255, 253, 240, 0.85) 0%, rgba(255, 245, 215, 0.50) 45%, rgba(255, 240, 195, 0) 80%)',
           filter: 'blur(12px)',
           pointerEvents: 'none',
@@ -197,15 +198,15 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
         }}
       />
 
-      {/* 6. Aureola Celestial Dorada inclinada (-4°) */}
+      {/* 6. Aureola Celestial Dorada (-4°) */}
       <div
         style={{
           position: 'absolute',
-          top: '136px',
+          top: '124px',
           left: '50%',
           transform: 'translateX(-50%) rotate(-4deg)',
-          width: '160px',
-          height: '42px',
+          width: '150px',
+          height: '40px',
           zIndex: 7,
           pointerEvents: 'none',
           display: 'flex',
@@ -215,7 +216,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
       >
         <svg width="100%" height="100%" viewBox="0 0 220 70" fill="none" style={{ overflow: 'visible' }}>
           <defs>
-            <filter id="muralHaloGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <filter id="frontHaloGlow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur1" />
               <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2" />
               <feMerge>
@@ -224,7 +225,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
-            <linearGradient id="muralHaloGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient id="frontHaloGoldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#FFA000" />
               <stop offset="25%" stopColor="#FFD54F" />
               <stop offset="50%" stopColor="#FFF9C4" />
@@ -232,25 +233,25 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
               <stop offset="100%" stopColor="#FFA000" />
             </linearGradient>
           </defs>
-          <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFD54F" strokeWidth="8" opacity="0.85" filter="url(#muralHaloGlow)" />
-          <ellipse cx="110" cy="35" rx="95" ry="24" stroke="url(#muralHaloGoldGrad)" strokeWidth="4.2" opacity="1.0" />
+          <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFD54F" strokeWidth="8" opacity="0.85" filter="url(#frontHaloGlow)" />
+          <ellipse cx="110" cy="35" rx="95" ry="24" stroke="url(#frontHaloGoldGrad)" strokeWidth="4.2" opacity="1.0" />
           <ellipse cx="110" cy="35" rx="95" ry="24" stroke="#FFFFFF" strokeWidth="2.4" opacity="0.98" />
         </svg>
       </div>
 
-      {/* 7. Fotografía de la mascota en marco circular con halo dorado */}
+      {/* 7. Fotografía de la mascota en marco circular */}
       <div
         style={{
           position: 'absolute',
-          top: '165px',
+          top: '150px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '185px',
-          height: '185px',
+          width: '175px',
+          height: '175px',
           borderRadius: '50%',
           overflow: 'hidden',
           border: '3.5px solid #C9A961',
-          boxShadow: '0 0 24px rgba(201,169,97,0.45), 0 8px 24px rgba(74,31,110,0.18)',
+          boxShadow: '0 0 22px rgba(201,169,97,0.45), 0 8px 20px rgba(74,31,110,0.18)',
           backgroundColor: 'white',
           zIndex: 5,
         }}
@@ -284,21 +285,21 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
           alt="Plan Eterno"
           style={{
             position: 'absolute',
-            top: 305,
-            left: 190,
-            width: 66,
-            height: 66,
+            top: 278,
+            left: 184,
+            width: 62,
+            height: 62,
             zIndex: 8,
-            filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.15))',
+            filter: 'drop-shadow(0 3px 8px rgba(0,0,0,0.18))',
           }}
         />
       )}
 
-      {/* 8. Zona Inferior: Mensaje conmemorativo y firma oficial */}
+      {/* 8. Zona Inferior: Mensaje y Firma oficial */}
       <div
         style={{
           position: 'absolute',
-          bottom: '16px',
+          bottom: '52px',
           left: 0,
           right: 0,
           textAlign: 'center',
@@ -307,65 +308,80 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          gap: '2px',
           padding: '0 20px',
+          pointerEvents: 'none',
         }}
       >
         <p
           style={{
             fontFamily: 'Georgia, serif',
             fontWeight: 700,
-            fontSize: '15px',
+            fontSize: '14px',
             color: '#4A3258',
-            margin: '0 0 4px 0',
-            lineHeight: 1.3,
+            margin: '0 0 2px 0',
+            lineHeight: 1.25,
             textShadow: '0 1px 2px rgba(255,255,255,0.9)',
           }}
         >
           Siempre serás mi lugar favorito en el mundo.
         </p>
 
-        {/* Firma Oficial Oficial Ángeles en el Cielo */}
+        {/* Firma Oficial auténtica de Ángeles en el Cielo */}
         <img
           src="/images/mural-preview/Angeles_en_el_Cielo_Firma_Oficial_transparent.png"
           alt="Ángeles en el Cielo"
           style={{
-            width: '180px',
+            width: '170px',
             height: 'auto',
             display: 'block',
-            margin: '0 auto',
+            margin: '1px auto 2px',
             filter: 'drop-shadow(0 1px 1px rgba(255,255,255,0.9))',
           }}
         />
 
-        {/* Lema secundario */}
         <span
           style={{
-            fontSize: '8px',
+            fontSize: '7.5px',
             fontWeight: 700,
-            letterSpacing: '2.5px',
+            letterSpacing: '2px',
             color: '#8B7B9E',
             textTransform: 'uppercase',
-            marginTop: '2px',
           }}
         >
           TODOS LOS PERROS VAN AL CIELO
         </span>
       </div>
 
-      {/* 9. Botón para girar al reverso: "Leer su historia ↻" */}
-      <button
+      {/* 9. BOTÓN INTERACTIVO PARA GIRAR: «Leer su historia» */}
+      <div
         data-download-ignore="true"
-        onClick={(e) => {
-          e.stopPropagation();
-          onFlip();
-        }}
-        className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full bg-white/90 hover:bg-white text-[#6D28D9] font-bold text-[11px] flex items-center gap-1.5 shadow-md border border-[#DDD6FE] transition-all hover:scale-105 active:scale-95 cursor-pointer z-30 select-none"
-        title="Ver dedicatoria e historia"
+        className="absolute bottom-2.5 left-0 right-0 flex justify-center z-30 pointer-events-auto"
       >
-        <span>Leer su historia</span>
-        <span className="text-xs">↻</span>
-      </button>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onFlip();
+          }}
+          className="group px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 shadow-md cursor-pointer select-none"
+          style={{
+            background: 'linear-gradient(180deg, #FFFFFF 0%, #FFFDF7 100%)',
+            border: '1.5px solid #D9A447',
+            boxShadow: '0 0 0 1px #F6D991, 0 4px 14px rgba(217, 164, 71, 0.25)',
+            color: '#3B2D54',
+          }}
+          title="Leer dedicatoria e historia"
+        >
+          {/* Icono de libro */}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D9A447" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+          <span className="font-semibold tracking-wide">Leer su historia</span>
+          {/* Flecha */}
+          <span className="text-xs font-bold text-[#D9A447] transition-transform group-hover:translate-x-0.5">→</span>
+        </button>
+      </div>
     </div>
   );
 };
