@@ -197,15 +197,15 @@ export default function PostalStoryShareModal({
     const photoCenterY = 720
     const photoRadius = 225
 
-    // CAPA 5: RESPLANDOR EXTERIOR CÁLIDO DE LA FOTO
+    // CAPA 5: RESPLANDOR EXTERIOR CÁLIDO DE LA FOTO (IDÉNTICO A TARJETA DEL MURAL)
     ctx.save()
     const glowGrad = ctx.createRadialGradient(
       photoCenterX, photoCenterY, photoRadius * 0.7,
       photoCenterX, photoCenterY, photoRadius * 1.25
     )
-    glowGrad.addColorStop(0, 'rgba(255, 235, 170, 0.75)')
-    glowGrad.addColorStop(0.6, 'rgba(254, 215, 226, 0.40)')
-    glowGrad.addColorStop(1, 'rgba(255, 255, 255, 0)')
+    glowGrad.addColorStop(0, 'rgba(255, 253, 240, 0.85)')
+    glowGrad.addColorStop(0.5, 'rgba(255, 245, 215, 0.50)')
+    glowGrad.addColorStop(1, 'rgba(255, 240, 195, 0)')
     ctx.fillStyle = glowGrad
     ctx.beginPath()
     ctx.arc(photoCenterX, photoCenterY, photoRadius * 1.25, 0, Math.PI * 2)
@@ -248,32 +248,32 @@ export default function PostalStoryShareModal({
     )
     ctx.restore()
 
-    // CAPA 7: MARCO DORADO RADIANTE DE LA FOTO
+    // CAPA 7: MARCO CIRCULAR IDÉNTICO A LA TARJETA DEL MURAL (#C9A961)
     ctx.save()
     ctx.beginPath()
     ctx.arc(photoCenterX, photoCenterY, photoRadius, 0, Math.PI * 2)
-    ctx.lineWidth = 8
-    ctx.strokeStyle = 'rgba(254, 240, 138, 0.95)'
-    ctx.shadowColor = 'rgba(250, 204, 21, 0.55)'
-    ctx.shadowBlur = 30
+    ctx.lineWidth = 10
+    ctx.strokeStyle = '#C9A961'
+    ctx.shadowColor = 'rgba(201, 169, 97, 0.45)'
+    ctx.shadowBlur = 28
     ctx.stroke()
     ctx.restore()
 
-    // CAPA 8: AUREOLA CELESTIAL INCLINADA (-4 GRADOS)
+    // CAPA 8: AUREOLA CELESTIAL INCLINADA (-4 GRADOS) IDÉNTICA A LA TARJETA DEL MURAL
     ctx.save()
-    ctx.translate(photoCenterX, photoCenterY - photoRadius - 10)
+    ctx.translate(photoCenterX, photoCenterY - photoRadius - 15)
     ctx.rotate(-4 * Math.PI / 180)
 
     // 8a. Aura exterior difusa
     ctx.beginPath()
     ctx.ellipse(0, 0, 190, 48, 0, 0, Math.PI * 2)
-    ctx.lineWidth = 14
-    ctx.strokeStyle = 'rgba(255, 213, 79, 0.80)'
+    ctx.lineWidth = 16
+    ctx.strokeStyle = 'rgba(255, 213, 79, 0.85)'
     ctx.shadowColor = '#FFD54F'
-    ctx.shadowBlur = 25
+    ctx.shadowBlur = 24
     ctx.stroke()
 
-    // 8b. Anillo dorado
+    // 8b. Anillo dorado con degradado
     const haloGrad = ctx.createLinearGradient(-190, 0, 190, 0)
     haloGrad.addColorStop(0, '#FFA000')
     haloGrad.addColorStop(0.25, '#FFD54F')
@@ -282,7 +282,7 @@ export default function PostalStoryShareModal({
     haloGrad.addColorStop(1, '#FFA000')
     ctx.beginPath()
     ctx.ellipse(0, 0, 190, 48, 0, 0, Math.PI * 2)
-    ctx.lineWidth = 6
+    ctx.lineWidth = 8.4
     ctx.strokeStyle = haloGrad
     ctx.shadowBlur = 0
     ctx.stroke()
@@ -290,10 +290,10 @@ export default function PostalStoryShareModal({
     // 8c. Filamento blanco brillante
     ctx.beginPath()
     ctx.ellipse(0, 0, 190, 48, 0, 0, Math.PI * 2)
-    ctx.lineWidth = 2.6
+    ctx.lineWidth = 4.8
     ctx.strokeStyle = '#FFFFFF'
     ctx.shadowColor = '#FFFFFF'
-    ctx.shadowBlur = 8
+    ctx.shadowBlur = 6
     ctx.stroke()
     ctx.restore()
 
@@ -611,21 +611,21 @@ export default function PostalStoryShareModal({
                   <img src="/images/icons/butterfly2.svg" alt="" className="w-full h-full object-contain rotate-15 drop-shadow-[0_0_10px_rgba(255,255,255,0.95)]" />
                 </div>
 
-                {/* Resplandor cálido exterior */}
+                {/* Resplandor cálido exterior idéntico a la tarjeta del mural */}
                 <div 
                   className="absolute -inset-4 rounded-full pointer-events-none"
                   style={{
-                    background: 'radial-gradient(circle, rgba(255, 235, 170, 0.70) 0%, rgba(254, 215, 226, 0.45) 50%, transparent 75%)',
-                    filter: 'blur(10px)',
+                    background: 'radial-gradient(ellipse at center, rgba(255, 253, 240, 0.85) 0%, rgba(255, 245, 215, 0.50) 45%, rgba(255, 240, 195, 0) 80%)',
+                    filter: 'blur(12px)',
                   }}
                 />
 
-                {/* Círculo de la foto real con fusión suave de nubes */}
+                {/* Círculo de la foto real idéntico a la tarjeta del mural */}
                 <div 
                   className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden bg-white z-0"
                   style={{
-                    border: '3px solid rgba(254, 240, 138, 0.90)',
-                    boxShadow: '0 0 20px rgba(250, 204, 21, 0.45), 0 10px 30px rgba(180, 140, 80, 0.28)',
+                    border: '3.5px solid #C9A961',
+                    boxShadow: '0 0 22px rgba(201,169,97,0.45), 0 8px 20px rgba(74,31,110,0.18)',
                   }}
                 >
                   <img 

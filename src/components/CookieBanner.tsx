@@ -24,86 +24,74 @@ export default function CookieBanner() {
   if (!visible) return null
 
   return (
-    <div style={{
-      position: 'fixed',
-      bottom: 24,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: 'min(680px, calc(100vw - 32px))',
-      background: 'rgba(255,255,255,0.95)',
-      backdropFilter: 'blur(16px)',
-      borderRadius: 20,
-      border: '1.5px solid rgba(180,150,220,0.30)',
-      boxShadow: '0 8px 40px rgba(100,70,150,0.18), 0 2px 12px rgba(100,70,150,0.10)',
-      padding: '20px 24px',
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      gap: 20,
-      fontFamily: 'sans-serif',
-    }}>
-      
-      {/* Icono */}
-      <div style={{ fontSize: 32, flexShrink: 0 }}>🍪</div>
-
-      {/* Texto */}
-      <div style={{ flex: 1 }}>
-        <p style={{
-          fontSize: 14,
-          color: '#4A3F6B',
-          margin: '0 0 4px',
-          fontWeight: 600,
-          lineHeight: 1.4,
-        }}>
-          Usamos cookies para mejorar tu experiencia
-        </p>
-        <p style={{
-          fontSize: 13,
-          color: '#9B8FB0',
-          margin: 0,
-          lineHeight: 1.5,
-        }}>
-          Solo usamos cookies necesarias para el funcionamiento 
-          del sitio y el proceso de pago. No rastreamos tu actividad.{' '}
-          <Link href="/cookies" style={{ color: '#EC6F9B', textDecoration: 'none' }}>
-            Más información
-          </Link>
-        </p>
+    <div
+      className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100vw-24px)] sm:w-[min(680px,calc(100vw-32px))] rounded-[20px] p-4 sm:p-6 z-[9999] flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5 box-border"
+      style={{
+        background: 'rgba(255,255,255,0.96)',
+        backdropFilter: 'blur(16px)',
+        border: '1.5px solid rgba(180,150,220,0.30)',
+        boxShadow: '0 8px 40px rgba(100,70,150,0.18), 0 2px 12px rgba(100,70,150,0.10)',
+        fontFamily: 'sans-serif',
+      }}
+    >
+      <div className="flex items-center gap-3 w-full sm:w-auto">
+        {/* Icono */}
+        <div style={{ fontSize: 28, flexShrink: 0 }}>🍪</div>
+        {/* Texto */}
+        <div className="flex-1 min-w-0">
+          <p style={{
+            fontSize: 13,
+            color: '#4A3F6B',
+            margin: '0 0 2px',
+            fontWeight: 600,
+            lineHeight: 1.3,
+          }}>
+            Usamos cookies para mejorar tu experiencia
+          </p>
+          <p style={{
+            fontSize: 12,
+            color: '#9B8FB0',
+            margin: 0,
+            lineHeight: 1.4,
+          }}>
+            Solo cookies necesarias para el sitio.{' '}
+            <Link href="/cookies" style={{ color: '#EC6F9B', textDecoration: 'none' }}>
+              Más info
+            </Link>
+          </p>
+        </div>
       </div>
 
       {/* Botones */}
-      <div style={{ 
-        display: 'flex', 
-        gap: 10, 
-        flexShrink: 0,
-        flexDirection: 'column',
-      }}>
+      <div className="flex sm:flex-col gap-2 w-full sm:w-auto shrink-0 justify-end">
         <button
           onClick={handleAccept}
+          className="flex-1 sm:flex-initial"
           style={{
-            padding: '10px 20px',
+            padding: '8px 16px',
             borderRadius: 999,
             border: 'none',
             background: 'linear-gradient(90deg, #ff82ad, #ec5f96)',
             color: '#fff',
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: 700,
             cursor: 'pointer',
             whiteSpace: 'nowrap',
             boxShadow: '0 4px 12px rgba(236,95,150,0.35)',
           }}
         >
-          Aceptar todas ✦
+          Aceptar ✦
         </button>
         <button
           onClick={handleReject}
+          className="flex-1 sm:flex-initial"
           style={{
-            padding: '10px 20px',
+            padding: '8px 16px',
             borderRadius: 999,
             border: '1.5px solid rgba(180,150,220,0.40)',
             background: 'transparent',
             color: '#9B8FB0',
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: 600,
             cursor: 'pointer',
             whiteSpace: 'nowrap',
