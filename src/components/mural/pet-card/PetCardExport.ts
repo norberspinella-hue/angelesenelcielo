@@ -249,20 +249,20 @@ export async function generateFrontCardPng(petData: PetData, isShelterPet: boole
   // Zona Inferior: Mensaje conmemorativo
   ctx.save();
   ctx.textAlign = 'center';
-  ctx.font = '700 38px Georgia, serif';
+  ctx.font = '700 36px Georgia, serif';
   ctx.fillStyle = '#4A3258';
   ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
   ctx.shadowBlur = 6;
-  ctx.fillText('Siempre serás mi lugar favorito en el mundo.', width / 2, 1070);
+  ctx.fillText('Siempre serás mi lugar favorito en el mundo.', width / 2, 1010);
   ctx.restore();
 
   // Firma Oficial de Ángeles en el Cielo
   if (signatureImg) {
     ctx.save();
-    const sigW = 440;
+    const sigW = 380;
     const sigH = (signatureImg.height / signatureImg.width) * sigW;
     const sigX = (width - sigW) / 2;
-    const sigY = 1130;
+    const sigY = 1065;
     ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
     ctx.shadowBlur = 6;
     ctx.drawImage(signatureImg, sigX, sigY, sigW, sigH);
@@ -272,13 +272,13 @@ export async function generateFrontCardPng(petData: PetData, isShelterPet: boole
   // Lema oficial en mayúsculas
   ctx.save();
   ctx.textAlign = 'center';
-  ctx.font = '700 20px sans-serif';
+  ctx.font = '700 22px sans-serif';
   ctx.fillStyle = '#8B7B9E';
   try {
     // @ts-ignore
     ctx.letterSpacing = '5px';
   } catch (e) {}
-  ctx.fillText('TODOS LOS PERROS VAN AL CIELO', width / 2, 1260);
+  ctx.fillText('TODAS LAS MASCOTAS VAN AL CIELO', width / 2, 1255);
   ctx.restore();
 
   return canvas.toDataURL('image/png', 1.0);
@@ -348,7 +348,7 @@ export async function generateBackCardPng(petData: PetData, datesStr: string = '
   const boxX = 90;
   const boxY = datesStr ? 310 : 275;
   const boxW = width - 180;
-  const boxH = 750;
+  const boxH = datesStr ? 680 : 715;
 
   ctx.save();
   ctx.fillStyle = 'rgba(255, 252, 245, 0.94)';
@@ -428,29 +428,29 @@ export async function generateBackCardPng(petData: PetData, datesStr: string = '
   }
   ctx.restore();
 
-  // Zona Inferior del Reverso: Firma oficial y enlace
+  // Zona Inferior del Reverso: Firma oficial y lema
   if (signatureImg) {
     ctx.save();
     const sigW = 380;
     const sigH = (signatureImg.height / signatureImg.width) * sigW;
     const sigX = (width - sigW) / 2;
-    const sigY = 1110;
+    const sigY = 1045;
     ctx.shadowColor = 'rgba(255, 255, 255, 0.9)';
     ctx.shadowBlur = 6;
     ctx.drawImage(signatureImg, sigX, sigY, sigW, sigH);
     ctx.restore();
   }
 
-  // URL del memorial o mural global
-  const siteUrl = petData.profile_slug
-    ? `angelesenelcielo.com/memorial/${petData.profile_slug}`
-    : 'angelesenelcielo.com/mural-global';
-
+  // Lema oficial en mayúsculas en el reverso
   ctx.save();
   ctx.textAlign = 'center';
-  ctx.font = '600 22px sans-serif';
-  ctx.fillStyle = '#A08FB7';
-  ctx.fillText(siteUrl, width / 2, 1240);
+  ctx.font = '700 22px sans-serif';
+  ctx.fillStyle = '#8B7B9E';
+  try {
+    // @ts-ignore
+    ctx.letterSpacing = '5px';
+  } catch (e) {}
+  ctx.fillText('TODAS LAS MASCOTAS VAN AL CIELO', width / 2, 1240);
   ctx.restore();
 
   return canvas.toDataURL('image/png', 1.0);

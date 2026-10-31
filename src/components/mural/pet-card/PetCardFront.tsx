@@ -350,7 +350,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
             textTransform: 'uppercase',
           }}
         >
-          TODOS LOS PERROS VAN AL CIELO
+          TODAS LAS MASCOTAS VAN AL CIELO
         </span>
       </div>
 

@@ -224,6 +224,21 @@ export const PetCardBack: React.FC<PetCardBackProps> = ({
         }}
       />
 
+      <span
+        style={{
+          fontSize: '7.5px',
+          fontWeight: 700,
+          letterSpacing: '2px',
+          color: '#8B7B9E',
+          textTransform: 'uppercase',
+          textAlign: 'center',
+          display: 'block',
+          marginTop: '2px',
+        }}
+      >
+        TODAS LAS MASCOTAS VAN AL CIELO
+      </span>
+
       {/* 7. BOTÓN INTERACTIVO PARA REGRESAR AL ANVERSO: «Volver a ver a {nombre}» */}
       <div
         data-download-ignore="true"
