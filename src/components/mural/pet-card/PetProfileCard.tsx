@@ -404,7 +404,7 @@ export function PetProfileCard({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 1. CAPA DE FONDO CELESTIAL REAL */}
+        {/* 1. FONDO CELESTIAL PANORÁMICO DEL MEMORIAL (Puro, sin velo translúcido) */}
         <div
           className="absolute inset-0 z-0 pointer-events-none select-none"
           style={{
@@ -412,16 +412,6 @@ export function PetProfileCard({
             backgroundPosition: 'center',
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
-          }}
-        />
-
-        {/* 2. VELO ROSADO CELESTIAL TRANSLÚCIDO (Permite apreciar con claridad las nubes y el cielo) */}
-        <div
-          className="absolute inset-0 z-0 pointer-events-none select-none"
-          style={{
-            background: 'linear-gradient(135deg, rgba(255, 245, 248, 0.45) 0%, rgba(253, 242, 248, 0.50) 50%, rgba(252, 231, 243, 0.55) 100%)',
-            backdropFilter: 'blur(2px)',
-            WebkitBackdropFilter: 'blur(2px)',
           }}
         />
 

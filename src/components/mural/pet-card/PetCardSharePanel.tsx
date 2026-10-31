@@ -43,7 +43,8 @@ export const PetCardSharePanel: React.FC<PetCardSharePanelProps> = ({
         boxShadow: '0 16px 40px rgba(74, 31, 110, 0.08), 0 0 20px rgba(255, 255, 255, 0.40) inset',
       }}
     >
-      {/* 6 MARIPOSAS DECORATIVAS REPARTIDAS POR EL CONTENEDOR */}
+      {/* MARIPOSAS DECORATIVAS */}
+      {/* Mariposas en las esquinas */}
       <div className="absolute top-2.5 left-3 w-6 h-6 -rotate-12 pointer-events-none select-none opacity-80 z-0">
         <img src="/images/icons/butterfly1.svg" alt="" className="w-full h-full object-contain drop-shadow-xs" />
       </div>
@@ -56,6 +57,22 @@ export const PetCardSharePanel: React.FC<PetCardSharePanelProps> = ({
       <div className="absolute top-[90px] right-2.5 w-5 h-5 rotate-25 pointer-events-none select-none opacity-75 z-0">
         <img src="/images/icons/butterfly1.svg" alt="" className="w-full h-full object-contain drop-shadow-xs" />
       </div>
+
+      {/* 4 MARIPOSAS GRANDES POR EL CENTRO (EL DOBLE DE GRANDES: 44px - 48px) */}
+      <div className="absolute top-[138px] -left-2 w-11 h-11 sm:w-12 sm:h-12 -rotate-18 pointer-events-none select-none opacity-85 z-0 filter drop-shadow-[0_2px_8px_rgba(236,72,153,0.30)]">
+        <img src="/images/icons/butterfly1.svg" alt="" className="w-full h-full object-contain" />
+      </div>
+      <div className="absolute top-[160px] -right-2 w-12 h-12 sm:w-13 sm:h-13 rotate-20 pointer-events-none select-none opacity-85 z-0 filter drop-shadow-[0_2px_8px_rgba(245,158,11,0.30)]">
+        <img src="/images/icons/butterfly2.svg" alt="" className="w-full h-full object-contain" />
+      </div>
+      <div className="absolute top-[222px] left-2 w-10 h-10 sm:w-11 sm:h-11 rotate-25 pointer-events-none select-none opacity-80 z-0 filter drop-shadow-[0_2px_6px_rgba(168,85,247,0.25)]">
+        <img src="/images/icons/butterfly2.svg" alt="" className="w-full h-full object-contain" />
+      </div>
+      <div className="absolute top-[236px] right-3 w-10 h-10 sm:w-11 sm:h-11 -rotate-15 pointer-events-none select-none opacity-80 z-0 filter drop-shadow-[0_2px_6px_rgba(236,72,153,0.25)]">
+        <img src="/images/icons/butterfly1.svg" alt="" className="w-full h-full object-contain" />
+      </div>
+
+      {/* Mariposas en la parte inferior */}
       <div className="absolute bottom-14 left-3 w-5 h-5 rotate-12 pointer-events-none select-none opacity-80 z-0">
         <img src="/images/icons/butterfly1.svg" alt="" className="w-full h-full object-contain drop-shadow-xs" />
       </div>
@@ -64,14 +81,14 @@ export const PetCardSharePanel: React.FC<PetCardSharePanelProps> = ({
       </div>
 
       {/* Título y subtítulo emocional */}
-      <div className="relative z-10 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#FFF0F5]/90 border border-[#FBCFE8] shadow-xs mb-2">
+      <div className="relative z-10 inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-[#FFF0F5]/90 border border-[#FBCFE8] shadow-xs mb-2">
         <span className="text-xs">💗</span>
         <span className="text-[11px] sm:text-xs font-bold text-[#BE185D] tracking-wide inline-flex items-center">
           Recuerdo de amor eterno
           <img
             src="/images/icons/plans/icon-plan-estrella.svg"
             alt=""
-            className="w-3.5 h-3.5 object-contain inline-block ml-1 align-middle"
+            className="w-7 h-7 object-contain inline-block ml-1.5 align-middle"
           />
         </span>
       </div>
@@ -80,12 +97,12 @@ export const PetCardSharePanel: React.FC<PetCardSharePanelProps> = ({
         Haz que su recuerdo siga brillando
       </h4>
 
-      <p className="relative z-10 text-[11.5px] sm:text-xs text-[#7B6F9A] m-0 mb-4 leading-relaxed font-sans max-w-xs">
-        Comparte a <strong className="text-[#BE185D]">{nombre}</strong> y ayuda a que su luz llegue a más personas.
+      <p className="relative z-10 text-[11.5px] sm:text-xs text-[#7B6F9A] m-0 mb-4 leading-relaxed font-sans max-w-xs flex items-center justify-center flex-wrap gap-1">
+        <span>Comparte a <strong className="text-[#BE185D]">{nombre}</strong> y ayuda a que su luz llegue a más personas.</span>
         <img
           src="/images/icons/plans/icon-plan-estrella.svg"
           alt=""
-          className="w-3.5 h-3.5 object-contain inline-block ml-1 align-middle"
+          className="w-7 h-7 object-contain inline-block ml-1 align-middle"
         />
       </p>
 
