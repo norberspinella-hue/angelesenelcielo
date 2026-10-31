@@ -404,11 +404,23 @@ export function PetProfileCard({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 1. FONDO CELESTIAL PANORÁMICO DEL MEMORIAL (Puro, sin velo translúcido) */}
+        {/* FONDO CELESTIAL DEL MODAL (ADAPTADO A CADA FORMATO: ESCRITORIO Y MÓVIL) */}
+        {/* Versión panorámica horizontal para escritorio y tablets */}
         <div
-          className="absolute inset-0 z-0 pointer-events-none select-none"
+          className="hidden sm:block absolute inset-0 z-0 pointer-events-none select-none"
           style={{
-            backgroundImage: "url('/images/memorial/bg-memorial-heaven.webp')",
+            backgroundImage: "url('/images/mural-preview/bg-modal-mural-desktop.webp')",
+            backgroundPosition: 'center',
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+          }}
+        />
+
+        {/* Versión vertical para pantallas móviles */}
+        <div
+          className="block sm:hidden absolute inset-0 z-0 pointer-events-none select-none"
+          style={{
+            backgroundImage: "url('/images/mural-preview/bg-modal-mural-mobile.webp')",
             backgroundPosition: 'center',
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
