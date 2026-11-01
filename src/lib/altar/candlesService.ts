@@ -27,12 +27,12 @@ function readLocalSettings(): Record<string, any> {
   try {
     ensureLocalDir();
     if (!fs.existsSync(SETTINGS_STORE_PATH)) {
-      return { persistence_enabled: true };
+      return { persistence_enabled: false, reminders_cron_enabled: false };
     }
     const raw = fs.readFileSync(SETTINGS_STORE_PATH, 'utf8');
     return JSON.parse(raw);
   } catch {
-    return { persistence_enabled: true };
+    return { persistence_enabled: false, reminders_cron_enabled: false };
   }
 }
 
@@ -536,20 +536,39 @@ export class CandlesService {
   /**
    * Interruptor de servidor en tiempo de ejecución (Runtime Feature Flag)
    * Almacenado de forma persistente y compartida entre todas las instancias de Vercel.
+   * Por seguridad ante fallos de conexión a BD, si no es explícitamente true, se asume false (fail-safe).
    */
   static async isFeatureEnabled(): Promise<boolean> {
     if (process.env.ALTAR_PERSISTENCE_ENABLED === 'false') return false;
-    const settings = await getPersistentSettings();
-    if (settings.persistence_enabled === false) return false;
-    return true;
+    try {
+      const settings = await getPersistentSettings();
+      return settings.persistence_enabled === true;
+    } catch {
+      return false;
+    }
+  }
+
+  static async isCronEnabled(): Promise<boolean> {
+    if (!await this.isFeatureEnabled()) return false;
+    try {
+      const settings = await getPersistentSettings();
+      return settings.reminders_cron_enabled === true;
+    } catch {
+      return false;
+    }
   }
 
   static async setRuntimeOverride(enabled: boolean, updatedBy = 'admin', reason = ''): Promise<void> {
     await updatePersistentSettings({ persistence_enabled: enabled }, updatedBy, reason);
   }
 
+  static async setCronOverride(enabled: boolean, updatedBy = 'admin', reason = ''): Promise<void> {
+    await updatePersistentSettings({ reminders_cron_enabled: enabled }, updatedBy, reason);
+  }
+
   static async getSettingsAudit(): Promise<{
     persistence_enabled: boolean;
+    reminders_cron_enabled: boolean;
     updated_at: string | null;
     updated_by: string | null;
     cron_running: boolean;
@@ -559,7 +578,8 @@ export class CandlesService {
   }> {
     const settings = await getPersistentSettings();
     return {
-      persistence_enabled: settings.persistence_enabled !== false,
+      persistence_enabled: settings.persistence_enabled === true,
+      reminders_cron_enabled: settings.reminders_cron_enabled === true,
       updated_at: settings.updated_at || null,
       updated_by: settings.updated_by || null,
       cron_running: !!settings.cron_running,
@@ -641,7 +661,7 @@ export class CandlesService {
     preRemindersSent: number;
     extinguishedNoticesSent: number;
   }> {
-    if (!await this.isFeatureEnabled()) {
+    if (!await this.isCronEnabled()) {
       return { preRemindersSent: 0, extinguishedNoticesSent: 0 };
     }
 

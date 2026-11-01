@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { enabled, token, actor, reason } = body;
+    const { enabled, cronEnabled, token, actor, reason } = body;
 
     const resolvedToken = extractProvidedToken(req, token);
     if (!isAuthorized(resolvedToken)) {
@@ -167,11 +167,15 @@ export async function POST(req: NextRequest) {
     const toggleReason = reason || (enabled ? 'Activación administrativa' : 'Desactivación de emergencia');
 
     await CandlesService.setRuntimeOverride(enabled, actorName, toggleReason);
+    if (typeof cronEnabled === 'boolean') {
+      await CandlesService.setCronOverride(cronEnabled, actorName, `Configuración de cron: ${cronEnabled}`);
+    }
     const updatedStatus = await CandlesService.getSettingsAudit();
 
     return NextResponse.json({
       success: true,
       enabled: updatedStatus.persistence_enabled,
+      cronEnabled: updatedStatus.reminders_cron_enabled,
       message: enabled
         ? 'Altar persistente activado con éxito. Todas las operaciones normales habilitadas.'
         : 'Altar persistente desactivado de emergencia (Modo de contingencia). Mutaciones, reencendidos y avisos bloqueados.',
