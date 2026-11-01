@@ -94,7 +94,10 @@ SELECT
 FROM public.altar_candles
 WHERE status = 'active';
 
-GRANT SELECT ON public.altar_candles_public_view TO anon, authenticated;
+-- Revocación total de acceso directo a la vista para anon y authenticated.
+-- Toda la lectura pública se canaliza exclusivamente a través del endpoint de servidor Next.js (/api/community/candles).
+REVOKE ALL ON public.altar_candles_public_view FROM anon, authenticated;
+GRANT SELECT ON public.altar_candles_public_view TO service_role;
 
 -- Tabla independiente para configuración y estado compartido en Vercel
 CREATE TABLE IF NOT EXISTS public.altar_settings (
