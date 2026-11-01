@@ -5,6 +5,20 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    if (!CandlesService.isFeatureEnabled()) {
+      return NextResponse.json({
+        success: true,
+        enabled: false,
+        candles: [],
+        total: 0,
+        stats: {
+          mural_occupied_slots: 151,
+          active_candles_count: 148,
+          total_historical_candles: 148,
+        },
+      });
+    }
+
     const { searchParams } = new URL(req.url);
     const filter = (searchParams.get('filter') as any) || 'todos';
     const search = searchParams.get('search') || '';

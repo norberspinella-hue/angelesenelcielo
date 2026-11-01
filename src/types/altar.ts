@@ -35,6 +35,8 @@ export interface AltarCandlePrivateRecord extends AltarCandlePublic {
   opted_out_at: string | null;
   ip_hash: string | null;
   mural_plan: string | null;
+  pre_reminder_sent_at?: string | null;
+  extinguished_notice_sent_at?: string | null;
 }
 
 export interface CreateCandleInput {

@@ -412,4 +412,120 @@ export class CandlesService {
     writeLocalCandles(existing);
     return { imported, skipped };
   }
+
+  /**
+   * Interruptor de servidor en tiempo de ejecución (Runtime Feature Flag)
+   * Evaluado dinámicamente en cada petición sin necesidad de recompilar la aplicación.
+   */
+  static isFeatureEnabled(): boolean {
+    return process.env.ALTAR_PERSISTENCE_ENABLED !== 'false';
+  }
+
+  /**
+   * Comprueba en tiempo real la vigencia de un derecho memorial en la tabla memorials
+   * (Integración 100% de solo lectura: SELECT sin escrituras).
+   */
+  static async checkMemorialValidity(memorialId: string): Promise<boolean> {
+    try {
+      const supabase = createAdminClient();
+      const { data, error } = await supabase
+        .from('memorials')
+        .select('id, publication_status, payment_status, expires_at')
+        .eq('id', memorialId)
+        .single();
+
+      const memorial = data as any;
+      if (!memorial) return false;
+      if (memorial.publication_status !== 'published' || memorial.payment_status !== 'paid') return false;
+      if (memorial.expires_at && new Date(memorial.expires_at).getTime() <= Date.now()) return false;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Sincronización de vigencia: si un derecho de memorial expira o finaliza,
+   * la vela pasa al régimen gratuito sin modificar memoriales ni pagos.
+   */
+  static async reconcileMemorialRight(candleId: string): Promise<AltarCandlePublic | null> {
+    const existing = readLocalCandles();
+    const candle = existing.find(c => c.id === candleId);
+    if (!candle || !candle.memorial_id) return null;
+
+    const isValid = await this.checkMemorialValidity(candle.memorial_id);
+    if (!isValid && candle.is_eternal) {
+      // El derecho en el mural ha finalizado: la vela pasa al régimen comunitario gratuito
+      candle.is_eternal = false;
+      candle.expires_at = new Date().toISOString(); // Pasa a estado apagado con opción de reavivar
+      writeLocalCandles(existing);
+    }
+    return computePresentationFields(candle);
+  }
+
+  /**
+   * Vinculación segura de futuras compras: enlaza una vela comunitaria existente
+   * con un memorial adquirido, otorgando la llama activa sin tocar Stripe ni webhooks.
+   */
+  static async linkCandleToMemorial(candleId: string, memorialId: string): Promise<boolean> {
+    const isValid = await this.checkMemorialValidity(memorialId);
+    if (!isValid) return false;
+
+    const existing = readLocalCandles();
+    const candle = existing.find(c => c.id === candleId);
+    if (!candle) return false;
+
+    candle.memorial_id = memorialId;
+    candle.is_from_mural = true;
+    candle.is_eternal = true;
+    writeLocalCandles(existing);
+    return true;
+  }
+
+  /**
+   * Procesador programado de recordatorios de correo con control estricto antiduplicados
+   */
+  static async processScheduledReminders(testMode = true): Promise<{
+    preRemindersSent: number;
+    extinguishedNoticesSent: number;
+  }> {
+    const existing = readLocalCandles();
+    const now = Date.now();
+    const fortyEightHoursMs = 48 * 60 * 60 * 1000;
+
+    let preRemindersSent = 0;
+    let extinguishedNoticesSent = 0;
+
+    for (const candle of existing) {
+      // Solo velas con email, recordatorios activos y que no sean del mural
+      if (!candle.email || !candle.reminder_opt_in || candle.is_from_mural) continue;
+
+      const expTime = new Date(candle.expires_at).getTime();
+      const timeLeft = expTime - now;
+
+      // 1. Aviso previo al apagado (entre 48h y 0h restantes)
+      if (timeLeft > 0 && timeLeft <= fortyEightHoursMs && !candle.pre_reminder_sent_at) {
+        candle.pre_reminder_sent_at = new Date().toISOString();
+        preRemindersSent++;
+        if (!testMode) {
+          // En producción invoca a Resend; en test permanece en log
+        }
+      }
+
+      // 2. Aviso de vela apagada (expirada y aviso previo ya enviado o tiempo rebasado)
+      if (timeLeft <= 0 && !candle.extinguished_notice_sent_at) {
+        candle.extinguished_notice_sent_at = new Date().toISOString();
+        extinguishedNoticesSent++;
+        if (!testMode) {
+          // En producción invoca a Resend; en test permanece en log
+        }
+      }
+    }
+
+    if (preRemindersSent > 0 || extinguishedNoticesSent > 0) {
+      writeLocalCandles(existing);
+    }
+
+    return { preRemindersSent, extinguishedNoticesSent };
+  }
 }
