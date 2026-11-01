@@ -56,11 +56,8 @@ CREATE INDEX IF NOT EXISTS idx_altar_candles_ip_hash_created
 -- Habilitar Row Level Security (RLS)
 ALTER TABLE public.altar_candles ENABLE ROW LEVEL SECURITY;
 
--- Política de lectura pública limitada a homenajes activos
-DROP POLICY IF EXISTS "altar_candles_public_read" ON public.altar_candles;
-CREATE POLICY "altar_candles_public_read" ON public.altar_candles
-  FOR SELECT TO anon, authenticated
-  USING (status = 'active');
+-- Revocación de acceso anónimo directo a la tabla base para proteger datos personales (RGPD)
+REVOKE ALL ON public.altar_candles FROM anon;
 
 -- Política de administración total para el cliente de servicio (Next.js server routes)
 DROP POLICY IF EXISTS "altar_candles_service_role_all" ON public.altar_candles;
@@ -104,10 +101,23 @@ CREATE TABLE IF NOT EXISTS public.altar_settings (
 
 ALTER TABLE public.altar_settings ENABLE ROW LEVEL SECURITY;
 
+REVOKE ALL ON public.altar_settings FROM anon, authenticated;
+
+DROP POLICY IF EXISTS "altar_settings_service_role_all" ON public.altar_settings;
 CREATE POLICY "altar_settings_service_role_all" ON public.altar_settings
   FOR ALL TO service_role
   USING (true)
   WITH CHECK (true);
+
+-- Estado inicial desactivado por defecto (Fail-safe)
+INSERT INTO public.altar_settings (key, value, updated_at, updated_by)
+VALUES (
+  'system_config',
+  '{"persistence_enabled": false, "reminders_cron_enabled": false, "audit_log": [{"timestamp": "2026-11-01T17:11:00Z", "actor": "phase-a-init", "reason": "Inicialización con altar desactivado"}]}'::jsonb,
+  now(),
+  'setup'
+)
+ON CONFLICT (key) DO NOTHING;
 
 -- Tabla de auditoría de ejecuciones cron para evitar concurrencia y registrar envíos
 CREATE TABLE IF NOT EXISTS public.altar_cron_logs (
@@ -122,6 +132,9 @@ CREATE TABLE IF NOT EXISTS public.altar_cron_logs (
 
 ALTER TABLE public.altar_cron_logs ENABLE ROW LEVEL SECURITY;
 
+REVOKE ALL ON public.altar_cron_logs FROM anon, authenticated;
+
+DROP POLICY IF EXISTS "altar_cron_logs_service_role_all" ON public.altar_cron_logs;
 CREATE POLICY "altar_cron_logs_service_role_all" ON public.altar_cron_logs
   FOR ALL TO service_role
   USING (true)
