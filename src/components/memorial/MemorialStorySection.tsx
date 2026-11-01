@@ -67,35 +67,35 @@ export const MemorialStorySection: React.FC<MemorialStorySectionProps> = ({
         </div>
 
         {/* COMPOSICIÓN ASIMÉTRICA: TEXTO ALINEADO ARRIBA SIN CAJA + MENSAJE GRANDE EN 3 LÍNEAS CENTRADO A LA DERECHA */}
-        <div className="w-full flex flex-col md:flex-row items-start justify-between gap-8 md:gap-10">
+        <div className="w-full flex flex-col md:flex-row items-start justify-between gap-8 md:gap-12 min-h-0">
           
-          {/* Bloque Izquierdo: Dedicatoria alineada arriba, sin caja y con fuente normal */}
-          <div className="w-full md:w-[58%] flex flex-col items-start relative pt-1">
+          {/* Bloque Izquierdo: Dedicatoria con Cormorant Garamond, tamaño 20-22px móvil / 25-27px escritorio, interlineado 1.45 */}
+          <div className="w-full md:w-[60%] flex flex-col items-start relative min-h-0">
             {/* Capa difusa de fusión suave sin bordes perceptibles de caja */}
             <div
-              className="absolute -inset-4 pointer-events-none -z-10"
+              className="absolute -inset-6 pointer-events-none -z-10"
               style={{
                 background:
-                  'radial-gradient(ellipse 80% 75% at 40% 40%, rgba(255, 252, 246, 0.75) 0%, rgba(255, 250, 242, 0.35) 60%, rgba(255, 250, 242, 0) 85%)',
-                filter: 'blur(8px)',
+                  'radial-gradient(ellipse 85% 80% at 35% 35%, rgba(255, 252, 246, 0.82) 0%, rgba(255, 250, 242, 0.40) 60%, rgba(255, 250, 242, 0) 90%)',
+                filter: 'blur(10px)',
               }}
             />
 
             <div
-              className="text-[#38284C] font-serif not-italic text-[15.5px] sm:text-[17px] leading-[1.85] text-left"
+              className="text-[#38284C] font-normal text-[21px] sm:text-[23px] md:text-[26px] leading-[1.45] text-left w-full"
               style={{
-                fontFamily: "Georgia, 'Playfair Display', serif",
-                fontStyle: 'normal',
+                fontFamily: "'Cormorant Garamond', 'Playfair Display', Georgia, serif",
                 whiteSpace: 'pre-line',
                 overflowWrap: 'break-word',
+                wordBreak: 'break-word',
               }}
             >
               {storyText}
             </div>
           </div>
 
-          {/* Bloque Derecho: «Gracias por todo, Menus ♡» en 3 líneas, centrado verticalmente y el doble de grande */}
-          <div className="w-full md:w-[42%] flex flex-col items-center md:items-center justify-center my-auto py-6 sm:py-10 text-center select-none">
+          {/* Bloque Derecho: «Gracias por todo, {petName} ♡» en 3 líneas, centrado verticalmente */}
+          <div className="w-full md:w-[40%] flex flex-col items-center justify-center my-auto py-6 sm:py-10 text-center select-none shrink-0">
             <div className="flex flex-col items-center leading-[0.92] text-[#7E6699]">
               <span
                 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-normal block"

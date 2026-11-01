@@ -7,7 +7,6 @@ interface MemorialHeroSectionProps {
   petName: string;
   photoUrl: string;
   datesText: string | null;
-  shortQuote: string | null;
   muralUrl: string;
 }
 
@@ -48,7 +47,6 @@ export const MemorialHeroSection: React.FC<MemorialHeroSectionProps> = ({
   petName,
   photoUrl,
   datesText,
-  shortQuote,
   muralUrl,
 }) => {
   return (
@@ -163,7 +161,7 @@ export const MemorialHeroSection: React.FC<MemorialHeroSectionProps> = ({
         {/* COLUMNA DERECHA: BLOQUE EDITORIAL SIN CAJA — FUSIÓN SUAVE POR DEGRADADO PERIMETRAL */}
         <div className="w-full min-w-0 md:w-1/2 flex flex-col items-center justify-center relative">
           
-          <div className="relative w-full max-w-md flex flex-col items-center text-center select-none py-4 px-2">
+          <div className="relative w-full max-w-md flex flex-col items-center text-center select-none py-6 sm:py-8 px-2">
             
             {/* Zona de opacidad con degradado perimetral que se funde suavemente con el fondo (sin bordes de caja) */}
             <div
@@ -177,14 +175,14 @@ export const MemorialHeroSection: React.FC<MemorialHeroSectionProps> = ({
 
             {/* Título: MI ANGELITO idéntico al mockup */}
             <div
-              className="text-[12px] sm:text-[13.5px] font-bold text-[#534068] tracking-[0.28em] uppercase select-none mb-1"
+              className="text-[12px] sm:text-[13.5px] font-bold text-[#534068] tracking-[0.28em] uppercase select-none mb-1.5"
               style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
               Mi angelito
             </div>
 
             {/* 1er Corazón Rosa Oficial con líneas doradas laterales */}
-            <div className="flex items-center justify-center gap-3 w-full my-1">
+            <div className="flex items-center justify-center gap-3 w-full my-1.5">
               <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-r from-transparent via-[#C69C4E] to-[#C69C4E]" />
               <CelestialPinkHeart className="w-4 h-4 sm:w-5 sm:h-5" />
               <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-l from-transparent via-[#C69C4E] to-[#C69C4E]" />
@@ -192,7 +190,7 @@ export const MemorialHeroSection: React.FC<MemorialHeroSectionProps> = ({
 
             {/* Nombre caligráfico Allura en violeta vibrante idéntico a la imagen de referencia */}
             <h1
-              className="text-6xl sm:text-7xl md:text-8xl leading-[0.95] font-normal my-1 break-words max-w-full select-none"
+              className="text-6xl sm:text-7xl md:text-8xl leading-[0.95] font-normal my-2 break-words max-w-full select-none"
               style={{
                 fontFamily: "'Allura', cursive",
                 background: 'linear-gradient(135deg, #A855F7 0%, #8B2FE8 55%, #701AD4 100%)',
@@ -208,7 +206,7 @@ export const MemorialHeroSection: React.FC<MemorialHeroSectionProps> = ({
             {/* Fechas de nacimiento y partida */}
             {datesText && (
               <p
-                className="text-[13px] sm:text-[14.5px] text-[#55426B] font-medium tracking-wide my-1 select-none"
+                className="text-[13.5px] sm:text-[15px] text-[#55426B] font-medium tracking-wide my-1.5 select-none"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               >
                 {datesText}
@@ -221,16 +219,6 @@ export const MemorialHeroSection: React.FC<MemorialHeroSectionProps> = ({
               <CelestialPinkHeart className="w-4 h-4 sm:w-5 sm:h-5" />
               <div className="h-[1px] w-16 sm:w-24 bg-gradient-to-l from-transparent via-[#C69C4E] to-[#C69C4E]" />
             </div>
-
-            {/* Cita breve conmemorativa en cursiva serif elegante */}
-            {shortQuote && (
-              <blockquote
-                className="text-xs sm:text-[13.5px] text-[#4E3F63] italic leading-relaxed max-w-sm mt-1 select-none font-serif"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-              >
-                “{shortQuote}”
-              </blockquote>
-            )}
 
           </div>
 

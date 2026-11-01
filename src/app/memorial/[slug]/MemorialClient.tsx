@@ -186,17 +186,12 @@ export default function MemorialClient({
     ? `/mural-global?highlight=${memorial.slot_assigned}&zoom=true`
     : `/mural-global`;
 
-  // Cita breve para el Hero: primer párrafo o recorte elegante
-  const shortQuote = memorial.dedication
-    ? memorial.dedication.split('\n')[0].slice(0, 180)
-    : 'Siempre serás mi lugar favorito en el mundo.';
-
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-[#FFFBF4] text-[#3B2D54] font-sans antialiased relative selection:bg-purple-200">
-      {/* Fuentes oficiales: Allura y Playfair Display */}
+      {/* Fuentes oficiales: Allura, Cormorant Garamond, Playfair Display y Nunito Sans */}
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Allura&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600&family=Nunito+Sans:wght@400;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500;1,600&family=Nunito+Sans:wght@400;600;700&display=swap"
       />
 
       {/* SECCIÓN 01 — HERO CELESTIAL CON HEADER INTEGRADO */}
@@ -204,7 +199,6 @@ export default function MemorialClient({
         petName={memorial.pet_name}
         photoUrl={memorial.photo_url}
         datesText={datesText}
-        shortQuote={shortQuote}
         muralUrl={muralUrl}
       />
 
