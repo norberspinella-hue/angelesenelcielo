@@ -182,6 +182,13 @@ export default function MuralGlobalPage() {
     const highlight = params.get('highlight')
     const zoom = params.get('zoom')
     
+    const memorialIdParam = params.get('memorialId')
+    if (memorialIdParam) {
+      setTimeout(() => {
+        handleResultClick(memorialIdParam)
+      }, 800)
+    }
+
     if (highlight && zoom) {
       const [x, y] = highlight.split(',').map(Number)
       setTimeout(() => {

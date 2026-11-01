@@ -25,6 +25,7 @@ export interface AltarCandle {
   socialHandle?: string;
   anniversaryDate?: string;
   isFromMural?: boolean;
+  memorialId?: string | null;
 }
 
 const SEED_CANDLES: AltarCandle[] = [
@@ -194,6 +195,11 @@ export default function CieloLlenoDeLucesClient() {
   const [selectedCandle, setSelectedCandle] = useState<AltarCandle | null>(null);
   const [showNewCandleModal, setShowNewCandleModal] = useState(false);
   const [newCandleCelebration, setNewCandleCelebration] = useState(false);
+  const [latestManageToken, setLatestManageToken] = useState<string | null>(null);
+  const [manualTokenInput, setManualTokenInput] = useState('');
+  const [showRecoveryForm, setShowRecoveryForm] = useState(false);
+  const [recoveryEmailInput, setRecoveryEmailInput] = useState('');
+  const [isRecovering, setIsRecovering] = useState(false);
 
   // Formulario nueva vela
   const [newPetName, setNewPetName] = useState('');
@@ -255,6 +261,7 @@ export default function CieloLlenoDeLucesClient() {
             isShelterPet: c.is_shelter_pet,
             shelterName: c.shelter_name,
             isFromMural: c.is_from_mural,
+            memorialId: c.memorial_id || null,
           }));
           setCandles(mapped);
         }
@@ -302,6 +309,85 @@ export default function CieloLlenoDeLucesClient() {
         setUploadedPhotoPreview(ev.target?.result as string);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  // Reavivar con clave manual para multidispositivo
+  const handleReigniteWithToken = async (candleId: string, customToken: string) => {
+    if (!customToken.trim()) {
+      showToast('Por favor introduce tu clave privada de gestión.');
+      return;
+    }
+    try {
+      const res = await fetch('/api/community/candles/reignite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ candleId, manageToken: customToken.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Clave de gestión incorrecta para este homenaje.');
+      }
+
+      try {
+        localStorage.setItem(`altar_manage_${candleId}`, customToken.trim());
+      } catch {}
+
+      setCandles(prev => prev.map(c => {
+        if (c.id === candleId) {
+          return {
+            ...c,
+            isNeedsReignition: false,
+            daysRemaining: 7,
+            warmthCount: c.warmthCount + 1,
+            litDate: 'Encendida de nuevo hoy',
+          };
+        }
+        return c;
+      }));
+
+      if (selectedCandle && selectedCandle.id === candleId) {
+        setSelectedCandle(prev => prev ? {
+          ...prev,
+          isNeedsReignition: false,
+          daysRemaining: 7,
+          warmthCount: prev.warmthCount + 1,
+          litDate: 'Encendida de nuevo hoy',
+        } : null);
+      }
+
+      setManualTokenInput('');
+      showToast('¡Llama reavivada con éxito! Este dispositivo ha quedado recordado.');
+    } catch (err: any) {
+      showToast(err.message || 'Error al reavivar la vela.');
+    }
+  };
+
+  // Solicitar recuperación segura de clave
+  const handleRequestRecovery = async (candleId: string, emailArg?: string) => {
+    const targetEmail = (emailArg || recoveryEmailInput).trim();
+    if (!targetEmail) {
+      showToast('Por favor introduce tu correo electrónico.');
+      return;
+    }
+    setIsRecovering(true);
+    try {
+      const res = await fetch('/api/community/candles/recovery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ candleId, email: targetEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'No se pudo tramitar la solicitud.');
+      }
+      showToast(data.message || 'Solicitud de recuperación verificada.');
+      setShowRecoveryForm(false);
+      setRecoveryEmailInput('');
+    } catch (err: any) {
+      showToast(err.message || 'Error en la solicitud.');
+    } finally {
+      setIsRecovering(false);
     }
   };
 
@@ -429,6 +515,7 @@ export default function CieloLlenoDeLucesClient() {
 
         setCandles(prev => [newCandle, ...prev]);
         if (data.manageToken) {
+          setLatestManageToken(data.manageToken);
           try {
             localStorage.setItem(`altar_manage_${data.candle.id}`, data.manageToken);
           } catch {}
@@ -1077,13 +1164,64 @@ export default function CieloLlenoDeLucesClient() {
             {/* Acciones */}
             <div className="pt-2 flex flex-col gap-2.5">
               {selectedCandle.isNeedsReignition ? (
-                <button
-                  onClick={() => handleReigniteCandle(selectedCandle.id)}
-                  className="w-full py-3 rounded-2xl font-bold text-white text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-[#D97706] to-[#F59E0B]"
-                >
-                  <Image src="/images/icons/plans/icon-plan-eterno.svg" alt="Corazón" width={16} height={16} className="w-4 h-4 object-contain" />
-                  <span>Volver a encender su llama por 7 días</span>
-                </button>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => {
+                      const localTok = typeof window !== 'undefined' ? localStorage.getItem(`altar_manage_${selectedCandle.id}`) : null;
+                      if (localTok) {
+                        handleReigniteCandle(selectedCandle.id);
+                      } else {
+                        setShowRecoveryForm(prev => !prev);
+                      }
+                    }}
+                    className="w-full py-3 rounded-2xl font-bold text-white text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-[#D97706] to-[#F59E0B]"
+                  >
+                    <Image src="/images/icons/plans/icon-plan-eterno.svg" alt="Corazón" width={16} height={16} className="w-4 h-4 object-contain" />
+                    <span>Volver a encender su llama por 7 días</span>
+                  </button>
+
+                  {/* Panel de clave para reavivado multidispositivo cuando no está en localStorage */}
+                  {showRecoveryForm && (
+                    <div className="p-3.5 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A] text-left space-y-2.5 animate-fade-in">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-[#92400E]">🔑 Reavivar desde este dispositivo</span>
+                        <span className="text-[10px] text-[#A16207]">Clave privada requerida</span>
+                      </div>
+                      <p className="text-[11px] text-[#78350F] leading-tight">
+                        Esta vela se encendió desde otro equipo. Introduce su clave privada de gestión para volver a encenderla:
+                      </p>
+                      <div className="flex gap-2">
+                        <input
+                          type="password"
+                          value={manualTokenInput}
+                          onChange={(e) => setManualTokenInput(e.target.value)}
+                          placeholder="Clave privada de gestión..."
+                          className="flex-1 px-3 py-1.5 rounded-xl border border-[#D97706]/40 bg-white text-xs outline-none text-[#2D0F31]"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleReigniteWithToken(selectedCandle.id, manualTokenInput)}
+                          className="px-3 py-1.5 rounded-xl bg-[#D97706] text-white text-xs font-bold hover:bg-[#B45309] transition-all cursor-pointer"
+                        >
+                          Validar
+                        </button>
+                      </div>
+
+                      <div className="pt-1 border-t border-[#FDE68A]/60 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const emailPrompt = prompt('Introduce el correo electrónico con el que registraste esta vela:');
+                            if (emailPrompt) handleRequestRecovery(selectedCandle.id, emailPrompt);
+                          }}
+                          className="text-[10.5px] font-semibold text-[#8C3F71] hover:underline cursor-pointer"
+                        >
+                          ¿Olvidaste tu clave privada?
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <button
                   onClick={() => handleSendWarmth(selectedCandle.id)}
@@ -1094,6 +1232,17 @@ export default function CieloLlenoDeLucesClient() {
                   </svg>
                   <span>Acompañar con un abrazo de luz ({selectedCandle.warmthCount})</span>
                 </button>
+              )}
+
+              {/* Enlace al Mural Global para velas vinculadas */}
+              {selectedCandle.isFromMural && (
+                <Link
+                  href={selectedCandle.memorialId ? `/mural-global?memorialId=${selectedCandle.memorialId}` : '/mural-global'}
+                  className="w-full py-2.5 px-4 rounded-2xl font-bold text-[#8C3F71] bg-[#FFF0F6] hover:bg-[#FCE3EE] border border-[#F0BED6] text-xs transition-all text-center flex items-center justify-center gap-2 shadow-xs"
+                >
+                  <Image src="/images/icons/plans/icon-plan-estrella.svg" alt="Mural" width={16} height={16} className="w-4 h-4 object-contain" />
+                  <span>Ver su casilla en el Mural Global →</span>
+                </Link>
               )}
 
               {/* Botón para hacer la llama eterna si aún no lo es */}
@@ -1144,7 +1293,7 @@ export default function CieloLlenoDeLucesClient() {
                       Encender una vela en el Cielo de Luces
                     </h3>
                     <p className="text-xs text-[#7A6478]">
-                      Tu llama permanecerá encendida durante 7 días (te avisaremos si se apaga)
+                      Tu llama permanecerá encendida durante 7 días y podrás reavivarla gratis desde este dispositivo
                     </p>
                   </div>
                 </div>
@@ -1277,7 +1426,7 @@ export default function CieloLlenoDeLucesClient() {
                         className="w-full px-3.5 py-2 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
                       />
                       <p className="text-[10px] text-[#8B5A3C] mt-1 leading-tight">
-                        Te enviaremos la confirmación del encendido y el enlace seguro para reavivar la vela gratuitamente cuando descanse a los 7 días.
+                        Tu correo vincula la vela a tu familia. Tu acceso para reavivarla se guarda automáticamente en este dispositivo. (Los avisos automáticos por correo se activarán próximamente).
                       </p>
                     </div>
 
@@ -1329,7 +1478,7 @@ export default function CieloLlenoDeLucesClient() {
                     ¡La vela de {newPetName} ya brilla!
                   </h3>
                   <p className="text-xs text-[#6A5266] mt-1.5 max-w-xs mx-auto leading-relaxed">
-                    Tu llama permanecerá encendida durante 7 días en el Cielo de Luces para acompañar su vuelo. Si se apaga, te enviaremos un aviso a {newEmail || 'tu email'}.
+                    Tu llama permanecerá encendida durante 7 días en el Cielo de Luces para acompañar su vuelo. Tu clave privada ha quedado guardada de forma segura en este dispositivo para reavivarla gratis en cualquier momento.
                   </p>
                 </div>
 
@@ -1343,6 +1492,29 @@ export default function CieloLlenoDeLucesClient() {
                     <strong>¿Quieres que su llama nunca se apague?</strong> Al <Link href="/#planes" className="underline font-bold">apadrinar o escoger un plan en Ángeles en el Cielo</Link>, su vela brillará encendida para siempre.
                   </span>
                 </div>
+
+                {latestManageToken && (
+                  <div className="p-3 rounded-2xl bg-[#FFF0F6]/80 border border-[#F0BED6] text-left space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold text-[#8C3F71]">🔑 Clave privada para otro dispositivo</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (navigator.clipboard) {
+                            navigator.clipboard.writeText(latestManageToken);
+                            showToast('Clave privada copiada. Guárdala si deseas reavivar la vela desde otro equipo.');
+                          }
+                        }}
+                        className="px-2 py-0.5 rounded-lg bg-[#8C3F71] text-white text-[10px] font-semibold hover:bg-[#6D2F56] transition-all cursor-pointer"
+                      >
+                        Copiar clave
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-[#7A5B70] leading-tight">
+                      En este navegador ya está guardada. Copia esta clave solo si deseas reavivar la llama desde otro móvil u ordenador. No la compartas públicamente.
+                    </p>
+                  </div>
+                )}
 
                 <div className="pt-2 flex flex-col gap-2">
                   <button

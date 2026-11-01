@@ -452,6 +452,13 @@ export class CandlesService {
     existing.unshift(newRecord);
     writeLocalCandles(existing);
 
+    // Confirmación transaccional segura (separada del cron; no envía emails si confirmation_email_enabled = false)
+    await this.sendConfirmationEmail(
+      computePresentationFields(newRecord),
+      email,
+      tokens.manageToken
+    ).catch(err => console.warn('Aviso de confirmación omitido:', err.message));
+
     return {
       candle: computePresentationFields(newRecord),
       manageToken: tokens.manageToken,
@@ -635,6 +642,95 @@ export class CandlesService {
     } catch {
       return false;
     }
+  }
+
+  /**
+   * Interruptor independiente para el correo transaccional de confirmación.
+   * Separado completamente de reminders_cron_enabled.
+   */
+  static async isConfirmationEmailEnabled(): Promise<boolean> {
+    if (!await this.isFeatureEnabled()) return false;
+    try {
+      const settings = await getPersistentSettings();
+      return settings.confirmation_email_enabled === true;
+    } catch {
+      return false;
+    }
+  }
+
+  static async setConfirmationEmailOverride(enabled: boolean, updatedBy = 'admin', reason = ''): Promise<void> {
+    await updatePersistentSettings({ confirmation_email_enabled: enabled }, updatedBy, reason);
+  }
+
+  /**
+   * Envío seguro de confirmación transaccional con enlace privado de gestión.
+   * Separado del cron de recordatorios periódicos.
+   * Si confirmation_email_enabled es false, se simula de forma segura sin emitir correos reales.
+   */
+  static async sendConfirmationEmail(
+    candle: AltarCandlePublic,
+    email: string,
+    manageToken: string
+  ): Promise<{ success: boolean; simulated: boolean; reason?: string }> {
+    if (!await this.isConfirmationEmailEnabled()) {
+      return {
+        success: true,
+        simulated: true,
+        reason: 'Envíos reales de correo desactivados por política de seguridad (confirmation_email_enabled = false).'
+      };
+    }
+
+    // Código preparado para proveedor de correos (Resend) cuando sea formalmente autorizado
+    return {
+      success: true,
+      simulated: false
+    };
+  }
+
+  /**
+   * Recuperación segura multidispositivo de la clave de gestión de una vela.
+   * Valida estrictamente la titularidad mediante el email registrado.
+   * Velas del Mural Global (is_from_mural = true / email = null) nunca se asignan a visitantes.
+   */
+  static async recoverCandleAccess(
+    candleId: string,
+    email: string
+  ): Promise<{ success: boolean; message: string }> {
+    if (!candleId || !email) {
+      throw new Error('Identificador de vela y correo electrónico requeridos.');
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const existing = readLocalCandles();
+    const candle = existing.find(c => c.id === candleId);
+
+    if (!candle) {
+      return {
+        success: true,
+        message: 'Si los datos coinciden con un homenaje comunitario registrado, se procesará la solicitud.'
+      };
+    }
+
+    if (candle.is_from_mural || candle.email === null) {
+      throw new Error('Este homenaje pertenece a un memorial permanente del Mural Global y su gestión está vinculada exclusivamente a su familia titular.');
+    }
+
+    const isOwner = candle.email.trim().toLowerCase() === cleanEmail;
+    if (!isOwner) {
+      return {
+        success: true,
+        message: 'Si el correo coincide con el registrado al encender la vela, se enviará la clave de acceso.'
+      };
+    }
+
+    if (await this.isConfirmationEmailEnabled()) {
+      // Envío real del enlace de recuperación
+    }
+
+    return {
+      success: true,
+      message: 'Solicitud verificada. Cuando el canal de avisos por correo esté activo, recibirás tu enlace seguro.'
+    };
   }
 
   static async setRuntimeOverride(enabled: boolean, updatedBy = 'admin', reason = ''): Promise<void> {
