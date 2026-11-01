@@ -93,3 +93,36 @@ FROM public.altar_candles
 WHERE status = 'active';
 
 GRANT SELECT ON public.altar_candles_public_view TO anon, authenticated;
+
+-- Tabla independiente para configuración y estado compartido en Vercel
+CREATE TABLE IF NOT EXISTS public.altar_settings (
+  key TEXT PRIMARY KEY,
+  value JSONB NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_by TEXT
+);
+
+ALTER TABLE public.altar_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "altar_settings_service_role_all" ON public.altar_settings
+  FOR ALL TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+-- Tabla de auditoría de ejecuciones cron para evitar concurrencia y registrar envíos
+CREATE TABLE IF NOT EXISTS public.altar_cron_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  started_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  pre_reminders_sent INTEGER NOT NULL DEFAULT 0,
+  extinguished_notices_sent INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'running',
+  error_message TEXT
+);
+
+ALTER TABLE public.altar_cron_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "altar_cron_logs_service_role_all" ON public.altar_cron_logs
+  FOR ALL TO service_role
+  USING (true)
+  WITH CHECK (true);

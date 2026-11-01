@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
-    if (!CandlesService.isFeatureEnabled()) {
+    if (!await CandlesService.isFeatureEnabled()) {
       return NextResponse.json({
         success: true,
         enabled: false,

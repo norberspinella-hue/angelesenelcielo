@@ -11,9 +11,121 @@ import {
 import { createAdminClient } from '@/lib/supabase/server';
 
 const LOCAL_STORE_PATH = path.join(process.cwd(), 'data', 'altar_candles_local.json');
+const SETTINGS_STORE_PATH = path.join(process.cwd(), 'data', 'altar_settings.json');
 
 // Sal para anonimización irreversible de IP
 const IP_SALT = process.env.ALTAR_IP_SALT || 'angeles-cielo-salt-2026';
+
+function ensureLocalDir() {
+  const dir = path.dirname(LOCAL_STORE_PATH);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+function readLocalSettings(): Record<string, any> {
+  try {
+    ensureLocalDir();
+    if (!fs.existsSync(SETTINGS_STORE_PATH)) {
+      return { persistence_enabled: true };
+    }
+    const raw = fs.readFileSync(SETTINGS_STORE_PATH, 'utf8');
+    return JSON.parse(raw);
+  } catch {
+    return { persistence_enabled: true };
+  }
+}
+
+function writeLocalSettings(settings: Record<string, any>): void {
+  try {
+    ensureLocalDir();
+    fs.writeFileSync(SETTINGS_STORE_PATH, JSON.stringify(settings, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error writing settings store:', err);
+  }
+}
+
+// In-memory cache para lectura de alto rendimiento de settings con TTL
+let settingsCache: { data: Record<string, any>; expiresAt: number } | null = null;
+
+async function getPersistentSettings(): Promise<Record<string, any>> {
+  const now = Date.now();
+  if (settingsCache && settingsCache.expiresAt > now) {
+    return settingsCache.data;
+  }
+
+  // 1. Intentar leer de la tabla persistente de Supabase (compartida entre todas las instancias Vercel)
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await ((supabase as any)
+      .from('altar_settings')
+      .select('value')
+      .eq('key', 'system_config')
+      .maybeSingle() as any);
+
+    if (!error && data?.value) {
+      settingsCache = { data: data.value, expiresAt: now + 10000 }; // 10s TTL
+      return data.value;
+    }
+  } catch {
+    // Supabase no configurado o modo offline local
+  }
+
+  // 2. Fallback a almacén local en disco
+  const local = readLocalSettings();
+  settingsCache = { data: local, expiresAt: now + 5000 };
+  return local;
+}
+
+async function updatePersistentSettings(
+  updates: Record<string, any>, 
+  actor = 'admin', 
+  reason = ''
+): Promise<Record<string, any>> {
+  const current = await getPersistentSettings();
+  const merged: Record<string, any> = { 
+    ...current, 
+    ...updates, 
+    updated_at: new Date().toISOString(), 
+    updated_by: actor 
+  };
+
+  if (!Array.isArray(merged.audit_log)) {
+    merged.audit_log = [];
+  }
+
+  merged.audit_log.unshift({
+    timestamp: new Date().toISOString(),
+    actor,
+    reason: reason || 'Modificación de configuración',
+    changes: updates,
+  });
+
+  // Limitar histórico a las últimas 50 operaciones
+  if (merged.audit_log.length > 50) {
+    merged.audit_log = merged.audit_log.slice(0, 50);
+  }
+
+  // 1. Persistir en Supabase para sincronización serverless
+  try {
+    const supabase = createAdminClient();
+    await ((supabase as any)
+      .from('altar_settings')
+      .upsert({
+        key: 'system_config',
+        value: merged,
+        updated_at: new Date().toISOString(),
+        updated_by: actor,
+      }) as any);
+  } catch (err) {
+    // Si la tabla aún no existe o falla la red, continúa con persistencia local
+  }
+
+  // 2. Persistir en archivo local
+  writeLocalSettings(merged);
+  settingsCache = { data: merged, expiresAt: Date.now() + 10000 };
+  return merged;
+}
 
 function hashValue(val: string): string {
   return crypto.createHash('sha256').update(val).digest('hex');
@@ -35,12 +147,6 @@ export function generateSecureTokens() {
 }
 
 // Helpers para el almacén local aislado
-function ensureLocalDir() {
-  const dir = path.dirname(LOCAL_STORE_PATH);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-}
 
 function readLocalCandles(): AltarCandlePrivateRecord[] {
   try {
@@ -175,6 +281,10 @@ export class CandlesService {
     input: CreateCandleInput,
     ip: string
   ): Promise<{ candle: AltarCandlePublic; manageToken: string }> {
+    if (!await this.isFeatureEnabled()) {
+      throw new Error('El servicio de encendido de velas se encuentra temporalmente en modo de contingencia.');
+    }
+
     // 1. Detección honeypot
     if (input.honeypot && input.honeypot.trim().length > 0) {
       throw new Error('Petición rechazada por control antispam.');
@@ -271,6 +381,10 @@ export class CandlesService {
    * Reavivar llama extinguida (7 nuevos días gratuitos e ilimitados)
    */
   static async reignite(candleId: string, manageToken: string): Promise<AltarCandlePublic> {
+    if (!await this.isFeatureEnabled()) {
+      throw new Error('El servicio de reavivado se encuentra temporalmente en modo de contingencia.');
+    }
+
     if (!manageToken || !manageToken.trim()) {
       throw new Error('Token de verificación requerido.');
     }
@@ -346,6 +460,10 @@ export class CandlesService {
    * Enviar abrazo de calor / luz comunitaria
    */
   static async sendWarmth(candleId: string): Promise<number> {
+    if (!await this.isFeatureEnabled()) {
+      throw new Error('El servicio de calor se encuentra temporalmente en modo de contingencia.');
+    }
+
     const existing = readLocalCandles();
     const candle = existing.find(c => c.id === candleId);
     if (!candle) throw new Error('Vela no encontrada');
@@ -415,19 +533,40 @@ export class CandlesService {
     return { imported, skipped };
   }
 
-  private static runtimeOverride: boolean | null = null;
-
-  static setRuntimeOverride(enabled: boolean | null): void {
-    this.runtimeOverride = enabled;
-  }
-
   /**
    * Interruptor de servidor en tiempo de ejecución (Runtime Feature Flag)
-   * Evaluado dinámicamente en cada petición sin necesidad de recompilar la aplicación.
+   * Almacenado de forma persistente y compartida entre todas las instancias de Vercel.
    */
-  static isFeatureEnabled(): boolean {
-    if (this.runtimeOverride !== null) return this.runtimeOverride;
-    return process.env.ALTAR_PERSISTENCE_ENABLED !== 'false';
+  static async isFeatureEnabled(): Promise<boolean> {
+    if (process.env.ALTAR_PERSISTENCE_ENABLED === 'false') return false;
+    const settings = await getPersistentSettings();
+    if (settings.persistence_enabled === false) return false;
+    return true;
+  }
+
+  static async setRuntimeOverride(enabled: boolean, updatedBy = 'admin', reason = ''): Promise<void> {
+    await updatePersistentSettings({ persistence_enabled: enabled }, updatedBy, reason);
+  }
+
+  static async getSettingsAudit(): Promise<{
+    persistence_enabled: boolean;
+    updated_at: string | null;
+    updated_by: string | null;
+    cron_running: boolean;
+    cron_last_completed_at: string | null;
+    cron_last_summary: any;
+    audit_log: any[];
+  }> {
+    const settings = await getPersistentSettings();
+    return {
+      persistence_enabled: settings.persistence_enabled !== false,
+      updated_at: settings.updated_at || null,
+      updated_by: settings.updated_by || null,
+      cron_running: !!settings.cron_running,
+      cron_last_completed_at: settings.cron_last_completed_at || null,
+      cron_last_summary: settings.cron_last_summary || null,
+      audit_log: Array.isArray(settings.audit_log) ? settings.audit_log : [],
+    };
   }
 
   /**
@@ -477,6 +616,10 @@ export class CandlesService {
    * con un memorial adquirido, otorgando la llama activa sin tocar Stripe ni webhooks.
    */
   static async linkCandleToMemorial(candleId: string, memorialId: string): Promise<boolean> {
+    if (!await this.isFeatureEnabled()) {
+      throw new Error('El servicio se encuentra temporalmente en modo de contingencia.');
+    }
+
     const isValid = await this.checkMemorialValidity(memorialId);
     if (!isValid) return false;
 
@@ -498,41 +641,70 @@ export class CandlesService {
     preRemindersSent: number;
     extinguishedNoticesSent: number;
   }> {
-    const existing = readLocalCandles();
-    const now = Date.now();
-    const fortyEightHoursMs = 48 * 60 * 60 * 1000;
+    if (!await this.isFeatureEnabled()) {
+      return { preRemindersSent: 0, extinguishedNoticesSent: 0 };
+    }
+
+    const settings = await getPersistentSettings();
+    const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
+    if (settings.cron_running && new Date(settings.cron_started_at || 0).getTime() > tenMinutesAgo) {
+      console.warn('Ejecución de cron en curso omitida para evitar concurrencia.');
+      return { preRemindersSent: 0, extinguishedNoticesSent: 0 };
+    }
+
+    await updatePersistentSettings(
+      { cron_running: true, cron_started_at: new Date().toISOString() },
+      'cron',
+      'Inicio de ciclo programado'
+    );
 
     let preRemindersSent = 0;
     let extinguishedNoticesSent = 0;
 
-    for (const candle of existing) {
-      // Solo velas con email, recordatorios activos y que no sean del mural
-      if (!candle.email || !candle.reminder_opt_in || candle.is_from_mural) continue;
+    try {
+      const existing = readLocalCandles();
+      const now = Date.now();
+      const fortyEightHoursMs = 48 * 60 * 60 * 1000;
 
-      const expTime = new Date(candle.expires_at).getTime();
-      const timeLeft = expTime - now;
+      for (const candle of existing) {
+        // Solo velas con email, recordatorios activos y que no sean del mural
+        if (!candle.email || !candle.reminder_opt_in || candle.is_from_mural) continue;
 
-      // 1. Aviso previo al apagado (entre 48h y 0h restantes)
-      if (timeLeft > 0 && timeLeft <= fortyEightHoursMs && !candle.pre_reminder_sent_at) {
-        candle.pre_reminder_sent_at = new Date().toISOString();
-        preRemindersSent++;
-        if (!testMode) {
-          // En producción invoca a Resend; en test permanece en log
+        const expTime = new Date(candle.expires_at).getTime();
+        const timeLeft = expTime - now;
+
+        // 1. Aviso previo al apagado (entre 48h y 0h restantes)
+        if (timeLeft > 0 && timeLeft <= fortyEightHoursMs && !candle.pre_reminder_sent_at) {
+          candle.pre_reminder_sent_at = new Date().toISOString();
+          preRemindersSent++;
+          if (!testMode) {
+            // En producción invoca a Resend; en test permanece en log
+          }
+        }
+
+        // 2. Aviso de vela apagada (expirada y aviso previo ya enviado o tiempo rebasado)
+        if (timeLeft <= 0 && !candle.extinguished_notice_sent_at) {
+          candle.extinguished_notice_sent_at = new Date().toISOString();
+          extinguishedNoticesSent++;
+          if (!testMode) {
+            // En producción invoca a Resend; en test permanece en log
+          }
         }
       }
 
-      // 2. Aviso de vela apagada (expirada y aviso previo ya enviado o tiempo rebasado)
-      if (timeLeft <= 0 && !candle.extinguished_notice_sent_at) {
-        candle.extinguished_notice_sent_at = new Date().toISOString();
-        extinguishedNoticesSent++;
-        if (!testMode) {
-          // En producción invoca a Resend; en test permanece en log
-        }
+      if (preRemindersSent > 0 || extinguishedNoticesSent > 0) {
+        writeLocalCandles(existing);
       }
-    }
-
-    if (preRemindersSent > 0 || extinguishedNoticesSent > 0) {
-      writeLocalCandles(existing);
+    } finally {
+      await updatePersistentSettings(
+        {
+          cron_running: false,
+          cron_last_completed_at: new Date().toISOString(),
+          cron_last_summary: { preRemindersSent, extinguishedNoticesSent },
+        },
+        'cron',
+        'Finalización de ciclo programado'
+      );
     }
 
     return { preRemindersSent, extinguishedNoticesSent };
