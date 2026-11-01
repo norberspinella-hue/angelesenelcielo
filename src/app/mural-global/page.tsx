@@ -116,6 +116,7 @@ export default function MuralGlobalPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState<any[]>([])
   const [highlightedMemorialId, setHighlightedMemorialId] = useState<string | null>(null)
+  const [isFromAltar, setIsFromAltar] = useState(false)
 
   // Debounce e implementación robusta de búsqueda
   useEffect(() => {
@@ -182,6 +183,9 @@ export default function MuralGlobalPage() {
     const highlight = params.get('highlight')
     const zoom = params.get('zoom')
     
+    if (params.get('memorialId') || params.get('from') === 'altar') {
+      setIsFromAltar(true)
+    }
     const memorialIdParam = params.get('memorialId')
     if (memorialIdParam) {
       setTimeout(() => {
@@ -279,11 +283,19 @@ export default function MuralGlobalPage() {
       >
         <div className="flex items-center gap-2 sm:gap-4">
           <Image src="/images/icons/Logoheart.svg" alt="Logo" width={40} height={40} className="h-8 sm:h-[56px] -my-1 sm:-my-3 w-auto object-contain" />
-          <Link href="/" className="text-xs sm:text-sm font-semibold text-[#706A95] hover:text-[#1E2A78] transition-colors flex items-center gap-1">
-            <span>←</span>
-            <span className="hidden sm:inline">Volver a la landing</span>
-            <span className="sm:hidden">Landing</span>
-          </Link>
+          {isFromAltar ? (
+            <Link href="/cielo-lleno-de-luces" className="text-xs sm:text-sm font-bold text-[#8C3F71] hover:text-[#6D2F56] transition-colors flex items-center gap-1.5 bg-[#FFF0F6] px-3 py-1 rounded-full border border-[#F0BED6] shadow-xs">
+              <span>←</span>
+              <span className="hidden sm:inline">Volver al Altar</span>
+              <span className="sm:hidden">Altar</span>
+            </Link>
+          ) : (
+            <Link href="/" className="text-xs sm:text-sm font-semibold text-[#706A95] hover:text-[#1E2A78] transition-colors flex items-center gap-1">
+              <span>←</span>
+              <span className="hidden sm:inline">Volver a la landing</span>
+              <span className="sm:hidden">Landing</span>
+            </Link>
+          )}
         </div>
         
         <div className="flex items-center gap-2 sm:gap-4">
