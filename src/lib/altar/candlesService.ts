@@ -7,8 +7,8 @@ import {
   CreateCandleInput, 
   AltarStats, 
   SpeciesType 
-} from '@/types/altar';
-import { createAdminClient } from '@/lib/supabase/server';
+} from '../../types/altar';
+import { createAdminClient } from '../supabase/server';
 
 const LOCAL_STORE_PATH = path.join(process.cwd(), 'data', 'altar_candles_local.json');
 const SETTINGS_STORE_PATH = path.join(process.cwd(), 'data', 'altar_settings.json');
@@ -169,6 +169,87 @@ function writeLocalCandles(candles: AltarCandlePrivateRecord[]): void {
   } catch (err) {
     console.error('Error writing local candles store:', err);
   }
+}
+
+export interface MemorialFlameRights {
+  hasValidRight: boolean;
+  isEternal: boolean;
+  expiresAt: string;
+  isLit: boolean;
+  status: 'active' | 'hidden';
+  planType: string;
+}
+
+/**
+ * Determina los derechos de llama según la vigencia real del memorial original en el Mural Global:
+ * 1. Memorial indefinido vigente (Estrella Brillante, Corazón Eterno, etc.): is_eternal = true, llama encendida permanente.
+ * 2. Huellita anual vigente: is_eternal = false, respeta la fecha real de vencimiento (memorial.expires_at).
+ * 3. Huellita anual caducado: is_eternal = false, llama apagada pero tarjeta visible en reposo.
+ * 4. Memorial retirado, no pagado o rechazado: sin encendido automático, llama apagada u oculta según corresponda.
+ */
+export function determineMemorialFlameRights(memorial: {
+  plan_type?: string | null;
+  expires_at?: string | null;
+  publication_status?: string | null;
+  payment_status?: string | null;
+  moderation_status?: string | null;
+  visibility?: string | null;
+}): MemorialFlameRights {
+  const isPaid = memorial.payment_status === 'paid';
+  const isPublished = memorial.publication_status === 'published';
+  const isNotRejected = memorial.moderation_status !== 'rejected';
+  const isVisible = memorial.visibility !== 'private';
+
+  const hasValidRight = isPaid && isPublished && isNotRejected && isVisible;
+
+  // Si el memorial no tiene derecho legítimo (no publicado, no pagado, rechazado o privado)
+  if (!hasValidRight) {
+    const isExplicitlyHidden = !isPublished || !isVisible || memorial.moderation_status === 'rejected';
+    return {
+      hasValidRight: false,
+      isEternal: false,
+      expiresAt: new Date(0).toISOString(),
+      isLit: false,
+      status: isExplicitlyHidden ? 'hidden' : 'active',
+      planType: memorial.plan_type || 'desconocido',
+    };
+  }
+
+  // Planes con permanencia indefinida: Corazón Eterno, Estrella Brillante, Ángelito Protector, Galaxia de Amor, Vínculo Infinito
+  // Plan anual: Huellita (identificado por plan_type 'huellita' o 'recuerdo_inicial', o si tiene expires_at definido)
+  const isAnnualPlan =
+    memorial.plan_type === 'huellita' ||
+    memorial.plan_type === 'recuerdo_inicial' ||
+    (memorial.expires_at !== null && memorial.expires_at !== undefined);
+
+  if (!isAnnualPlan) {
+    // Memorial de permanencia indefinida con derecho vigente: llama activa permanente
+    const farFuture = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toISOString();
+    return {
+      hasValidRight: true,
+      isEternal: true,
+      expiresAt: farFuture,
+      isLit: true,
+      status: 'active',
+      planType: memorial.plan_type || 'corazon_eterno',
+    };
+  }
+
+  // Memorial Huellita anual: debe respetar su fecha real de vencimiento
+  const now = Date.now();
+  const memorialExpiryTime = memorial.expires_at
+    ? new Date(memorial.expires_at).getTime()
+    : now + 365 * 24 * 60 * 60 * 1000;
+  const isExpired = memorialExpiryTime <= now;
+
+  return {
+    hasValidRight: !isExpired,
+    isEternal: false, // Huellita anual NO es eterno
+    expiresAt: new Date(memorialExpiryTime).toISOString(),
+    isLit: !isExpired,
+    status: 'active', // La tarjeta del homenaje permanece visible aunque se apague la llama
+    planType: memorial.plan_type || 'huellita',
+  };
 }
 
 export function computePresentationFields(candle: AltarCandlePrivateRecord): AltarCandlePublic {
@@ -491,9 +572,7 @@ export class CandlesService {
 
       const tokens = generateSecureTokens();
       const nowIso = new Date().toISOString();
-      // Duración: Si es memorial vigente en mural, llama activa permanente
-      const isEternal = true;
-      const farFuture = new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toISOString();
+      const rights = determineMemorialFlameRights(m);
 
       const newCandle: AltarCandlePrivateRecord = {
         id: crypto.randomUUID(),
@@ -510,19 +589,19 @@ export class CandlesService {
         opted_out_at: null,
         ip_hash: null,
         is_from_mural: true,
-        is_eternal: isEternal,
+        is_eternal: rights.isEternal,
         memorial_id: m.id,
-        mural_plan: m.plan_type || 'recuerdo_eterno',
+        mural_plan: rights.planType,
         warmth_count: 50 + Math.floor(Math.random() * 80),
         is_shelter_pet: m.pet_name === 'Vaiana',
         shelter_name: m.pet_name === 'Vaiana' ? 'Almas de 4 patas · Málaga' : null,
-        status: 'active',
+        status: rights.status,
         created_at: m.created_at || nowIso,
-        expires_at: farFuture,
+        expires_at: rights.expiresAt,
         reignited_at: null,
         reignite_count: 0,
-        is_lit: true,
-        days_remaining: 999,
+        is_lit: rights.isLit,
+        days_remaining: rights.isEternal ? 999 : Math.max(0, Math.ceil((new Date(rights.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))),
       };
 
       existing.push(newCandle);
@@ -621,14 +700,33 @@ export class CandlesService {
     const candle = existing.find(c => c.id === candleId);
     if (!candle || !candle.memorial_id) return null;
 
-    const isValid = await this.checkMemorialValidity(candle.memorial_id);
-    if (!isValid && candle.is_eternal) {
-      // El derecho en el mural ha finalizado: la vela pasa al régimen comunitario gratuito
-      candle.is_eternal = false;
-      candle.expires_at = new Date().toISOString(); // Pasa a estado apagado con opción de reavivar
+    try {
+      const supabase = createAdminClient();
+      const { data: memorial } = await ((supabase as any)
+        .from('memorials')
+        .select('id, plan_type, publication_status, payment_status, expires_at, moderation_status, visibility')
+        .eq('id', candle.memorial_id)
+        .maybeSingle() as any);
+
+      if (!memorial) {
+        // Memorial retirado: la llama se apaga pero la tarjeta permanece salvo que fuera ocultada
+        candle.is_eternal = false;
+        candle.expires_at = new Date().toISOString();
+        writeLocalCandles(existing);
+        return computePresentationFields(candle);
+      }
+
+      const rights = determineMemorialFlameRights(memorial);
+      candle.is_eternal = rights.isEternal;
+      candle.expires_at = rights.expiresAt;
+      if (rights.status === 'hidden') {
+        candle.status = 'hidden';
+      }
       writeLocalCandles(existing);
+      return computePresentationFields(candle);
+    } catch {
+      return computePresentationFields(candle);
     }
-    return computePresentationFields(candle);
   }
 
   /**
@@ -640,18 +738,33 @@ export class CandlesService {
       throw new Error('El servicio se encuentra temporalmente en modo de contingencia.');
     }
 
-    const isValid = await this.checkMemorialValidity(memorialId);
-    if (!isValid) return false;
+    try {
+      const supabase = createAdminClient();
+      const { data: memorial } = await ((supabase as any)
+        .from('memorials')
+        .select('id, plan_type, publication_status, payment_status, expires_at, moderation_status, visibility')
+        .eq('id', memorialId)
+        .maybeSingle() as any);
 
-    const existing = readLocalCandles();
-    const candle = existing.find(c => c.id === candleId);
-    if (!candle) return false;
+      if (!memorial) return false;
+      const rights = determineMemorialFlameRights(memorial);
+      if (!rights.hasValidRight) return false;
 
-    candle.memorial_id = memorialId;
-    candle.is_from_mural = true;
-    candle.is_eternal = true;
-    writeLocalCandles(existing);
-    return true;
+      const existing = readLocalCandles();
+      const candle = existing.find(c => c.id === candleId);
+      if (!candle) return false;
+
+      candle.memorial_id = memorialId;
+      candle.is_from_mural = true;
+      candle.is_eternal = rights.isEternal;
+      candle.expires_at = rights.expiresAt;
+      candle.mural_plan = rights.planType;
+      candle.status = rights.status;
+      writeLocalCandles(existing);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /**
