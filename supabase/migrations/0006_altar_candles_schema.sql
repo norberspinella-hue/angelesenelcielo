@@ -1,50 +1,55 @@
 -- Migración 0006: Esquema autónomo para Altar de Luces (Cielo lleno de luces)
--- Tabla independiente y aislada. No modifica ninguna tabla existente.
+-- Totalmente aislado e independiente. CERO claves foráneas ni dependencias de integridad sobre tablas existentes.
 
 CREATE TABLE IF NOT EXISTS public.altar_candles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  pet_name TEXT NOT NULL,
-  species TEXT NOT NULL DEFAULT 'perro' CHECK (species IN ('perro', 'gato', 'conejo', 'pajaro', 'caballo', 'otro')),
-  author_name TEXT NOT NULL DEFAULT 'Familia amorosa',
-  dedication TEXT NOT NULL,
-  photo_url TEXT,
+  pet_name VARCHAR(100) NOT NULL,
+  species VARCHAR(20) NOT NULL DEFAULT 'perro' CHECK (species IN ('perro', 'gato', 'conejo', 'pajaro', 'caballo', 'otro')),
+  author_name VARCHAR(100) NOT NULL DEFAULT 'Familia amorosa',
+  dedication VARCHAR(500) NOT NULL,
+  photo_url VARCHAR(1000),
   
   -- Campos privados protegidos (nunca expuestos en consultas públicas anónimas)
-  email TEXT,
-  manage_token_hash TEXT,
-  unsubscribe_token_hash TEXT,
+  email VARCHAR(255),
+  manage_token_hash VARCHAR(128),
+  unsubscribe_token_hash VARCHAR(128),
   reminder_opt_in BOOLEAN NOT NULL DEFAULT true,
   commercial_opt_in BOOLEAN NOT NULL DEFAULT false,
   opted_out_at TIMESTAMPTZ,
-  ip_hash TEXT,
+  ip_hash VARCHAR(128),
   
-  -- Vinculación de solo lectura con memoriales del Mural Global
+  -- Vinculación puramente lógica con memoriales del Mural Global (SIN FK para aislamiento total)
   is_from_mural BOOLEAN NOT NULL DEFAULT false,
   is_eternal BOOLEAN NOT NULL DEFAULT false,
-  memorial_id UUID REFERENCES public.memorials(id) ON DELETE SET NULL,
-  mural_plan TEXT,
+  memorial_id UUID,
+  mural_plan VARCHAR(50),
   
   -- Interacción comunitaria y protectoras
   warmth_count INTEGER NOT NULL DEFAULT 1,
   is_shelter_pet BOOLEAN NOT NULL DEFAULT false,
-  shelter_name TEXT,
+  shelter_name VARCHAR(100),
   
   -- Control de estado y ciclo vital de la llama
-  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'hidden', 'reported', 'flagged')),
+  status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'hidden', 'reported', 'flagged')),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   expires_at TIMESTAMPTZ NOT NULL DEFAULT (now() + interval '7 days'),
   reignited_at TIMESTAMPTZ,
-  reignite_count INTEGER NOT NULL DEFAULT 0
+  reignite_count INTEGER NOT NULL DEFAULT 0,
+  
+  -- Campos de auditoría y prevención de duplicados de correo (idempotencia)
+  pre_reminder_sent_at TIMESTAMPTZ,
+  extinguished_notice_sent_at TIMESTAMPTZ
 );
 
--- Índices de alto rendimiento para consultas públicas y cálculo de contadores
+-- Índices de alto rendimiento para consultas y recuentos
 CREATE INDEX IF NOT EXISTS idx_altar_candles_status_expires 
   ON public.altar_candles (status, expires_at);
 
 CREATE INDEX IF NOT EXISTS idx_altar_candles_created_at 
   ON public.altar_candles (created_at DESC);
 
-CREATE INDEX IF NOT EXISTS idx_altar_candles_memorial_id 
+-- Restricción estricta de unicidad parcial: impide duplicar tarjetas de un mismo memorial
+CREATE UNIQUE INDEX IF NOT EXISTS uq_altar_candles_memorial_id 
   ON public.altar_candles (memorial_id) WHERE memorial_id IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_altar_candles_manage_token 
@@ -56,10 +61,10 @@ CREATE INDEX IF NOT EXISTS idx_altar_candles_ip_hash_created
 -- Habilitar Row Level Security (RLS)
 ALTER TABLE public.altar_candles ENABLE ROW LEVEL SECURITY;
 
--- Revocación de acceso anónimo directo a la tabla base para proteger datos personales (RGPD)
-REVOKE ALL ON public.altar_candles FROM anon;
+-- Revocación total de acceso a la tabla base con datos personales para roles públicos
+REVOKE ALL ON public.altar_candles FROM anon, authenticated;
 
--- Política de administración total para el cliente de servicio (Next.js server routes)
+-- Acceso administrativo exclusivo para service_role (API Next.js de servidor)
 DROP POLICY IF EXISTS "altar_candles_service_role_all" ON public.altar_candles;
 CREATE POLICY "altar_candles_service_role_all" ON public.altar_candles
   FOR ALL TO service_role
@@ -93,10 +98,10 @@ GRANT SELECT ON public.altar_candles_public_view TO anon, authenticated;
 
 -- Tabla independiente para configuración y estado compartido en Vercel
 CREATE TABLE IF NOT EXISTS public.altar_settings (
-  key TEXT PRIMARY KEY,
+  key VARCHAR(100) PRIMARY KEY,
   value JSONB NOT NULL,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_by TEXT
+  updated_by VARCHAR(100)
 );
 
 ALTER TABLE public.altar_settings ENABLE ROW LEVEL SECURITY;
@@ -113,7 +118,7 @@ CREATE POLICY "altar_settings_service_role_all" ON public.altar_settings
 INSERT INTO public.altar_settings (key, value, updated_at, updated_by)
 VALUES (
   'system_config',
-  '{"persistence_enabled": false, "reminders_cron_enabled": false, "audit_log": [{"timestamp": "2026-11-01T17:11:00Z", "actor": "phase-a-init", "reason": "Inicialización con altar desactivado"}]}'::jsonb,
+  '{"persistence_enabled": false, "reminders_cron_enabled": false, "audit_log": [{"timestamp": "2026-11-01T17:20:00Z", "actor": "phase-a-setup", "reason": "Inicialización segura con altar y cron desactivados"}]}'::jsonb,
   now(),
   'setup'
 )
@@ -126,7 +131,7 @@ CREATE TABLE IF NOT EXISTS public.altar_cron_logs (
   completed_at TIMESTAMPTZ,
   pre_reminders_sent INTEGER NOT NULL DEFAULT 0,
   extinguished_notices_sent INTEGER NOT NULL DEFAULT 0,
-  status TEXT NOT NULL DEFAULT 'running',
+  status VARCHAR(20) NOT NULL DEFAULT 'running',
   error_message TEXT
 );
 
