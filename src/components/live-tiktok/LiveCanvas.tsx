@@ -30,6 +30,7 @@ export function LiveCanvas({
     activePetDedication = '',
     candleLitAt = 0,
     muralStarsCount,
+    webCandlesCount = 18,
     sessionCandlesCount,
   } = state;
 
@@ -44,25 +45,28 @@ export function LiveCanvas({
   // Lista de hasta 5 nombres recientes para el ticker superior sin truncar el estado
   const recentCandles = candles.slice(0, 5);
 
-  // Auto-adaptación de escala tipográfica según longitud del nombre (sin deformar letras)
+  // 1. NOMBRE PRINCIPAL: 3 Escalones Tipográficos Obligatorios y Centrado Perfecto
   const nameLength = currentPet.length;
-  let nameFontSize = 'clamp(44px, 11.5vw, 124px)'; // Nombres cortos: Chloé, Bro, Xena
-  if (nameLength > 18) {
-    nameFontSize = 'clamp(20px, 5.2vw, 56px)'; // Nombres muy largos: Maximiliano Fernando
-  } else if (nameLength > 12) {
-    nameFontSize = 'clamp(26px, 6.8vw, 76px)'; // Nombres largos: Mary Margaret
-  } else if (nameLength > 6) {
-    nameFontSize = 'clamp(34px, 8.8vw, 96px)'; // Nombres medios: Juliette
+  let nameFontSize = 'clamp(34px, 7.4vw, 82px)'; // Escalón 1 · Nombre Corto (1 a 5 chars: Dura, Bro, Coco, Maya)
+  if (nameLength > 11) {
+    nameFontSize = 'clamp(20px, 4.2vw, 48px)'; // Escalón 3 · Nombre Largo (12+ chars: Maximiliano Fernando, Mary Margaret)
+  } else if (nameLength > 5) {
+    nameFontSize = 'clamp(26px, 5.8vw, 66px)'; // Escalón 2 · Nombre Medio (6 a 11 chars: Chloé, Juliette, Kassius)
   }
 
-  // Auto-adaptación de escala para la dedicatoria de hasta 2 líneas
+  // 2. DEDICATORIA: Control Estricto de 1 o 2 Líneas Equilibradas (Sin Palabras Huérfanas)
   const dedicationLength = rawDedication.length;
-  let dedicationFontSize = 'clamp(13px, 2.8vw, 30px)';
-  if (dedicationLength > 60) {
-    dedicationFontSize = 'clamp(10px, 2.1vw, 22px)';
-  } else if (dedicationLength > 35) {
-    dedicationFontSize = 'clamp(11.5px, 2.4vw, 25px)';
+  let dedicationFontSize = 'clamp(14px, 2.9vw, 29px)';
+  if (dedicationLength > 65) {
+    dedicationFontSize = 'clamp(11px, 2.2vw, 22px)';
+  } else if (dedicationLength > 40) {
+    dedicationFontSize = 'clamp(12.5px, 2.5vw, 25px)';
   }
+
+  // Formateo en líneas limpias para evitar que palabras queden aisladas en 3ª línea
+  const dedicationLines = rawDedication.includes('\n')
+    ? rawDedication.split('\n').filter(Boolean)
+    : [rawDedication];
 
   return (
     <div
@@ -176,53 +180,68 @@ export function LiveCanvas({
       {/* ========================================================================= */}
       {activeScene === 1 && (
         <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none">
-          {/* 1. CONTADORES SUPERIORES INDEPENDIENTES (Y: ~24.5% en 1080x1920) */}
+          {/* 1. CONTADORES SUPERIORES INDEPENDIENTES (Y: ~23.8% en 1080x1920) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2.5 sm:gap-4 z-20 w-full max-w-[90%]"
-            style={{ top: '24.2%' }}
+            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 sm:gap-2.5 z-20 w-full max-w-[96%]"
+            style={{ top: '23.8%' }}
           >
-            {/* Píldora Mural Global (Dato real verificado de Supabase) */}
-            <div className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-[#FFFDF8]/80 backdrop-blur-md border border-[#DDBF80]/55 shadow-[0_4px_16px_rgba(78,35,100,0.08)]">
-              <span className="text-xs sm:text-sm drop-shadow-xs">⭐</span>
-              <span className="text-[11px] sm:text-xs font-serif font-bold text-[#3B142D] tracking-wide whitespace-nowrap">
-                <strong className="font-extrabold text-[#2E0D1E]">{muralStarsCount || 151}</strong> en el mural
+            {/* Píldora 1: Mural Global (Dato real verificado de Supabase) */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFFDF8]/90 backdrop-blur-md border border-[#D5B77B]/60 shadow-[0_4px_16px_rgba(78,35,100,0.08)]">
+              <span className="text-xs drop-shadow-xs">⭐</span>
+              <span className="text-[11px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
+                <strong className="font-extrabold text-[#1E0417]">{muralStarsCount || 151}</strong> en el mural
               </span>
             </div>
 
-            {/* Píldora Sesión LIVE (Contador propio de la emisión actual) */}
-            <div className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-[#FAF0FC]/80 backdrop-blur-md border border-[#D5A0DC]/55 shadow-[0_4px_16px_rgba(78,35,100,0.08)]">
-              <span className="text-xs sm:text-sm drop-shadow-xs">🕯️</span>
-              <span className="text-[11px] sm:text-xs font-serif font-bold text-[#3B142D] tracking-wide whitespace-nowrap">
-                <strong className="font-extrabold text-[#2E0D1E]">{sessionCandlesCount}</strong> en este directo
+            {/* Píldora 2: Altar Web (Llamas activas reales de Cielo lleno de luces) */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFF8FA]/90 backdrop-blur-md border border-[#EAC2D8]/70 shadow-[0_4px_16px_rgba(78,35,100,0.08)]">
+              <span className="text-xs drop-shadow-xs">✨</span>
+              <span className="text-[11px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
+                <strong className="font-extrabold text-[#1E0417]">{webCandlesCount || 18}</strong> en la web
+              </span>
+            </div>
+
+            {/* Píldora 3: Sesión LIVE (Contador propio de la emisión actual) */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF0FC]/90 backdrop-blur-md border border-[#D09BD8]/60 shadow-[0_4px_16px_rgba(78,35,100,0.08)]">
+              <span className="text-xs drop-shadow-xs">🕯️</span>
+              <span className="text-[11px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
+                <strong className="font-extrabold text-[#1E0417]">{sessionCandlesCount}</strong> en este directo
               </span>
             </div>
           </div>
 
-          {/* 2. TICKER DE LUCES RECIENTES (Y: ~30.2% en 1080x1920) */}
+          {/* 2. TICKER DE LUCES RECIENTES CON MAYOR TAMAÑO Y CONTRASTE (Y: ~29.8% en 1080x1920) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-20 w-full max-w-[90%]"
-            style={{ top: '30.2%' }}
+            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-20 w-full max-w-[92%]"
+            style={{ top: '29.8%' }}
           >
+            {/* Subtítulo con más presencia y contraste */}
             <span
-              className="font-serif italic text-xs sm:text-sm text-[#4A1E3C] tracking-wide drop-shadow-[0_1px_2px_rgba(255,255,255,0.85)]"
-              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+              className="font-serif italic font-semibold text-sm sm:text-base text-[#24051B] tracking-wide"
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.9)',
+              }}
             >
               Pequeñas luces que nunca se apagan
             </span>
-            <span className="text-[10px] text-[#A05C88] my-0.5 leading-none">♡</span>
+            <span className="text-xs text-[#8B1E5F] my-0.5 leading-none font-bold">♡</span>
 
-            {/* Ticker horizontal de hasta 5 mascotas recientes */}
-            <div className="flex items-center justify-center gap-2 sm:gap-2.5 flex-wrap px-2 max-w-full">
+            {/* Ticker horizontal de hasta 5 mascotas recientes (Mayor tamaño y contraste óptimo) */}
+            <div className="flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap px-3 max-w-full">
               {recentCandles.map((c, idx) => (
                 <React.Fragment key={c.id || idx}>
                   {idx > 0 && (
-                    <span className="text-[10px] text-[#A05C88]/70 select-none">♡</span>
+                    <span className="text-xs text-[#8B1E5F]/80 font-bold select-none">♡</span>
                   )}
                   <span
-                    className={`font-serif italic text-xs sm:text-sm text-[#38112C] font-semibold tracking-wide drop-shadow-[0_1px_2px_rgba(255,255,255,0.7)] transition-all duration-700 ${
+                    className={`font-serif italic font-bold text-sm sm:text-[17px] text-[#1A0315] tracking-wide transition-all duration-700 ${
                       idx === 0 && isJustLit ? 'text-[#8B1E5F] font-black scale-105' : ''
                     }`}
-                    style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                    style={{
+                      fontFamily: "'Cormorant Garamond', Georgia, serif",
+                      textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.9)',
+                    }}
                   >
                     {c.name}
                   </span>
@@ -264,68 +283,95 @@ export function LiveCanvas({
             <div className="absolute top-[38px] w-2 h-2 rounded-full bg-amber-100 shadow-[0_0_12px_#FDE047] animate-pulse" />
           </div>
 
-          {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (Y: ~67.2% en 1080x1920) */}
-          <div
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-20 w-[68%] max-w-[500px]"
-            style={{ top: '67.2%', height: '12.8%' }}
-          >
-            {currentPet ? (
-              <div className="w-full h-full flex flex-col justify-between items-center py-1">
-                {/* Nombre Protagonista con Allura y adaptación automática de tamaño */}
-                <div className="flex-1 flex items-center justify-center w-full px-2 overflow-hidden">
-                  <span
-                    className="leading-none tracking-normal select-none text-center block w-full truncate"
-                    style={{
-                      fontFamily: "'Allura', cursive",
-                      color: '#2E0D1E',
-                      fontSize: nameFontSize,
-                      textShadow: '0 1px 3px rgba(255,255,255,0.85), 0 2px 8px rgba(220,180,230,0.4)',
-                    }}
-                  >
-                    {currentPet}
-                  </span>
-                </div>
+          {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (ZONA SUPERIOR: NOMBRE | ZONA INFERIOR: DEDICATORIA) */}
+          {currentPet ? (
+            <>
+              {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA CENTRADO (Y: ~70.4% a ~74.3%) */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-20 w-[64%] max-w-[460px] px-4"
+                style={{ top: '70.4%', height: '3.9%' }}
+              >
+                <span
+                  className="leading-none tracking-normal select-none text-center block w-full truncate"
+                  style={{
+                    fontFamily: "'Allura', cursive",
+                    color: '#200516',
+                    fontSize: nameFontSize,
+                    textShadow: '0 1px 3px rgba(255,255,255,1), 0 2px 8px rgba(255,255,255,0.8), 0 0 14px rgba(230,200,240,0.5)',
+                  }}
+                >
+                  {currentPet}
+                </span>
+              </div>
 
-                {/* Frase conmemorativa de máximo 2 líneas */}
-                <div className="w-full px-2 pb-0.5 text-center flex items-center justify-center">
+              {/* ZONA INFERIOR: DEDICATORIA DE 1 O 2 LÍNEAS EQUILIBRADAS (Y: ~76.2% a ~80.0%) */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-20 w-[64%] max-w-[460px] px-3"
+                style={{ top: '76.2%', height: '3.8%' }}
+              >
+                {dedicationLines.length > 1 ? (
+                  <div className="w-full flex flex-col items-center justify-center leading-tight">
+                    {dedicationLines.map((line, idx) => (
+                      <p
+                        key={idx}
+                        className="font-serif italic font-bold text-[#23051B] tracking-normal"
+                        style={{
+                          fontFamily: "'Cormorant Garamond', Georgia, serif",
+                          fontSize: dedicationFontSize,
+                          textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.85)',
+                          margin: 0,
+                          lineHeight: '1.2',
+                        }}
+                      >
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                ) : (
                   <p
-                    className="font-serif italic text-[#4A1E3C] leading-snug line-clamp-2 max-w-[95%]"
+                    className="font-serif italic font-bold text-[#23051B] leading-tight tracking-normal"
                     style={{
                       fontFamily: "'Cormorant Garamond', Georgia, serif",
                       fontSize: dedicationFontSize,
-                      textShadow: '0 1px 2px rgba(255,255,255,0.85)',
+                      textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.85)',
+                      textWrap: 'balance',
+                      margin: 0,
+                      lineHeight: '1.25',
                     }}
                   >
                     {rawDedication}
                   </p>
-                </div>
+                )}
               </div>
-            ) : (
-              /* Estado de reposo / Altar inicial */
-              <div className="w-full h-full flex flex-col justify-center items-center py-1 text-center">
-                <span
-                  className="leading-none tracking-normal select-none block"
-                  style={{
-                    fontFamily: "'Allura', cursive",
-                    color: '#3B142D',
-                    fontSize: 'clamp(32px, 5.5vw, 56px)',
-                    textShadow: '0 1px 3px rgba(255,255,255,0.85)',
-                  }}
-                >
-                  Ángeles en el Cielo
-                </span>
-                <p
-                  className="font-serif italic text-xs sm:text-sm text-[#5C2B4E] mt-1"
-                  style={{
-                    fontFamily: "'Cormorant Garamond', Georgia, serif",
-                    textShadow: '0 1px 2px rgba(255,255,255,0.85)',
-                  }}
-                >
-                  Escribe el nombre de tu ángel en el chat 🕯️
-                </p>
-              </div>
-            )}
-          </div>
+            </>
+          ) : (
+            /* Estado de reposo / Altar inicial */
+            <div
+              className="absolute left-1/2 -translate-x-1/2 flex flex-col justify-center items-center py-1 text-center z-20 w-[64%] max-w-[460px]"
+              style={{ top: '70.6%', height: '8.8%' }}
+            >
+              <span
+                className="leading-none tracking-normal select-none block"
+                style={{
+                  fontFamily: "'Allura', cursive",
+                  color: '#2A071E',
+                  fontSize: 'clamp(30px, 5.2vw, 52px)',
+                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.85)',
+                }}
+              >
+                Ángeles en el Cielo
+              </span>
+              <p
+                className="font-serif italic font-bold text-xs sm:text-sm text-[#380E2B] mt-1.5"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.85)',
+                }}
+              >
+                Escribe el nombre de tu ángel en el chat 🕯️
+              </p>
+            </div>
+          )}
         </div>
       )}
 

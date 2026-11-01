@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OctubreBanner } from '@/components/landing/OctubreBanner';
 import { CartasAlCieloHeader } from '@/components/comunidad/CartasAlCieloHeader';
 import { Footer } from '@/components/landing/Footer';
+import type { AltarStats } from '@/types/altar';
 
 export interface AltarCandle {
   id: string;
@@ -23,6 +24,7 @@ export interface AltarCandle {
   shelterName?: string;
   socialHandle?: string;
   anniversaryDate?: string;
+  isFromMural?: boolean;
 }
 
 const SEED_CANDLES: AltarCandle[] = [
@@ -181,8 +183,10 @@ const SEED_CANDLES: AltarCandle[] = [
 ];
 
 export default function CieloLlenoDeLucesClient() {
+  const isPersistentAltarEnabled = process.env.NEXT_PUBLIC_ENABLE_PERSISTENT_ALTAR !== 'false';
   const [hasTopBanner, setHasTopBanner] = useState(true);
   const [candles, setCandles] = useState<AltarCandle[]>(SEED_CANDLES);
+  const [stats, setStats] = useState<AltarStats | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'todos' | 'vivas' | 'reavivar' | 'perro' | 'gato' | 'refugios'>('todos');
   
@@ -198,7 +202,10 @@ export default function CieloLlenoDeLucesClient() {
   const [newDedication, setNewDedication] = useState('');
   const [newAnniversaryDate, setNewAnniversaryDate] = useState('');
   const [newEmail, setNewEmail] = useState('');
-  const [newAnniversaryOptIn, setNewAnniversaryOptIn] = useState(true);
+  const [commercialConsent, setCommercialConsent] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newAnniversaryOptIn, setNewAnniversaryOptIn] = useState(false);
   const [uploadedPhotoPreview, setUploadedPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -212,12 +219,60 @@ export default function CieloLlenoDeLucesClient() {
     }, 4000);
   };
 
-  // Contadores
-  const totalCandlesCount = 148;
-  const activeCandlesCount = candles.filter(c => !c.isNeedsReignition).length;
-  const needsReignitionCount = candles.filter(c => c.isNeedsReignition).length;
+  // Carga reactiva de velas persistentes
+  useEffect(() => {
+    if (!isPersistentAltarEnabled) return;
+    let isCancelled = false;
 
-  // Filtrado
+    async function loadCandles() {
+      try {
+        const queryParams = new URLSearchParams();
+        if (filterMode && filterMode !== 'todos') queryParams.set('filter', filterMode);
+        if (searchQuery.trim()) queryParams.set('search', searchQuery.trim());
+        
+        const res = await fetch(`/api/community/candles?${queryParams.toString()}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (isCancelled || !data.success) return;
+
+        if (data.stats) {
+          setStats(data.stats);
+        }
+
+        if (Array.isArray(data.candles) && data.candles.length > 0) {
+          const mapped: AltarCandle[] = data.candles.map((c: any) => ({
+            id: c.id,
+            petName: c.pet_name,
+            species: c.species,
+            authorName: c.author_name,
+            dedication: c.dedication,
+            photoUrl: c.photo_url || '/images/comunidad/golden_retriever_celestial_clean.webp',
+            litDate: c.is_lit ? 'Encendida' : 'Llama en reposo',
+            daysRemaining: c.days_remaining,
+            isNeedsReignition: !c.is_lit,
+            isEternal: c.is_eternal,
+            warmthCount: c.warmth_count,
+            isShelterPet: c.is_shelter_pet,
+            shelterName: c.shelter_name,
+            isFromMural: c.is_from_mural,
+          }));
+          setCandles(mapped);
+        }
+      } catch (err) {
+        console.error('Error fetching persistent altar candles:', err);
+      }
+    }
+
+    loadCandles();
+    return () => { isCancelled = true; };
+  }, [isPersistentAltarEnabled, filterMode, searchQuery]);
+
+  // Contadores vivos
+  const activeCandlesCount = stats ? stats.active_candles_count : candles.filter(c => !c.isNeedsReignition).length;
+  const needsReignitionCount = candles.filter(c => c.isNeedsReignition).length;
+  const totalCandlesCount = stats ? stats.total_historical_candles : candles.length;
+
+  // Filtrado de respaldo en cliente
   const filteredCandles = useMemo(() => {
     return candles.filter((candle) => {
       if (searchQuery.trim()) {
@@ -250,8 +305,13 @@ export default function CieloLlenoDeLucesClient() {
     }
   };
 
-  // Acción: Encender llama apagada (ciclo de 7 días catedralicio)
-  const handleReigniteCandle = (candleId: string) => {
+  // Acción: Encender llama apagada (Reavivado gratuito e ilimitado)
+  const handleReigniteCandle = async (candleId: string) => {
+    let token = '';
+    try {
+      token = localStorage.getItem(`altar_manage_${candleId}`) || '';
+    } catch {}
+
     setCandles(prev => prev.map(c => {
       if (c.id === candleId) {
         return {
@@ -275,11 +335,23 @@ export default function CieloLlenoDeLucesClient() {
       } : null);
     }
 
+    if (isPersistentAltarEnabled && token) {
+      try {
+        await fetch('/api/community/candles/reignite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ candleId, manageToken: token }),
+        });
+      } catch (err) {
+        console.error('Error re-igniting candle via API:', err);
+      }
+    }
+
     showToast('Llama encendida con éxito. Permanecerá ardiendo 7 días más en el Cielo de Luces.');
   };
 
   // Acción: Acompañar / Enviar calor
-  const handleSendWarmth = (candleId: string, e?: React.MouseEvent) => {
+  const handleSendWarmth = async (candleId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setCandles(prev => prev.map(c => {
       if (c.id === candleId) {
@@ -293,30 +365,97 @@ export default function CieloLlenoDeLucesClient() {
     }
 
     showToast('Has acompañado esta vela con un abrazo de luz.');
+
+    if (isPersistentAltarEnabled) {
+      try {
+        await fetch('/api/community/candles/warmth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ candleId }),
+        });
+      } catch (err) {
+        console.error('Error sending warmth:', err);
+      }
+    }
   };
 
-  // Envío del formulario de nueva vela
-  const handleCreateCandle = (e: React.FormEvent) => {
+  // Envío del formulario de nueva vela comunitaria gratuita
+  const handleCreateCandle = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newPetName.trim()) return;
+    if (!newPetName.trim()) {
+      showToast('Por favor introduce el nombre de tu mascota.');
+      return;
+    }
+    if (!newEmail.trim()) {
+      showToast('Por favor introduce tu correo electrónico.');
+      return;
+    }
 
-    const newEntry: AltarCandle = {
-      id: 'user-candle-' + Date.now(),
-      petName: newPetName.trim(),
-      species: newSpecies,
-      authorName: newAuthor.trim() || 'Familia amorosa',
-      dedication: newDedication.trim() || 'Una luz eterna que nunca se apagará en el Cielo de Luces.',
-      photoUrl: uploadedPhotoPreview || '/images/comunidad/golden_retriever_celestial_clean.webp',
-      litDate: 'Encendida hoy',
-      daysRemaining: 7,
-      isNeedsReignition: false,
-      warmthCount: 1,
-      anniversaryDate: newAnniversaryOptIn ? newAnniversaryDate : undefined,
-    };
+    setIsSubmitting(true);
+    try {
+      if (isPersistentAltarEnabled) {
+        const res = await fetch('/api/community/candles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            pet_name: newPetName.trim(),
+            species: newSpecies,
+            author_name: newAuthor.trim() || 'Familia amorosa',
+            dedication: newDedication.trim() || 'Una luz eterna que nunca se apagará en el Cielo de Luces.',
+            photo_url: uploadedPhotoPreview || null,
+            email: newEmail.trim(),
+            commercial_opt_in: commercialConsent,
+            honeypot: honeypot,
+          }),
+        });
 
-    setCandles(prev => [newEntry, ...prev]);
-    setNewCandleCelebration(true);
-    showToast(`¡Vela encendida en el Cielo de Luces por ${newPetName}!`);
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || 'No se pudo encender la vela');
+        }
+
+        const newCandle: AltarCandle = {
+          id: data.candle.id,
+          petName: data.candle.pet_name,
+          species: data.candle.species,
+          authorName: data.candle.author_name,
+          dedication: data.candle.dedication,
+          photoUrl: data.candle.photo_url || '/images/comunidad/golden_retriever_celestial_clean.webp',
+          litDate: 'Encendida hoy',
+          daysRemaining: 7,
+          isNeedsReignition: false,
+          warmthCount: 1,
+        };
+
+        setCandles(prev => [newCandle, ...prev]);
+        if (data.manageToken) {
+          try {
+            localStorage.setItem(`altar_manage_${data.candle.id}`, data.manageToken);
+          } catch {}
+        }
+      } else {
+        const newEntry: AltarCandle = {
+          id: 'user-candle-' + Date.now(),
+          petName: newPetName.trim(),
+          species: newSpecies,
+          authorName: newAuthor.trim() || 'Familia amorosa',
+          dedication: newDedication.trim() || 'Una luz eterna que nunca se apagará en el Cielo de Luces.',
+          photoUrl: uploadedPhotoPreview || '/images/comunidad/golden_retriever_celestial_clean.webp',
+          litDate: 'Encendida hoy',
+          daysRemaining: 7,
+          isNeedsReignition: false,
+          warmthCount: 1,
+        };
+        setCandles(prev => [newEntry, ...prev]);
+      }
+
+      setNewCandleCelebration(true);
+      showToast(`¡Vela encendida en el Cielo de Luces por ${newPetName}!`);
+    } catch (err: any) {
+      showToast(err.message || 'Error al encender la vela.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -458,10 +597,10 @@ export default function CieloLlenoDeLucesClient() {
                   <div>
                     <div className="flex items-baseline gap-2">
                       <span className="font-playfair text-2xl sm:text-3xl font-bold text-[#2D0F31] leading-none">
-                        148
+                        {activeCandlesCount}
                       </span>
                       <span className="text-xs sm:text-sm font-semibold text-[#5C3C58]">
-                        Hoy se han encendido 148 velas
+                        Hoy arden {activeCandlesCount} llamas vivas en el Altar
                       </span>
                     </div>
                   </div>
@@ -1123,57 +1262,59 @@ export default function CieloLlenoDeLucesClient() {
                     />
                   </div>
 
-                  {/* Pilar 3: Recordatorio de aniversario con fecha + email */}
+                  {/* Correo electrónico obligatorio para gestión y recordatorios */}
                   <div className="p-3.5 rounded-2xl bg-[#FFF9F3] border border-[#F5E2CC] space-y-2.5">
-                    <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#8B4513] mb-1">
+                        Tu correo electrónico para gestionar la vela *
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        placeholder="tu.correo@ejemplo.com"
+                        className="w-full px-3.5 py-2 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
+                      />
+                      <p className="text-[10px] text-[#8B5A3C] mt-1 leading-tight">
+                        Te enviaremos la confirmación del encendido y el enlace seguro para reavivar la vela gratuitamente cuando descanse a los 7 días.
+                      </p>
+                    </div>
+
+                    {/* Casilla RGPD independiente para novedades comerciales (Opcional) */}
+                    <label className="flex items-start gap-2 pt-1 border-t border-[#F5E2CC]/60 cursor-pointer select-none">
                       <input
                         type="checkbox"
-                        checked={newAnniversaryOptIn}
-                        onChange={(e) => setNewAnniversaryOptIn(e.target.checked)}
+                        checked={commercialConsent}
+                        onChange={(e) => setCommercialConsent(e.target.checked)}
                         className="mt-0.5 rounded border-[#D9CBD6] text-[#A06020] focus:ring-[#A06020] cursor-pointer"
                       />
-                      <span className="text-[11.5px] text-[#6A4D3B] leading-snug">
-                        <strong className="font-semibold text-[#8B4513]">Recordatorio de aniversario y aviso si se apaga la vela:</strong> Deseo recibir un aviso cariñoso por email en su fecha especial y si su llama necesita ser encendida.
+                      <span className="text-[11px] text-[#6A4D3B] leading-snug">
+                        Deseo recibir novedades y homenajes especiales de Ángeles en el Cielo (Opcional).
                       </span>
                     </label>
 
-                    {newAnniversaryOptIn && (
-                      <div className="space-y-2 pt-1 border-t border-[#F5E2CC]/60">
-                        <div>
-                          <label className="block text-[11px] font-bold text-[#8B4513] mb-1">
-                            Fecha de aniversario o partida *
-                          </label>
-                          <input
-                            type="date"
-                            required
-                            value={newAnniversaryDate}
-                            onChange={(e) => setNewAnniversaryDate(e.target.value)}
-                            className="w-full px-3 py-1.5 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-[11px] font-bold text-[#8B4513] mb-1">
-                            Tu correo electrónico para los avisos *
-                          </label>
-                          <input
-                            type="email"
-                            required
-                            value={newEmail}
-                            onChange={(e) => setNewEmail(e.target.value)}
-                            placeholder="ejemplo@correo.com"
-                            className="w-full px-3 py-1.5 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
-                          />
-                        </div>
-                      </div>
-                    )}
+                    {/* Campo Honeypot invisible contra bots */}
+                    <input
+                      type="text"
+                      name="website_url"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                      style={{ display: 'none' }}
+                      aria-hidden="true"
+                    />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-2xl font-bold text-white text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-[#B83C7E] via-[#A83273] to-[#8C2860]"
+                    disabled={isSubmitting}
+                    className={`w-full py-3.5 rounded-2xl font-bold text-white text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer bg-gradient-to-r from-[#B83C7E] via-[#A83273] to-[#8C2860] ${
+                      isSubmitting ? 'opacity-70 cursor-wait' : ''
+                    }`}
                   >
-                    <span>Encender vela por {newPetName || 'mi angelito'}</span>
+                    <span>{isSubmitting ? 'Encendiendo vela...' : `Encender vela por ${newPetName || 'mi angelito'}`}</span>
                     <span>→</span>
                   </button>
                 </form>

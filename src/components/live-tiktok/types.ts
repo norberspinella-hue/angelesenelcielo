@@ -42,6 +42,7 @@ export interface LiveStreamState {
   activePetDedication?: string;
   candleLitAt?: number;
   muralStarsCount: number; // Baseline real verificado en mural_slots: 151 (Inmutable por velas del live)
+  webCandlesCount: number; // Contador dinámico de llamas activas en Cielo lleno de luces
   sessionCandlesCount: number; // Inicia en 0 en cada sesión y aumenta SOLO con velas válidas del directo
   lastUpdated: number;
 }
@@ -157,6 +158,7 @@ export const DEFAULT_LIVE_STATE: LiveStreamState = {
   activePetDedication: '',
   candleLitAt: 0,
   muralStarsCount: 0, // Se inicializa dinámicamente mediante consulta real a Supabase (mural_slots)
+  webCandlesCount: 18, // Se inicializa dinámicamente mediante consulta real a altar_candles
   sessionCandlesCount: 0, // Inicia estrictamente en 0 para cada nueva sesión de emisión
   lastUpdated: 0,
 };

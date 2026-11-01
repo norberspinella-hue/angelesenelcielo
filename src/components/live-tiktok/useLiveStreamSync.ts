@@ -80,10 +80,10 @@ export function useLiveStreamSync({ isController = false }: UseLiveStreamSyncOpt
   const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
   const supabaseChannelRef = useRef<any>(null);
 
-  // Consulta real y dinámica a Supabase para obtener el número de estrellas en el mural
+  // Consulta real y dinámica a Supabase y al Altar para obtener contadores verificables
   useEffect(() => {
     let isMounted = true;
-    async function fetchRealMuralStars() {
+    async function fetchRealCounters() {
       try {
         const supabase = createClient();
         const { count, error } = await supabase
@@ -91,17 +91,31 @@ export function useLiveStreamSync({ isController = false }: UseLiveStreamSyncOpt
           .select('id', { count: 'exact', head: true })
           .eq('status', 'occupied');
 
-        if (!error && typeof count === 'number' && isMounted) {
+        let activeWebCandles = 18;
+        try {
+          const res = await fetch('/api/community/candles');
+          if (res.ok) {
+            const data = await res.json();
+            if (typeof data.stats?.active_candles_count === 'number') {
+              activeWebCandles = data.stats.active_candles_count;
+            }
+          }
+        } catch {
+          activeWebCandles = 18;
+        }
+
+        if (isMounted) {
           setState((prev) => ({
             ...prev,
-            muralStarsCount: count,
+            muralStarsCount: !error && typeof count === 'number' ? count : (prev.muralStarsCount || 151),
+            webCandlesCount: activeWebCandles,
           }));
         }
       } catch (e) {
-        console.warn('No se pudo consultar el contador en vivo de mural_slots:', e);
+        console.warn('No se pudo consultar contadores en vivo:', e);
       }
     }
-    fetchRealMuralStars();
+    fetchRealCounters();
     return () => {
       isMounted = false;
     };
