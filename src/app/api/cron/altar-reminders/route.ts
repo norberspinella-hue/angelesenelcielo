@@ -13,7 +13,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
     }
 
-    const testMode = process.env.NODE_ENV !== 'production';
+    const isProd = process.env.NODE_ENV === 'production';
+    const forceSend = req.nextUrl.searchParams.get('forceSend') === 'true';
+    const testMode = isProd ? false : !forceSend;
     const result = await CandlesService.processScheduledReminders(testMode);
 
     return NextResponse.json({

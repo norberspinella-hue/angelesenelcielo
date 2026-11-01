@@ -10,7 +10,11 @@ import {
 } from '../../types/altar';
 import { createAdminClient } from '../supabase/server';
 import { resend } from '../resend';
-import { generateConfirmationEmailHtml } from './altarEmailTemplates';
+import { 
+  generateConfirmationEmailHtml,
+  generatePreExtinctionEmailHtml,
+  generateExtinguishedEmailHtml
+} from './altarEmailTemplates';
 
 const LOCAL_STORE_PATH = path.join(process.cwd(), 'data', 'altar_candles_local.json');
 const SETTINGS_STORE_PATH = path.join(process.cwd(), 'data', 'altar_settings.json');
@@ -583,6 +587,23 @@ export class CandlesService {
     existing[index] = candle;
     writeLocalCandles(existing);
 
+    try {
+      const supabase = createAdminClient();
+      await (supabase as any)
+        .from('altar_candles')
+        .update({
+          expires_at: newExpiresIso,
+          reignited_at: nowIso,
+          reignite_count: candle.reignite_count,
+          pre_reminder_sent_at: null,
+          extinguished_notice_sent_at: null,
+          status: 'active'
+        })
+        .eq('id', candleId);
+    } catch {
+      // Silencioso en modo local
+    }
+
     return computePresentationFields(candle);
   }
 
@@ -595,11 +616,12 @@ export class CandlesService {
     }
 
     const tokenHash = hashValue(unsubscribeToken.trim());
+    const rawToken = unsubscribeToken.trim();
     const existing = readLocalCandles();
     let updated = false;
 
     for (const c of existing) {
-      if (c.unsubscribe_token_hash === tokenHash) {
+      if (c.unsubscribe_token_hash === tokenHash || c.unsubscribe_token_hash === rawToken) {
         c.reminder_opt_in = false;
         c.commercial_opt_in = false;
         c.opted_out_at = new Date().toISOString();
@@ -609,6 +631,19 @@ export class CandlesService {
 
     if (updated) {
       writeLocalCandles(existing);
+      try {
+        const supabase = createAdminClient();
+        await (supabase as any)
+          .from('altar_candles')
+          .update({
+            reminder_opt_in: false,
+            commercial_opt_in: false,
+            opted_out_at: new Date().toISOString()
+          })
+          .or(`unsubscribe_token_hash.eq.${tokenHash},unsubscribe_token_hash.eq.${rawToken}`);
+      } catch {
+        // Silencioso en modo local
+      }
     }
 
     return updated;
@@ -1106,9 +1141,33 @@ export class CandlesService {
       const now = Date.now();
       const fortyEightHoursMs = 48 * 60 * 60 * 1000;
 
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://todaslasmascotasvanalcielo.com').replace(/\/$/, '');
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'contacto@todaslasmascotasvanalcielo.com';
+
+      // También consultar Supabase si está disponible para asegurar procesar todas las velas
+      try {
+        const supabase = createAdminClient();
+        const { data: dbCandles } = await (supabase as any)
+          .from('altar_candles')
+          .select('*')
+          .eq('status', 'active');
+        if (dbCandles && Array.isArray(dbCandles)) {
+          const idSet = new Set(existing.map(c => c.id));
+          for (const dc of dbCandles) {
+            if (!idSet.has(dc.id)) {
+              existing.push(dc);
+            }
+          }
+        }
+      } catch {
+        // fallback
+      }
+
       for (const candle of existing) {
-        // Solo velas con email, recordatorios activos y que no sean del mural
-        if (!candle.email || !candle.reminder_opt_in || candle.is_from_mural) continue;
+        // Solo velas con email, recordatorios activos, no eternas, activas y que no sean del mural
+        if (!candle.email || !candle.reminder_opt_in || candle.is_from_mural || candle.is_eternal || candle.status !== 'active') {
+          continue;
+        }
 
         const expTime = new Date(candle.expires_at).getTime();
         const timeLeft = expTime - now;
@@ -1117,23 +1176,92 @@ export class CandlesService {
         if (timeLeft > 0 && timeLeft <= fortyEightHoursMs && !candle.pre_reminder_sent_at) {
           candle.pre_reminder_sent_at = new Date().toISOString();
           preRemindersSent++;
+
           if (!testMode) {
-            // En producción invoca a Resend; en test permanece en log
+            try {
+              const hoursRemaining = Math.max(1, Math.round(timeLeft / (60 * 60 * 1000)));
+              const reigniteUrl = `${appUrl}/cielo-lleno-de-luces?candleId=${candle.id}&action=reignite`;
+              const candleUrl = `${appUrl}/cielo-lleno-de-luces?candleId=${candle.id}`;
+              const unsubscribeUrl = candle.unsubscribe_token_hash
+                ? `${appUrl}/api/community/candles/unsubscribe?token=${candle.unsubscribe_token_hash}&candleId=${candle.id}`
+                : `${appUrl}/cielo-lleno-de-luces`;
+
+              const html = generatePreExtinctionEmailHtml({
+                petName: candle.pet_name,
+                authorName: candle.author_name,
+                candleUrl,
+                reigniteUrl,
+                unsubscribeUrl,
+                hoursRemaining
+              });
+
+              await resend.emails.send({
+                from: `Ángeles en el Cielo <${fromEmail}>`,
+                to: candle.email,
+                subject: `🕯️ La velita de ${candle.pet_name} descansará pronto en el Cielo de Luces`,
+                html
+              });
+            } catch (err: any) {
+              console.error('Error enviando pre-recordatorio Resend:', err.message);
+            }
           }
         }
 
-        // 2. Aviso de vela apagada (expirada y aviso previo ya enviado o tiempo rebasado)
-        if (timeLeft <= 0 && !candle.extinguished_notice_sent_at) {
+        // 2. Aviso de vela apagada (expirada dentro de los últimos 3 días para evitar retroactivos)
+        const threeDaysMs = 72 * 60 * 60 * 1000;
+        if (timeLeft <= 0 && timeLeft >= -threeDaysMs && !candle.extinguished_notice_sent_at) {
           candle.extinguished_notice_sent_at = new Date().toISOString();
           extinguishedNoticesSent++;
+
           if (!testMode) {
-            // En producción invoca a Resend; en test permanece en log
+            try {
+              const reigniteUrl = `${appUrl}/cielo-lleno-de-luces?candleId=${candle.id}&action=reignite`;
+              const candleUrl = `${appUrl}/cielo-lleno-de-luces?candleId=${candle.id}`;
+              const unsubscribeUrl = candle.unsubscribe_token_hash
+                ? `${appUrl}/api/community/candles/unsubscribe?token=${candle.unsubscribe_token_hash}&candleId=${candle.id}`
+                : `${appUrl}/cielo-lleno-de-luces`;
+
+              const html = generateExtinguishedEmailHtml({
+                petName: candle.pet_name,
+                authorName: candle.author_name,
+                candleUrl,
+                reigniteUrl,
+                unsubscribeUrl,
+                muralUrl: `${appUrl}/mural-global`
+              });
+
+              await resend.emails.send({
+                from: `Ángeles en el Cielo <${fromEmail}>`,
+                to: candle.email,
+                subject: `✨ La llama de ${candle.pet_name} reposa en el altar · Su recuerdo permanece`,
+                html
+              });
+            } catch (err: any) {
+              console.error('Error enviando aviso de reposo Resend:', err.message);
+            }
           }
         }
       }
 
       if (preRemindersSent > 0 || extinguishedNoticesSent > 0) {
         writeLocalCandles(existing);
+        // Sincronizar marcas a Supabase
+        try {
+          const supabase = createAdminClient();
+          for (const c of existing) {
+            if (c.pre_reminder_sent_at || c.extinguished_notice_sent_at) {
+              await (supabase as any)
+                .from('altar_candles')
+                .update({
+                  pre_reminder_sent_at: c.pre_reminder_sent_at,
+                  extinguished_notice_sent_at: c.extinguished_notice_sent_at
+                })
+                .eq('id', c.id);
+            }
+          }
+        } catch {
+          // fallback
+        }
       }
     } finally {
       await updatePersistentSettings(
