@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 export default function CookieBanner() {
+  const pathname = usePathname()
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
+    if (pathname?.startsWith('/live-tiktok')) return
     const consent = localStorage.getItem('cookie-consent')
     if (!consent) setVisible(true)
-  }, [])
+  }, [pathname])
 
   const handleAccept = () => {
     localStorage.setItem('cookie-consent', 'accepted')
@@ -21,6 +24,7 @@ export default function CookieBanner() {
     setVisible(false)
   }
 
+  if (pathname?.startsWith('/live-tiktok')) return null
   if (!visible) return null
 
   return (

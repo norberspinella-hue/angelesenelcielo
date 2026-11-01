@@ -4,6 +4,8 @@ import { usePathname } from 'next/navigation';
 
 export function WhatsAppButton() {
   const pathname = usePathname();
+  if (pathname?.startsWith('/live-tiktok')) return null;
+
   const phoneNumber = '34610319143';
   const defaultMessage = 'Hola, tengo una consulta sobre el memorial de Ángeles en el Cielo 🐾';
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(defaultMessage)}`;
