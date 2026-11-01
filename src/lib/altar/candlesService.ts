@@ -9,6 +9,8 @@ import {
   SpeciesType 
 } from '../../types/altar';
 import { createAdminClient } from '../supabase/server';
+import { resend } from '../resend';
+import { generateConfirmationEmailHtml } from './altarEmailTemplates';
 
 const LOCAL_STORE_PATH = path.join(process.cwd(), 'data', 'altar_candles_local.json');
 const SETTINGS_STORE_PATH = path.join(process.cwd(), 'data', 'altar_settings.json');
@@ -76,6 +78,40 @@ function writeLocalTickets(tickets: AltarExchangeTicket[]): void {
     fs.writeFileSync(TICKETS_STORE_PATH, JSON.stringify(tickets, null, 2), 'utf8');
   } catch (err) {
     console.error('Error writing tickets store:', err);
+  }
+}
+
+async function getPersistentTickets(): Promise<AltarExchangeTicket[]> {
+  try {
+    const supabase = createAdminClient();
+    const { data } = await ((supabase as any)
+      .from('altar_settings')
+      .select('value')
+      .eq('key', 'exchange_tickets')
+      .maybeSingle() as any);
+    if (data?.value && Array.isArray(data.value)) {
+      return data.value;
+    }
+  } catch {
+    // fallback a almacén local
+  }
+  return readLocalTickets();
+}
+
+async function savePersistentTickets(tickets: AltarExchangeTicket[]): Promise<void> {
+  writeLocalTickets(tickets);
+  try {
+    const supabase = createAdminClient();
+    await ((supabase as any)
+      .from('altar_settings')
+      .upsert({
+        key: 'exchange_tickets',
+        value: tickets,
+        updated_at: new Date().toISOString(),
+        updated_by: 'altar_tickets_engine'
+      }) as any);
+  } catch (err) {
+    console.error('Error syncing tickets to Supabase:', err);
   }
 }
 
@@ -489,7 +525,8 @@ export class CandlesService {
     await this.sendConfirmationEmail(
       computePresentationFields(newRecord),
       email,
-      tokens.manageToken
+      tokens.manageToken,
+      tokens.unsubscribeToken
     ).catch(err => console.warn('Aviso de confirmación omitido:', err.message));
 
     return {
@@ -703,8 +740,9 @@ export class CandlesService {
   static async sendConfirmationEmail(
     candle: AltarCandlePublic,
     email: string,
-    manageToken: string
-  ): Promise<{ success: boolean; simulated: boolean; reason?: string }> {
+    manageToken: string,
+    unsubscribeToken?: string
+  ): Promise<{ success: boolean; simulated: boolean; reason?: string; emailId?: string; ticket?: string }> {
     if (!await this.isConfirmationEmailEnabled()) {
       return {
         success: true,
@@ -713,11 +751,55 @@ export class CandlesService {
       };
     }
 
-    // Código preparado para proveedor de correos (Resend) cuando sea formalmente autorizado
-    return {
-      success: true,
-      simulated: false
-    };
+    try {
+      // 1. Ticket de intercambio temporal de un solo uso (caducidad 2 horas = 7200000 ms)
+      const rawTicket = await this.createExchangeTicket(candle.id, manageToken, 'confirmation', 2 * 60 * 60 * 1000);
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || 'https://todaslasmascotasvanalcielo.com').replace(/\/$/, '');
+      const manageUrl = `${appUrl}/cielo-lleno-de-luces?ticket=${rawTicket}`;
+      const candleUrl = `${appUrl}/cielo-lleno-de-luces?candleId=${candle.id}`;
+      const unsubscribeUrl = unsubscribeToken
+        ? `${appUrl}/api/community/candles/unsubscribe?token=${unsubscribeToken}&candleId=${candle.id}`
+        : `${appUrl}/cielo-lleno-de-luces`;
+
+      const expDate = new Date(candle.expires_at || Date.now() + 7 * 24 * 60 * 60 * 1000);
+      const expiresDateStr = expDate.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+
+      const html = generateConfirmationEmailHtml({
+        petName: candle.pet_name,
+        authorName: candle.author_name,
+        candleUrl,
+        manageUrl,
+        unsubscribeUrl,
+        expiresDateStr
+      });
+
+      const fromEmail = process.env.RESEND_FROM_EMAIL || 'contacto@todaslasmascotasvanalcielo.com';
+      const { data, error } = await resend.emails.send({
+        from: `Ángeles en el Cielo <${fromEmail}>`,
+        to: email,
+        subject: `Una luz brilla por ${candle.pet_name} en el Cielo de Luces ✨`,
+        html
+      });
+
+      if (error) {
+        console.error('Error enviando correo de confirmación de altar con Resend:', error);
+        return { success: false, simulated: false, reason: error.message };
+      }
+
+      return {
+        success: true,
+        simulated: false,
+        emailId: data?.id,
+        ticket: rawTicket
+      };
+    } catch (err: any) {
+      console.error('Excepción al enviar confirmación de altar:', err);
+      return { success: false, simulated: false, reason: err.message };
+    }
   }
 
   /**
@@ -730,16 +812,17 @@ export class CandlesService {
    * Crear un ticket de intercambio temporal de un solo uso
    * Evita la exposición de claves permanentes en URLs, logs o historial
    */
-  static createExchangeTicket(
+  static async createExchangeTicket(
     candleId: string,
     manageToken: string,
     type: 'confirmation' | 'recovery' = 'confirmation',
     ttlMs = 2 * 60 * 60 * 1000 // 2h por defecto
-  ): string {
+  ): Promise<string> {
     const rawTicket = 'tkt_' + crypto.randomBytes(24).toString('base64url');
     const ticketHash = hashValue(rawTicket);
     const now = Date.now();
-    const tickets = readLocalTickets().filter(t => t.expiresAt > now && !t.used);
+    let tickets = await getPersistentTickets();
+    tickets = tickets.filter(t => t.expiresAt > now && !t.used);
     tickets.push({
       ticketHash,
       candleId,
@@ -749,7 +832,7 @@ export class CandlesService {
       used: false,
       createdAt: new Date().toISOString()
     });
-    writeLocalTickets(tickets);
+    await savePersistentTickets(tickets);
     return rawTicket;
   }
 
@@ -757,12 +840,12 @@ export class CandlesService {
    * Canjear un ticket de intercambio temporal de un solo uso
    * Se quema inmediatamente tras su primer canje exitoso
    */
-  static exchangeTicket(rawTicket: string): { candleId: string; manageToken: string } {
+  static async exchangeTicket(rawTicket: string): Promise<{ candleId: string; manageToken: string }> {
     if (!rawTicket || !rawTicket.trim()) {
       throw new Error('Ticket no proporcionado.');
     }
     const ticketHash = hashValue(rawTicket.trim());
-    const tickets = readLocalTickets();
+    const tickets = await getPersistentTickets();
     const found = tickets.find(t => t.ticketHash === ticketHash);
     if (!found) {
       throw new Error('Enlace de acceso no válido o inexistente.');
@@ -774,11 +857,50 @@ export class CandlesService {
       throw new Error('Este enlace de acceso ha caducado por motivos de seguridad.');
     }
     found.used = true;
-    writeLocalTickets(tickets);
+    await savePersistentTickets(tickets);
     return {
       candleId: found.candleId,
       manageToken: found.manageToken
     };
+  }
+
+  /**
+   * Eliminación segura y autorizada exclusivamente para pruebas o titularidad
+   * Impide terminantemente eliminar velas del Mural Global
+   */
+  static async deleteCandle(candleId: string, manageToken: string): Promise<boolean> {
+    if (!candleId || !manageToken) {
+      throw new Error('Identificador y clave requeridos.');
+    }
+    const tokenHash = hashValue(manageToken.trim());
+    const existing = readLocalCandles();
+    const index = existing.findIndex(c => c.id === candleId);
+
+    if (index !== -1 && existing[index].is_from_mural) {
+      throw new Error('No se pueden eliminar homenajes del Mural Global.');
+    }
+
+    if (index !== -1) {
+      if (existing[index].manage_token_hash !== tokenHash) {
+        throw new Error('Clave de gestión no válida.');
+      }
+      existing.splice(index, 1);
+      writeLocalCandles(existing);
+    }
+
+    try {
+      const supabase = createAdminClient();
+      await (supabase as any)
+        .from('altar_candles')
+        .delete()
+        .eq('id', candleId)
+        .eq('manage_token_hash', tokenHash)
+        .eq('is_from_mural', false);
+    } catch {
+      // Ignorar si no está en Supabase
+    }
+
+    return true;
   }
 
   static async recoverCandleAccess(

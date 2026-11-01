@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = CandlesService.exchangeTicket(ticket);
+    const result = await CandlesService.exchangeTicket(ticket);
 
     return NextResponse.json({
       success: true,
