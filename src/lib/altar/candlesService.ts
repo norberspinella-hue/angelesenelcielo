@@ -305,6 +305,8 @@ export class CandlesService {
     candle.expires_at = newExpiresIso;
     candle.reignited_at = nowIso;
     candle.reignite_count = (candle.reignite_count || 0) + 1;
+    candle.pre_reminder_sent_at = null;
+    candle.extinguished_notice_sent_at = null;
 
     existing[index] = candle;
     writeLocalCandles(existing);
@@ -413,11 +415,18 @@ export class CandlesService {
     return { imported, skipped };
   }
 
+  private static runtimeOverride: boolean | null = null;
+
+  static setRuntimeOverride(enabled: boolean | null): void {
+    this.runtimeOverride = enabled;
+  }
+
   /**
    * Interruptor de servidor en tiempo de ejecución (Runtime Feature Flag)
    * Evaluado dinámicamente en cada petición sin necesidad de recompilar la aplicación.
    */
   static isFeatureEnabled(): boolean {
+    if (this.runtimeOverride !== null) return this.runtimeOverride;
     return process.env.ALTAR_PERSISTENCE_ENABLED !== 'false';
   }
 
