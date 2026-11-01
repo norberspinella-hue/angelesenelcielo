@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS public.altar_candles (
   pet_name VARCHAR(100) NOT NULL,
   species VARCHAR(20) NOT NULL DEFAULT 'perro' CHECK (species IN ('perro', 'gato', 'conejo', 'pajaro', 'caballo', 'otro')),
   author_name VARCHAR(100) NOT NULL DEFAULT 'Familia amorosa',
-  dedication VARCHAR(500) NOT NULL,
+  dedication TEXT NOT NULL,
   photo_url VARCHAR(1000),
   
   -- Campos privados protegidos (nunca expuestos en consultas públicas anónimas)
