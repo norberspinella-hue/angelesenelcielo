@@ -46,6 +46,39 @@ function writeLocalSettings(settings: Record<string, any>): void {
 }
 
 // In-memory cache para lectura de alto rendimiento de settings con TTL
+
+const TICKETS_STORE_PATH = path.join(process.cwd(), 'data', 'altar_tickets.json');
+
+export interface AltarExchangeTicket {
+  ticketHash: string;
+  candleId: string;
+  manageToken: string;
+  type: 'confirmation' | 'recovery';
+  expiresAt: number;
+  used: boolean;
+  createdAt: string;
+}
+
+function readLocalTickets(): AltarExchangeTicket[] {
+  try {
+    ensureLocalDir();
+    if (!fs.existsSync(TICKETS_STORE_PATH)) return [];
+    const raw = fs.readFileSync(TICKETS_STORE_PATH, 'utf8');
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+function writeLocalTickets(tickets: AltarExchangeTicket[]): void {
+  try {
+    ensureLocalDir();
+    fs.writeFileSync(TICKETS_STORE_PATH, JSON.stringify(tickets, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error writing tickets store:', err);
+  }
+}
+
 let settingsCache: { data: Record<string, any>; expiresAt: number } | null = null;
 
 async function getPersistentSettings(): Promise<Record<string, any>> {
@@ -692,6 +725,62 @@ export class CandlesService {
    * Valida estrictamente la titularidad mediante el email registrado.
    * Velas del Mural Global (is_from_mural = true / email = null) nunca se asignan a visitantes.
    */
+  
+  /**
+   * Crear un ticket de intercambio temporal de un solo uso
+   * Evita la exposición de claves permanentes en URLs, logs o historial
+   */
+  static createExchangeTicket(
+    candleId: string,
+    manageToken: string,
+    type: 'confirmation' | 'recovery' = 'confirmation',
+    ttlMs = 2 * 60 * 60 * 1000 // 2h por defecto
+  ): string {
+    const rawTicket = 'tkt_' + crypto.randomBytes(24).toString('base64url');
+    const ticketHash = hashValue(rawTicket);
+    const now = Date.now();
+    const tickets = readLocalTickets().filter(t => t.expiresAt > now && !t.used);
+    tickets.push({
+      ticketHash,
+      candleId,
+      manageToken,
+      type,
+      expiresAt: now + ttlMs,
+      used: false,
+      createdAt: new Date().toISOString()
+    });
+    writeLocalTickets(tickets);
+    return rawTicket;
+  }
+
+  /**
+   * Canjear un ticket de intercambio temporal de un solo uso
+   * Se quema inmediatamente tras su primer canje exitoso
+   */
+  static exchangeTicket(rawTicket: string): { candleId: string; manageToken: string } {
+    if (!rawTicket || !rawTicket.trim()) {
+      throw new Error('Ticket no proporcionado.');
+    }
+    const ticketHash = hashValue(rawTicket.trim());
+    const tickets = readLocalTickets();
+    const found = tickets.find(t => t.ticketHash === ticketHash);
+    if (!found) {
+      throw new Error('Enlace de acceso no válido o inexistente.');
+    }
+    if (found.used) {
+      throw new Error('Este enlace de acceso ya ha sido utilizado.');
+    }
+    if (Date.now() > found.expiresAt) {
+      throw new Error('Este enlace de acceso ha caducado por motivos de seguridad.');
+    }
+    found.used = true;
+    writeLocalTickets(tickets);
+    return {
+      candleId: found.candleId,
+      manageToken: found.manageToken
+    };
+  }
+
   static async recoverCandleAccess(
     candleId: string,
     email: string

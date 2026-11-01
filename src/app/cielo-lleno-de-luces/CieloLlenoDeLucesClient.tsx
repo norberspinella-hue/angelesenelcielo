@@ -274,6 +274,57 @@ export default function CieloLlenoDeLucesClient() {
     return () => { isCancelled = true; };
   }, [isPersistentAltarEnabled, filterMode, searchQuery]);
 
+
+  // Manejo seguro de tickets de intercambio de un solo uso y apertura por enlace de correo
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const ticketParam = params.get('ticket');
+    const candleIdParam = params.get('candleId');
+    const actionParam = params.get('action');
+
+    // 1. Canje de ticket de un solo uso (confirmación o recuperación)
+    if (ticketParam) {
+      fetch('/api/community/candles/exchange-ticket', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticket: ticketParam })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.candleId && data.manageToken) {
+            try {
+              localStorage.setItem(`altar_manage_${data.candleId}`, data.manageToken);
+            } catch {}
+            // Limpieza inmediata del ticket en la URL (prevención de fugas en historial, logs y compartir)
+            const cleanUrl = `${window.location.pathname}?candleId=${data.candleId}`;
+            window.history.replaceState({}, '', cleanUrl);
+
+            // Auto-seleccionar la vela si ya cargó
+            const target = candles.find(c => c.id === data.candleId);
+            if (target) {
+              setSelectedCandle(target);
+            }
+            showToast('✓ Dispositivo vinculado con éxito para gestionar este homenaje.');
+          } else {
+            showToast(data.error || 'El enlace de acceso ya no es válido o ha caducado.');
+          }
+        })
+        .catch(() => {
+          showToast('Error al procesar el enlace de acceso.');
+        });
+    } else if (candleIdParam) {
+      // 2. Apertura directa por enlace de aviso previo o reposo (?candleId=...&action=reignite)
+      const target = candles.find(c => c.id === candleIdParam);
+      if (target) {
+        setSelectedCandle(target);
+        if (actionParam === 'reignite') {
+          showToast(`Homenaje de ${target.petName} abierto. Confirma el reavivado en el panel.`);
+        }
+      }
+    }
+  }, [candles]);
+
   // Contadores vivos
   const activeCandlesCount = stats ? stats.active_candles_count : candles.filter(c => !c.isNeedsReignition).length;
   const needsReignitionCount = candles.filter(c => c.isNeedsReignition).length;
