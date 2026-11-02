@@ -43,6 +43,11 @@ DECLARE
   v_rec RECORD;
   v_now TIMESTAMPTZ := timezone('utc'::text, now());
 BEGIN
+  -- 1. Validación estricta: rechazar claves nulas o vacías
+  IF p_key IS NULL OR length(trim(p_key)) = 0 THEN
+    RAISE EXCEPTION 'p_key no puede ser nula ni vacía';
+  END IF;
+
   SELECT failed_attempts, blocked_until
   INTO v_rec
   FROM public.admin_rate_limits
@@ -168,9 +173,15 @@ BEGIN
     END
   RETURNING arl.failed_attempts, arl.blocked_until INTO v_rec;
 
-  -- 3. Limpieza oportunista de registros expirados (sin cron adicional)
+  -- 3. Limpieza oportunista acotada de registros expirados (máximo 50 por invocación, sin contención ni bloqueos prolongados)
   DELETE FROM public.admin_rate_limits
-  WHERE expires_at < v_now;
+  WHERE id IN (
+    SELECT id
+    FROM public.admin_rate_limits
+    WHERE expires_at < v_now
+    LIMIT 50
+    FOR UPDATE SKIP LOCKED
+  );
 
   -- 4. Retornar estado del bloqueo
   IF v_rec.blocked_until IS NOT NULL AND v_rec.blocked_until > v_now THEN

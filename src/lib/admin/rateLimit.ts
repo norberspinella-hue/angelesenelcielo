@@ -83,6 +83,14 @@ export async function checkRateLimit(req: NextRequest): Promise<RateLimitCheckRe
     const ip = getTrustedClientIp(req);
     const key = getPseudonymizedKey(ip, 'ip');
 
+    if (!key || key.trim().length === 0) {
+      return {
+        allowed: false,
+        status: 400,
+        error: 'Identificador de solicitud administrativo no válido.',
+      };
+    }
+
     const supabase = createAdminClient();
     const { data, error } = await (supabase as any)
       .rpc('check_admin_rate_limit', { p_key: key });
@@ -126,6 +134,10 @@ export async function recordFailedAttempt(req: NextRequest): Promise<{ blocked: 
     const ip = getTrustedClientIp(req);
     const key = getPseudonymizedKey(ip, 'ip');
 
+    if (!key || key.trim().length === 0) {
+      return { blocked: true, remainingSeconds: 900 };
+    }
+
     const supabase = createAdminClient();
     const { data, error } = await (supabase as any)
       .rpc('record_admin_failed_attempt', {
@@ -159,6 +171,7 @@ export async function clearAttemptsOnSuccess(req: NextRequest): Promise<void> {
   try {
     const ip = getTrustedClientIp(req);
     const key = getPseudonymizedKey(ip, 'ip');
+    if (!key || key.trim().length === 0) return;
 
     const supabase = createAdminClient();
     await (supabase as any)
