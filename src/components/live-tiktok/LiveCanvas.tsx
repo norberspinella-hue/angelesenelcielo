@@ -182,7 +182,7 @@ export function LiveCanvas({
         <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none">
           {/* 1. CONTADORES SUPERIORES INDEPENDIENTES (Y: ~23.8% en 1080x1920) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 sm:gap-2.5 z-20 w-full max-w-[96%]"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 sm:gap-2.5 z-30 w-full max-w-[96%]"
             style={{ top: '19.2%' }}
           >
             {/* Píldora 1: Mural Global (Dato real verificado de Supabase) */}
@@ -212,7 +212,7 @@ export function LiveCanvas({
 
           {/* 2. TICKER DE LUCES RECIENTES CON MAYOR TAMAÑO Y CONTRASTE (Y: ~29.8% en 1080x1920) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-20 w-full max-w-[92%]"
+            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-full max-w-[92%]"
             style={{ top: '25.5%' }}
           >
             {/* Subtítulo con más presencia y contraste */}
@@ -252,7 +252,7 @@ export function LiveCanvas({
 
           {/* 3. VELA PROTAGONISTA: SISTEMA DE LLAMA VIVA Y RESPLANDOR SINCRONIZADO */}
           <div
-            className="absolute pointer-events-none z-25 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
+            className="absolute pointer-events-none z-10 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
             style={{ left: '21.5%', top: '35.2%', width: '160px', height: '160px' }}
           >
             {/* 1. Aureola ambiental suave permanente que baña el cristal y las flores */}
@@ -355,7 +355,7 @@ export function LiveCanvas({
             <>
               {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA CENTRADO CON RESPLANDOR CELESTIAL */}
               <div
-                className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-20 w-[76%] max-w-[500px] px-4"
+                className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-30 w-[76%] max-w-[500px] px-4"
                 style={{ top: '69.6%', height: '5.6%' }}
               >
                 {/* Halo / Círculo rojizo-dorado expansivo al entrar el perrito */}
@@ -399,7 +399,7 @@ export function LiveCanvas({
 
               {/* ZONA INFERIOR: DEDICATORIA DE 1 O 2 LÍNEAS EQUILIBRADAS */}
               <div
-                className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-20 w-[76%] max-w-[500px] px-3"
+                className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-[76%] max-w-[500px] px-3"
                 style={{ top: '75.6%', height: '5.5%' }}
               >
                 {dedicationLines.length > 1 ? (
@@ -440,7 +440,7 @@ export function LiveCanvas({
           ) : (
             /* Estado de reposo / Altar inicial */
             <div
-              className="absolute left-1/2 -translate-x-1/2 flex flex-col justify-center items-center py-1 text-center z-20 w-[64%] max-w-[460px]"
+              className="absolute left-1/2 -translate-x-1/2 flex flex-col justify-center items-center py-1 text-center z-30 w-[78%] max-w-[480px]"
               style={{ top: '70.6%', height: '8.8%' }}
             >
               <span
