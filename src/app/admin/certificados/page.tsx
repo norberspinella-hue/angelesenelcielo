@@ -310,6 +310,12 @@ export default function AdminCertificadosPage() {
 
           <div className="flex items-center gap-2.5 flex-wrap">
             <Link
+              href="/admin/altar"
+              className="px-4 py-2 rounded-full text-xs font-bold bg-indigo-50 text-indigo-900 hover:bg-indigo-100 border border-indigo-300 transition-all shadow-xs"
+            >
+              ✨ Altar & Comunicaciones
+            </Link>
+            <Link
               href="/admin/moderacion"
               className="px-4 py-2 rounded-full text-xs font-bold bg-pink-50 text-[#BE185D] hover:bg-pink-100 border border-pink-300 transition-all"
             >

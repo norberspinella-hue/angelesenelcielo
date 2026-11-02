@@ -285,6 +285,12 @@ export default function AdminModeracionPage() {
 
           <div className="flex items-center gap-2.5 flex-wrap">
             <Link
+              href="/admin/altar"
+              className="px-4 py-2 rounded-full text-xs font-bold bg-indigo-50 text-indigo-900 hover:bg-indigo-100 border border-indigo-300 transition-all shadow-xs"
+            >
+              ✨ Altar & Comunicaciones
+            </Link>
+            <Link
               href="/admin/certificados"
               className="px-4 py-2 rounded-full text-xs font-bold bg-amber-50 text-amber-900 hover:bg-amber-100 border border-amber-300 transition-all shadow-xs"
             >
