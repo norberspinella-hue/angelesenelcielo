@@ -16,32 +16,22 @@ function getHmacSecret(): string {
 }
 
 /**
- * Extracción estricta de IP confiable inyectada por infraestructura de borde (Edge Proxy).
- * Prioriza cabeceras autenticadas por el proxy de Vercel y rechaza cabeceras arbitrarias.
- * Si no puede determinarse una IP confiable del proxy, retorna null para rechazo defensivo.
+ * Extracción estricta y exclusiva de IP autenticada por la infraestructura de borde de Vercel.
+ * En nuestro despliegue en Vercel, 'x-vercel-forwarded-for' es la ÚNICA cabecera cuya autenticidad
+ * garantiza el proxy de Vercel (inyectada con la IP del socket TCP y limpiada de valores previos).
+ * Se rechazan cabeceras manipulables por clientes como 'cf-connecting-ip', 'x-real-ip' o 'x-forwarded-for'.
+ * Si no puede determinarse de forma confiable, retorna null para aplicar rechazo defensivo.
  */
 export function getTrustedClientIp(req: NextRequest): string | null {
-  // 1. Cabecera Vercel Edge (la más confiable en despliegue Vercel, inyectada y sobrescrita por su proxy)
+  // Cabecera Vercel Edge: garantizada y sobrescrita exclusivamente por el proxy de borde de Vercel
   const vercelIp = req.headers.get('x-vercel-forwarded-for');
   if (vercelIp) {
     const candidate = vercelIp.split(',')[0].trim();
     if (isValidIp(candidate)) return candidate;
   }
 
-  // 2. Cabecera Cloudflare Edge
-  const cfIp = req.headers.get('cf-connecting-ip');
-  if (cfIp && isValidIp(cfIp.trim())) {
-    return cfIp.trim();
-  }
-
-  // 3. Cabecera x-real-ip inyectada por infraestructura confiable
-  const realIp = req.headers.get('x-real-ip');
-  if (realIp && isValidIp(realIp.trim())) {
-    return realIp.trim();
-  }
-
-  // Si no puede determinarse una IP confiable del proxy de infraestructura, retornar null
-  // No se aceptan cabeceras arbitrarias manipulables por el cliente ni se usa un alias compartido
+  // Si no se recibe la cabecera autenticada del proxy de Vercel o la IP es inválida, retornar null.
+  // Rechazo seguro: no se aceptan cabeceras arbitrarias facilitadas por el cliente.
   return null;
 }
 
