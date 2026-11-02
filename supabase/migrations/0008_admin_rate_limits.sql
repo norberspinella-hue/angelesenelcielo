@@ -22,11 +22,9 @@ CREATE INDEX IF NOT EXISTS idx_admin_rate_limits_expires
 CREATE INDEX IF NOT EXISTS idx_admin_rate_limits_blocked 
   ON public.admin_rate_limits (blocked_until) WHERE blocked_until IS NOT NULL;
 
--- 3. Seguridad a nivel de fila (RLS) y permisos mínimos exclusivos para service_role
+-- 3. Seguridad a nivel de fila (RLS) y revocación pública
 ALTER TABLE public.admin_rate_limits ENABLE ROW LEVEL SECURITY;
-
-REVOKE ALL ON public.admin_rate_limits FROM PUBLIC, anon, authenticated;
-GRANT ALL ON public.admin_rate_limits TO service_role;
+REVOKE ALL ON public.admin_rate_limits FROM PUBLIC;
 
 -- 4. Función atómica para comprobar si un identificador está bloqueado
 CREATE OR REPLACE FUNCTION public.check_admin_rate_limit(
@@ -65,7 +63,7 @@ END;
 $$;
 
 -- 5. Función atómica para registrar intento fallido mediante INSERT ... ON CONFLICT DO UPDATE
--- Protege contra condiciones de carrera incluso con tabla fría/vacía.
+-- Jerarquía estricta: un bloqueo activo SIEMPRE prevalece sobre el reinicio de ventana.
 CREATE OR REPLACE FUNCTION public.record_admin_failed_attempt(
   p_key VARCHAR(64),
   p_scope VARCHAR(16) DEFAULT 'ip',
@@ -102,7 +100,7 @@ BEGIN
   v_lockout_until := v_now + (p_lockout_seconds || ' seconds')::INTERVAL;
   v_expire_at := v_lockout_until + INTERVAL '1 hour';
 
-  -- 2. Operación atómica de inserción o actualización (inmune a carreras en tabla vacía)
+  -- 2. Operación atómica de inserción o actualización con precedencia estricta del bloqueo
   INSERT INTO public.admin_rate_limits AS arl (
     id, scope, failed_attempts, first_attempt_at, last_attempt_at, blocked_until, expires_at
   )
@@ -110,30 +108,63 @@ BEGIN
     p_key, p_scope, 1, v_now, v_now, NULL, v_now + (p_window_seconds || ' seconds')::INTERVAL + INTERVAL '1 hour'
   )
   ON CONFLICT (id) DO UPDATE SET
+    -- Conteo de intentos fallidos
     failed_attempts = CASE
-      -- Si la ventana anterior ya expiró, reiniciar conteo a 1
-      WHEN arl.first_attempt_at < v_window_start THEN 1
-      -- Si está bloqueado o en ventana, incrementar
-      ELSE arl.failed_attempts + 1
+      -- REGLA 1: Si hay un bloqueo activo vigente, NUNCA reiniciar por expiración de ventana.
+      WHEN arl.blocked_until IS NOT NULL AND arl.blocked_until > v_now THEN
+        arl.failed_attempts + 1
+      -- REGLA 2: Si el bloqueo anterior ya venció, iniciar una nueva ventana desde 1
+      WHEN arl.blocked_until IS NOT NULL AND arl.blocked_until <= v_now THEN
+        1
+      -- REGLA 3: Si la ventana inicial ya expiró (sin bloqueo), reiniciar a 1
+      WHEN arl.first_attempt_at < v_window_start THEN
+        1
+      -- REGLA 4: Dentro de la ventana deslizante normal, incrementar
+      ELSE
+        arl.failed_attempts + 1
     END,
+
+    -- Inicio de ventana deslizante
     first_attempt_at = CASE
-      WHEN arl.first_attempt_at < v_window_start THEN v_now
-      ELSE arl.first_attempt_at
+      -- Si hay bloqueo activo vigente, conservar el inicio original intacto
+      WHEN arl.blocked_until IS NOT NULL AND arl.blocked_until > v_now THEN
+        arl.first_attempt_at
+      -- Si el bloqueo anterior venció o la ventana anterior expiró, nueva marca de inicio
+      WHEN (arl.blocked_until IS NOT NULL AND arl.blocked_until <= v_now) OR (arl.first_attempt_at < v_window_start) THEN
+        v_now
+      ELSE
+        arl.first_attempt_at
     END,
+
+    -- Último intento registrado siempre se actualiza a v_now
     last_attempt_at = v_now,
+
+    -- Límite temporal de bloqueo activo
     blocked_until = CASE
-      -- Si ya está bloqueado y el bloqueo sigue vigente, mantener bloqueo
-      WHEN arl.blocked_until IS NOT NULL AND arl.blocked_until > v_now THEN arl.blocked_until
-      -- Si la ventana expiró, reiniciar sin bloqueo
-      WHEN arl.first_attempt_at < v_window_start THEN NULL
-      -- Si el nuevo intento alcanza o supera el máximo, activar bloqueo
-      WHEN (arl.failed_attempts + 1) >= p_max_attempts THEN v_lockout_until
-      ELSE NULL
+      -- REGLA A: Si ya está bloqueado y el bloqueo sigue vigente, PRESERVAR EL BLOQUEO ACTIVO
+      WHEN arl.blocked_until IS NOT NULL AND arl.blocked_until > v_now THEN
+        arl.blocked_until
+      -- REGLA B: Si el bloqueo anterior venció, queda libre de bloqueo (nueva ventana)
+      WHEN arl.blocked_until IS NOT NULL AND arl.blocked_until <= v_now THEN
+        NULL
+      -- REGLA C: Si la ventana anterior venció sin bloqueo, queda libre de bloqueo
+      WHEN arl.first_attempt_at < v_window_start THEN
+        NULL
+      -- REGLA D: Dentro de la ventana, si este nuevo intento alcanza o supera el umbral, ACTIVAR BLOQUEO
+      WHEN (arl.failed_attempts + 1) >= p_max_attempts THEN
+        v_lockout_until
+      ELSE
+        NULL
     END,
+
+    -- Fecha de purga automática
     expires_at = CASE
-      WHEN (arl.failed_attempts + 1) >= p_max_attempts OR (arl.blocked_until IS NOT NULL AND arl.blocked_until > v_now)
-        THEN v_expire_at
-      ELSE v_now + (p_window_seconds || ' seconds')::INTERVAL + INTERVAL '1 hour'
+      WHEN arl.blocked_until IS NOT NULL AND arl.blocked_until > v_now THEN
+        arl.blocked_until + INTERVAL '1 hour'
+      WHEN (arl.failed_attempts + 1) >= p_max_attempts THEN
+        v_expire_at
+      ELSE
+        v_now + (p_window_seconds || ' seconds')::INTERVAL + INTERVAL '1 hour'
     END
   RETURNING arl.failed_attempts, arl.blocked_until INTO v_rec;
 
@@ -157,6 +188,7 @@ END;
 $$;
 
 -- 6. Función atómica para limpiar intentos tras autenticación legítima exitosa
+-- PROTECCIÓN CONCURRENTE: si existe un bloqueo activo, NO lo elimina.
 CREATE OR REPLACE FUNCTION public.clear_admin_attempts(
   p_key VARCHAR(64)
 )
@@ -166,17 +198,38 @@ SECURITY INVOKER
 SET search_path = public, pg_temp
 AS $$
 BEGIN
-  DELETE FROM public.admin_rate_limits WHERE id = p_key;
+  DELETE FROM public.admin_rate_limits
+  WHERE id = p_key
+    AND (blocked_until IS NULL OR blocked_until <= timezone('utc'::text, now()));
 END;
 $$;
 
--- 7. Revocación total de permisos públicos y concesión exclusiva a service_role
-REVOKE EXECUTE ON FUNCTION public.check_admin_rate_limit(VARCHAR) FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.record_admin_failed_attempt(VARCHAR, VARCHAR, INTEGER, INTEGER, INTEGER) FROM PUBLIC, anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.clear_admin_attempts(VARCHAR) FROM PUBLIC, anon, authenticated;
+-- 7. Revocación de permisos públicos
+REVOKE EXECUTE ON FUNCTION public.check_admin_rate_limit(VARCHAR) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.record_admin_failed_attempt(VARCHAR, VARCHAR, INTEGER, INTEGER, INTEGER) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.clear_admin_attempts(VARCHAR) FROM PUBLIC;
 
-GRANT EXECUTE ON FUNCTION public.check_admin_rate_limit(VARCHAR) TO service_role;
-GRANT EXECUTE ON FUNCTION public.record_admin_failed_attempt(VARCHAR, VARCHAR, INTEGER, INTEGER, INTEGER) TO service_role;
-GRANT EXECUTE ON FUNCTION public.clear_admin_attempts(VARCHAR) TO service_role;
+-- 8. Concesión exclusiva a roles de infraestructura si existen en el entorno
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN
+    GRANT ALL ON public.admin_rate_limits TO service_role;
+    GRANT EXECUTE ON FUNCTION public.check_admin_rate_limit(VARCHAR) TO service_role;
+    GRANT EXECUTE ON FUNCTION public.record_admin_failed_attempt(VARCHAR, VARCHAR, INTEGER, INTEGER, INTEGER) TO service_role;
+    GRANT EXECUTE ON FUNCTION public.clear_admin_attempts(VARCHAR) TO service_role;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+    REVOKE ALL ON public.admin_rate_limits FROM anon;
+    REVOKE EXECUTE ON FUNCTION public.check_admin_rate_limit(VARCHAR) FROM anon;
+    REVOKE EXECUTE ON FUNCTION public.record_admin_failed_attempt(VARCHAR, VARCHAR, INTEGER, INTEGER, INTEGER) FROM anon;
+    REVOKE EXECUTE ON FUNCTION public.clear_admin_attempts(VARCHAR) FROM anon;
+  END IF;
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+    REVOKE ALL ON public.admin_rate_limits FROM authenticated;
+    REVOKE EXECUTE ON FUNCTION public.check_admin_rate_limit(VARCHAR) FROM authenticated;
+    REVOKE EXECUTE ON FUNCTION public.record_admin_failed_attempt(VARCHAR, VARCHAR, INTEGER, INTEGER, INTEGER) FROM authenticated;
+    REVOKE EXECUTE ON FUNCTION public.clear_admin_attempts(VARCHAR) FROM authenticated;
+  END IF;
+END $$;
 
 COMMIT;
