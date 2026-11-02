@@ -56,11 +56,11 @@ export function LiveCanvas({
 
   // 2. DEDICATORIA: Control Estricto de 1 o 2 Líneas Equilibradas (Sin Palabras Huérfanas)
   const dedicationLength = rawDedication.length;
-  let dedicationFontSize = 'clamp(14px, 2.9vw, 29px)';
+  let dedicationFontSize = 'clamp(18px, 3.8vw, 38px)';
   if (dedicationLength > 65) {
-    dedicationFontSize = 'clamp(11px, 2.2vw, 22px)';
+    dedicationFontSize = 'clamp(15px, 3.0vw, 30px)';
   } else if (dedicationLength > 40) {
-    dedicationFontSize = 'clamp(12.5px, 2.5vw, 25px)';
+    dedicationFontSize = 'clamp(17px, 3.4vw, 34px)';
   }
 
   // Formateo en líneas limpias para evitar que palabras queden aisladas en 3ª línea
@@ -183,29 +183,29 @@ export function LiveCanvas({
           {/* 1. CONTADORES SUPERIORES INDEPENDIENTES (Y: ~23.8% en 1080x1920) */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 sm:gap-2.5 z-20 w-full max-w-[96%]"
-            style={{ top: '23.8%' }}
+            style={{ top: '19.2%' }}
           >
             {/* Píldora 1: Mural Global (Dato real verificado de Supabase) */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFFDF8]/90 backdrop-blur-md border border-[#D5B77B]/60 shadow-[0_4px_16px_rgba(78,35,100,0.08)]">
-              <span className="text-xs drop-shadow-xs">⭐</span>
-              <span className="text-[11px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
-                <strong className="font-extrabold text-[#1E0417]">{muralStarsCount || 151}</strong> en el mural
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#FFFDF8]/96 backdrop-blur-md border border-[#D5B77B]/80 shadow-[0_6px_20px_rgba(78,35,100,0.15)]">
+              <span className="text-base drop-shadow-xs">⭐</span>
+              <span className="text-[13.5px] sm:text-[15.5px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
+                <strong className="font-black text-[16px] sm:text-[18px] text-[#1E0417]">{muralStarsCount || 151}</strong> en el mural
               </span>
             </div>
 
             {/* Píldora 2: Altar Web (Llamas activas reales de Cielo lleno de luces) */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FFF8FA]/90 backdrop-blur-md border border-[#EAC2D8]/70 shadow-[0_4px_16px_rgba(78,35,100,0.08)]">
-              <span className="text-xs drop-shadow-xs">✨</span>
-              <span className="text-[11px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
-                <strong className="font-extrabold text-[#1E0417]">{webCandlesCount || 18}</strong> en la web
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#FFF8FA]/96 backdrop-blur-md border border-[#EAC2D8]/85 shadow-[0_6px_20px_rgba(78,35,100,0.15)]">
+              <span className="text-base drop-shadow-xs">✨</span>
+              <span className="text-[13.5px] sm:text-[15.5px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
+                <strong className="font-black text-[16px] sm:text-[18px] text-[#1E0417]">{webCandlesCount || 18}</strong> en la web
               </span>
             </div>
 
             {/* Píldora 3: Sesión LIVE (Contador propio de la emisión actual) */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF0FC]/90 backdrop-blur-md border border-[#D09BD8]/60 shadow-[0_4px_16px_rgba(78,35,100,0.08)]">
-              <span className="text-xs drop-shadow-xs">🕯️</span>
-              <span className="text-[11px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
-                <strong className="font-extrabold text-[#1E0417]">{sessionCandlesCount}</strong> en este directo
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#FAF0FC]/96 backdrop-blur-md border border-[#D09BD8]/80 shadow-[0_6px_20px_rgba(78,35,100,0.15)]">
+              <span className="text-base drop-shadow-xs">🕯️</span>
+              <span className="text-[13.5px] sm:text-[15.5px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
+                <strong className="font-black text-[16px] sm:text-[18px] text-[#1E0417]">{sessionCandlesCount}</strong> en este directo
               </span>
             </div>
           </div>
@@ -213,11 +213,11 @@ export function LiveCanvas({
           {/* 2. TICKER DE LUCES RECIENTES CON MAYOR TAMAÑO Y CONTRASTE (Y: ~29.8% en 1080x1920) */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-20 w-full max-w-[92%]"
-            style={{ top: '29.8%' }}
+            style={{ top: '25.5%' }}
           >
             {/* Subtítulo con más presencia y contraste */}
             <span
-              className="font-serif italic font-semibold text-sm sm:text-base text-[#24051B] tracking-wide"
+              className="font-serif italic font-extrabold text-[18px] sm:text-[22px] text-[#24051B] tracking-wide"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.9)',
@@ -225,7 +225,7 @@ export function LiveCanvas({
             >
               Pequeñas luces que nunca se apagan
             </span>
-            <span className="text-xs text-[#8B1E5F] my-0.5 leading-none font-bold">♡</span>
+            <span className="text-base text-[#8B1E5F] my-1 leading-none font-black">♡</span>
 
             {/* Ticker horizontal de hasta 5 mascotas recientes (Mayor tamaño y contraste óptimo) */}
             <div className="flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap px-3 max-w-full">
@@ -235,9 +235,9 @@ export function LiveCanvas({
                     <span className="text-xs text-[#8B1E5F]/80 font-bold select-none">♡</span>
                   )}
                   <span
-                    className={`font-serif italic font-bold text-sm sm:text-[17px] text-[#1A0315] tracking-wide transition-all duration-700 ${
-                      idx === 0 && isJustLit ? 'text-[#8B1E5F] font-black scale-105' : ''
-                    }`}
+                    className={`font-serif italic font-extrabold text-[19px] sm:text-[24px] text-[#1A0315] tracking-wide transition-all duration-700 ${
+                    idx === 0 && isJustLit ? 'text-[#8B1E5F] font-black scale-110' : ''
+                  }`}
                     style={{
                       fontFamily: "'Cormorant Garamond', Georgia, serif",
                       textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.9)',
@@ -250,64 +250,157 @@ export function LiveCanvas({
             </div>
           </div>
 
-          {/* 3. VELA PROTAGONISTA: AURA Y LLAMA VIVA SINCRONIZADA CON LA MECHA (Y: ~52%) */}
+          {/* 3. VELA PROTAGONISTA: SISTEMA DE LLAMA VIVA Y RESPLANDOR SINCRONIZADO */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 pointer-events-none z-20 flex items-center justify-center"
-            style={{ top: '51.8%', width: '120px', height: '120px' }}
+            className="absolute pointer-events-none z-25 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
+            style={{ left: '21.5%', top: '35.2%', width: '160px', height: '160px' }}
           >
-            {/* Aureola cálida permanente respirando suavemente */}
-            <div className="absolute w-24 h-24 rounded-full bg-gradient-to-t from-amber-400/25 via-amber-200/20 to-transparent blur-xl animate-live-aura-breath" />
+            {/* 1. Aureola ambiental suave permanente que baña el cristal y las flores */}
+            <div
+              className="absolute w-36 h-36 rounded-full pointer-events-none animate-live-aura-breath"
+              style={{
+                background: 'radial-gradient(circle, rgba(255, 190, 60, 0.48) 0%, rgba(245, 135, 25, 0.25) 45%, rgba(220, 85, 30, 0.08) 70%, transparent 85%)',
+                mixBlendMode: 'screen',
+              }}
+            />
 
-            {/* Transición luminosa delicada (Luminous Flare Bloom) al pulsar "Encender vela" */}
+            {/* 2. Aureola dorada interior media */}
+            <div
+              className="absolute w-20 h-20 rounded-full pointer-events-none"
+              style={{
+                background: 'radial-gradient(circle, rgba(255, 225, 130, 0.75) 0%, rgba(251, 160, 36, 0.35) 55%, transparent 80%)',
+                mixBlendMode: 'screen',
+                animation: 'liveAuraBreath 2.6s ease-in-out infinite alternate',
+              }}
+            />
+
+            {/* 3. Contenedor de la llama viva sobre la mecha */}
+            <div
+              className="absolute flex items-end justify-center pointer-events-none"
+              style={{ width: '28px', height: '52px', top: '56px' }}
+            >
+              {/* Cuerpo exterior de la llama en forma de lágrima ardiente */}
+              <div
+                className="absolute bottom-0 w-[18px] h-[40px] pointer-events-none"
+                style={{
+                  transformOrigin: 'center bottom',
+                  borderRadius: '50% 50% 35% 35% / 70% 70% 30% 30%',
+                  background: 'linear-gradient(to top, rgba(255, 95, 15, 0.95) 0%, rgba(255, 175, 20, 0.98) 45%, rgba(255, 240, 140, 1) 85%, #ffffff 100%)',
+                  mixBlendMode: 'screen',
+                  animation: 'liveRealisticFlameSway 2.5s ease-in-out infinite',
+                }}
+              />
+
+              {/* Núcleo blanco brillante de combustión intensa */}
+              <div
+                className="absolute bottom-[3px] w-[8px] h-[22px] pointer-events-none"
+                style={{
+                  borderRadius: '50% 50% 35% 35% / 75% 75% 25% 25%',
+                  background: 'linear-gradient(to top, #fff9d6 0%, #ffffff 100%)',
+                  boxShadow: '0 0 8px #ffffff, 0 0 16px rgba(255, 255, 220, 0.9)',
+                  animation: 'liveFlameCoreJitter 0.22s ease-in-out infinite alternate',
+                }}
+              />
+
+              {/* Base azulada de combustión pura en la mecha */}
+              <div
+                className="absolute bottom-0 w-[10px] h-[5px] rounded-full pointer-events-none"
+                style={{
+                  background: 'radial-gradient(ellipse at center, rgba(120, 190, 255, 0.9) 0%, rgba(50, 110, 255, 0.5) 60%, transparent 100%)',
+                  mixBlendMode: 'screen',
+                }}
+              />
+
+              {/* Micro-chispas continuas ascendentes */}
+              <div
+                className="absolute -top-1 left-1 w-1 h-1 rounded-full bg-amber-100 shadow-[0_0_6px_#FDE047]"
+                style={{ animation: 'liveSparkleFloat 2.8s ease-out infinite' }}
+              />
+              <div
+                className="absolute -top-2 right-1 w-1 h-1 rounded-full bg-pink-100 shadow-[0_0_6px_#FFF]"
+                style={{ animation: 'liveSparkleFloat 3.2s ease-out 1.2s infinite' }}
+              />
+            </div>
+
+            {/* 4. Transición luminosa delicada (Luminous Flare Bloom) al pulsar "Encender vela" */}
             {isJustLit && (
               <>
                 <div
                   className="absolute inset-0 flex items-center justify-center animate-ping"
                   style={{ animationDuration: '2.8s', animationIterationCount: 1 }}
                 >
-                  <div className="w-28 h-28 rounded-full bg-radial from-amber-300/60 via-pink-400/30 to-transparent blur-md" />
+                  <div
+                    className="w-36 h-36 rounded-full blur-md"
+                    style={{
+                      background: 'radial-gradient(circle, rgba(255, 230, 140, 0.85) 0%, rgba(244, 114, 182, 0.5) 40%, rgba(245, 158, 11, 0.25) 65%, transparent 80%)',
+                      mixBlendMode: 'screen',
+                    }}
+                  />
                 </div>
                 {/* Partículas doradas flotantes */}
                 <div
-                  className="absolute -top-3 left-4 w-1.5 h-1.5 rounded-full bg-amber-200 shadow-[0_0_8px_#FDE047]"
+                  className="absolute -top-6 left-3 w-2 h-2 rounded-full bg-amber-200 shadow-[0_0_10px_#FDE047]"
                   style={{ animation: 'liveSparkleFloat 2.5s ease-out forwards' }}
                 />
                 <div
-                  className="absolute -top-6 right-5 w-1 h-1 rounded-full bg-pink-100 shadow-[0_0_8px_#FFF]"
+                  className="absolute -top-10 right-3 w-1.5 h-1.5 rounded-full bg-pink-100 shadow-[0_0_10px_#FFF]"
                   style={{ animation: 'liveSparkleFloat 3s ease-out 0.4s forwards' }}
                 />
               </>
             )}
-
-            {/* Micro-chispa celestial sobre la mecha de la vela */}
-            <div className="absolute top-[38px] w-2 h-2 rounded-full bg-amber-100 shadow-[0_0_12px_#FDE047] animate-pulse" />
           </div>
 
           {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (ZONA SUPERIOR: NOMBRE | ZONA INFERIOR: DEDICATORIA) */}
           {currentPet ? (
             <>
-              {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA CENTRADO (Y: ~70.4% a ~74.3%) */}
+              {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA CENTRADO CON RESPLANDOR CELESTIAL */}
               <div
-                className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-20 w-[64%] max-w-[460px] px-4"
-                style={{ top: '70.4%', height: '3.9%' }}
+                className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-20 w-[76%] max-w-[500px] px-4"
+                style={{ top: '69.6%', height: '5.6%' }}
               >
+                {/* Halo / Círculo rojizo-dorado expansivo al entrar el perrito */}
+                {isJustLit && (
+                  <>
+                    <div
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full blur-xl animate-ping"
+                      style={{
+                        width: '280px',
+                        height: '110px',
+                        background: 'radial-gradient(ellipse at center, rgba(244, 63, 94, 0.48) 0%, rgba(225, 29, 72, 0.28) 45%, rgba(251, 191, 36, 0.15) 70%, transparent 90%)',
+                        mixBlendMode: 'screen',
+                        animationDuration: '3.0s',
+                        animationIterationCount: 1,
+                      }}
+                    />
+                    <div
+                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full blur-lg animate-pulse"
+                      style={{
+                        width: '240px',
+                        height: '80px',
+                        background: 'radial-gradient(ellipse at center, rgba(251, 113, 133, 0.35) 0%, rgba(244, 63, 94, 0.18) 50%, transparent 80%)',
+                        mixBlendMode: 'screen',
+                      }}
+                    />
+                  </>
+                )}
+
                 <span
-                  className="leading-none tracking-normal select-none text-center block w-full truncate"
+                  className="leading-none tracking-normal select-none text-center block w-full truncate relative z-10"
                   style={{
                     fontFamily: "'Allura', cursive",
-                    color: '#200516',
+                    color: '#1A0213',
                     fontSize: nameFontSize,
-                    textShadow: '0 1px 3px rgba(255,255,255,1), 0 2px 8px rgba(255,255,255,0.8), 0 0 14px rgba(230,200,240,0.5)',
+                    textShadow: '0 1px 4px rgba(255,255,255,1), 0 2px 10px rgba(255,255,255,0.95), 0 0 18px rgba(255,255,255,0.85)',
                   }}
                 >
                   {currentPet}
                 </span>
               </div>
 
-              {/* ZONA INFERIOR: DEDICATORIA DE 1 O 2 LÍNEAS EQUILIBRADAS (Y: ~76.2% a ~80.0%) */}
+              {/* ZONA INFERIOR: DEDICATORIA DE 1 O 2 LÍNEAS EQUILIBRADAS */}
               <div
-                className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-20 w-[64%] max-w-[460px] px-3"
-                style={{ top: '76.2%', height: '3.8%' }}
+                className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-20 w-[76%] max-w-[500px] px-3"
+                style={{ top: '75.6%', height: '5.5%' }}
               >
                 {dedicationLines.length > 1 ? (
                   <div className="w-full flex flex-col items-center justify-center leading-tight">
@@ -351,21 +444,20 @@ export function LiveCanvas({
               style={{ top: '70.6%', height: '8.8%' }}
             >
               <span
-                className="leading-none tracking-normal select-none block"
-                style={{
-                  fontFamily: "'Allura', cursive",
-                  color: '#2A071E',
-                  fontSize: 'clamp(30px, 5.2vw, 52px)',
-                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.85)',
-                }}
-              >
-                Ángeles en el Cielo
-              </span>
-              <p
-                className="font-serif italic font-bold text-xs sm:text-sm text-[#380E2B] mt-1.5"
+                className="font-serif italic font-extrabold text-[18px] sm:text-[22px] text-[#24051B] tracking-wide"
                 style={{
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.85)',
+                  textShadow: '0 1px 4px rgba(255,255,255,1), 0 0 12px rgba(255,255,255,0.95)',
+                }}
+              >
+                Un altar eterno de luz y amor
+              </span>
+              <span className="text-base text-[#8B1E5F] my-1 leading-none font-black">♡</span>
+              <p
+                className="font-serif italic font-extrabold text-[15px] sm:text-[18px] text-[#380E2B] mt-1"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  textShadow: '0 1px 4px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.9)',
                 }}
               >
                 Escribe el nombre de tu ángel en el chat 🕯️
