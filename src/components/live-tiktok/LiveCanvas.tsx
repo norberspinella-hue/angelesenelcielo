@@ -210,37 +210,37 @@ export function LiveCanvas({
             </div>
           </div>
 
-          {/* 2. TICKER DE LUCES RECIENTES CON MAYOR TAMAÑO Y CONTRASTE (Y: ~29.8% en 1080x1920) */}
+          {/* 2. TICKER DE LUCES RECIENTES: DELICADO Y SECUNDARIO (Y: ~25.5%) */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-full max-w-[92%]"
             style={{ top: '25.5%' }}
           >
-            {/* Subtítulo con más presencia y contraste */}
+            {/* Subtítulo discreto */}
             <span
-              className="font-serif italic font-extrabold text-[18px] sm:text-[22px] text-[#24051B] tracking-wide"
+              className="font-serif italic font-semibold text-xs sm:text-[14px] text-[#4E1E3C]/90 tracking-wide"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.9)',
+                textShadow: '0 1px 3px rgba(255,255,255,0.95), 0 0 8px rgba(255,255,255,0.8)',
               }}
             >
               Pequeñas luces que nunca se apagan
             </span>
-            <span className="text-base text-[#8B1E5F] my-1 leading-none font-black">♡</span>
+            <span className="text-[11px] text-[#8B1E5F]/70 my-0.5 leading-none font-bold">♡</span>
 
-            {/* Ticker horizontal de hasta 5 mascotas recientes (Mayor tamaño y contraste óptimo) */}
-            <div className="flex items-center justify-center gap-2.5 sm:gap-3 flex-wrap px-3 max-w-full">
+            {/* Nombres recientes: tamaño moderado y contraste suave para no competir con el nombre principal */}
+            <div className="flex items-center justify-center gap-2 sm:gap-2.5 flex-wrap px-3 max-w-full">
               {recentCandles.map((c, idx) => (
                 <React.Fragment key={c.id || idx}>
                   {idx > 0 && (
-                    <span className="text-xs text-[#8B1E5F]/80 font-bold select-none">♡</span>
+                    <span className="text-[10px] text-[#8B1E5F]/60 font-semibold select-none">♡</span>
                   )}
                   <span
-                    className={`font-serif italic font-extrabold text-[19px] sm:text-[24px] text-[#1A0315] tracking-wide transition-all duration-700 ${
-                    idx === 0 && isJustLit ? 'text-[#8B1E5F] font-black scale-110' : ''
-                  }`}
+                    className={`font-serif italic font-semibold text-xs sm:text-[14.5px] text-[#4A1E37]/90 tracking-wide transition-all duration-700 ${
+                      idx === 0 && isJustLit ? 'text-[#8B1E5F] font-bold scale-105' : ''
+                    }`}
                     style={{
                       fontFamily: "'Cormorant Garamond', Georgia, serif",
-                      textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.9)',
+                      textShadow: '0 1px 2px rgba(255,255,255,0.95), 0 0 6px rgba(255,255,255,0.7)',
                     }}
                   >
                     {c.name}
@@ -250,103 +250,41 @@ export function LiveCanvas({
             </div>
           </div>
 
-          {/* 3. VELA PROTAGONISTA: SISTEMA DE LLAMA VIVA Y RESPLANDOR SINCRONIZADO */}
+          {/* 3. VELA PROTAGONISTA: ANIMACIÓN NATURAL INTEGRADA SOBRE LA LLAMA ORIGINAL */}
           <div
             className="absolute pointer-events-none z-10 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
-            style={{ left: '21.5%', top: '35.2%', width: '160px', height: '160px' }}
+            style={{ left: '21.5%', top: '35.0%', width: '130px', height: '130px' }}
           >
-            {/* 1. Aureola ambiental suave permanente que baña el cristal y las flores */}
+            {/* Aureola ambiental cálida permanente y muy suave respirando con la llama */}
             <div
-              className="absolute w-36 h-36 rounded-full pointer-events-none animate-live-aura-breath"
+              className="absolute w-28 h-28 rounded-full pointer-events-none animate-live-aura-breath"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 190, 60, 0.48) 0%, rgba(245, 135, 25, 0.25) 45%, rgba(220, 85, 30, 0.08) 70%, transparent 85%)',
+                background: 'radial-gradient(circle, rgba(255, 190, 60, 0.40) 0%, rgba(245, 140, 30, 0.18) 50%, transparent 75%)',
                 mixBlendMode: 'screen',
               }}
             />
 
-            {/* 2. Aureola dorada interior media */}
+            {/* Suave parpadeo lumínico directo sobre el núcleo de la llama de la foto */}
             <div
-              className="absolute w-20 h-20 rounded-full pointer-events-none"
+              className="absolute w-6 h-11 pointer-events-none"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 225, 130, 0.75) 0%, rgba(251, 160, 36, 0.35) 55%, transparent 80%)',
+                top: '47px',
+                borderRadius: '50% 50% 40% 40% / 60% 60% 30% 30%',
+                background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0%, rgba(255, 220, 110, 0.55) 45%, rgba(255, 140, 20, 0.20) 80%, transparent 100%)',
                 mixBlendMode: 'screen',
-                animation: 'liveAuraBreath 2.6s ease-in-out infinite alternate',
+                animation: 'liveFlameCoreJitter 0.25s ease-in-out infinite alternate',
               }}
             />
 
-            {/* 3. Contenedor de la llama viva sobre la mecha */}
-            <div
-              className="absolute flex items-end justify-center pointer-events-none"
-              style={{ width: '28px', height: '52px', top: '56px' }}
-            >
-              {/* Cuerpo exterior de la llama en forma de lágrima ardiente */}
-              <div
-                className="absolute bottom-0 w-[18px] h-[40px] pointer-events-none"
-                style={{
-                  transformOrigin: 'center bottom',
-                  borderRadius: '50% 50% 35% 35% / 70% 70% 30% 30%',
-                  background: 'linear-gradient(to top, rgba(255, 95, 15, 0.95) 0%, rgba(255, 175, 20, 0.98) 45%, rgba(255, 240, 140, 1) 85%, #ffffff 100%)',
-                  mixBlendMode: 'screen',
-                  animation: 'liveRealisticFlameSway 2.5s ease-in-out infinite',
-                }}
-              />
-
-              {/* Núcleo blanco brillante de combustión intensa */}
-              <div
-                className="absolute bottom-[3px] w-[8px] h-[22px] pointer-events-none"
-                style={{
-                  borderRadius: '50% 50% 35% 35% / 75% 75% 25% 25%',
-                  background: 'linear-gradient(to top, #fff9d6 0%, #ffffff 100%)',
-                  boxShadow: '0 0 8px #ffffff, 0 0 16px rgba(255, 255, 220, 0.9)',
-                  animation: 'liveFlameCoreJitter 0.22s ease-in-out infinite alternate',
-                }}
-              />
-
-              {/* Base azulada de combustión pura en la mecha */}
-              <div
-                className="absolute bottom-0 w-[10px] h-[5px] rounded-full pointer-events-none"
-                style={{
-                  background: 'radial-gradient(ellipse at center, rgba(120, 190, 255, 0.9) 0%, rgba(50, 110, 255, 0.5) 60%, transparent 100%)',
-                  mixBlendMode: 'screen',
-                }}
-              />
-
-              {/* Micro-chispas continuas ascendentes */}
-              <div
-                className="absolute -top-1 left-1 w-1 h-1 rounded-full bg-amber-100 shadow-[0_0_6px_#FDE047]"
-                style={{ animation: 'liveSparkleFloat 2.8s ease-out infinite' }}
-              />
-              <div
-                className="absolute -top-2 right-1 w-1 h-1 rounded-full bg-pink-100 shadow-[0_0_6px_#FFF]"
-                style={{ animation: 'liveSparkleFloat 3.2s ease-out 1.2s infinite' }}
-              />
-            </div>
-
-            {/* 4. Transición luminosa delicada (Luminous Flare Bloom) al pulsar "Encender vela" */}
+            {/* Resplandor cálido adicional al pulsar "Encender vela" (sin aros ni indicadores artificiales) */}
             {isJustLit && (
-              <>
-                <div
-                  className="absolute inset-0 flex items-center justify-center animate-ping"
-                  style={{ animationDuration: '2.8s', animationIterationCount: 1 }}
-                >
-                  <div
-                    className="w-36 h-36 rounded-full blur-md"
-                    style={{
-                      background: 'radial-gradient(circle, rgba(255, 230, 140, 0.85) 0%, rgba(244, 114, 182, 0.5) 40%, rgba(245, 158, 11, 0.25) 65%, transparent 80%)',
-                      mixBlendMode: 'screen',
-                    }}
-                  />
-                </div>
-                {/* Partículas doradas flotantes */}
-                <div
-                  className="absolute -top-6 left-3 w-2 h-2 rounded-full bg-amber-200 shadow-[0_0_10px_#FDE047]"
-                  style={{ animation: 'liveSparkleFloat 2.5s ease-out forwards' }}
-                />
-                <div
-                  className="absolute -top-10 right-3 w-1.5 h-1.5 rounded-full bg-pink-100 shadow-[0_0_10px_#FFF]"
-                  style={{ animation: 'liveSparkleFloat 3s ease-out 0.4s forwards' }}
-                />
-              </>
+              <div
+                className="absolute w-32 h-32 rounded-full pointer-events-none blur-md animate-pulse"
+                style={{
+                  background: 'radial-gradient(circle, rgba(255, 230, 140, 0.6) 0%, rgba(245, 160, 60, 0.3) 45%, transparent 75%)',
+                  mixBlendMode: 'screen',
+                }}
+              />
             )}
           </div>
 
