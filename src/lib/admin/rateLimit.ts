@@ -16,11 +16,12 @@ function getHmacSecret(): string {
 }
 
 /**
- * Extracción estricta de IP confiable inyectada por infraestructura de borde.
+ * Extracción estricta de IP confiable inyectada por infraestructura de borde (Edge Proxy).
  * Prioriza cabeceras autenticadas por el proxy de Vercel y rechaza cabeceras arbitrarias.
+ * Si no puede determinarse una IP confiable del proxy, retorna null para rechazo defensivo.
  */
-export function getTrustedClientIp(req: NextRequest): string {
-  // 1. Cabecera Vercel Edge (la más confiable en despliegue Vercel, inyectada por su proxy)
+export function getTrustedClientIp(req: NextRequest): string | null {
+  // 1. Cabecera Vercel Edge (la más confiable en despliegue Vercel, inyectada y sobrescrita por su proxy)
   const vercelIp = req.headers.get('x-vercel-forwarded-for');
   if (vercelIp) {
     const candidate = vercelIp.split(',')[0].trim();
@@ -33,21 +34,15 @@ export function getTrustedClientIp(req: NextRequest): string {
     return cfIp.trim();
   }
 
-  // 3. Cabecera x-real-ip
+  // 3. Cabecera x-real-ip inyectada por infraestructura confiable
   const realIp = req.headers.get('x-real-ip');
   if (realIp && isValidIp(realIp.trim())) {
     return realIp.trim();
   }
 
-  // 4. Primer elemento de x-forwarded-for con validación
-  const forwarded = req.headers.get('x-forwarded-for');
-  if (forwarded) {
-    const candidate = forwarded.split(',')[0].trim();
-    if (isValidIp(candidate)) return candidate;
-  }
-
-  // Si no puede determinarse una IP confiable, clasificar en origen defensivo documentado
-  return 'unknown_source';
+  // Si no puede determinarse una IP confiable del proxy de infraestructura, retornar null
+  // No se aceptan cabeceras arbitrarias manipulables por el cliente ni se usa un alias compartido
+  return null;
 }
 
 function isValidIp(ip: string): boolean {
@@ -62,6 +57,9 @@ function isValidIp(ip: string): boolean {
  * Cero almacenamiento o registro de IPs reales en base de datos.
  */
 export function getPseudonymizedKey(ip: string, scope = 'ip'): string {
+  if (!ip || ip.trim().length === 0) {
+    throw new Error('IP requerida para derivación de clave seudonimizada');
+  }
   const secret = getHmacSecret();
   return crypto.createHmac('sha256', secret).update(`${scope}:${ip.trim()}`).digest('hex');
 }
@@ -81,6 +79,14 @@ export interface RateLimitCheckResult {
 export async function checkRateLimit(req: NextRequest): Promise<RateLimitCheckResult> {
   try {
     const ip = getTrustedClientIp(req);
+    if (!ip) {
+      return {
+        allowed: false,
+        status: 403,
+        error: 'No se pudo determinar el origen confiable de la conexión de red. Acceso administrativo temporalmente rechazado.',
+      };
+    }
+
     const key = getPseudonymizedKey(ip, 'ip');
 
     if (!key || key.trim().length === 0) {
@@ -132,6 +138,10 @@ export async function checkRateLimit(req: NextRequest): Promise<RateLimitCheckRe
 export async function recordFailedAttempt(req: NextRequest): Promise<{ blocked: boolean; remainingSeconds?: number }> {
   try {
     const ip = getTrustedClientIp(req);
+    if (!ip) {
+      return { blocked: true, remainingSeconds: 900 };
+    }
+
     const key = getPseudonymizedKey(ip, 'ip');
 
     if (!key || key.trim().length === 0) {
@@ -170,6 +180,8 @@ export async function recordFailedAttempt(req: NextRequest): Promise<{ blocked: 
 export async function clearAttemptsOnSuccess(req: NextRequest): Promise<void> {
   try {
     const ip = getTrustedClientIp(req);
+    if (!ip) return;
+
     const key = getPseudonymizedKey(ip, 'ip');
     if (!key || key.trim().length === 0) return;
 
