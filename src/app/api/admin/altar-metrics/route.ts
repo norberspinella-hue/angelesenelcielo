@@ -1,40 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { resend } from '@/lib/resend';
+import { checkRateLimit, recordFailedAttempt, clearAttemptsOnSuccess } from '@/lib/admin/rateLimit';
 
 export const dynamic = 'force-dynamic';
-
-// Protección anti-fuerza bruta en memoria
-const failedAttemptsMap = new Map<string, number[]>();
-const MAX_FAILED_ATTEMPTS = 5;
-const LOCKOUT_WINDOW_MS = 15 * 60 * 1000;
-
-function getClientIp(req: NextRequest): string {
-  const forwarded = req.headers.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0].trim();
-  return '127.0.0.1';
-}
-
-function checkRateLimit(ip: string): { allowed: boolean; remainingMs?: number } {
-  const now = Date.now();
-  const attempts = failedAttemptsMap.get(ip) || [];
-  const recent = attempts.filter(ts => now - ts < LOCKOUT_WINDOW_MS);
-  failedAttemptsMap.set(ip, recent);
-
-  if (recent.length >= MAX_FAILED_ATTEMPTS) {
-    const oldest = recent[0];
-    const remainingMs = LOCKOUT_WINDOW_MS - (now - oldest);
-    return { allowed: false, remainingMs };
-  }
-  return { allowed: true };
-}
-
-function recordFailedAttempt(ip: string) {
-  const now = Date.now();
-  const attempts = failedAttemptsMap.get(ip) || [];
-  attempts.push(now);
-  failedAttemptsMap.set(ip, attempts);
-}
 
 function isAuthorized(req: NextRequest): boolean {
   const authHeader = req.headers.get('authorization');
@@ -65,24 +34,29 @@ function isAuthorized(req: NextRequest): boolean {
 }
 
 export async function GET(req: NextRequest) {
-  const ip = getClientIp(req);
-  const rateLimit = checkRateLimit(ip);
-
+  // 1. Comprobación atómica previa en PostgreSQL (Política Fail-Closed: 503 ante caída)
+  const rateLimit = await checkRateLimit(req);
   if (!rateLimit.allowed) {
-    const remainingSec = Math.ceil((rateLimit.remainingMs || 0) / 1000);
     return NextResponse.json(
-      { error: `Demasiados intentos fallidos. Bloqueado temporalmente durante ${remainingSec} segundos.` },
-      { status: 429 }
+      { error: rateLimit.error || 'Acceso administrativo temporalmente bloqueado.' },
+      { status: rateLimit.status || 429 }
     );
   }
 
+  // 2. Comprobación de credenciales autorizadas
   if (!isAuthorized(req)) {
-    recordFailedAttempt(ip);
+    const rec = await recordFailedAttempt(req);
+    const msg = rec.blocked
+      ? `No autorizado. Límite de intentos superado. Bloqueado temporalmente durante ${rec.remainingSeconds || 900} segundos.`
+      : 'No autorizado. Se requiere token o PIN administrativo válido.';
     return NextResponse.json(
-      { error: 'No autorizado. Se requiere token o PIN administrativo válido.' },
-      { status: 401 }
+      { error: msg },
+      { status: rec.blocked ? 429 : 401 }
     );
   }
+
+  // 3. Autenticación exitosa legítima: limpiar contador de fallos para este origen
+  await clearAttemptsOnSuccess(req);
 
   try {
     const supabase = createAdminClient();
