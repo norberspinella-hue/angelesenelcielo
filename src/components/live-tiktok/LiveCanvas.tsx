@@ -44,23 +44,12 @@ export function LiveCanvas({
   const rawDedication = activePetDedication.trim() || (currentPet ? 'Tu luz seguirá brillando\nen nuestros corazones' : '');
   const isJustLit = Boolean(candleLitAt && Date.now() - candleLitAt < 4500);
 
-  // Lista de hasta 5 nombres recientes para el ticker superior sin truncar el estado
-  // Memorial secundario ampliado: 20 nombres visibles (5 líneas × 4 nombres)
-  const DEFAULT_20_NAMES = [
-    'Luna', 'Thor', 'Coco', 'Milo',
-    'Nala', 'Simba', 'Rocky', 'Toby',
-    'Kira', 'Bruno', 'Maya', 'Leo',
-    'Bella', 'Lucas', 'Lola', 'Max',
-    'Zeus', 'Sasha', 'Pancho', 'Bimba'
-  ];
+  // Memorial de nombres añadidos exclusivamente durante la emisión
+  const sessionCandleNames = Array.from(new Set(candles.map(c => c.name).filter(Boolean)));
+  const totalMemorialCount = sessionCandleNames.length;
 
-  // Combina las velas activas del directo con los ángeles base garantizando siempre 20 visibles
-  const sessionCandleNames = candles.map(c => c.name).filter(Boolean);
-  const combinedMemorialNames = Array.from(new Set([...sessionCandleNames, ...DEFAULT_20_NAMES]));
-
-  // Rotación automática suave por tandas de 20 nombres cuando hay más de 20 registros
+  // Rotación automática suave por tandas de hasta 20 nombres cuando hay más de 20 registros
   const [rotationBatchIndex, setRotationBatchIndex] = React.useState(0);
-  const totalMemorialCount = combinedMemorialNames.length;
 
   React.useEffect(() => {
     if (totalMemorialCount <= 20) return;
@@ -70,17 +59,14 @@ export function LiveCanvas({
     return () => clearInterval(interval);
   }, [totalMemorialCount]);
 
-  const startIdx = (rotationBatchIndex * 20) % totalMemorialCount;
-  const active20MemorialNames = Array.from({ length: 20 }, (_, i) => combinedMemorialNames[(startIdx + i) % totalMemorialCount]);
+  const startIdx = totalMemorialCount > 0 ? (rotationBatchIndex * 20) % totalMemorialCount : 0;
+  const activeMemorialBatch = sessionCandleNames.slice(startIdx, startIdx + 20);
 
-  // Agrupación en 5 líneas de 4 nombres
-  const nameRows: string[][] = [
-    active20MemorialNames.slice(0, 4),
-    active20MemorialNames.slice(4, 8),
-    active20MemorialNames.slice(8, 12),
-    active20MemorialNames.slice(12, 16),
-    active20MemorialNames.slice(16, 20),
-  ];
+  // Agrupación dinámica en filas de hasta 4 nombres
+  const nameRows: string[][] = [];
+  for (let i = 0; i < activeMemorialBatch.length; i += 4) {
+    nameRows.push(activeMemorialBatch.slice(i, i + 4));
+  }
 
   // 1. NOMBRE PRINCIPAL: 4 Escalones Tipográficos Obligatorios y Centrado Dinámico
   const nameLength = currentPet.length;
@@ -359,26 +345,38 @@ export function LiveCanvas({
 
             {/* Rejilla de 5 líneas × 4 nombres en blanco marfil #FFFDF8 con sombra malva oscuro #76546D */}
             <div className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 w-full max-w-[620px]">
-              {nameRows.map((row, rowIdx) => (
-                <div key={rowIdx} className="flex items-center justify-center gap-1.5 sm:gap-3 w-full">
-                  {row.map((name, colIdx) => (
-                    <React.Fragment key={colIdx}>
-                      {colIdx > 0 && (
-                        <span className="text-[10px] sm:text-[12px] text-[#FFFDF8]/60 font-bold select-none">·</span>
-                      )}
-                      <span
-                        className="font-serif italic font-bold text-[13.5px] sm:text-[16.5px] text-[#FFFDF8] tracking-wide whitespace-nowrap"
-                        style={{
-                          fontFamily: "'Cormorant Garamond', Georgia, serif",
-                          textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
-                        }}
-                      >
-                        {name}
-                      </span>
-                    </React.Fragment>
-                  ))}
-                </div>
-              ))}
+              {nameRows.length > 0 ? (
+                nameRows.map((row, rowIdx) => (
+                  <div key={rowIdx} className="flex items-center justify-center gap-1.5 sm:gap-3 w-full">
+                    {row.map((name, colIdx) => (
+                      <React.Fragment key={colIdx}>
+                        {colIdx > 0 && (
+                          <span className="text-[10px] sm:text-[12px] text-[#FFFDF8]/60 font-bold select-none">·</span>
+                        )}
+                        <span
+                          className="font-serif italic font-bold text-[13.5px] sm:text-[16.5px] text-[#FFFDF8] tracking-wide whitespace-nowrap"
+                          style={{
+                            fontFamily: "'Cormorant Garamond', Georgia, serif",
+                            textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
+                          }}
+                        >
+                          {name}
+                        </span>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                ))
+              ) : (
+                <span
+                  className="font-serif italic text-[12px] sm:text-[13.5px] text-[#FFFDF8]/75 tracking-wide mt-0.5"
+                  style={{
+                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    textShadow: '0 1px 2px rgba(118, 84, 109, 0.45)',
+                  }}
+                >
+                  Escribe en el chat para encender una luz por tu angelito
+                </span>
+              )}
             </div>
           </div>
 

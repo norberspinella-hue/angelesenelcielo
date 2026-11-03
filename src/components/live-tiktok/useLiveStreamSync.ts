@@ -10,7 +10,7 @@ import {
   INITIAL_CANDLES,
 } from './types';
 
-const STORAGE_KEY = 'angeles_live_tiktok_state_v3';
+const STORAGE_KEY = 'angeles_live_tiktok_state_v5';
 const AUTH_TOKEN_KEY = 'angeles_live_tiktok_auth_token_v3';
 const BROADCAST_CHANNEL_NAME = 'angeles_live_tiktok_sync_v3';
 const SUPABASE_CHANNEL_NAME = 'live_tiktok_realtime_stream_v3';
@@ -311,7 +311,7 @@ export function useLiveStreamSync({ isController = false }: UseLiveStreamSyncOpt
 
   const resetLiveSession = useCallback(() => {
     updateState({
-      candles: INITIAL_CANDLES,
+      candles: [],
       sessionCandlesCount: 0,
       activeScene: 1,
       currentLetterIndex: 0,

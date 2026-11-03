@@ -120,18 +120,7 @@ export const PRELOADED_LETTERS: LetterItem[] = [
   },
 ];
 
-export const INITIAL_CANDLES: LiveCandle[] = [
-  { id: 'c-poppy', name: 'Poppy', species: '🌟 Ángelito Protector (4x4)', timeAgo: 'ahora mismo', isNew: true },
-  { id: 'c0', name: 'Bro', species: '🐾 Fundador #0007 (@nala68271)', timeAgo: 'ahora mismo', isNew: true },
-  { id: 'c1', name: 'Nano', species: '🐾 Perrito', timeAgo: 'hace 2 min' },
-  { id: 'c2', name: 'Chloe', species: '✨ Gatita', timeAgo: 'hace 4 min' },
-  { id: 'c3', name: 'House', species: '🐾 Perrito', timeAgo: 'hace 7 min' },
-  { id: 'c4', name: 'Vaiana', species: '🐾 Almas de 4 patas', timeAgo: 'hace 12 min' },
-  { id: 'c5', name: 'Juliette', species: '🐾 Refugio Nueva Vida', timeAgo: 'hace 15 min' },
-  { id: 'c6', name: 'Mary Margaret', species: '✨ Gatita', timeAgo: 'hace 19 min' },
-  { id: 'c7', name: 'Toby', species: '🐾 Golden Retriever', timeAgo: 'hace 24 min' },
-  { id: 'c8', name: 'Luna', species: '✨ Gatita blanca', timeAgo: 'hace 28 min' },
-];
+export const INITIAL_CANDLES: LiveCandle[] = [];
 
 export const SHELTER_ANGELS: ShelterAngelItem[] = [
   {
@@ -152,7 +141,7 @@ export const DEFAULT_LIVE_STATE: LiveStreamState = {
   currentShelterIndex: 0,
   autoPlayLetters: false,
   letterDuration: 14,
-  candles: INITIAL_CANDLES,
+  candles: [],
   activePetName: '',
   activePetSpecies: '',
   activePetDedication: '',
