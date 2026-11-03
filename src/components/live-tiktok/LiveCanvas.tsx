@@ -267,7 +267,14 @@ export function LiveCanvas({
             {/* FILA 1: En el mural + En la web (Alineados horizontalmente a partir de Y=230px) */}
             <div className="flex items-center justify-center gap-2 sm:gap-2.5">
               {/* Píldora 1: Mural Global (Estrella de Oro Cálido) - Fondo 85% opacidad */}
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFDF8]/32 backdrop-blur-md border-[1.5px] border-[#E8BD79] shadow-[0_0_12px_rgba(232,189,121,0.35)]">
+              <div className="relative flex items-center gap-2 px-3.5 py-1.5 rounded-full overflow-hidden"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(255, 253, 249, 0.48) 0%, rgba(255, 253, 248, 0.36) 30%, rgba(250, 240, 245, 0.26) 70%, rgba(242, 222, 233, 0.32) 100%)',
+                  border: '1.4px solid rgba(232, 189, 121, 0.85)',
+                  boxShadow: 'inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.80), inset 0 -2px 3px 0 rgba(118, 84, 109, 0.16), 0 4px 12px 0 rgba(118, 84, 109, 0.25), 0 0 14px 0 rgba(232, 189, 121, 0.30)',
+                  backdropFilter: 'blur(10px) saturate(125%)',
+                  WebkitBackdropFilter: 'blur(10px) saturate(125%)',
+                }}>
                 <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <linearGradient id="starGoldGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -289,7 +296,14 @@ export function LiveCanvas({
               </div>
 
               {/* Píldora 2: Web Global (Destellos Rosa Frambuesa) - Fondo 85% opacidad */}
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF8FA]/32 backdrop-blur-md border-[1.5px] border-[#E8B8CB] shadow-[0_0_12px_rgba(232,184,203,0.35)]">
+              <div className="relative flex items-center gap-2 px-3.5 py-1.5 rounded-full overflow-hidden"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(255, 251, 253, 0.48) 0%, rgba(255, 248, 250, 0.36) 30%, rgba(252, 238, 244, 0.26) 70%, rgba(245, 220, 232, 0.32) 100%)',
+                  border: '1.4px solid rgba(232, 184, 203, 0.85)',
+                  boxShadow: 'inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.80), inset 0 -2px 3px 0 rgba(118, 84, 109, 0.16), 0 4px 12px 0 rgba(118, 84, 109, 0.25), 0 0 14px 0 rgba(232, 184, 203, 0.30)',
+                  backdropFilter: 'blur(10px) saturate(125%)',
+                  WebkitBackdropFilter: 'blur(10px) saturate(125%)',
+                }}>
                 <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <linearGradient id="sparkleRoseGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -314,7 +328,14 @@ export function LiveCanvas({
             </div>
 
             {/* FILA 2: En este directo (Centrado horizontalmente debajo) - Fondo 85% opacidad */}
-            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF0FC]/32 backdrop-blur-md border-[1.5px] border-[#CBA8DB] shadow-[0_0_12px_rgba(203,168,219,0.35)]">
+            <div className="relative flex items-center gap-2 px-4 py-1.5 rounded-full overflow-hidden"
+              style={{
+                background: 'linear-gradient(180deg, rgba(252, 246, 254, 0.48) 0%, rgba(250, 240, 252, 0.36) 30%, rgba(245, 232, 250, 0.26) 70%, rgba(238, 216, 246, 0.32) 100%)',
+                border: '1.4px solid rgba(203, 168, 219, 0.85)',
+                boxShadow: 'inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.80), inset 0 -2px 3px 0 rgba(118, 84, 109, 0.16), 0 4px 12px 0 rgba(118, 84, 109, 0.25), 0 0 14px 0 rgba(203, 168, 219, 0.30)',
+                backdropFilter: 'blur(10px) saturate(125%)',
+                WebkitBackdropFilter: 'blur(10px) saturate(125%)',
+              }}>
               <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="flameGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
