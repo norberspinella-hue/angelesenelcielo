@@ -371,14 +371,15 @@ export function LiveCanvas({
             )}
           </div>
 
-          {/* 3. CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~54.6%, EN 2 LÍNEAS ARMONIOSAS) */}
+          {/* 3. CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~53.6%, EN 2 LÍNEAS + VELA CELESTIAL DORADA PREMIUM) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 pointer-events-none w-[75%] max-w-[380px]"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-3 sm:gap-4 z-30 pointer-events-none w-[80%] max-w-[420px]"
             style={{ top: '53.6%' }}
           >
-            <div className="flex items-center justify-center gap-1.5 leading-none">
+            {/* Texto en 2 líneas perfectamente centrado y con sombra de nitidez pura */}
+            <div className="flex flex-col items-center justify-center text-center">
               <span
-                className="font-serif italic font-extrabold text-[16px] sm:text-[19px] text-[#240417] tracking-wide"
+                className="font-serif italic font-bold text-[16.5px] sm:text-[19.5px] text-[#220417] tracking-wide leading-none"
                 style={{
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
                   textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
@@ -386,37 +387,66 @@ export function LiveCanvas({
               >
                 Enciende una luz
               </span>
-              <svg className="w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="ctaLiveFlameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFBEB" />
-                    <stop offset="35%" stopColor="#FDE68A" />
-                    <stop offset="70%" stopColor="#F59E0B" />
-                    <stop offset="100%" stopColor="#D97706" />
-                  </linearGradient>
-                  <linearGradient id="ctaLiveBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FFFDF5" />
-                    <stop offset="50%" stopColor="#FDF2D0" />
-                    <stop offset="100%" stopColor="#E6C875" />
-                  </linearGradient>
-                </defs>
-                <circle cx="12" cy="7.5" r="4.5" fill="#FEF08A" fillOpacity="0.5" />
-                <path d="M12 2C10.5 4.5 9.5 6.2 9.5 8C9.5 9.4 10.6 10.5 12 10.5C13.4 10.5 14.5 9.4 14.5 8C14.5 6.2 13.5 4.5 12 2Z" fill="url(#ctaLiveFlameGrad)" />
-                <circle cx="12" cy="8.2" r="1.1" fill="#FFFFFF" />
-                <line x1="12" y1="10.5" x2="12" y2="12" stroke="#78350F" strokeWidth="1.2" strokeLinecap="round" />
-                <rect x="9.5" y="12" width="5" height="9.5" rx="1.5" fill="url(#ctaLiveBodyGrad)" stroke="#B45309" strokeWidth="0.6" />
-                <rect x="10.5" y="13" width="1.2" height="7.5" rx="0.6" fill="#FFFFFF" fillOpacity="0.75" />
-              </svg>
+              <span
+                className="font-serif italic font-bold text-[16.5px] sm:text-[19.5px] text-[#220417] tracking-wide leading-tight mt-1"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
+                }}
+              >
+                por tu angelito
+              </span>
             </div>
-            <span
-              className="font-serif italic font-extrabold text-[16px] sm:text-[19px] text-[#240417] tracking-wide leading-tight mt-0.5"
-              style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
-              }}
-            >
-              por tu angelito
-            </span>
+
+            {/* Vela SVG Celestial Premium a la derecha, claramente visible y separada */}
+            <svg className="w-[26px] h-[38px] sm:w-[30px] sm:h-[44px] shrink-0" viewBox="0 0 44 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="ctaCandleAuraLive" cx="50%" cy="40%" r="50%">
+                  <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.75" />
+                  <stop offset="35%" stopColor="#F59E0B" stopOpacity="0.35" />
+                  <stop offset="70%" stopColor="#EA580C" stopOpacity="0.10" />
+                  <stop offset="100%" stopColor="#EA580C" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id="ctaFlameOuterGradLive" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFBEB" />
+                  <stop offset="20%" stopColor="#FDE68A" />
+                  <stop offset="55%" stopColor="#F59E0B" />
+                  <stop offset="100%" stopColor="#D97706" />
+                </linearGradient>
+                <linearGradient id="ctaFlameInnerGradLive" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" />
+                  <stop offset="45%" stopColor="#FEF08A" />
+                  <stop offset="100%" stopColor="#F59E0B" />
+                </linearGradient>
+                <linearGradient id="ctaWaxRimGradLive" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#EED5A5" />
+                  <stop offset="50%" stopColor="#FFFDF7" />
+                  <stop offset="100%" stopColor="#D9B778" />
+                </linearGradient>
+                <linearGradient id="ctaCandleBodyGradLive" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#EDE0C8" />
+                  <stop offset="22%" stopColor="#FFFDF9" />
+                  <stop offset="60%" stopColor="#F7EEDD" />
+                  <stop offset="85%" stopColor="#E8D5B5" />
+                  <stop offset="100%" stopColor="#D2B47E" />
+                </linearGradient>
+                <linearGradient id="ctaCandleBaseGradLive" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#B89355" />
+                  <stop offset="50%" stopColor="#FDE68A" />
+                  <stop offset="100%" stopColor="#9A7532" />
+                </linearGradient>
+              </defs>
+              <circle cx="22" cy="18.5" r="23" fill="url(#ctaCandleAuraLive)" />
+              <path d="M 22 2.6 C 29.9 10.5, 30.8 18.5, 22 26.4 C 13.2 18.5, 14.1 10.5, 22 2.6 Z" fill="url(#ctaFlameOuterGradLive)" />
+              <path d="M 22 7.2 C 26.8 13.2, 27.3 18.5, 22 23.7 C 16.7 18.5, 17.2 13.2, 22 7.2 Z" fill="url(#ctaFlameInnerGradLive)" />
+              <ellipse cx="22" cy="19" rx="2.2" ry="4.3" fill="#FFFFFF" opacity="0.95" />
+              <path d="M 22 23.1 Q 22.8 25.7, 22 29" stroke="#5A2E12" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+              <ellipse cx="22" cy="29.7" rx="10.1" ry="2.6" fill="url(#ctaWaxRimGradLive)" stroke="#C8A265" strokeWidth="0.8" />
+              <path d="M 11.9 29.7 L 12.3 58.1 C 12.3 62, 31.7 62, 31.7 58.1 L 32.1 29.7 Z" fill="url(#ctaCandleBodyGradLive)" stroke="#B89355" strokeWidth="0.8" />
+              <path d="M 17.1 31 L 17.6 56.7 C 18.9 57.4, 19.8 57.4, 20.2 56.7 L 19.8 31 Z" fill="#FFFFFF" opacity="0.5" />
+              <path d="M 29.5 30.3 C 31.7 34.3, 31.7 39.6, 29.5 40.9 C 28.1 39.6, 28.6 34.3, 29.5 30.3 Z" fill="#FFF8EC" opacity="0.85" stroke="#D5B77B" strokeWidth="0.5" />
+              <ellipse cx="22" cy="58.1" rx="11" ry="3" fill="url(#ctaCandleBaseGradLive)" stroke="#9A7532" strokeWidth="0.8" />
+            </svg>
           </div>
 
           {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (NOMBRE PROTAGONISTA + DEDICATORIA) */}
