@@ -415,7 +415,7 @@
       font-weight: 700;
       position: relative;
       z-index: 10;
-      text-shadow: 0 2px 6px rgba(118, 84, 109, 0.98), 0 0 16px rgba(118, 84, 109, 0.80), 0 0 28px rgba(118, 84, 109, 0.50);
+      text-shadow: 0 2px 6px rgba(118, 84, 109, 0.48), 0 0 16px rgba(118, 84, 109, 0.28);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -570,56 +570,29 @@
           <!-- FILA 1: En el mural + En la web -->
           <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
             <div class="pill" style="background: linear-gradient(180deg, rgba(255, 253, 249, 0.48) 0%, rgba(255, 253, 248, 0.36) 30%, rgba(250, 240, 245, 0.26) 70%, rgba(242, 222, 233, 0.32) 100%); border: 1.4px solid rgba(232, 189, 121, 0.85); box-shadow: inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.80), inset 0 -2px 3px 0 rgba(118, 84, 109, 0.16), 0 4px 12px 0 rgba(118, 84, 109, 0.25), 0 0 14px 0 rgba(232, 189, 121, 0.30); backdrop-filter: blur(10px) saturate(125%); -webkit-backdrop-filter: blur(10px) saturate(125%); padding: 5px 14px; margin: 0; border-radius: 9999px;">
-              <svg class="pill-icon" viewBox="0 0 36 36" width="16" height="16" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-right:4px;">
-                <defs>
-                  <linearGradient id="prevStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#FDE68A" />
-                    <stop offset="50%" stop-color="#F59E0B" />
-                    <stop offset="100%" stop-color="#D97706" />
-                  </linearGradient>
-                </defs>
-                <path d="M18 2L20.8 11.2L28.8 8.8L23.2 15.2L31 20L22.2 21.8L25.4 30.2L18 24.8L10.6 30.2L13.8 21.8L5 20L12.8 15.2L7.2 8.8L15.2 11.2Z" fill="url(#prevStarGrad)" stroke="#B45309" stroke-width="0.8" />
-                <circle cx="18" cy="18" r="3.2" fill="#FFFFFF" opacity="0.85" />
-              </svg>
+              <img src="/images/icons/plans/icon-plan-estrella.svg" width="18" height="18" style="display:inline-block; vertical-align:middle; margin-right:5px;" alt="Plan Estrella" />
               <span><strong id="muralCount">151</strong> en el mural</span>
             </div>
             <div class="pill" style="background: linear-gradient(180deg, rgba(255, 251, 253, 0.48) 0%, rgba(255, 248, 250, 0.36) 30%, rgba(252, 238, 244, 0.26) 70%, rgba(245, 220, 232, 0.32) 100%); border: 1.4px solid rgba(232, 184, 203, 0.85); box-shadow: inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.80), inset 0 -2px 3px 0 rgba(118, 84, 109, 0.16), 0 4px 12px 0 rgba(118, 84, 109, 0.25), 0 0 14px 0 rgba(232, 184, 203, 0.30); backdrop-filter: blur(10px) saturate(125%); -webkit-backdrop-filter: blur(10px) saturate(125%); padding: 5px 14px; margin: 0; border-radius: 9999px;">
-              <svg class="pill-icon" viewBox="0 0 32 32" width="16" height="16" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-right:4px;">
-                <defs>
-                  <linearGradient id="prevSparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#FBCFE8" />
-                    <stop offset="50%" stop-color="#F43F5E" />
-                    <stop offset="100%" stop-color="#BE185D" />
-                  </linearGradient>
-                </defs>
-                <path d="M16 2C16 9 23 16 23 16C23 16 16 23 16 30C16 23 9 16 9 16C9 16 16 9 16 2Z" fill="url(#prevSparkleGrad)" stroke="#9D174D" stroke-width="0.8" />
-                <circle cx="16" cy="16" r="2.2" fill="#FFFFFF" opacity="0.9" />
-                <path d="M26 4C26 6.8 29 9 29 9C29 9 26 11.2 26 14C26 11.2 23 9 23 9C23 9 26 6.8 26 4Z" fill="#F472B6" />
-                <path d="M6 20C6 22.2 8.5 24 8.5 24C8.5 24 6 25.8 6 28C6 25.8 3.5 24 3.5 24C3.5 24 6 22.2 6 20Z" fill="#FB7185" />
-              </svg>
+              <img src="/images/icons/plans/icon-plan-inicial.svg" width="18" height="18" style="display:inline-block; vertical-align:middle; margin-right:5px;" alt="Plan Inicial" />
               <span><strong id="webCount">18</strong> en la web</span>
             </div>
           </div>
           <!-- FILA 2: En este directo -->
           <div class="pill" style="background: linear-gradient(180deg, rgba(252, 246, 254, 0.48) 0%, rgba(250, 240, 252, 0.36) 30%, rgba(245, 232, 250, 0.26) 70%, rgba(238, 216, 246, 0.32) 100%); border: 1.4px solid rgba(203, 168, 219, 0.85); box-shadow: inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.80), inset 0 -2px 3px 0 rgba(118, 84, 109, 0.16), 0 4px 12px 0 rgba(118, 84, 109, 0.25), 0 0 14px 0 rgba(203, 168, 219, 0.30); backdrop-filter: blur(10px) saturate(125%); -webkit-backdrop-filter: blur(10px) saturate(125%); padding: 5px 16px; margin: 0; border-radius: 9999px;">
-            <svg class="pill-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-right:4px;">
-              <defs>
-                <linearGradient id="prevFlameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#FEF08A" />
-                  <stop offset="50%" stop-color="#F59E0B" />
-                  <stop offset="100%" stop-color="#EA580C" />
-                </linearGradient>
-                <linearGradient id="prevCandleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#F5D0FE" />
-                  <stop offset="50%" stop-color="#C084FC" />
-                  <stop offset="100%" stop-color="#7E22CE" />
-                </linearGradient>
-              </defs>
-              <path d="M12 2C10.5 4.5 9.5 6 9.5 7.8C9.5 9.2 10.6 10.3 12 10.3C13.4 10.3 14.5 9.2 14.5 7.8C14.5 6 13.5 4.5 12 2Z" fill="url(#prevFlameGrad)" />
-              <circle cx="12" cy="8" r="1.1" fill="#FFFFFF" />
-              <line x1="12" y1="10.3" x2="12" y2="12" stroke="#78350F" stroke-width="1.2" stroke-linecap="round" />
-              <rect x="8.5" y="12" width="7" height="9" rx="2" fill="url(#prevCandleGrad)" stroke="#A855F7" stroke-width="0.6" />
-              <rect x="9.8" y="13.2" width="1.8" height="6.5" rx="0.9" fill="#FFFFFF" fill-opacity="0.55" />
+            <svg viewBox="0 0 36 50" width="15" height="21" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-right:5px;">
+              <circle cx="18" cy="14" r="18" fill="url(#ctaCandleAuraPrev)" class="animate-cta-aura" />
+              <g class="animate-cta-flame">
+                <path d="M 18 2 C 24.5 8, 25.2 14, 18 20 C 10.8 14, 11.5 8, 18 2 Z" fill="url(#ctaFlameOuterGradPrev)" />
+                <path d="M 18 5.5 C 22 10, 22.3 14, 18 18 C 13.7 14, 14 10, 18 5.5 Z" fill="url(#ctaFlameInnerGradPrev)" />
+                <ellipse cx="18" cy="14.5" rx="2" ry="3.5" fill="#FFFFFF" opacity="0.95" />
+              </g>
+              <path d="M 18 17.5 Q 18.8 19.5, 18 22" stroke="#5A2E12" stroke-width="1.6" stroke-linecap="round" fill="none" />
+              <ellipse cx="18" cy="22.5" rx="8.3" ry="2" fill="url(#ctaWaxRimGradPrev)" stroke="#C8A265" stroke-width="0.8" />
+              <path d="M 9.7 22.5 L 10 44 C 10 47, 26 47, 26 44 L 26.3 22.5 Z" fill="url(#ctaCandleBodyGradPrev)" stroke="#B89355" stroke-width="0.8" />
+              <path d="M 14 23.5 L 14.4 43 C 15.5 43.5, 16.2 43.5, 16.5 43 L 16.2 23.5 Z" fill="#FFFFFF" opacity="0.5" />
+              <path d="M 24.1 23 C 25.9 26, 25.9 30, 24.1 31 C 23 30, 23.4 26, 24.1 23 Z" fill="#FFF8EC" opacity="0.85" stroke="#D5B77B" stroke-width="0.5" />
+              <ellipse cx="18" cy="44" rx="9" ry="2.2" fill="url(#ctaCandleBaseGradPrev)" stroke="#9A7532" stroke-width="0.8" />
             </svg>
             <span><strong id="liveCandlesCount">42</strong> en este directo</span>
           </div>
@@ -627,24 +600,24 @@
 
         <!-- 2. MEMORIAL SECUNDARIO: 20 NOMBRES AMPLIADOS (+30%, 5 LÍNEAS × 4 NOMBRES) -->
         <div class="ticker" style="top: 21.0%; width: 94%; max-width: 580px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-          <span class="ticker-title" style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; font-size: 14.5px; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 10px rgba(118, 84, 109, 0.65);">
+          <span class="ticker-title" style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; font-size: 14.5px; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25);">
             Pequeñas luces que nunca se apagan
           </span>
           <span class="ticker-heart" style="font-size: 11px; color: #FFFDF8; text-shadow: 0 1px 2px rgba(118, 84, 109, 0.8); margin: 2px 0;">♡</span>
           <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 100%;">
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25);">
               <strong id="tickerTopName" style="color: #FFFDF8; font-weight: 800;">Luna</strong> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Thor</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Coco</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Milo</span>
             </div>
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25);">
               <span>Nala</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Simba</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Rocky</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Toby</span>
             </div>
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25);">
               <span>Kira</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Bruno</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Maya</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Leo</span>
             </div>
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25);">
               <span>Bella</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Lucas</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Lola</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Max</span>
             </div>
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25);">
               <span>Zeus</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Sasha</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Pancho</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Bimba</span>
             </div>
           </div>
@@ -660,10 +633,10 @@
         
         <!-- CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~53.0%, 2 LÍNEAS + VELA DORADA CENTRADA DEBAJO) -->
         <div style="position: absolute; left: 50%; transform: translateX(-50%); top: 53.0%; width: 75%; max-width: 380px; text-align: center; z-index: 30; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 800; font-size: 16.5px; color: #FFFDF8; text-shadow: 0 1px 4px rgba(118, 84, 109, 0.95), 0 0 12px rgba(118, 84, 109, 0.75), 0 0 20px rgba(118, 84, 109, 0.45); letter-spacing: 0.3px; line-height: 1;">
+          <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 800; font-size: 16.5px; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25); letter-spacing: 0.3px; line-height: 1;">
             Enciende una luz
           </span>
-          <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 800; font-size: 16.5px; color: #FFFDF8; text-shadow: 0 1px 4px rgba(118, 84, 109, 0.95), 0 0 12px rgba(118, 84, 109, 0.75), 0 0 20px rgba(118, 84, 109, 0.45); margin-top: 4px; letter-spacing: 0.3px; line-height: 1.1;">
+          <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 800; font-size: 16.5px; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25); margin-top: 4px; letter-spacing: 0.3px; line-height: 1.1;">
             por tu angelito
           </span>
 

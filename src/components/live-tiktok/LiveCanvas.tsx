@@ -275,21 +275,10 @@ export function LiveCanvas({
                   backdropFilter: 'blur(10px) saturate(125%)',
                   WebkitBackdropFilter: 'blur(10px) saturate(125%)',
                 }}>
-                <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="starGoldGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#FDE68A" />
-                      <stop offset="45%" stopColor="#F59E0B" />
-                      <stop offset="100%" stopColor="#D97706" />
-                    </linearGradient>
-                  </defs>
-                  <circle cx="12" cy="12" r="8" fill="#FEF08A" fillOpacity="0.45" />
-                  <path d="M12 2L14.2 9.2L21.5 9.2L15.6 13.5L17.8 20.7L12 16.4L6.2 20.7L8.4 13.5L2.5 9.2L9.8 9.2L12 2Z" fill="url(#starGoldGradLive)" stroke="#B45309" strokeWidth="0.5" />
-                  <circle cx="12" cy="12" r="1.8" fill="#FFFFFF" />
-                </svg>
+                <img src="/images/icons/plans/icon-plan-estrella.svg" className="w-[20px] h-[20px] shrink-0 object-contain select-none" alt="Plan Estrella" />
                 <span
                   className={`text-[12.5px] sm:text-[14px] font-serif font-bold tracking-wide whitespace-nowrap ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#4A1E37]'}`}
-                  style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.95), 0 0 5px rgba(118, 84, 109, 0.70)' } : undefined}
+                  style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.45), 0 0 4px rgba(118, 84, 109, 0.25)' } : undefined}
                 >
                   <strong className={`font-black text-[14.5px] sm:text-[16.5px] ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#331024]'}`}>{muralStarsCount || 151}</strong> en el mural
                 </span>
@@ -304,23 +293,10 @@ export function LiveCanvas({
                   backdropFilter: 'blur(10px) saturate(125%)',
                   WebkitBackdropFilter: 'blur(10px) saturate(125%)',
                 }}>
-                <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                    <linearGradient id="sparkleRoseGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#FBCFE8" />
-                      <stop offset="50%" stopColor="#F43F5E" />
-                      <stop offset="100%" stopColor="#BE185D" />
-                    </linearGradient>
-                  </defs>
-                  <circle cx="12" cy="12" r="7.5" fill="#FCE7F3" fillOpacity="0.5" />
-                  <path d="M12 2C12 7.5 16.5 12 16.5 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 7.5 12C7.5 12 12 7.5 12 2Z" fill="url(#sparkleRoseGradLive)" stroke="#9D174D" strokeWidth="0.5" />
-                  <circle cx="12" cy="12" r="1.6" fill="#FFFFFF" />
-                  <path d="M19 4C19 6 21 8 21 8C21 8 19 10 19 12C19 10 17 8 17 8C17 8 19 6 19 4Z" fill="#F472B6" />
-                  <path d="M5 16C5 17.5 6.5 19 6.5 19C6.5 19 5 20.5 5 22C5 20.5 3.5 19 3.5 19C3.5 19 5 17.5 5 16Z" fill="#FB7185" />
-                </svg>
+                <img src="/images/icons/plans/icon-plan-inicial.svg" className="w-[20px] h-[20px] shrink-0 object-contain select-none" alt="Plan Inicial" />
                 <span
                   className={`text-[12.5px] sm:text-[14px] font-serif font-bold tracking-wide whitespace-nowrap ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#4A1E37]'}`}
-                  style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.95), 0 0 5px rgba(118, 84, 109, 0.70)' } : undefined}
+                  style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.45), 0 0 4px rgba(118, 84, 109, 0.25)' } : undefined}
                 >
                   <strong className={`font-black text-[14.5px] sm:text-[16.5px] ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#331024]'}`}>{webCandlesCount}</strong> en la web
                 </span>
@@ -336,29 +312,23 @@ export function LiveCanvas({
                 backdropFilter: 'blur(10px) saturate(125%)',
                 WebkitBackdropFilter: 'blur(10px) saturate(125%)',
               }}>
-              <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="flameGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FEF08A" />
-                    <stop offset="50%" stopColor="#F59E0B" />
-                    <stop offset="100%" stopColor="#EA580C" />
-                  </linearGradient>
-                  <linearGradient id="candleGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#F5D0FE" />
-                    <stop offset="50%" stopColor="#C084FC" />
-                    <stop offset="100%" stopColor="#7E22CE" />
-                  </linearGradient>
-                </defs>
-                <circle cx="12" cy="7" r="5" fill="#FDE047" fillOpacity="0.4" />
-                <path d="M12 2C10.5 4.5 9.5 6 9.5 7.8C9.5 9.2 10.6 10.3 12 10.3C13.4 10.3 14.5 9.2 14.5 7.8C14.5 6 13.5 4.5 12 2Z" fill="url(#flameGradLive)" />
-                <circle cx="12" cy="8" r="1.1" fill="#FFFFFF" />
-                <line x1="12" y1="10.3" x2="12" y2="12" stroke="#78350F" strokeWidth="1.2" strokeLinecap="round" />
-                <rect x="8.5" y="12" width="7" height="9" rx="2" fill="url(#candleGradLive)" stroke="#A855F7" strokeWidth="0.6" />
-                <rect x="9.8" y="13.2" width="1.8" height="6.5" rx="0.9" fill="#FFFFFF" fillOpacity="0.55" />
+              <svg className="w-[16px] h-[22px] shrink-0 select-none -my-0.5" viewBox="0 0 36 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="18" cy="14" r="18" fill="url(#ctaCandleAuraLiveFinal)" className="animate-cta-aura" />
+                <g className="animate-cta-flame">
+                  <path d="M 18 2 C 24.5 8, 25.2 14, 18 20 C 10.8 14, 11.5 8, 18 2 Z" fill="url(#ctaFlameOuterGradLiveFinal)" />
+                  <path d="M 18 5.5 C 22 10, 22.3 14, 18 18 C 13.7 14, 14 10, 18 5.5 Z" fill="url(#ctaFlameInnerGradLiveFinal)" />
+                  <ellipse cx="18" cy="14.5" rx="2" ry="3.5" fill="#FFFFFF" opacity="0.95" />
+                </g>
+                <path d="M 18 17.5 Q 18.8 19.5, 18 22" stroke="#5A2E12" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+                <ellipse cx="18" cy="22.5" rx="8.3" ry="2" fill="url(#ctaWaxRimGradLiveFinal)" stroke="#C8A265" strokeWidth="0.8" />
+                <path d="M 9.7 22.5 L 10 44 C 10 47, 26 47, 26 44 L 26.3 22.5 Z" fill="url(#ctaCandleBodyGradLiveFinal)" stroke="#B89355" strokeWidth="0.8" />
+                <path d="M 14 23.5 L 14.4 43 C 15.5 43.5, 16.2 43.5, 16.5 43 L 16.2 23.5 Z" fill="#FFFFFF" opacity="0.5" />
+                <path d="M 24.1 23 C 25.9 26, 25.9 30, 24.1 31 C 23 30, 23.4 26, 24.1 23 Z" fill="#FFF8EC" opacity="0.85" stroke="#D5B77B" strokeWidth="0.5" />
+                <ellipse cx="18" cy="44" rx="9" ry="2.2" fill="url(#ctaCandleBaseGradLiveFinal)" stroke="#9A7532" strokeWidth="0.8" />
               </svg>
               <span
                 className={`text-[12.5px] sm:text-[14px] font-serif font-bold tracking-wide whitespace-nowrap ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#4A1E37]'}`}
-                style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.95), 0 0 5px rgba(118, 84, 109, 0.70)' } : undefined}
+                style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.45), 0 0 4px rgba(118, 84, 109, 0.25)' } : undefined}
               >
                 <strong className={`font-black text-[14.5px] sm:text-[16.5px] ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#331024]'}`}>{sessionCandlesCount}</strong> en este directo
               </span>
@@ -375,7 +345,7 @@ export function LiveCanvas({
               className="font-serif italic font-semibold text-[13px] sm:text-[15.5px] text-[#FFFDF8] tracking-wide"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(118, 84, 109, 0.95), 0 0 10px rgba(118, 84, 109, 0.65)',
+                textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
               }}
             >
               Pequeñas luces que nunca se apagan
@@ -400,7 +370,7 @@ export function LiveCanvas({
                         className="font-serif italic font-bold text-[13.5px] sm:text-[16.5px] text-[#FFFDF8] tracking-wide whitespace-nowrap"
                         style={{
                           fontFamily: "'Cormorant Garamond', Georgia, serif",
-                          textShadow: '0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70)',
+                          textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
                         }}
                       >
                         {name}
@@ -460,7 +430,7 @@ export function LiveCanvas({
               className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#FFFDF8] tracking-wide leading-none"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 4px rgba(118, 84, 109, 0.95), 0 0 12px rgba(118, 84, 109, 0.75), 0 0 20px rgba(118, 84, 109, 0.45)',
+                textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
               }}
             >
               Enciende una luz
@@ -469,7 +439,7 @@ export function LiveCanvas({
               className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#FFFDF8] tracking-wide leading-tight mt-1"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 4px rgba(118, 84, 109, 0.95), 0 0 12px rgba(118, 84, 109, 0.75), 0 0 20px rgba(118, 84, 109, 0.45)',
+                textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
               }}
             >
               por tu angelito
@@ -573,7 +543,7 @@ export function LiveCanvas({
                     fontFamily: "'Allura', cursive",
                     color: '#FFFDF8',
                     fontSize: nameFontSize,
-                    textShadow: '0 2px 6px rgba(118, 84, 109, 0.98), 0 0 16px rgba(118, 84, 109, 0.80), 0 0 28px rgba(118, 84, 109, 0.50)',
+                    textShadow: '0 2px 6px rgba(118, 84, 109, 0.48), 0 0 16px rgba(118, 84, 109, 0.28)',
                   }}
                 >
                   {currentPet}
@@ -594,7 +564,7 @@ export function LiveCanvas({
                         style={{
                           fontFamily: "'Cormorant Garamond', Georgia, serif",
                           fontSize: dedicationFontSize,
-                          textShadow: '0 1px 3px rgba(118, 84, 109, 0.95), 0 0 10px rgba(118, 84, 109, 0.70)',
+                          textShadow: '0 1.5px 4px rgba(118, 84, 109, 0.45), 0 0 8px rgba(118, 84, 109, 0.25)',
                           margin: 0,
                           lineHeight: '1.22',
                         }}
@@ -609,7 +579,7 @@ export function LiveCanvas({
                     style={{
                       fontFamily: "'Cormorant Garamond', Georgia, serif",
                       fontSize: dedicationFontSize,
-                      textShadow: '0 1px 3px rgba(118, 84, 109, 0.95), 0 0 10px rgba(118, 84, 109, 0.70)',
+                      textShadow: '0 1.5px 4px rgba(118, 84, 109, 0.45), 0 0 8px rgba(118, 84, 109, 0.25)',
                       textWrap: 'balance',
                       margin: 0,
                       lineHeight: '1.25',
