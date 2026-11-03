@@ -223,7 +223,7 @@ export function LiveCanvas({
             {/* FILA 1: En el mural + En la web (Alineados horizontalmente a partir de Y=230px) */}
             <div className="flex items-center justify-center gap-2 sm:gap-2.5">
               {/* Píldora 1: Mural Global (Estrella de Oro Cálido) - Fondo 85% opacidad */}
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFDF8]/85 backdrop-blur-md border border-[#D5B77B]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFDF8]/70 backdrop-blur-md border border-[#D5B77B]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
                 <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <linearGradient id="starGoldGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -242,7 +242,7 @@ export function LiveCanvas({
               </div>
 
               {/* Píldora 2: Web Global (Destellos Rosa Frambuesa) - Fondo 85% opacidad */}
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF8FA]/85 backdrop-blur-md border border-[#F2CBDD]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF8FA]/70 backdrop-blur-md border border-[#F2CBDD]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
                 <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <linearGradient id="sparkleRoseGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -264,7 +264,7 @@ export function LiveCanvas({
             </div>
 
             {/* FILA 2: En este directo (Centrado horizontalmente debajo) - Fondo 85% opacidad */}
-            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF0FC]/85 backdrop-blur-md border border-[#E2BCE8]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
+            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF0FC]/70 backdrop-blur-md border border-[#E2BCE8]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
               <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="flameGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -371,19 +371,51 @@ export function LiveCanvas({
             )}
           </div>
 
-          {/* 3. CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~54.4%) */}
+          {/* 3. CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~54.6%, EN 2 LÍNEAS ARMONIOSAS) */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 pointer-events-none w-[75%] max-w-[380px]"
-            style={{ top: '54.4%' }}
+            style={{ top: '53.6%' }}
           >
+            <div className="flex items-center justify-center gap-1.5 leading-none">
+              <span
+                className="font-serif italic font-extrabold text-[16px] sm:text-[19px] text-[#240417] tracking-wide"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
+                }}
+              >
+                Enciende una luz
+              </span>
+              <svg className="w-[14px] h-[14px] sm:w-[16px] sm:h-[16px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="ctaLiveFlameGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFBEB" />
+                    <stop offset="35%" stopColor="#FDE68A" />
+                    <stop offset="70%" stopColor="#F59E0B" />
+                    <stop offset="100%" stopColor="#D97706" />
+                  </linearGradient>
+                  <linearGradient id="ctaLiveBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FFFDF5" />
+                    <stop offset="50%" stopColor="#FDF2D0" />
+                    <stop offset="100%" stopColor="#E6C875" />
+                  </linearGradient>
+                </defs>
+                <circle cx="12" cy="7.5" r="4.5" fill="#FEF08A" fillOpacity="0.5" />
+                <path d="M12 2C10.5 4.5 9.5 6.2 9.5 8C9.5 9.4 10.6 10.5 12 10.5C13.4 10.5 14.5 9.4 14.5 8C14.5 6.2 13.5 4.5 12 2Z" fill="url(#ctaLiveFlameGrad)" />
+                <circle cx="12" cy="8.2" r="1.1" fill="#FFFFFF" />
+                <line x1="12" y1="10.5" x2="12" y2="12" stroke="#78350F" strokeWidth="1.2" strokeLinecap="round" />
+                <rect x="9.5" y="12" width="5" height="9.5" rx="1.5" fill="url(#ctaLiveBodyGrad)" stroke="#B45309" strokeWidth="0.6" />
+                <rect x="10.5" y="13" width="1.2" height="7.5" rx="0.6" fill="#FFFFFF" fillOpacity="0.75" />
+              </svg>
+            </div>
             <span
-              className="font-serif italic font-extrabold text-[15px] sm:text-[18px] text-[#2E091F] tracking-wide leading-tight"
+              className="font-serif italic font-extrabold text-[16px] sm:text-[19px] text-[#240417] tracking-wide leading-tight mt-0.5"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
               }}
             >
-              Enciende una luz por tu angelito 🕯️
+              por tu angelito
             </span>
           </div>
 
