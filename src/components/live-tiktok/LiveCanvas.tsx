@@ -371,81 +371,79 @@ export function LiveCanvas({
             )}
           </div>
 
-          {/* 3. CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~53.6%, EN 2 LÍNEAS + VELA CELESTIAL DORADA PREMIUM) */}
+          {/* 3. CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~53.0%, 2 LÍNEAS + VELA DORADA CENTRADA DEBAJO) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-3 sm:gap-4 z-30 pointer-events-none w-[80%] max-w-[420px]"
-            style={{ top: '53.6%' }}
+            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 pointer-events-none w-[75%] max-w-[380px]"
+            style={{ top: '53.0%' }}
           >
             {/* Texto en 2 líneas perfectamente centrado y con sombra de nitidez pura */}
-            <div className="flex flex-col items-center justify-center text-center">
-              <span
-                className="font-serif italic font-bold text-[16.5px] sm:text-[19.5px] text-[#220417] tracking-wide leading-none"
-                style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
-                }}
-              >
-                Enciende una luz
-              </span>
-              <span
-                className="font-serif italic font-bold text-[16.5px] sm:text-[19.5px] text-[#220417] tracking-wide leading-tight mt-1"
-                style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
-                }}
-              >
-                por tu angelito
-              </span>
-            </div>
+            <span
+              className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#220417] tracking-wide leading-none"
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
+              }}
+            >
+              Enciende una luz
+            </span>
+            <span
+              className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#220417] tracking-wide leading-tight mt-1"
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
+              }}
+            >
+              por tu angelito
+            </span>
 
-            {/* Vela SVG Celestial Premium a la derecha, claramente visible y separada */}
-            <svg className="w-[26px] h-[38px] sm:w-[30px] sm:h-[44px] shrink-0" viewBox="0 0 44 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Vela SVG Celestial Premium centrada debajo del texto (sin solape) */}
+            <svg className="w-[22px] h-[32px] sm:w-[26px] sm:h-[36px] shrink-0 mt-1" viewBox="0 0 36 50" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <radialGradient id="ctaCandleAuraLive" cx="50%" cy="40%" r="50%">
-                  <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.75" />
-                  <stop offset="35%" stopColor="#F59E0B" stopOpacity="0.35" />
-                  <stop offset="70%" stopColor="#EA580C" stopOpacity="0.10" />
+                <radialGradient id="ctaCandleAuraLiveFinal" cx="50%" cy="40%" r="50%">
+                  <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.80" />
+                  <stop offset="35%" stopColor="#F59E0B" stopOpacity="0.40" />
+                  <stop offset="70%" stopColor="#EA580C" stopOpacity="0.12" />
                   <stop offset="100%" stopColor="#EA580C" stopOpacity="0" />
                 </radialGradient>
-                <linearGradient id="ctaFlameOuterGradLive" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="ctaFlameOuterGradLiveFinal" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#FFFBEB" />
                   <stop offset="20%" stopColor="#FDE68A" />
                   <stop offset="55%" stopColor="#F59E0B" />
                   <stop offset="100%" stopColor="#D97706" />
                 </linearGradient>
-                <linearGradient id="ctaFlameInnerGradLive" x1="0%" y1="0%" x2="0%" y2="100%">
+                <linearGradient id="ctaFlameInnerGradLiveFinal" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor="#FFFFFF" />
                   <stop offset="45%" stopColor="#FEF08A" />
                   <stop offset="100%" stopColor="#F59E0B" />
                 </linearGradient>
-                <linearGradient id="ctaWaxRimGradLive" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient id="ctaWaxRimGradLiveFinal" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#EED5A5" />
                   <stop offset="50%" stopColor="#FFFDF7" />
                   <stop offset="100%" stopColor="#D9B778" />
                 </linearGradient>
-                <linearGradient id="ctaCandleBodyGradLive" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient id="ctaCandleBodyGradLiveFinal" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#EDE0C8" />
                   <stop offset="22%" stopColor="#FFFDF9" />
                   <stop offset="60%" stopColor="#F7EEDD" />
                   <stop offset="85%" stopColor="#E8D5B5" />
                   <stop offset="100%" stopColor="#D2B47E" />
                 </linearGradient>
-                <linearGradient id="ctaCandleBaseGradLive" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient id="ctaCandleBaseGradLiveFinal" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#B89355" />
                   <stop offset="50%" stopColor="#FDE68A" />
                   <stop offset="100%" stopColor="#9A7532" />
                 </linearGradient>
               </defs>
-              <circle cx="22" cy="18.5" r="23" fill="url(#ctaCandleAuraLive)" />
-              <path d="M 22 2.6 C 29.9 10.5, 30.8 18.5, 22 26.4 C 13.2 18.5, 14.1 10.5, 22 2.6 Z" fill="url(#ctaFlameOuterGradLive)" />
-              <path d="M 22 7.2 C 26.8 13.2, 27.3 18.5, 22 23.7 C 16.7 18.5, 17.2 13.2, 22 7.2 Z" fill="url(#ctaFlameInnerGradLive)" />
-              <ellipse cx="22" cy="19" rx="2.2" ry="4.3" fill="#FFFFFF" opacity="0.95" />
-              <path d="M 22 23.1 Q 22.8 25.7, 22 29" stroke="#5A2E12" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-              <ellipse cx="22" cy="29.7" rx="10.1" ry="2.6" fill="url(#ctaWaxRimGradLive)" stroke="#C8A265" strokeWidth="0.8" />
-              <path d="M 11.9 29.7 L 12.3 58.1 C 12.3 62, 31.7 62, 31.7 58.1 L 32.1 29.7 Z" fill="url(#ctaCandleBodyGradLive)" stroke="#B89355" strokeWidth="0.8" />
-              <path d="M 17.1 31 L 17.6 56.7 C 18.9 57.4, 19.8 57.4, 20.2 56.7 L 19.8 31 Z" fill="#FFFFFF" opacity="0.5" />
-              <path d="M 29.5 30.3 C 31.7 34.3, 31.7 39.6, 29.5 40.9 C 28.1 39.6, 28.6 34.3, 29.5 30.3 Z" fill="#FFF8EC" opacity="0.85" stroke="#D5B77B" strokeWidth="0.5" />
-              <ellipse cx="22" cy="58.1" rx="11" ry="3" fill="url(#ctaCandleBaseGradLive)" stroke="#9A7532" strokeWidth="0.8" />
+              <circle cx="18" cy="14" r="18" fill="url(#ctaCandleAuraLiveFinal)" />
+              <path d="M 18 2 C 24.5 8, 25.2 14, 18 20 C 10.8 14, 11.5 8, 18 2 Z" fill="url(#ctaFlameOuterGradLiveFinal)" />
+              <path d="M 18 5.5 C 22 10, 22.3 14, 18 18 C 13.7 14, 14 10, 18 5.5 Z" fill="url(#ctaFlameInnerGradLiveFinal)" />
+              <ellipse cx="18" cy="14.5" rx="2" ry="3.5" fill="#FFFFFF" opacity="0.95" />
+              <path d="M 18 17.5 Q 18.8 19.5, 18 22" stroke="#5A2E12" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+              <ellipse cx="18" cy="22.5" rx="8.3" ry="2" fill="url(#ctaWaxRimGradLiveFinal)" stroke="#C8A265" strokeWidth="0.8" />
+              <path d="M 9.7 22.5 L 10 44 C 10 47, 26 47, 26 44 L 26.3 22.5 Z" fill="url(#ctaCandleBodyGradLiveFinal)" stroke="#B89355" strokeWidth="0.8" />
+              <path d="M 14 23.5 L 14.4 43 C 15.5 43.5, 16.2 43.5, 16.5 43 L 16.2 23.5 Z" fill="#FFFFFF" opacity="0.5" />
+              <path d="M 24.1 23 C 25.9 26, 25.9 30, 24.1 31 C 23 30, 23.4 26, 24.1 23 Z" fill="#FFF8EC" opacity="0.85" stroke="#D5B77B" strokeWidth="0.5" />
+              <ellipse cx="18" cy="44" rx="9" ry="2.2" fill="url(#ctaCandleBaseGradLiveFinal)" stroke="#9A7532" strokeWidth="0.8" />
             </svg>
           </div>
 
