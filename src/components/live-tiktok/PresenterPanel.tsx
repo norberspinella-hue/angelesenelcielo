@@ -580,10 +580,10 @@ export function PresenterPanel() {
                   {/* Lista dinámica de velas activas */}
                   <div className="space-y-2">
                     <span className="text-[11px] font-bold text-pink-300/70 block">
-                      Velas registradas en la emisión:
+                      Velas registradas en la emisión ({state.candles.length}):
                     </span>
-                    <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1">
-                      {state.candles.slice(0, 12).map((c) => {
+                    <div className="max-h-80 overflow-y-auto space-y-1.5 pr-1">
+                      {state.candles.map((c) => {
                         const isCurrentActive = state.activePetName === c.name;
                         return (
                           <div
