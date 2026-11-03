@@ -80,22 +80,24 @@ export function LiveCanvas({
     active20MemorialNames.slice(16, 20),
   ];
 
-  // 1. NOMBRE PRINCIPAL: 3 Escalones Tipográficos Obligatorios y Centrado Perfecto
+  // 1. NOMBRE PRINCIPAL: 4 Escalones Tipográficos Obligatorios y Centrado Dinámico
   const nameLength = currentPet.length;
-  let nameFontSize = 'clamp(34px, 7.4vw, 82px)'; // Escalón 1 · Nombre Corto (1 a 5 chars: Dura, Bro, Coco, Maya)
-  if (nameLength > 11) {
-    nameFontSize = 'clamp(20px, 4.2vw, 48px)'; // Escalón 3 · Nombre Largo (12+ chars: Maximiliano Fernando, Mary Margaret)
+  let nameFontSize = 'clamp(40px, 8.5vw, 100px)'; // 1 a 5 chars (Poppy, Luna, Coco)
+  if (nameLength > 13) {
+    nameFontSize = 'clamp(28px, 5.8vw, 74px)';   // 14+ chars (Mary Margaret)
+  } else if (nameLength > 9) {
+    nameFontSize = 'clamp(32px, 6.8vw, 84px)';   // 10 a 13 chars (Maximiliano)
   } else if (nameLength > 5) {
-    nameFontSize = 'clamp(26px, 5.8vw, 66px)'; // Escalón 2 · Nombre Medio (6 a 11 chars: Chloé, Juliette, Kassius)
+    nameFontSize = 'clamp(36px, 7.8vw, 92px)';   // 6 a 9 chars (Juliette)
   }
 
   // 2. DEDICATORIA: Control Estricto de 1 o 2 Líneas Equilibradas (Sin Palabras Huérfanas)
   const dedicationLength = rawDedication.length;
-  let dedicationFontSize = 'clamp(18px, 3.8vw, 38px)';
+  let dedicationFontSize = 'clamp(18px, 3.4vw, 34px)';
   if (dedicationLength > 65) {
-    dedicationFontSize = 'clamp(15px, 3.0vw, 30px)';
+    dedicationFontSize = 'clamp(15px, 2.7vw, 27px)';
   } else if (dedicationLength > 40) {
-    dedicationFontSize = 'clamp(17px, 3.4vw, 34px)';
+    dedicationFontSize = 'clamp(16px, 3.0vw, 30px)';
   }
 
   // Formateo en líneas limpias para evitar que palabras queden aisladas en 3ª línea
@@ -378,22 +380,22 @@ export function LiveCanvas({
             className="absolute pointer-events-none z-10 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
             style={{ left: '21.5%', top: '35.0%', width: '130px', height: '130px' }}
           >
-            {/* Aureola ambiental cálida permanente y muy suave respirando con la llama */}
+            {/* Aureola ambiental cálida difusa permanente (100% natural, sin aros ni círculos digitales) */}
             <div
-              className="absolute w-28 h-28 rounded-full pointer-events-none animate-live-aura-breath"
+              className="absolute w-28 h-28 rounded-full pointer-events-none animate-live-aura-breath blur-lg"
               style={{
-                background: 'radial-gradient(circle, rgba(255, 190, 60, 0.40) 0%, rgba(245, 140, 30, 0.18) 50%, transparent 75%)',
+                background: 'radial-gradient(circle, rgba(255, 195, 80, 0.28) 0%, rgba(245, 140, 30, 0.10) 50%, transparent 75%)',
                 mixBlendMode: 'screen',
               }}
             />
 
-            {/* Suave parpadeo lumínico directo sobre el núcleo de la llama de la foto */}
+            {/* Suave respiración lumínica orgánica sobre el núcleo cálido de la fotografía */}
             <div
-              className="absolute w-6 h-11 pointer-events-none"
+              className="absolute w-5 h-10 pointer-events-none blur-xs"
               style={{
                 top: '47px',
                 borderRadius: '50% 50% 40% 40% / 60% 60% 30% 30%',
-                background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0%, rgba(255, 220, 110, 0.55) 45%, rgba(255, 140, 20, 0.20) 80%, transparent 100%)',
+                background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.70) 0%, rgba(255, 220, 110, 0.35) 45%, transparent 80%)',
                 mixBlendMode: 'screen',
                 animation: 'liveFlameCoreJitter 0.25s ease-in-out infinite alternate',
               }}
@@ -494,40 +496,40 @@ export function LiveCanvas({
             </svg>
           </div>
 
-          {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (NOMBRE PROTAGONISTA + DEDICATORIA) */}
+          {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (NOMBRE PROTAGONISTA + DEDICATORIA) CON DISTANCIA ANTI-COLISIÓN */}
           {currentPet ? (
-            <>
-              {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA CENTRADO CON RESPLANDOR CELESTIAL */}
-              <div
-                className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-30 w-[76%] max-w-[500px] px-4"
-                style={{ top: '67.0%', height: '5.6%' }}
-              >
-                {/* Halo / Círculo rojizo-dorado expansivo al entrar el perrito */}
-                {isJustLit && (
-                  <>
-                    <div
-                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full blur-xl animate-ping"
-                      style={{
-                        width: '280px',
-                        height: '110px',
-                        background: 'radial-gradient(ellipse at center, rgba(244, 63, 94, 0.48) 0%, rgba(225, 29, 72, 0.28) 45%, rgba(251, 191, 36, 0.15) 70%, transparent 90%)',
-                        mixBlendMode: 'screen',
-                        animationDuration: '3.0s',
-                        animationIterationCount: 1,
-                      }}
-                    />
-                    <div
-                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full blur-lg animate-pulse"
-                      style={{
-                        width: '240px',
-                        height: '80px',
-                        background: 'radial-gradient(ellipse at center, rgba(251, 113, 133, 0.35) 0%, rgba(244, 63, 94, 0.18) 50%, transparent 80%)',
-                        mixBlendMode: 'screen',
-                      }}
-                    />
-                  </>
-                )}
+            <div
+              className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-start text-center z-30 w-[82%] max-w-[540px] px-3 pointer-events-none"
+              style={{ top: '65.2%' }}
+            >
+              {/* Halo / Círculo rojizo-dorado expansivo al entrar el perrito */}
+              {isJustLit && (
+                <>
+                  <div
+                    className="absolute left-1/2 top-8 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full blur-xl animate-ping"
+                    style={{
+                      width: '280px',
+                      height: '110px',
+                      background: 'radial-gradient(ellipse at center, rgba(244, 63, 94, 0.48) 0%, rgba(225, 29, 72, 0.28) 45%, rgba(251, 191, 36, 0.15) 70%, transparent 90%)',
+                      mixBlendMode: 'screen',
+                      animationDuration: '3.0s',
+                      animationIterationCount: 1,
+                    }}
+                  />
+                  <div
+                    className="absolute left-1/2 top-8 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full blur-lg animate-pulse"
+                    style={{
+                      width: '240px',
+                      height: '80px',
+                      background: 'radial-gradient(ellipse at center, rgba(251, 113, 133, 0.35) 0%, rgba(244, 63, 94, 0.18) 50%, transparent 80%)',
+                      mixBlendMode: 'screen',
+                    }}
+                  />
+                </>
+              )}
 
+              {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA */}
+              <div className="w-full flex items-center justify-center relative z-10">
                 <span
                   className="leading-none tracking-normal select-none text-center block w-full truncate relative z-10"
                   style={{
@@ -541,10 +543,10 @@ export function LiveCanvas({
                 </span>
               </div>
 
-              {/* ZONA INFERIOR: DEDICATORIA DE 1 O 2 LÍNEAS EQUILIBRADAS */}
+              {/* ZONA INFERIOR: DEDICATORIA CON SEPARACIÓN GARANTIZADA DE 44-48PX (NUNCA SOLAPA) */}
               <div
-                className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-[76%] max-w-[500px] px-3"
-                style={{ top: '73.0%', height: '5.5%' }}
+                className="w-full flex flex-col items-center justify-center text-center relative z-10"
+                style={{ marginTop: 'clamp(32px, 4.5vw, 48px)', lineHeight: 1.22 }}
               >
                 {dedicationLines.length > 1 ? (
                   <div className="w-full flex flex-col items-center justify-center leading-tight">
@@ -557,7 +559,7 @@ export function LiveCanvas({
                           fontSize: dedicationFontSize,
                           textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.85)',
                           margin: 0,
-                          lineHeight: '1.2',
+                          lineHeight: '1.22',
                         }}
                       >
                         {line}
@@ -580,7 +582,7 @@ export function LiveCanvas({
                   </p>
                 )}
               </div>
-            </>
+            </div>
           ) : (
             /* Estado de reposo / Altar inicial */
             <div
