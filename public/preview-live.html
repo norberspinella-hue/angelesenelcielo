@@ -226,7 +226,7 @@
     }
     .ticker-heart {
       font-size: 11px;
-      color: #8B1E5F;
+      color: #FFFDF8;
       opacity: 0.7;
       font-weight: 700;
       margin: 1px 0;
@@ -244,7 +244,7 @@
       text-shadow: 0 1px 2px rgba(255,255,255,0.95), 0 0 6px rgba(255,255,255,0.7);
     }
     .ticker-item-active {
-      color: #8B1E5F;
+      color: #FFFDF8;
       font-weight: 900;
       transform: scale(1.1);
     }
@@ -409,13 +409,13 @@
 
     .pet-name {
       font-family: 'Allura', cursive;
-      color: #1A0213;
+      color: #FFFDF8;
       font-size: 70px;
       line-height: 1;
       font-weight: 700;
       position: relative;
       z-index: 10;
-      text-shadow: 0 1px 4px rgba(255,255,255,1), 0 2px 10px rgba(255,255,255,0.95), 0 0 18px rgba(255,255,255,0.85);
+      text-shadow: 0 2px 6px rgba(118, 84, 109, 0.98), 0 0 16px rgba(118, 84, 109, 0.80), 0 0 28px rgba(118, 84, 109, 0.50);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -434,10 +434,10 @@
     .pet-dedication {
       font-style: italic;
       font-weight: 800;
-      color: #200418;
+      color: #FFFDF8;
       font-size: 16px;
       line-height: 1.25;
-      text-shadow: 0 1px 4px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.95);
+      text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 10px rgba(118, 84, 109, 0.70);
       margin: 0;
     }
 
@@ -524,6 +524,12 @@
     <button class="btn" id="btnTriggerCandle" onclick="simulateLightCandle()">
       <span>✨</span> Encender Nueva Vela (Probar Círculo Rojizo)
     </button>
+    <button class="btn btn-secondary" id="btnToggleVariant" onclick="toggleCounterVariant()" style="border-color: #E8BD79; color: #FDE68A; font-weight: bold;">
+      ⚖️ Alternar Variante Contadores (Ciruela vs Blanco)
+    </button>
+    <button class="btn btn-secondary" onclick="setPet('Mary Margaret', 'Siempre en nuestra memoria y en nuestro amor.\nVuela alto dulce angelito.', '50px')">
+      Mascota: Mary Margaret (50px)
+    </button>
     <button class="btn btn-secondary" onclick="setPet('Poppy', 'Tu luz seguirá brillando\nen nuestros corazones', '72px')">
       Mascota: Poppy (Corto · 72px)
     </button>
@@ -563,7 +569,7 @@
         <div style="position: absolute; left: 50%; transform: translateX(-50%); top: 12.4%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; z-index: 30; width: 92%; max-width: 600px;">
           <!-- FILA 1: En el mural + En la web -->
           <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <div class="pill" style="background: rgba(255, 253, 248, 0.70); backdrop-filter: blur(8px); padding: 5px 12px; margin: 0; box-shadow: 0 4px 16px rgba(78,35,100,0.10);">
+            <div class="pill" style="background: rgba(255, 253, 248, 0.70); backdrop-filter: blur(8px); padding: 5px 12px; margin: 0; box-shadow: 0 4px 16px rgba(78,35,100,0.10); border: 1.8px solid #CBA8DB; border: 1.8px solid #E8B8CB; border: 1.8px solid #E8BD79;">
               <svg class="pill-icon" viewBox="0 0 36 36" width="16" height="16" aria-hidden="true" style="display:inline-block; vertical-align:middle; margin-right:4px;">
                 <defs>
                   <linearGradient id="prevStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -621,25 +627,25 @@
 
         <!-- 2. MEMORIAL SECUNDARIO: 20 NOMBRES AMPLIADOS (+30%, 5 LÍNEAS × 4 NOMBRES) -->
         <div class="ticker" style="top: 21.0%; width: 94%; max-width: 580px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-          <span class="ticker-title" style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; font-size: 14.5px; color: rgba(78, 30, 60, 0.95); text-shadow: 0 1px 3px rgba(255,255,255,0.98), 0 0 8px rgba(255,255,255,0.85);">
+          <span class="ticker-title" style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; font-size: 14.5px; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 10px rgba(118, 84, 109, 0.65);">
             Pequeñas luces que nunca se apagan
           </span>
-          <span class="ticker-heart" style="font-size: 11px; color: rgba(139, 30, 95, 0.7); margin: 2px 0;">♡</span>
+          <span class="ticker-heart" style="font-size: 11px; color: #FFFDF8; text-shadow: 0 1px 2px rgba(118, 84, 109, 0.8); margin: 2px 0;">♡</span>
           <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 100%;">
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #421731; text-shadow: 0 1px 2px rgba(255,255,255,1), 0 0 6px rgba(255,255,255,0.85);">
-              <strong id="tickerTopName" style="color: #8B1E5F; font-weight: 800;">Luna</strong> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Thor</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Coco</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Milo</span>
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+              <strong id="tickerTopName" style="color: #FFFDF8; font-weight: 800;">Luna</strong> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Thor</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Coco</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Milo</span>
             </div>
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #421731; text-shadow: 0 1px 2px rgba(255,255,255,1), 0 0 6px rgba(255,255,255,0.85);">
-              <span>Nala</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Simba</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Rocky</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Toby</span>
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+              <span>Nala</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Simba</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Rocky</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Toby</span>
             </div>
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #421731; text-shadow: 0 1px 2px rgba(255,255,255,1), 0 0 6px rgba(255,255,255,0.85);">
-              <span>Kira</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Bruno</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Maya</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Leo</span>
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+              <span>Kira</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Bruno</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Maya</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Leo</span>
             </div>
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #421731; text-shadow: 0 1px 2px rgba(255,255,255,1), 0 0 6px rgba(255,255,255,0.85);">
-              <span>Bella</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Lucas</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Lola</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Max</span>
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+              <span>Bella</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Lucas</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Lola</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Max</span>
             </div>
-            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #421731; text-shadow: 0 1px 2px rgba(255,255,255,1), 0 0 6px rgba(255,255,255,0.85);">
-              <span>Zeus</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Sasha</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Pancho</span> <span style="color: rgba(139, 30, 95, 0.6); font-size: 11px;">·</span> <span>Bimba</span>
+            <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14px; font-weight: 700; color: #FFFDF8; text-shadow: 0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70);">
+              <span>Zeus</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Sasha</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Pancho</span> <span style="color: rgba(255, 253, 248, 0.65); font-size: 11px;">·</span> <span>Bimba</span>
             </div>
           </div>
         </div>
@@ -654,10 +660,10 @@
         
         <!-- CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~53.0%, 2 LÍNEAS + VELA DORADA CENTRADA DEBAJO) -->
         <div style="position: absolute; left: 50%; transform: translateX(-50%); top: 53.0%; width: 75%; max-width: 380px; text-align: center; z-index: 30; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 800; font-size: 16.5px; color: #220417; text-shadow: 0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85); letter-spacing: 0.3px; line-height: 1;">
+          <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 800; font-size: 16.5px; color: #FFFDF8; text-shadow: 0 1px 4px rgba(118, 84, 109, 0.95), 0 0 12px rgba(118, 84, 109, 0.75), 0 0 20px rgba(118, 84, 109, 0.45); letter-spacing: 0.3px; line-height: 1;">
             Enciende una luz
           </span>
-          <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 800; font-size: 16.5px; color: #220417; text-shadow: 0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85); margin-top: 4px; letter-spacing: 0.3px; line-height: 1.1;">
+          <span style="font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 800; font-size: 16.5px; color: #FFFDF8; text-shadow: 0 1px 4px rgba(118, 84, 109, 0.95), 0 0 12px rgba(118, 84, 109, 0.75), 0 0 20px rgba(118, 84, 109, 0.45); margin-top: 4px; letter-spacing: 0.3px; line-height: 1.1;">
             por tu angelito
           </span>
 
@@ -874,6 +880,24 @@
       document.getElementById('restingContainer').style.display = 'block';
     }
   
+    let counterVariantIsWhite = false;
+
+    function toggleCounterVariant() {
+      counterVariantIsWhite = !counterVariantIsWhite;
+      const pills = document.querySelectorAll('.pill');
+      pills.forEach(p => {
+        if (counterVariantIsWhite) {
+          p.style.color = '#FFFDF8';
+          p.style.textShadow = '0 1px 2px rgba(118, 84, 109, 0.95), 0 0 5px rgba(118, 84, 109, 0.70)';
+        } else {
+          p.style.color = '#4A1E37';
+          p.style.textShadow = 'none';
+        }
+      });
+      const btn = document.getElementById('btnToggleVariant');
+      if (btn) btn.innerText = counterVariantIsWhite ? '⚖️ Contadores: Blanco Marfil (Variante A)' : '⚖️ Contadores: Ciruela Elegante (Variante B)';
+    }
+
     let safeZoneVisible = false;
     let mobileUIVisible = false;
 

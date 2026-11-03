@@ -13,6 +13,7 @@ interface LiveCanvasProps {
   showSafeZone?: boolean;
   safeZoneOpacity?: number;
   className?: string;
+  counterTextVariant?: 'white' | 'plum';
 }
 
 export function LiveCanvas({
@@ -20,6 +21,7 @@ export function LiveCanvas({
   showSafeZone = false,
   safeZoneOpacity = 0.85,
   className = '',
+  counterTextVariant = 'plum',
 }: LiveCanvasProps) {
   const {
     activeScene,
@@ -265,7 +267,7 @@ export function LiveCanvas({
             {/* FILA 1: En el mural + En la web (Alineados horizontalmente a partir de Y=230px) */}
             <div className="flex items-center justify-center gap-2 sm:gap-2.5">
               {/* Píldora 1: Mural Global (Estrella de Oro Cálido) - Fondo 85% opacidad */}
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFDF8]/70 backdrop-blur-md border border-[#D5B77B]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFDF8]/70 backdrop-blur-md border border-[#E8BD79] shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
                 <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <linearGradient id="starGoldGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -278,13 +280,16 @@ export function LiveCanvas({
                   <path d="M12 2L14.2 9.2L21.5 9.2L15.6 13.5L17.8 20.7L12 16.4L6.2 20.7L8.4 13.5L2.5 9.2L9.8 9.2L12 2Z" fill="url(#starGoldGradLive)" stroke="#B45309" strokeWidth="0.5" />
                   <circle cx="12" cy="12" r="1.8" fill="#FFFFFF" />
                 </svg>
-                <span className="text-[12.5px] sm:text-[14px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
-                  <strong className="font-black text-[14.5px] sm:text-[16.5px] text-[#1E0417]">{muralStarsCount || 151}</strong> en el mural
+                <span
+                  className={`text-[12.5px] sm:text-[14px] font-serif font-bold tracking-wide whitespace-nowrap ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#4A1E37]'}`}
+                  style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.95), 0 0 5px rgba(118, 84, 109, 0.70)' } : undefined}
+                >
+                  <strong className={`font-black text-[14.5px] sm:text-[16.5px] ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#331024]'}`}>{muralStarsCount || 151}</strong> en el mural
                 </span>
               </div>
 
               {/* Píldora 2: Web Global (Destellos Rosa Frambuesa) - Fondo 85% opacidad */}
-              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF8FA]/70 backdrop-blur-md border border-[#F2CBDD]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF8FA]/70 backdrop-blur-md border border-[#E8B8CB] shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
                 <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <linearGradient id="sparkleRoseGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -299,14 +304,17 @@ export function LiveCanvas({
                   <path d="M19 4C19 6 21 8 21 8C21 8 19 10 19 12C19 10 17 8 17 8C17 8 19 6 19 4Z" fill="#F472B6" />
                   <path d="M5 16C5 17.5 6.5 19 6.5 19C6.5 19 5 20.5 5 22C5 20.5 3.5 19 3.5 19C3.5 19 5 17.5 5 16Z" fill="#FB7185" />
                 </svg>
-                <span className="text-[12.5px] sm:text-[14px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
-                  <strong className="font-black text-[14.5px] sm:text-[16.5px] text-[#1E0417]">{webCandlesCount}</strong> en la web
+                <span
+                  className={`text-[12.5px] sm:text-[14px] font-serif font-bold tracking-wide whitespace-nowrap ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#4A1E37]'}`}
+                  style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.95), 0 0 5px rgba(118, 84, 109, 0.70)' } : undefined}
+                >
+                  <strong className={`font-black text-[14.5px] sm:text-[16.5px] ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#331024]'}`}>{webCandlesCount}</strong> en la web
                 </span>
               </div>
             </div>
 
             {/* FILA 2: En este directo (Centrado horizontalmente debajo) - Fondo 85% opacidad */}
-            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF0FC]/70 backdrop-blur-md border border-[#E2BCE8]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
+            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF0FC]/70 backdrop-blur-md border border-[#CBA8DB] shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
               <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="flameGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -327,8 +335,11 @@ export function LiveCanvas({
                 <rect x="8.5" y="12" width="7" height="9" rx="2" fill="url(#candleGradLive)" stroke="#A855F7" strokeWidth="0.6" />
                 <rect x="9.8" y="13.2" width="1.8" height="6.5" rx="0.9" fill="#FFFFFF" fillOpacity="0.55" />
               </svg>
-              <span className="text-[12.5px] sm:text-[14px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
-                <strong className="font-black text-[14.5px] sm:text-[16.5px] text-[#1E0417]">{sessionCandlesCount}</strong> en este directo
+              <span
+                className={`text-[12.5px] sm:text-[14px] font-serif font-bold tracking-wide whitespace-nowrap ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#4A1E37]'}`}
+                style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.95), 0 0 5px rgba(118, 84, 109, 0.70)' } : undefined}
+              >
+                <strong className={`font-black text-[14.5px] sm:text-[16.5px] ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#331024]'}`}>{sessionCandlesCount}</strong> en este directo
               </span>
             </div>
           </div>
@@ -338,32 +349,37 @@ export function LiveCanvas({
             className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-full max-w-[96%] pointer-events-none"
             style={{ top: '21.2%' }}
           >
-            {/* Subtítulo discreto con mayor presencia y elegancia */}
+            {/* Subtítulo discreto en blanco marfil con sombra malva suave */}
             <span
-              className="font-serif italic font-semibold text-[13px] sm:text-[15.5px] text-[#4E1E3C] tracking-wide"
+              className="font-serif italic font-semibold text-[13px] sm:text-[15.5px] text-[#FFFDF8] tracking-wide"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(255,255,255,0.98), 0 0 8px rgba(255,255,255,0.85)',
+                textShadow: '0 1px 3px rgba(118, 84, 109, 0.95), 0 0 10px rgba(118, 84, 109, 0.65)',
               }}
             >
               Pequeñas luces que nunca se apagan
             </span>
-            <span className="text-[11px] text-[#8B1E5F]/70 my-0.5 leading-none font-bold">♡</span>
+            <span
+              className="text-[11px] text-[#FFFDF8]/90 my-0.5 leading-none font-bold select-none"
+              style={{ textShadow: '0 1px 2px rgba(118, 84, 109, 0.8)' }}
+            >
+              ♡
+            </span>
 
-            {/* Rejilla de 5 líneas × 4 nombres con tipografía 25-30% más grande y separación mejorada */}
+            {/* Rejilla de 5 líneas × 4 nombres en blanco marfil #FFFDF8 con sombra malva oscuro #76546D */}
             <div className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 w-full max-w-[620px]">
               {nameRows.map((row, rowIdx) => (
                 <div key={rowIdx} className="flex items-center justify-center gap-1.5 sm:gap-3 w-full">
                   {row.map((name, colIdx) => (
                     <React.Fragment key={colIdx}>
                       {colIdx > 0 && (
-                        <span className="text-[10px] sm:text-[12px] text-[#8B1E5F]/60 font-bold select-none">·</span>
+                        <span className="text-[10px] sm:text-[12px] text-[#FFFDF8]/60 font-bold select-none">·</span>
                       )}
                       <span
-                        className="font-serif italic font-bold text-[13.5px] sm:text-[16.5px] text-[#421731] tracking-wide whitespace-nowrap"
+                        className="font-serif italic font-bold text-[13.5px] sm:text-[16.5px] text-[#FFFDF8] tracking-wide whitespace-nowrap"
                         style={{
                           fontFamily: "'Cormorant Garamond', Georgia, serif",
-                          textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 7px rgba(255,255,255,0.85)',
+                          textShadow: '0 1px 3px rgba(118, 84, 109, 0.95), 0 0 8px rgba(118, 84, 109, 0.70)',
                         }}
                       >
                         {name}
@@ -418,21 +434,21 @@ export function LiveCanvas({
             className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 pointer-events-none w-[75%] max-w-[380px]"
             style={{ top: '53.0%' }}
           >
-            {/* Texto en 2 líneas perfectamente centrado y con sombra de nitidez pura */}
+            {/* Texto en 2 líneas en blanco marfil cálido #FFFDF8 con sombra malva suave #76546D */}
             <span
-              className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#220417] tracking-wide leading-none"
+              className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#FFFDF8] tracking-wide leading-none"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
+                textShadow: '0 1px 4px rgba(118, 84, 109, 0.95), 0 0 12px rgba(118, 84, 109, 0.75), 0 0 20px rgba(118, 84, 109, 0.45)',
               }}
             >
               Enciende una luz
             </span>
             <span
-              className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#220417] tracking-wide leading-tight mt-1"
+              className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#FFFDF8] tracking-wide leading-tight mt-1"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
+                textShadow: '0 1px 4px rgba(118, 84, 109, 0.95), 0 0 12px rgba(118, 84, 109, 0.75), 0 0 20px rgba(118, 84, 109, 0.45)',
               }}
             >
               por tu angelito
@@ -534,9 +550,9 @@ export function LiveCanvas({
                   className="leading-none tracking-normal select-none text-center block w-full truncate relative z-10"
                   style={{
                     fontFamily: "'Allura', cursive",
-                    color: '#1A0213',
+                    color: '#FFFDF8',
                     fontSize: nameFontSize,
-                    textShadow: '0 1px 4px rgba(255,255,255,1), 0 2px 10px rgba(255,255,255,0.95), 0 0 18px rgba(255,255,255,0.85)',
+                    textShadow: '0 2px 6px rgba(118, 84, 109, 0.98), 0 0 16px rgba(118, 84, 109, 0.80), 0 0 28px rgba(118, 84, 109, 0.50)',
                   }}
                 >
                   {currentPet}
@@ -553,11 +569,11 @@ export function LiveCanvas({
                     {dedicationLines.map((line, idx) => (
                       <p
                         key={idx}
-                        className="font-serif italic font-bold text-[#23051B] tracking-normal"
+                        className="font-serif italic font-bold text-[#FFFDF8] tracking-normal"
                         style={{
                           fontFamily: "'Cormorant Garamond', Georgia, serif",
                           fontSize: dedicationFontSize,
-                          textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.85)',
+                          textShadow: '0 1px 3px rgba(118, 84, 109, 0.95), 0 0 10px rgba(118, 84, 109, 0.70)',
                           margin: 0,
                           lineHeight: '1.22',
                         }}
@@ -568,11 +584,11 @@ export function LiveCanvas({
                   </div>
                 ) : (
                   <p
-                    className="font-serif italic font-bold text-[#23051B] leading-tight tracking-normal"
+                    className="font-serif italic font-bold text-[#FFFDF8] leading-tight tracking-normal"
                     style={{
                       fontFamily: "'Cormorant Garamond', Georgia, serif",
                       fontSize: dedicationFontSize,
-                      textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.85)',
+                      textShadow: '0 1px 3px rgba(118, 84, 109, 0.95), 0 0 10px rgba(118, 84, 109, 0.70)',
                       textWrap: 'balance',
                       margin: 0,
                       lineHeight: '1.25',
