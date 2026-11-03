@@ -81,11 +81,11 @@ export function LiveCanvas({
 
   // 2. DEDICATORIA: Control Estricto de 1 o 2 Líneas Equilibradas (Sin Palabras Huérfanas)
   const dedicationLength = rawDedication.length;
-  let dedicationFontSize = 'clamp(18px, 3.4vw, 34px)';
+  let dedicationFontSize = 'clamp(16px, 3.1vw, 30.5px)';
   if (dedicationLength > 65) {
-    dedicationFontSize = 'clamp(15px, 2.7vw, 27px)';
+    dedicationFontSize = 'clamp(13.5px, 2.4vw, 24px)';
   } else if (dedicationLength > 40) {
-    dedicationFontSize = 'clamp(16px, 3.0vw, 30px)';
+    dedicationFontSize = 'clamp(14.5px, 2.7vw, 27px)';
   }
 
   // Formateo en líneas limpias para evitar que palabras queden aisladas en 3ª línea
@@ -505,7 +505,7 @@ export function LiveCanvas({
           {currentPet ? (
             <div
               className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-start text-center z-30 w-[82%] max-w-[540px] px-3 pointer-events-none"
-              style={{ top: '65.2%' }}
+              style={{ top: '61.8%' }}
             >
               {/* Halo / Círculo rojizo-dorado expansivo al entrar el perrito */}
               {isJustLit && (
@@ -551,7 +551,7 @@ export function LiveCanvas({
               {/* ZONA INFERIOR: DEDICATORIA CON SEPARACIÓN GARANTIZADA DE 44-48PX (NUNCA SOLAPA) */}
               <div
                 className="w-full flex flex-col items-center justify-center text-center relative z-10"
-                style={{ marginTop: 'clamp(32px, 4.5vw, 48px)', lineHeight: 1.22 }}
+                style={{ marginTop: 'clamp(32px, 4.0vw, 44px)', lineHeight: 1.20 }}
               >
                 {dedicationLines.length > 1 ? (
                   <div className="w-full flex flex-col items-center justify-center leading-tight">
