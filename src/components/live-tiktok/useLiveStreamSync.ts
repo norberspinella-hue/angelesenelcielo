@@ -7,6 +7,7 @@ import {
   DEFAULT_LIVE_STATE,
   PRELOADED_LETTERS,
   LiveCandle,
+  INITIAL_CANDLES,
 } from './types';
 
 const STORAGE_KEY = 'angeles_live_tiktok_state_v3';
@@ -275,8 +276,42 @@ export function useLiveStreamSync({ isController = false }: UseLiveStreamSyncOpt
   );
 
   // Iniciar nueva emisión (resetea el contador de sesión a 0 y limpia el pedestal)
+  
+  // Eliminar una vela concreta del directo
+  const removeCandle = useCallback(
+    (candleId: string) => {
+      if (isController && !authTokenRef.current) {
+        console.warn('Acción bloqueada: Presentador no autenticado.');
+        return;
+      }
+
+      updateState((prev) => {
+        const targetCandle = prev.candles.find((c) => c.id === candleId);
+        if (!targetCandle) return prev;
+
+        const updatedCandles = prev.candles.filter((c) => c.id !== candleId);
+        const shouldDecrementCount = targetCandle.isSessionCandle && prev.sessionCandlesCount > 0;
+        const isActivePet = prev.activePetName === targetCandle.name;
+
+        return {
+          ...prev,
+          candles: updatedCandles,
+          sessionCandlesCount: shouldDecrementCount
+            ? Math.max(0, prev.sessionCandlesCount - 1)
+            : prev.sessionCandlesCount,
+          activePetName: isActivePet ? '' : prev.activePetName,
+          activePetSpecies: isActivePet ? '' : prev.activePetSpecies,
+          activePetDedication: isActivePet ? '' : prev.activePetDedication,
+          candleLitAt: isActivePet ? 0 : prev.candleLitAt,
+        };
+      });
+    },
+    [isController, updateState]
+  );
+
   const resetLiveSession = useCallback(() => {
     updateState({
+      candles: INITIAL_CANDLES,
       sessionCandlesCount: 0,
       activeScene: 1,
       currentLetterIndex: 0,
@@ -466,6 +501,7 @@ export function useLiveStreamSync({ isController = false }: UseLiveStreamSyncOpt
     updateState,
     addCandle,
     activatePet,
+    removeCandle,
     resetLiveSession,
     syncStatus,
     activeOutputsCount,

@@ -16,6 +16,7 @@ export function PresenterPanel() {
     updateState,
     addCandle,
     activatePet,
+    removeCandle,
     resetLiveSession,
     syncStatus,
     activeOutputsCount,
@@ -616,6 +617,22 @@ export function PresenterPanel() {
                                 title="Mostrar esta mascota en el pedestal"
                               >
                                 {isCurrentActive ? '★ En Altar' : 'Poner en Altar'}
+                              </button>
+                            <button
+                                onClick={() => {
+                                  if (window.confirm(`¿Eliminar la vela de "${c.name}" de la emisión?`)) {
+                                    removeCandle(c.id);
+                                  }
+                                }}
+                                className="p-1 rounded-lg text-pink-300/80 hover:text-red-400 hover:bg-red-500/15 border border-white/10 hover:border-red-400/40 transition-all cursor-pointer"
+                                title={`Eliminar vela de ${c.name}`}
+                                aria-label={`Eliminar vela de ${c.name}`}
+                              >
+                                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                  <line x1="10" y1="11" x2="10" y2="17" />
+                                  <line x1="14" y1="11" x2="14" y2="17" />
+                                </svg>
                               </button>
                             </div>
                           </div>
