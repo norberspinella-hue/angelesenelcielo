@@ -275,7 +275,7 @@ export function LiveCanvas({
                   backdropFilter: 'blur(10px) saturate(125%)',
                   WebkitBackdropFilter: 'blur(10px) saturate(125%)',
                 }}>
-                <img src="/images/icons/plans/icon-plan-estrella.svg" className="w-[20px] h-[20px] shrink-0 object-contain select-none" alt="Plan Estrella" />
+                <img src="/images/icons/plans/icon-plan-estrella.svg" className="w-[30px] h-[30px] sm:w-[34px] sm:h-[34px] shrink-0 object-contain select-none -my-1.5" alt="Plan Estrella" />
                 <span
                   className={`text-[12.5px] sm:text-[14px] font-serif font-bold tracking-wide whitespace-nowrap ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#4A1E37]'}`}
                   style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.45), 0 0 4px rgba(118, 84, 109, 0.25)' } : undefined}
@@ -293,7 +293,7 @@ export function LiveCanvas({
                   backdropFilter: 'blur(10px) saturate(125%)',
                   WebkitBackdropFilter: 'blur(10px) saturate(125%)',
                 }}>
-                <img src="/images/icons/plans/icon-plan-inicial.svg" className="w-[20px] h-[20px] shrink-0 object-contain select-none" alt="Plan Inicial" />
+                <img src="/images/icons/plans/icon-plan-inicial.svg" className="w-[30px] h-[30px] sm:w-[34px] sm:h-[34px] shrink-0 object-contain select-none -my-1.5" alt="Plan Inicial" />
                 <span
                   className={`text-[12.5px] sm:text-[14px] font-serif font-bold tracking-wide whitespace-nowrap ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#4A1E37]'}`}
                   style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.45), 0 0 4px rgba(118, 84, 109, 0.25)' } : undefined}
