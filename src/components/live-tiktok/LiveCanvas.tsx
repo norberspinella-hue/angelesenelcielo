@@ -56,9 +56,18 @@ export function LiveCanvas({
   const sessionCandleNames = candles.map(c => c.name).filter(Boolean);
   const combinedMemorialNames = Array.from(new Set([...sessionCandleNames, ...DEFAULT_20_NAMES]));
 
-  // Preparado para rotación suave por tandas si se superan los 20 registros
+  // Rotación automática suave por tandas de 20 nombres cuando hay más de 20 registros
+  const [rotationBatchIndex, setRotationBatchIndex] = React.useState(0);
   const totalMemorialCount = combinedMemorialNames.length;
-  const rotationBatchIndex = Math.floor((Date.now() / 14000) % Math.max(1, Math.ceil(totalMemorialCount / 20)));
+
+  React.useEffect(() => {
+    if (totalMemorialCount <= 20) return;
+    const interval = setInterval(() => {
+      setRotationBatchIndex(prev => (prev + 1) % Math.ceil(totalMemorialCount / 20));
+    }, 14000);
+    return () => clearInterval(interval);
+  }, [totalMemorialCount]);
+
   const startIdx = (rotationBatchIndex * 20) % totalMemorialCount;
   const active20MemorialNames = Array.from({ length: 20 }, (_, i) => combinedMemorialNames[(startIdx + i) % totalMemorialCount]);
 
@@ -279,37 +288,37 @@ export function LiveCanvas({
             </div>
           </div>
 
-          {/* 2. MEMORIAL SECUNDARIO: 20 NOMBRES VISIBLES (5 LÍNEAS × 4 NOMBRES) (Y: ~24.6%) */}
+          {/* 2. MEMORIAL SECUNDARIO: 20 NOMBRES VISIBLES (5 LÍNEAS × 4 NOMBRES) (AMPLIADOS 25-30%) (Y: ~24.0%) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-full max-w-[94%] pointer-events-none"
-            style={{ top: '24.6%' }}
+            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-full max-w-[96%] pointer-events-none"
+            style={{ top: '24.0%' }}
           >
-            {/* Subtítulo discreto */}
+            {/* Subtítulo discreto con mayor presencia y elegancia */}
             <span
-              className="font-serif italic font-semibold text-xs sm:text-[13.5px] text-[#4E1E3C]/90 tracking-wide"
+              className="font-serif italic font-semibold text-[13px] sm:text-[15.5px] text-[#4E1E3C] tracking-wide"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(255,255,255,0.95), 0 0 8px rgba(255,255,255,0.8)',
+                textShadow: '0 1px 3px rgba(255,255,255,0.98), 0 0 8px rgba(255,255,255,0.85)',
               }}
             >
               Pequeñas luces que nunca se apagan
             </span>
-            <span className="text-[10px] text-[#8B1E5F]/60 my-0.5 leading-none">♡</span>
+            <span className="text-[11px] text-[#8B1E5F]/70 my-0.5 leading-none font-bold">♡</span>
 
-            {/* Rejilla de 5 líneas × 4 nombres (20 nombres secundarios en pantalla) */}
-            <div className="flex flex-col items-center justify-center gap-0.5 sm:gap-1 w-full max-w-[540px]">
+            {/* Rejilla de 5 líneas × 4 nombres con tipografía 25-30% más grande y separación mejorada */}
+            <div className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 w-full max-w-[620px]">
               {nameRows.map((row, rowIdx) => (
-                <div key={rowIdx} className="flex items-center justify-center gap-1 sm:gap-2 w-full">
+                <div key={rowIdx} className="flex items-center justify-center gap-1.5 sm:gap-3 w-full">
                   {row.map((name, colIdx) => (
                     <React.Fragment key={colIdx}>
                       {colIdx > 0 && (
-                        <span className="text-[8.5px] text-[#8B1E5F]/45 font-semibold select-none">·</span>
+                        <span className="text-[10px] sm:text-[12px] text-[#8B1E5F]/60 font-bold select-none">·</span>
                       )}
                       <span
-                        className="font-serif italic font-semibold text-[10.5px] sm:text-[13px] text-[#4A1E37]/90 tracking-wide whitespace-nowrap"
+                        className="font-serif italic font-bold text-[13.5px] sm:text-[16.5px] text-[#421731] tracking-wide whitespace-nowrap"
                         style={{
                           fontFamily: "'Cormorant Garamond', Georgia, serif",
-                          textShadow: '0 1px 2px rgba(255,255,255,0.95), 0 0 6px rgba(255,255,255,0.7)',
+                          textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 7px rgba(255,255,255,0.85)',
                         }}
                       >
                         {name}
@@ -359,9 +368,25 @@ export function LiveCanvas({
             )}
           </div>
 
-          {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (ZONA SUPERIOR: NOMBRE | ZONA INFERIOR: DEDICATORIA) */}
+          {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (CTA DE PARTICIPACIÓN + NOMBRE + DEDICATORIA) */}
           {currentPet ? (
             <>
+              {/* CTA PRINCIPAL DE PARTICIPACIÓN: INMEDIATAMENTE ENCIMA DEL NOMBRE PROTAGONISTA */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-30 w-[86%] max-w-[540px] pointer-events-none"
+                style={{ top: '65.2%' }}
+              >
+                <span
+                  className="font-serif italic font-extrabold text-[15.5px] sm:text-[19px] text-[#3D122A] tracking-wide"
+                  style={{
+                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.95), 0 0 18px rgba(255,255,255,0.7)',
+                  }}
+                >
+                  Enciende una luz por tu angelito 🕯️
+                </span>
+              </div>
+
               {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA CENTRADO CON RESPLANDOR CELESTIAL */}
               <div
                 className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-30 w-[76%] max-w-[500px] px-4"
@@ -449,11 +474,21 @@ export function LiveCanvas({
           ) : (
             /* Estado de reposo / Altar inicial */
             <div
-              className="absolute left-1/2 -translate-x-1/2 flex flex-col justify-center items-center py-1 text-center z-30 w-[78%] max-w-[480px]"
-              style={{ top: '70.6%', height: '8.8%' }}
+              className="absolute left-1/2 -translate-x-1/2 flex flex-col justify-center items-center py-1 text-center z-30 w-[84%] max-w-[540px]"
+              style={{ top: '65.2%', height: '14.5%' }}
             >
+              {/* CTA principal en reposo */}
               <span
-                className="font-serif italic font-extrabold text-[18px] sm:text-[22px] text-[#24051B] tracking-wide"
+                className="font-serif italic font-extrabold text-[16px] sm:text-[20px] text-[#3D122A] tracking-wide mb-1"
+                style={{
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.95), 0 0 18px rgba(255,255,255,0.7)',
+                }}
+              >
+                Enciende una luz por tu angelito 🕯️
+              </span>
+              <span
+                className="font-serif italic font-extrabold text-[17px] sm:text-[21px] text-[#24051B] tracking-wide mt-1"
                 style={{
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
                   textShadow: '0 1px 4px rgba(255,255,255,1), 0 0 12px rgba(255,255,255,0.95)',
@@ -461,15 +496,15 @@ export function LiveCanvas({
               >
                 Un altar eterno de luz y amor
               </span>
-              <span className="text-base text-[#8B1E5F] my-1 leading-none font-black">♡</span>
+              <span className="text-sm text-[#8B1E5F] my-0.5 leading-none font-black">♡</span>
               <p
-                className="font-serif italic font-extrabold text-[15px] sm:text-[18px] text-[#380E2B] mt-1"
+                className="font-serif italic font-bold text-[14px] sm:text-[17px] text-[#4A1736] mt-0.5"
                 style={{
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  textShadow: '0 1px 4px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.9)',
+                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.85)',
                 }}
               >
-                Escribe el nombre de tu ángel en el chat 🕯️
+                Escribe el nombre de tu ángel en el chat
               </p>
             </div>
           )}
