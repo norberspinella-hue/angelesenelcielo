@@ -597,20 +597,20 @@ export function LiveCanvas({
               style={{ top: '67.0%', height: '11.0%' }}
             >
               <span
-                className="font-serif italic font-extrabold text-[17px] sm:text-[21px] text-[#24051B] tracking-wide"
+                className="font-serif italic font-extrabold text-[17px] sm:text-[21px] text-[#FFFDF8] tracking-wide"
                 style={{
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  textShadow: '0 1px 4px rgba(255,255,255,1), 0 0 12px rgba(255,255,255,0.95)',
+                  textShadow: '0 1.5px 4px rgba(118, 84, 109, 0.45), 0 0 8px rgba(118, 84, 109, 0.25)',
                 }}
               >
                 Un altar eterno de luz y amor
               </span>
-              <span className="text-sm text-[#8B1E5F] my-0.5 leading-none font-black">♡</span>
+              <span className="text-sm text-[#FFFDF8]/90 my-0.5 leading-none font-black" style={{ textShadow: '0 1px 2px rgba(118, 84, 109, 0.8)' }}>♡</span>
               <p
-                className="font-serif italic font-bold text-[14px] sm:text-[17px] text-[#4A1736] mt-0.5"
+                className="font-serif italic font-bold text-[14px] sm:text-[17px] text-[#FFFDF8] mt-0.5"
                 style={{
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 8px rgba(255,255,255,0.85)',
+                  textShadow: '0 1.5px 4px rgba(118, 84, 109, 0.45), 0 0 8px rgba(118, 84, 109, 0.25)',
                 }}
               >
                 Escribe el nombre de tu ángel en el chat
