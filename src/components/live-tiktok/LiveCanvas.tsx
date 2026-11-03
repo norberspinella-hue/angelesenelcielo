@@ -215,63 +215,66 @@ export function LiveCanvas({
       {/* ========================================================================= */}
       {activeScene === 1 && (
         <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none">
-          {/* 1. CONTADORES SUPERIORES CON ICONOS CELESTIALES SVG EXCLUSIVOS (Y: ~18.8%) */}
+          {/* 1. CONTADORES SUPERIORES EN 2 FILAS CON 85% DE OPACIDAD (Y: >= 230px, top: 12.4%) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 sm:gap-2.5 z-30 w-full max-w-[880px] px-2"
-            style={{ top: '18.8%' }}
+            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1.5 z-30 w-full max-w-[620px] px-2"
+            style={{ top: '12.4%' }}
           >
-            {/* Píldora 1: Mural Global (Estrella Celestial de Oro Cálido) */}
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#FFFDF8]/96 backdrop-blur-md border border-[#D5B77B]/80 shadow-[0_4px_16px_rgba(78,35,100,0.12)]">
-              <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="starGoldGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FDE68A" />
-                    <stop offset="45%" stopColor="#F59E0B" />
-                    <stop offset="100%" stopColor="#D97706" />
-                  </linearGradient>
-                </defs>
-                <circle cx="12" cy="12" r="8" fill="#FEF08A" fillOpacity="0.45" />
-                <path d="M12 2L14.2 9.2L21.5 9.2L15.6 13.5L17.8 20.7L12 16.4L6.2 20.7L8.4 13.5L2.5 9.2L9.8 9.2L12 2Z" fill="url(#starGoldGradLive)" stroke="#B45309" strokeWidth="0.5" />
-                <circle cx="12" cy="12" r="1.8" fill="#FFFFFF" />
-              </svg>
-              <span className="text-[13px] sm:text-[14.5px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
-                <strong className="font-black text-[15px] sm:text-[17px] text-[#1E0417]">{muralStarsCount || 151}</strong> en el mural
-              </span>
+            {/* FILA 1: En el mural + En la web (Alineados horizontalmente a partir de Y=230px) */}
+            <div className="flex items-center justify-center gap-2 sm:gap-2.5">
+              {/* Píldora 1: Mural Global (Estrella de Oro Cálido) - Fondo 85% opacidad */}
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFDF8]/85 backdrop-blur-md border border-[#D5B77B]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
+                <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="starGoldGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FDE68A" />
+                      <stop offset="45%" stopColor="#F59E0B" />
+                      <stop offset="100%" stopColor="#D97706" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="12" cy="12" r="8" fill="#FEF08A" fillOpacity="0.45" />
+                  <path d="M12 2L14.2 9.2L21.5 9.2L15.6 13.5L17.8 20.7L12 16.4L6.2 20.7L8.4 13.5L2.5 9.2L9.8 9.2L12 2Z" fill="url(#starGoldGradLive)" stroke="#B45309" strokeWidth="0.5" />
+                  <circle cx="12" cy="12" r="1.8" fill="#FFFFFF" />
+                </svg>
+                <span className="text-[12.5px] sm:text-[14px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
+                  <strong className="font-black text-[14.5px] sm:text-[16.5px] text-[#1E0417]">{muralStarsCount || 151}</strong> en el mural
+                </span>
+              </div>
+
+              {/* Píldora 2: Web Global (Destellos Rosa Frambuesa) - Fondo 85% opacidad */}
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF8FA]/85 backdrop-blur-md border border-[#F2CBDD]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
+                <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="sparkleRoseGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FBCFE8" />
+                      <stop offset="50%" stopColor="#F43F5E" />
+                      <stop offset="100%" stopColor="#BE185D" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="12" cy="12" r="7.5" fill="#FCE7F3" fillOpacity="0.5" />
+                  <path d="M12 2C12 7.5 16.5 12 16.5 12C16.5 12 12 16.5 12 22C12 16.5 7.5 12 7.5 12C7.5 12 12 7.5 12 2Z" fill="url(#sparkleRoseGradLive)" stroke="#9D174D" strokeWidth="0.5" />
+                  <circle cx="12" cy="12" r="1.6" fill="#FFFFFF" />
+                  <path d="M19 4C19 6 21 8 21 8C21 8 19 10 19 12C19 10 17 8 17 8C17 8 19 6 19 4Z" fill="#F472B6" />
+                  <path d="M5 16C5 17.5 6.5 19 6.5 19C6.5 19 5 20.5 5 22C5 20.5 3.5 19 3.5 19C3.5 19 5 17.5 5 16Z" fill="#FB7185" />
+                </svg>
+                <span className="text-[12.5px] sm:text-[14px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
+                  <strong className="font-black text-[14.5px] sm:text-[16.5px] text-[#1E0417]">{webCandlesCount}</strong> en la web
+                </span>
+              </div>
             </div>
 
-            {/* Píldora 2: Altar Web (Chispas Celestiales en Rosa Frambuesa / Malva) */}
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#FFF8FA]/96 backdrop-blur-md border border-[#EAC2D8]/85 shadow-[0_4px_16px_rgba(78,35,100,0.12)]">
+            {/* FILA 2: En este directo (Centrado horizontalmente debajo) - Fondo 85% opacidad */}
+            <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FAF0FC]/85 backdrop-blur-md border border-[#E2BCE8]/80 shadow-[0_4px_16px_rgba(78,35,100,0.10)]">
               <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
-                  <linearGradient id="sparkleRoseGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#FBCFE8" />
-                    <stop offset="45%" stopColor="#EC4899" />
-                    <stop offset="100%" stopColor="#BE185D" />
-                  </linearGradient>
-                </defs>
-                <circle cx="9" cy="9" r="6" fill="#F472B6" fillOpacity="0.35" />
-                <path d="M9 2C9 5.866 5.866 9 2 9C5.866 9 9 12.134 9 16C9 12.134 12.134 9 16 9C12.134 9 9 5.866 9 2Z" fill="url(#sparkleRoseGradLive)" />
-                <circle cx="9" cy="9" r="1.4" fill="#FFFFFF" />
-                <path d="M18 4C18 5.657 16.657 7 15 7C16.657 7 18 8.343 18 10C18 8.343 19.343 7 21 7C19.343 7 18 5.657 18 4Z" fill="#F472B6" />
-                <path d="M17 15C17 16.105 16.105 17 15 17C16.105 17 17 17.895 17 19C17 17.895 17.895 17 19 17C17.895 17 17 16.105 17 15Z" fill="#F9A8D4" />
-              </svg>
-              <span className="text-[13px] sm:text-[14.5px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
-                <strong className="font-black text-[15px] sm:text-[17px] text-[#1E0417]">{webCandlesCount || 18}</strong> en la web
-              </span>
-            </div>
-
-            {/* Píldora 3: Sesión LIVE (Cirio Celestial en Malva y Llama Cálida) */}
-            <div className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#FAF0FC]/96 backdrop-blur-md border border-[#D09BD8]/80 shadow-[0_4px_16px_rgba(78,35,100,0.12)]">
-              <svg className="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="flameGradLive" x1="0%" y1="100%" x2="0%" y2="0%">
-                    <stop offset="0%" stopColor="#EA580C" />
+                  <linearGradient id="flameGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#FEF08A" />
                     <stop offset="50%" stopColor="#F59E0B" />
-                    <stop offset="100%" stopColor="#FEF08A" />
+                    <stop offset="100%" stopColor="#EA580C" />
                   </linearGradient>
                   <linearGradient id="candleGradLive" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#F5D0FE" />
-                    <stop offset="60%" stopColor="#C084FC" />
+                    <stop offset="50%" stopColor="#C084FC" />
                     <stop offset="100%" stopColor="#7E22CE" />
                   </linearGradient>
                 </defs>
@@ -282,8 +285,8 @@ export function LiveCanvas({
                 <rect x="8.5" y="12" width="7" height="9" rx="2" fill="url(#candleGradLive)" stroke="#A855F7" strokeWidth="0.6" />
                 <rect x="9.8" y="13.2" width="1.8" height="6.5" rx="0.9" fill="#FFFFFF" fillOpacity="0.55" />
               </svg>
-              <span className="text-[13px] sm:text-[14.5px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
-                <strong className="font-black text-[15px] sm:text-[17px] text-[#1E0417]">{sessionCandlesCount}</strong> en este directo
+              <span className="text-[12.5px] sm:text-[14px] font-serif font-bold text-[#2A0820] tracking-wide whitespace-nowrap">
+                <strong className="font-black text-[14.5px] sm:text-[16.5px] text-[#1E0417]">{sessionCandlesCount}</strong> en este directo
               </span>
             </div>
           </div>
@@ -291,7 +294,7 @@ export function LiveCanvas({
           {/* 2. MEMORIAL SECUNDARIO: 20 NOMBRES VISIBLES (5 LÍNEAS × 4 NOMBRES) (AMPLIADOS 25-30%) (Y: ~24.0%) */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-full max-w-[96%] pointer-events-none"
-            style={{ top: '24.0%' }}
+            style={{ top: '21.2%' }}
           >
             {/* Subtítulo discreto con mayor presencia y elegancia */}
             <span
@@ -368,25 +371,25 @@ export function LiveCanvas({
             )}
           </div>
 
-          {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (CTA DE PARTICIPACIÓN + NOMBRE + DEDICATORIA) */}
+          {/* 3. CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~54.4%) */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 pointer-events-none w-[75%] max-w-[380px]"
+            style={{ top: '54.4%' }}
+          >
+            <span
+              className="font-serif italic font-extrabold text-[15px] sm:text-[18px] text-[#2E091F] tracking-wide leading-tight"
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.98), 0 0 20px rgba(255,255,255,0.85)',
+              }}
+            >
+              Enciende una luz por tu angelito 🕯️
+            </span>
+          </div>
+
+          {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (NOMBRE PROTAGONISTA + DEDICATORIA) */}
           {currentPet ? (
             <>
-              {/* CTA PRINCIPAL DE PARTICIPACIÓN: INMEDIATAMENTE ENCIMA DEL NOMBRE PROTAGONISTA */}
-              <div
-                className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-30 w-[86%] max-w-[540px] pointer-events-none"
-                style={{ top: '61.8%' }}
-              >
-                <span
-                  className="font-serif italic font-extrabold text-[15.5px] sm:text-[19px] text-[#3D122A] tracking-wide"
-                  style={{
-                    fontFamily: "'Cormorant Garamond', Georgia, serif",
-                    textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.95), 0 0 18px rgba(255,255,255,0.7)',
-                  }}
-                >
-                  Enciende una luz por tu angelito 🕯️
-                </span>
-              </div>
-
               {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA CENTRADO CON RESPLANDOR CELESTIAL */}
               <div
                 className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-30 w-[76%] max-w-[500px] px-4"
@@ -475,20 +478,10 @@ export function LiveCanvas({
             /* Estado de reposo / Altar inicial */
             <div
               className="absolute left-1/2 -translate-x-1/2 flex flex-col justify-center items-center py-1 text-center z-30 w-[84%] max-w-[540px]"
-              style={{ top: '62.0%', height: '14.5%' }}
+              style={{ top: '67.0%', height: '11.0%' }}
             >
-              {/* CTA principal en reposo */}
               <span
-                className="font-serif italic font-extrabold text-[16px] sm:text-[20px] text-[#3D122A] tracking-wide mb-1"
-                style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  textShadow: '0 1px 3px rgba(255,255,255,1), 0 0 10px rgba(255,255,255,0.95), 0 0 18px rgba(255,255,255,0.7)',
-                }}
-              >
-                Enciende una luz por tu angelito 🕯️
-              </span>
-              <span
-                className="font-serif italic font-extrabold text-[17px] sm:text-[21px] text-[#24051B] tracking-wide mt-1"
+                className="font-serif italic font-extrabold text-[17px] sm:text-[21px] text-[#24051B] tracking-wide"
                 style={{
                   fontFamily: "'Cormorant Garamond', Georgia, serif",
                   textShadow: '0 1px 4px rgba(255,255,255,1), 0 0 12px rgba(255,255,255,0.95)',
