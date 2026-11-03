@@ -203,6 +203,46 @@ export function LiveCanvas({
         .animate-live-wings-float {
           animation: liveWingsFloat 3.8s ease-in-out infinite;
         }
+
+        @keyframes ctaFlameSway {
+          0%, 100% {
+            transform: rotate(-1.5deg) scale(0.98, 1.02);
+            opacity: 0.95;
+          }
+          25% {
+            transform: rotate(1.4deg) scale(1.02, 0.98) translateY(-0.4px);
+            opacity: 1;
+          }
+          50% {
+            transform: rotate(-0.8deg) scale(0.97, 1.03) translateY(0.2px);
+            opacity: 0.92;
+          }
+          75% {
+            transform: rotate(1.5deg) scale(1.03, 0.97) translateY(-0.2px);
+            opacity: 0.98;
+          }
+        }
+
+        @keyframes ctaAuraBreathe {
+          0%, 100% {
+            transform: scale(0.92);
+            opacity: 0.45;
+          }
+          50% {
+            transform: scale(1.08);
+            opacity: 0.85;
+          }
+        }
+
+        .animate-cta-flame {
+          transform-origin: 18px 21px;
+          animation: ctaFlameSway 2.5s ease-in-out infinite;
+        }
+
+        .animate-cta-aura {
+          transform-origin: 18px 14px;
+          animation: ctaAuraBreathe 3.2s ease-in-out infinite;
+        }
       `}</style>
 
       {/* GUÍA DE ENCUADRE TIKTOK (SOLO SI SE SOLICITA EN EL MONITOR DE PRODUCCIÓN) */}
@@ -396,7 +436,7 @@ export function LiveCanvas({
               por tu angelito
             </span>
 
-            {/* Vela SVG Celestial Premium centrada debajo del texto (sin solape) */}
+            {/* Vela SVG Celestial Premium centrada debajo del texto (con mini llama viva animada) */}
             <svg className="w-[22px] h-[32px] sm:w-[26px] sm:h-[36px] shrink-0 mt-1" viewBox="0 0 36 50" fill="none" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <radialGradient id="ctaCandleAuraLiveFinal" cx="50%" cy="40%" r="50%">
@@ -434,10 +474,17 @@ export function LiveCanvas({
                   <stop offset="100%" stopColor="#9A7532" />
                 </linearGradient>
               </defs>
-              <circle cx="18" cy="14" r="18" fill="url(#ctaCandleAuraLiveFinal)" />
-              <path d="M 18 2 C 24.5 8, 25.2 14, 18 20 C 10.8 14, 11.5 8, 18 2 Z" fill="url(#ctaFlameOuterGradLiveFinal)" />
-              <path d="M 18 5.5 C 22 10, 22.3 14, 18 18 C 13.7 14, 14 10, 18 5.5 Z" fill="url(#ctaFlameInnerGradLiveFinal)" />
-              <ellipse cx="18" cy="14.5" rx="2" ry="3.5" fill="#FFFFFF" opacity="0.95" />
+              {/* Halo cálido sutil animado */}
+              <circle cx="18" cy="14" r="18" fill="url(#ctaCandleAuraLiveFinal)" className="animate-cta-aura" />
+              
+              {/* Mini llama viva animada (oscilación lateral y ligero cambio de tamaño) */}
+              <g className="animate-cta-flame">
+                <path d="M 18 2 C 24.5 8, 25.2 14, 18 20 C 10.8 14, 11.5 8, 18 2 Z" fill="url(#ctaFlameOuterGradLiveFinal)" />
+                <path d="M 18 5.5 C 22 10, 22.3 14, 18 18 C 13.7 14, 14 10, 18 5.5 Z" fill="url(#ctaFlameInnerGradLiveFinal)" />
+                <ellipse cx="18" cy="14.5" rx="2" ry="3.5" fill="#FFFFFF" opacity="0.95" />
+              </g>
+
+              {/* Mecha fina exactamente debajo de la llama */}
               <path d="M 18 17.5 Q 18.8 19.5, 18 22" stroke="#5A2E12" strokeWidth="1.6" strokeLinecap="round" fill="none" />
               <ellipse cx="18" cy="22.5" rx="8.3" ry="2" fill="url(#ctaWaxRimGradLiveFinal)" stroke="#C8A265" strokeWidth="0.8" />
               <path d="M 9.7 22.5 L 10 44 C 10 47, 26 47, 26 44 L 26.3 22.5 Z" fill="url(#ctaCandleBodyGradLiveFinal)" stroke="#B89355" strokeWidth="0.8" />
