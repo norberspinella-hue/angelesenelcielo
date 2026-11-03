@@ -217,7 +217,7 @@ export function LiveCanvas({
         <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none">
           {/* 1. CONTADORES SUPERIORES CON ICONOS CELESTIALES SVG EXCLUSIVOS (Y: ~18.8%) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 sm:gap-2.5 z-30 w-full max-w-[98%]"
+            className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 sm:gap-2.5 z-30 w-full max-w-[880px] px-2"
             style={{ top: '18.8%' }}
           >
             {/* Píldora 1: Mural Global (Estrella Celestial de Oro Cálido) */}
@@ -374,7 +374,7 @@ export function LiveCanvas({
               {/* CTA PRINCIPAL DE PARTICIPACIÓN: INMEDIATAMENTE ENCIMA DEL NOMBRE PROTAGONISTA */}
               <div
                 className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-30 w-[86%] max-w-[540px] pointer-events-none"
-                style={{ top: '65.2%' }}
+                style={{ top: '61.8%' }}
               >
                 <span
                   className="font-serif italic font-extrabold text-[15.5px] sm:text-[19px] text-[#3D122A] tracking-wide"
@@ -390,7 +390,7 @@ export function LiveCanvas({
               {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA CENTRADO CON RESPLANDOR CELESTIAL */}
               <div
                 className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center text-center z-30 w-[76%] max-w-[500px] px-4"
-                style={{ top: '69.6%', height: '5.6%' }}
+                style={{ top: '67.0%', height: '5.6%' }}
               >
                 {/* Halo / Círculo rojizo-dorado expansivo al entrar el perrito */}
                 {isJustLit && (
@@ -434,7 +434,7 @@ export function LiveCanvas({
               {/* ZONA INFERIOR: DEDICATORIA DE 1 O 2 LÍNEAS EQUILIBRADAS */}
               <div
                 className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-[76%] max-w-[500px] px-3"
-                style={{ top: '75.6%', height: '5.5%' }}
+                style={{ top: '73.0%', height: '5.5%' }}
               >
                 {dedicationLines.length > 1 ? (
                   <div className="w-full flex flex-col items-center justify-center leading-tight">
@@ -475,7 +475,7 @@ export function LiveCanvas({
             /* Estado de reposo / Altar inicial */
             <div
               className="absolute left-1/2 -translate-x-1/2 flex flex-col justify-center items-center py-1 text-center z-30 w-[84%] max-w-[540px]"
-              style={{ top: '65.2%', height: '14.5%' }}
+              style={{ top: '62.0%', height: '14.5%' }}
             >
               {/* CTA principal en reposo */}
               <span
