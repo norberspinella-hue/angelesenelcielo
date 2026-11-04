@@ -218,6 +218,15 @@ export default function CieloLlenoDeLucesClient() {
   // Toast feedback
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const handleScrollToLights = () => {
+    const el = document.getElementById('seccion-luces');
+    if (el) {
+      const yOffset = -96;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => {
@@ -614,240 +623,146 @@ export default function CieloLlenoDeLucesClient() {
       <CartasAlCieloHeader hasTopBanner={hasTopBanner} showGarland={true} />
 
       {/* ========================================================================= */}
-      {/* HERO: ENTRADA AL SANTUARIO «UN CIELO LLENO DE LUCES» (MAQUETA MAESTRA)   */}
+      {/* HERO: PORTAL CELESTIAL «CIELO LLENO DE LUCES» (FASE 1)                    */}
       {/* ========================================================================= */}
       <section 
-        className={`relative pb-14 px-4 sm:px-6 lg:px-8 overflow-hidden transition-all duration-300 ${
-          hasTopBanner ? 'pt-36 sm:pt-40 md:pt-44' : 'pt-24 sm:pt-28'
-        }`}
+        className={`relative overflow-hidden transition-all duration-300 ${
+          hasTopBanner ? 'pt-32 sm:pt-36 md:pt-40 lg:pt-32' : 'pt-24 sm:pt-28 lg:pt-24'
+        } pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-12 flex flex-col justify-between`}
         style={{
-          backgroundImage: "url('/images/luces/fondo_hero_PC_1920x1080.webp')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          minHeight: 'clamp(680px, 92vh, 980px)',
           isolation: 'isolate',
         }}
       >
         
-        {/* Fondo fotográfico celestial SIN capa de opacidad global (100% nítido) */}
+        {/* Fondos WebP oficiales adaptativos por breakpoint (sin texto incrustado) */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
-          {/* Desktop (> 1024px) */}
-          <div className="hidden lg:block absolute inset-0">
+          {/* Pantallas muy grandes / 2K / 4K (> 1920px) */}
+          <div className="hidden 2xl:block absolute inset-0">
+            <Image 
+              src="/images/luces/fondo_hero_PC_2560x1440.webp" 
+              alt="Cielo lleno de luces" 
+              fill 
+              priority 
+              quality={90}
+              className="object-cover object-left-bottom xl:object-center" 
+            />
+          </div>
+          {/* Escritorio estándar (1024px - 1920px) */}
+          <div className="hidden lg:block 2xl:hidden absolute inset-0">
             <Image 
               src="/images/luces/fondo_hero_PC_1920x1080.webp" 
               alt="Cielo lleno de luces" 
               fill 
               priority 
-              className="object-cover object-center" 
+              quality={90}
+              className="object-cover object-left-bottom lg:object-center" 
             />
           </div>
           {/* Tablet (640px - 1024px) */}
           <div className="hidden sm:block lg:hidden absolute inset-0">
             <Image 
-              src="/images/luces/fondo_hero_tablet_1200x900.webp" 
-              alt="Cielo lleno de luces tablet" 
+              src="/images/luces/fondo_hero_MOVIL_1080x1350.webp" 
+              alt="Cielo lleno de luces" 
               fill 
               priority 
-              className="object-cover object-center" 
+              quality={90}
+              className="object-cover object-bottom" 
             />
           </div>
           {/* Móvil (< 640px) */}
           <div className="block sm:hidden absolute inset-0">
             <Image 
-              src="/images/luces/fondo_hero_MOVIL_1080x1350.webp" 
-              alt="Cielo lleno de luces móvil" 
+              src="/images/luces/fondo_hero_MOVIL_1080x1920.webp" 
+              alt="Cielo lleno de luces" 
               fill 
               priority 
-              className="object-cover object-center" 
+              quality={90}
+              className="object-cover object-bottom" 
             />
           </div>
         </div>
 
-        <div className="max-w-[1240px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+        {/* Contenedor principal: Grilla en desktop (portal a la izq, texto a la dcha) */}
+        <div className="max-w-[1360px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10 my-auto">
           
-          {/* COLUMNA IZQUIERDA (7 cols): MANCHA DE TRANSPARENCIA BLANCA SUAVE DETRÁS DEL TEXTO */}
-          <div className="lg:col-span-7 space-y-5 text-left relative">
+          {/* COLUMNA IZQUIERDA (Desktop): Área visual libre para contemplar el portal, escaleras y perrito */}
+          <div className="hidden lg:block lg:col-span-6 xl:col-span-7 pointer-events-none min-h-[460px] xl:min-h-[520px]" />
 
-            {/* Título Oficial: Alineado a la izquierda sin badge ni desplazamientos */}
-            <h1 className="relative font-playfair text-3xl sm:text-5xl lg:text-[56px] font-bold tracking-tight text-[#2D0F31] leading-[1.12]">
-              <span 
-                className="absolute pointer-events-none select-none -z-10 blur-2xl rounded-3xl"
-                style={{
-                  left: '-20%',
-                  right: '5%',
-                  top: '-18px',
-                  bottom: '-58px',
-                  background: 'radial-gradient(ellipse 65% 75% at 38% 46%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.80) 50%, rgba(255, 255, 255, 0.40) 75%, rgba(255, 255, 255, 0) 95%)',
-                }}
-              />
-              Un cielo lleno <br />
+          {/* COLUMNA DERECHA (Desktop) / SUPERIOR (Móvil): Textos y CTAs */}
+          <div className="lg:col-span-6 xl:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5 relative">
+            
+            {/* Halo sutil de fondo para máxima legibilidad tipográfica */}
+            <div 
+              className="absolute -inset-4 sm:-inset-6 -z-10 rounded-3xl blur-2xl pointer-events-none opacity-75 lg:opacity-60"
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.94) 0%, rgba(255, 250, 253, 0.78) 55%, rgba(255, 255, 255, 0) 100%)',
+              }}
+            />
+
+            {/* Título Oficial: «Cielo lleno de luces» */}
+            <h1 className="font-playfair text-3xl sm:text-5xl lg:text-[44px] xl:text-[52px] font-bold tracking-tight text-[#2D0F31] leading-[1.12]">
+              Cielo lleno <br className="hidden sm:inline" />
               <span className="relative inline-block text-[#B83C7E]">
-                de luces <span className="inline-block font-sans text-3xl sm:text-4xl text-[#B83C7E] ml-1">♡</span>
+                de luces <span className="inline-block font-sans text-2xl sm:text-4xl text-[#B83C7E] ml-1">♡</span>
                 <svg className="w-full h-3 text-[#B83C7E]/40 -mt-1" viewBox="0 0 120 12" fill="none" preserveAspectRatio="none">
                   <path d="M0,8 Q60,0 120,8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
                 </svg>
               </span>
             </h1>
 
-            {/* Párrafo descriptivo exacto de la maqueta */}
-            <p className="text-sm sm:text-base text-[#523A4E] max-w-xl leading-relaxed font-sans font-medium">
-              Cada familia puede encender una vela por su ángel, para que su luz siga brillando en este cielo. Un pequeño gesto que nos une y recuerda que siempre viven en nuestros corazones.
+            {/* Subtítulo Oficial: «Un lugar donde el amor sigue brillando». */}
+            <p className="font-playfair italic text-base sm:text-xl text-[#8C3F71] font-semibold leading-snug">
+              «Un lugar donde el amor sigue brillando».
             </p>
 
-            {/* Botón Principal: Encender una vela → */}
-            <div className="pt-1 flex flex-wrap items-center gap-3">
+            {/* Texto Emocional Oficial */}
+            <p className="font-sans text-xs sm:text-base text-[#523A4E] max-w-md sm:max-w-lg leading-relaxed font-medium">
+              Enciende una luz por tu mascota y deja que su recuerdo siga iluminando nuestro cielo.
+            </p>
+
+            {/* Botones de Acción Oficiales */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              {/* Botón Principal: «Enciende una luz» */}
               <button
+                type="button"
                 onClick={() => {
                   setNewCandleCelebration(false);
                   setShowNewCandleModal(true);
                 }}
-                className="w-full sm:w-auto justify-center px-7 sm:px-8 py-3.5 rounded-full font-bold text-white text-sm sm:text-base shadow-[0_10px_28px_rgba(184,60,126,0.38)] hover:shadow-[0_14px_32px_rgba(184,60,126,0.48)] hover:-translate-y-0.5 transition-all flex items-center gap-2.5 cursor-pointer bg-gradient-to-r from-[#B83C7E] via-[#A83273] to-[#8C2860]"
+                className="w-full sm:w-auto justify-center px-7 sm:px-8 py-3.5 rounded-full font-bold text-white text-sm sm:text-base shadow-[0_10px_28px_rgba(184,60,126,0.38)] hover:shadow-[0_14px_34px_rgba(184,60,126,0.48)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2.5 cursor-pointer bg-gradient-to-r from-[#B83C7E] via-[#A83273] to-[#8C2860]"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M12 2C10.5 4.2 10 5.8 10 7.2C10 8.8 10.9 9.8 12 9.8C13.1 9.8 14 8.8 14 7.2C14 5.8 13.5 4.2 12 2Z" fill="#FFFFFF"/>
                   <rect x="8" y="12" width="8" height="10" rx="1.8" fill="#FFFFFF"/>
                 </svg>
-                <span>Encender una vela</span>
+                <span>Enciende una luz</span>
                 <span className="text-base sm:text-lg">→</span>
               </button>
 
-              <Link
-                href="/desde-el-corazon"
-                className="px-5 py-3 rounded-full font-bold text-[#8C3F71] bg-white/95 hover:bg-[#FFF0F6] border border-[#F0BED6] text-xs sm:text-sm flex items-center gap-1.5 transition-all shadow-sm"
+              {/* Botón Secundario: «Ver todas las luces» */}
+              <button
+                type="button"
+                onClick={handleScrollToLights}
+                className="w-full sm:w-auto justify-center px-6 sm:px-7 py-3.5 rounded-full font-bold text-[#8C3F71] bg-white/95 hover:bg-[#FFF0F6] border border-[#F0BED6] text-xs sm:text-sm flex items-center gap-2 transition-all shadow-sm hover:shadow hover:-translate-y-0.5 cursor-pointer"
               >
-                <Image 
-                  src="/images/icons/plans/icon-plan-estrella.svg" 
-                  alt="Estrella" 
-                  width={18} 
-                  height={18} 
-                  className="w-[18px] h-[18px] object-contain shrink-0" 
-                />
-                <span>Llama Eterna</span>
-              </Link>
+                <span>Ver todas las luces</span>
+                <span className="text-sm">↓</span>
+              </button>
             </div>
 
-            {/* Caja de estadísticas de la maqueta con corazón relleno rosa */}
-            <div className="bg-white/90  rounded-2xl p-4 sm:p-5 border border-white/80 shadow-[0_8px_24px_rgba(140,60,110,0.08)] max-w-md">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200/70 flex items-center justify-center text-2xl shrink-0 shadow-inner">
-                    🕯️
-                  </div>
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-playfair text-2xl sm:text-3xl font-bold text-[#2D0F31] leading-none">
-                        {activeCandlesCount}
-                      </span>
-                      <span className="text-xs sm:text-sm font-semibold text-[#5C3C58]">
-                        Hoy arden {activeCandlesCount} llamas vivas en el Altar
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                {/* Corazón con relleno rosa oficial */}
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#DF6197" className="shrink-0 select-none overflow-visible">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </div>
-              <p className="text-[11px] text-[#7A6478] mt-2 pt-2 border-t border-[#F2DEE9] italic font-serif">
-                Cada luz es un recuerdo, cada llama una historia de amor.
-              </p>
+            {/* Indicador Real de Llamas Vivas */}
+            <div className="pt-2 flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#6E4F66]">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
+              <span>
+                Hoy arden <strong className="text-[#2D0F31] font-bold">{activeCandlesCount}</strong> llamas vivas en el Altar
+              </span>
             </div>
 
           </div>
 
-          {/* COLUMNA DERECHA (5 cols): PANEL DE VELA SOLIDARIA (VAIANA - FOTO REAL DEL MURAL Y REDES) */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end">
-            <div 
-              className="w-full max-w-md lg:max-w-[85%] rounded-3xl p-4 sm:p-6 border border-[#F5D5E4]/80 shadow-[0_16px_40px_rgba(140,60,110,0.10)] flex flex-col justify-between relative overflow-hidden"
-              style={{
-                background: 'linear-gradient(180deg, rgba(255, 248, 250, 0.75) 0%, rgba(252, 238, 245, 0.75) 100%)',
-              }}
-            >
-              {/* Imagen de fondo: Corazón Ghibli como marca de agua celestial */}
-              <div className="absolute -bottom-6 -right-6 w-52 h-52 opacity-25 pointer-events-none select-none z-0">
-                <Image 
-                  src="/images/icons/corazon-de-angel.webp" 
-                  alt="Corazón Ghibli" 
-                  fill 
-                  className="object-contain" 
-                />
-              </div>
-
-              <div className="relative z-10 space-y-3.5">
-                
-                {/* Badge oficial: iconplanpaw + Ángel del Refugio de la Semana */}
-                <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF0F6] border border-[#F0BED6] text-[11px] font-bold text-[#8C3F71] uppercase tracking-wide shadow-xs">
-                    <Image 
-                      src="/images/icons/plans/pawrosa.svg" 
-                      alt="Huella" 
-                      width={14} 
-                      height={14} 
-                      className="w-3.5 h-3.5 object-contain" 
-                    />
-                    <span>Ángel del Refugio de la Semana</span>
-                  </span>
-                  <span className="text-[10px] font-bold text-[#A87A9A] uppercase tracking-wider">
-                    Solidario
-                  </span>
-                </div>
-
-                {/* Perfil del Angelito: Vaiana (FOTO REAL DEL MURAL) */}
-                <div className="flex items-center gap-3.5">
-                  <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full overflow-hidden relative shadow-md border-2 border-[#F59E0B] shrink-0 bg-white ring-2 ring-white">
-                    <Image 
-                      src="/images/solidario/vaiana_real_mural.jpg" 
-                      alt="Vaiana subiendo las escaleras celestiales - Almas de 4 patas" 
-                      fill 
-                      className="object-cover" 
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-playfair text-xl font-bold text-[#2D0F31] leading-tight">
-                      Vaiana · Almas de 4 patas
-                    </h3>
-                    <p className="text-[11.5px] text-[#8C5A7B] font-medium">
-                      Málaga · Cruzó el puente de acogida
-                    </p>
-                    {/* Usuario de la Red Social */}
-                    <div className="mt-1 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/95 border border-[#F3D5E4] text-[10.5px] font-bold text-[#8C3F71]">
-                      <span>📸</span>
-                      <span>@almas.de.4.patas</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Dedicatoria emotiva real de Vaiana del mural */}
-                <p className="text-xs text-[#5D4657] leading-relaxed italic">
-                  «Vaiana solo era un bebe recien nacida, cuando la dejaron abandonada en medio de la nada, pero encontró Un Corazón de Ángel, Amaya. Ella le dió todo el amor del mundo. Vaiana se fue a los pocos días, pero conoció lo que es el cariño y calidez de una mamá perruna.»
-                </p>
-
-                {/* Nota del 50% solidario */}
-                <div className="p-3 rounded-2xl bg-white/85 border border-[#F3D9E7] text-[11px] text-[#7A506C] leading-snug">
-                  <strong className="text-[#8C3F71] font-semibold">El 50% de las estrellas solidarias</strong> se destina a alimentación, mantas térmicas y medicación para los perritos ancianos que siguen en refugios.
-                </div>
-
-                {/* Botón CTA con el icono oficial de Desde el Corazón */}
-                <div className="pt-1">
-                  <Link
-                    href="/desde-el-corazon"
-                    className="w-full py-3 px-4 rounded-2xl font-bold text-[#8C3F71] bg-white hover:bg-[#FFF0F6] border border-[#F0BED6] text-xs flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md cursor-pointer"
-                  >
-                    <Image 
-                      src="/images/icons/plans/icon-plan-eterno.svg" 
-                      alt="Corazón" 
-                      width={18} 
-                      height={18} 
-                      className="object-contain" 
-                    />
-                    <span>Apadrinar una Estrella por Vaiana →</span>
-                  </Link>
-                </div>
-
-              </div>
-
-            </div>
-          </div>
+          {/* En Móvil: Espacio libre para contemplar el portal celestial y el perrito en la parte inferior */}
+          <div className="block lg:hidden w-full h-[320px] sm:h-[400px] pointer-events-none select-none" />
 
         </div>
       </section>
@@ -855,7 +770,7 @@ export default function CieloLlenoDeLucesClient() {
       {/* ========================================================================= */}
       {/* BARRA DE FILTROS & BUSCADOR                                               */}
       {/* ========================================================================= */}
-      <section className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+      <section id="seccion-luces" className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-4 scroll-mt-24">
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-[#F6E1EE] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
           
           {/* Buscador de perritos */}
