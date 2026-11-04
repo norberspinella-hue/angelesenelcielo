@@ -55,43 +55,43 @@ export default function PostalStoryShareModal({
 
   // Dynamic font size for pet name
   const nameLen = resolvedName.length
-  let previewNameSize = 44
-  let exportNameSize = 110
+  let previewNameSize = 48
+  let exportNameSize = 121
   if (nameLen > 18) {
     previewNameSize = 26
-    exportNameSize = 72
+    exportNameSize = 79
   } else if (nameLen > 14) {
     previewNameSize = 30
-    exportNameSize = 82
+    exportNameSize = 90
   } else if (nameLen > 10) {
     previewNameSize = 36
-    exportNameSize = 94
+    exportNameSize = 103
   } else if (nameLen > 7) {
     previewNameSize = 40
-    exportNameSize = 102
+    exportNameSize = 112
   }
 
   // Dynamic font size for dedication
   const dedLen = resolvedDedication.length
-  let previewDedSize = 11.5
+  let previewDedSize = 13.5
   let previewDedLineHeight = 1.45
-  let exportDedSize = 32
+  let exportDedSize = 39
   let exportDedLineHeight = 1.45
 
-  if (dedLen > 300) {
-    previewDedSize = 8.5
-    previewDedLineHeight = 1.25
-    exportDedSize = 22
-    exportDedLineHeight = 1.30
+  if (dedLen > 280) {
+    previewDedSize = 11.2
+    previewDedLineHeight = 1.36
+    exportDedSize = 29.5
+    exportDedLineHeight = 1.36
   } else if (dedLen > 180) {
-    previewDedSize = 9.5
-    previewDedLineHeight = 1.32
-    exportDedSize = 25
-    exportDedLineHeight = 1.35
-  } else if (dedLen > 100) {
-    previewDedSize = 10.5
+    previewDedSize = 11.8
     previewDedLineHeight = 1.38
-    exportDedSize = 28
+    exportDedSize = 32
+    exportDedLineHeight = 1.38
+  } else if (dedLen > 100) {
+    previewDedSize = 12.5
+    previewDedLineHeight = 1.40
+    exportDedSize = 35
     exportDedLineHeight = 1.40
   }
 
@@ -194,8 +194,8 @@ export default function PostalStoryShareModal({
 
     // PARÁMETROS DEL RETRATO
     const photoCenterX = width / 2
-    const photoCenterY = 720
-    const photoRadius = 225
+    const photoCenterY = 725
+    const photoRadius = 280
 
     // CAPA 5: RESPLANDOR EXTERIOR CÁLIDO DE LA FOTO (IDÉNTICO A TARJETA DEL MURAL)
     ctx.save()
@@ -326,7 +326,7 @@ export default function PostalStoryShareModal({
     ctx.shadowColor = 'rgba(255, 255, 255, 0.9)'
     ctx.shadowBlur = 6
 
-    const maxDedWidth = 840
+    const maxDedWidth = 890
     const words = `“${resolvedDedication}”`.split(' ')
     const lines: string[] = []
     let currentLine = words[0] || ''
@@ -345,7 +345,7 @@ export default function PostalStoryShareModal({
     lines.push(currentLine)
 
     const dedLineHeightPx = exportDedSize * exportDedLineHeight
-    let startDedY = 1100
+    let startDedY = 1070
     lines.forEach((l, idx) => {
       ctx.fillText(l, width / 2, startDedY + idx * dedLineHeightPx)
     })
@@ -353,7 +353,7 @@ export default function PostalStoryShareModal({
     ctx.restore()
 
     // CAPA 11: CORAZÓN DORADO BAJO LA DEDICATORIA
-    const heartY = endDedY + 50
+    const heartY = endDedY + 48
     ctx.save()
     ctx.textAlign = 'center'
     ctx.font = '28px sans-serif'
@@ -362,7 +362,8 @@ export default function PostalStoryShareModal({
     ctx.restore()
 
     // CAPA 12: FRASE FIJA "Tu recuerdo sigue brillando aquí."
-    const fixedPhraseY = heartY + 48
+    // Bloque inferior desplazado 80px hacia abajo conservando separaciones relativas
+    const fixedPhraseY = heartY + 126
     ctx.save()
     ctx.textAlign = 'center'
     ctx.font = '600 26px "Playfair Display", Georgia, serif'
@@ -375,7 +376,7 @@ export default function PostalStoryShareModal({
     ctx.restore()
 
     // CAPA 13: FIRMA OFICIAL "Ángeles en el Cielo"
-    const signY = fixedPhraseY + 75
+    const signY = fixedPhraseY + 72
     ctx.save()
     ctx.textAlign = 'center'
     ctx.font = '400 56px "Allura", "Pinyon Script", cursive'
@@ -577,7 +578,7 @@ export default function PostalStoryShareModal({
               <div className="relative flex flex-col items-center justify-center my-auto">
                 {/* Aureola dorada inclinada flotando sobre la cabeza */}
                 <div 
-                  className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 w-[116px] h-[32px] flex items-center justify-center pointer-events-none"
+                  className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10 w-[130px] h-[36px] flex items-center justify-center pointer-events-none"
                   style={{ transform: 'translateX(-50%) rotate(-4deg)' }}
                 >
                   <svg width="100%" height="100%" viewBox="0 0 220 70" fill="none" style={{ overflow: 'visible' }}>
@@ -622,7 +623,7 @@ export default function PostalStoryShareModal({
 
                 {/* Círculo de la foto real idéntico a la tarjeta del mural */}
                 <div 
-                  className="relative w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden bg-white z-0"
+                  className="relative w-40 h-40 sm:w-44 sm:h-44 rounded-full overflow-hidden bg-white z-0"
                   style={{
                     border: '3.5px solid #C9A961',
                     boxShadow: '0 0 22px rgba(201,169,97,0.45), 0 8px 20px rgba(74,31,110,0.18)',
@@ -646,7 +647,7 @@ export default function PostalStoryShareModal({
               {/* ZONA EMOCIONAL: DEDICATORIA */}
               <div className="w-full text-center px-2 mb-2">
                 <p 
-                  className="font-serif italic text-[#3B2648] m-0 max-w-[280px] mx-auto line-clamp-4"
+                  className="font-serif italic text-[#3B2648] m-0 max-w-[305px] mx-auto line-clamp-6"
                   style={{
                     fontSize: `${previewDedSize}px`,
                     lineHeight: previewDedLineHeight,
