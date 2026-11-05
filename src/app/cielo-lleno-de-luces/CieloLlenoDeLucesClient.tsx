@@ -794,6 +794,91 @@ export default function CieloLlenoDeLucesClient() {
       </section>
 
       {/* ========================================================================= */}
+      {/* SECCIÓN 2: ¿QUÉ ES CIELO LLENO DE LUCES? (FASE 2)                         */}
+      {/* ========================================================================= */}
+      <section id="que-es-cielo-de-luces" className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10 min-w-0">
+        <div className="bg-[#FFFDFB]/85 sm:bg-white/85 backdrop-blur-md rounded-[28px] sm:rounded-[32px] p-6 sm:p-8 lg:p-10 border border-[#F3D5E4]/70 shadow-[0_12px_40px_rgba(184,60,126,0.05)] transition-all">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
+            
+            {/* Columna Izquierda: Título y Explicación */}
+            <div className="lg:col-span-4 lg:pr-8 lg:border-r lg:border-[#F0BED6]/40 flex flex-col justify-center text-center lg:text-left">
+              <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-[#9E4D7F] uppercase mb-2">
+                Homenaje celestial
+              </span>
+              <h2 className="font-playfair text-2xl sm:text-3xl lg:text-[30px] font-bold text-[#2D0F31] leading-tight">
+                ¿Qué es Cielo lleno de luces?
+              </h2>
+              <p className="font-sans text-xs sm:text-sm text-[#6C5367] leading-relaxed mt-3 sm:mt-4">
+                Un homenaje vivo y compartido, donde cada luz representa el amor, la huella y la historia de una mascota que siempre vivirá en nuestro corazón.
+              </p>
+            </div>
+
+            {/* Separador móvil sutil */}
+            <div className="block lg:hidden w-full h-px bg-gradient-to-r from-transparent via-[#F0BED6]/40 to-transparent -my-2" />
+
+            {/* Tres Columnas a la Derecha: Los Tres Pilares */}
+            <div className="lg:col-span-8 lg:pl-2 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#F0BED6]/40 gap-6 md:gap-0 items-start">
+              
+              {/* Pilar 1: Enciende su luz */}
+              <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-4 md:pt-0">
+                <div 
+                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#FFF5F9] via-[#FAF0F6] to-[#F5E6EF] border border-[#F0BED6]/80 shadow-[0_4px_16px_rgba(184,60,126,0.06)] flex items-center justify-center shrink-0 mb-3 sm:mb-4"
+                  aria-hidden="true"
+                >
+                  <div className="w-8 h-8 rounded-full border border-dashed border-[#C8874E]/40 flex items-center justify-center">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#C8874E]/60 shadow-[0_0_8px_rgba(200,135,78,0.4)]" />
+                  </div>
+                </div>
+                <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
+                  Enciende su luz
+                </h3>
+                <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
+                  Una vela gratuita durante siete días.
+                </p>
+              </div>
+
+              {/* Pilar 2: Comparte su recuerdo */}
+              <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
+                <div 
+                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#FFF5F9] via-[#FAF0F6] to-[#F5E6EF] border border-[#F0BED6]/80 shadow-[0_4px_16px_rgba(184,60,126,0.06)] flex items-center justify-center shrink-0 mb-3 sm:mb-4"
+                  aria-hidden="true"
+                >
+                  <div className="w-8 h-8 rounded-full border border-dashed border-[#B83C7E]/40 flex items-center justify-center">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#B83C7E]/60 shadow-[0_0_8px_rgba(184,60,126,0.4)]" />
+                  </div>
+                </div>
+                <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
+                  Comparte su recuerdo
+                </h3>
+                <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
+                  Su nombre, fotografía e historia tienen un lugar en nuestro cielo.
+                </p>
+              </div>
+
+              {/* Pilar 3: Vuelve a iluminarla */}
+              <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
+                <div 
+                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#FFF5F9] via-[#FAF0F6] to-[#F5E6EF] border border-[#F0BED6]/80 shadow-[0_4px_16px_rgba(184,60,126,0.06)] flex items-center justify-center shrink-0 mb-3 sm:mb-4"
+                  aria-hidden="true"
+                >
+                  <div className="w-8 h-8 rounded-full border border-dashed border-[#C8874E]/40 flex items-center justify-center">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#C8874E]/60 shadow-[0_0_8px_rgba(200,135,78,0.4)]" />
+                  </div>
+                </div>
+                <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
+                  Vuelve a iluminarla
+                </h3>
+                <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
+                  Cuando su llama descanse, podrás volver a encenderla gratuitamente.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
       {/* BARRA DE FILTROS & BUSCADOR                                               */}
       {/* ========================================================================= */}
       <section id="seccion-luces" className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-4 scroll-mt-24 min-w-0">
