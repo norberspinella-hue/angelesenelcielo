@@ -72,10 +72,10 @@ export function OctubreBanner({ onVisibilityChange }: OctubreBannerProps) {
             />
           </div>
 
-          <div className="flex flex-col text-left leading-tight">
+          <div className="flex flex-col text-left leading-tight min-w-0">
             <div className="flex items-center gap-2">
               <span 
-                className="font-bold text-sm sm:text-base text-[#FDE68A] tracking-wide drop-shadow-xs"
+                className="font-bold text-xs sm:text-base text-[#FDE68A] tracking-wide drop-shadow-xs whitespace-nowrap"
                 style={{ fontFamily: 'var(--font-playfair), Georgia, serif' }}
               >
                 27 de octubre
@@ -85,7 +85,7 @@ export function OctubreBanner({ onVisibilityChange }: OctubreBannerProps) {
                 Día de las Mascotas
               </span>
             </div>
-            <span className="text-xs sm:text-sm text-white/95 font-medium group-hover:text-amber-200 transition-colors">
+            <span className="text-[11px] sm:text-sm text-white/95 font-medium group-hover:text-amber-200 transition-colors truncate">
               Encendamos una luz por nuestras mascotas <span className="hidden lg:inline text-white/75">· Ellas regresan a visitarnos antes que nadie 🕯️</span>
             </span>
           </div>

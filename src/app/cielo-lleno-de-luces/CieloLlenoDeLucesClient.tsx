@@ -187,6 +187,7 @@ const SEED_CANDLES: AltarCandle[] = [
 export default function CieloLlenoDeLucesClient() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
+
   const isPersistentAltarEnabled = process.env.NEXT_PUBLIC_ENABLE_PERSISTENT_ALTAR !== 'false';
   const [hasTopBanner, setHasTopBanner] = useState(true);
   const [candles, setCandles] = useState<AltarCandle[]>(SEED_CANDLES);
@@ -203,6 +204,18 @@ export default function CieloLlenoDeLucesClient() {
   const [showRecoveryForm, setShowRecoveryForm] = useState(false);
   const [recoveryEmailInput, setRecoveryEmailInput] = useState('');
   const [isRecovering, setIsRecovering] = useState(false);
+
+  // Bloqueo de scroll en body cuando un modal está abierto para evitar movimientos de fondo
+  useEffect(() => {
+    if (showNewCandleModal || selectedCandle) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showNewCandleModal, selectedCandle]);
 
   // Formulario nueva vela
   const [newPetName, setNewPetName] = useState('');
@@ -609,7 +622,7 @@ export default function CieloLlenoDeLucesClient() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDFB] text-[#2D0F31] flex flex-col selection:bg-[#F3D5E4] selection:text-[#8C3F71] relative w-full max-w-full overflow-x-hidden">
+    <div className="min-h-screen bg-[#FFFDFB] text-[#2D0F31] flex flex-col selection:bg-[#F3D5E4] selection:text-[#8C3F71] relative w-full max-w-full">
       
       {/* Toast flotante */}
       {toastMessage && (
@@ -630,10 +643,10 @@ export default function CieloLlenoDeLucesClient() {
       {/* ========================================================================= */}
       <section 
         className={`relative overflow-hidden transition-all duration-300 ${
-          hasTopBanner ? 'pt-32 sm:pt-36 md:pt-40 lg:pt-32' : 'pt-24 sm:pt-28 lg:pt-24'
+          hasTopBanner ? 'pt-52 sm:pt-56 md:pt-44 lg:pt-32' : 'pt-40 sm:pt-44 lg:pt-24'
         } pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-12 flex flex-col justify-between`}
         style={{
-          minHeight: 'clamp(680px, 92vh, 980px)',
+          minHeight: 'clamp(720px, 94vh, 980px)',
           isolation: 'isolate',
         }}
       >
@@ -725,7 +738,7 @@ export default function CieloLlenoDeLucesClient() {
             </p>
 
             {/* Botones de Acción Oficiales */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto max-w-full">
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full max-w-[340px] sm:max-w-none mx-auto lg:mx-0">
               {/* Botón Principal: «Enciende una luz» */}
               <button
                 type="button"
@@ -755,7 +768,7 @@ export default function CieloLlenoDeLucesClient() {
             </div>
 
             {/* Indicador Real de Llamas Vivas */}
-            <div className="pt-2 flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#6E4F66]">
+            <div className="pt-2 flex items-center justify-center lg:justify-start gap-2 text-xs sm:text-sm font-semibold text-[#6E4F66] w-full">
               <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-ping" />
               <span>
                 Hoy arden <strong className="text-[#2D0F31] font-bold">{activeCandlesCount}</strong> llamas vivas en el Altar
@@ -1070,12 +1083,22 @@ export default function CieloLlenoDeLucesClient() {
       {/* MODAL 1: DETALLE DE VELA SELECCIONADA                                     */}
       {/* ========================================================================= */}
       {mounted && selectedCandle && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-3 sm:p-4 bg-[#150719]/80 backdrop-blur-md overflow-y-auto animate-fade-in">
-          <div className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-center space-y-4 relative text-[#2D0F31] max-h-[92vh] overflow-y-auto my-auto">
+        <div 
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-[#0D0312]/85 backdrop-blur-md overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setSelectedCandle(null);
+          }}
+        >
+          <div 
+            className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-[0_24px_64px_rgba(0,0,0,0.50)] border border-white text-center space-y-4 relative text-[#2D0F31] max-h-[92vh] overflow-y-auto my-auto z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
             
             <button
+              type="button"
               onClick={() => setSelectedCandle(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center cursor-pointer transition-colors z-20 font-bold select-none"
+              aria-label="Cerrar modal"
             >
               ✕
             </button>
@@ -1242,12 +1265,22 @@ export default function CieloLlenoDeLucesClient() {
       {/* MODAL 2: FORMULARIO PARA ENCENDER UNA NUEVA VELA                          */}
       {/* ========================================================================= */}
       {mounted && showNewCandleModal && typeof document !== 'undefined' && createPortal(
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-3 sm:p-4 bg-[#150719]/80 backdrop-blur-md overflow-y-auto animate-fade-in">
-          <div className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-left space-y-4 relative text-[#2D0F31] max-h-[92vh] overflow-y-auto my-auto">
+        <div 
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-[#0D0312]/85 backdrop-blur-md overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] animate-fade-in"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowNewCandleModal(false);
+          }}
+        >
+          <div 
+            className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-[0_24px_64px_rgba(0,0,0,0.50)] border border-white text-left space-y-4 relative text-[#2D0F31] max-h-[92vh] overflow-y-auto my-auto z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
             
             <button
+              type="button"
               onClick={() => setShowNewCandleModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center cursor-pointer transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center cursor-pointer transition-colors z-20 font-bold select-none"
+              aria-label="Cerrar modal"
             >
               ✕
             </button>
