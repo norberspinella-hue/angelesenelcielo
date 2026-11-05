@@ -205,15 +205,25 @@ export default function CieloLlenoDeLucesClient() {
   const [recoveryEmailInput, setRecoveryEmailInput] = useState('');
   const [isRecovering, setIsRecovering] = useState(false);
 
-  // Bloqueo de scroll en body cuando un modal está abierto para evitar movimientos de fondo
+  // Bloqueo de scroll en body cuando un modal está abierto y cierre mediante tecla Escape
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowNewCandleModal(false);
+        setSelectedCandle(null);
+      }
+    };
+
     if (showNewCandleModal || selectedCandle) {
       document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
     } else {
       document.body.style.overflow = '';
     }
+
     return () => {
       document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [showNewCandleModal, selectedCandle]);
 
