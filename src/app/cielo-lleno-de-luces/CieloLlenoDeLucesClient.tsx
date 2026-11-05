@@ -821,13 +821,15 @@ export default function CieloLlenoDeLucesClient() {
               
               {/* Pilar 1: Enciende su luz */}
               <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-4 md:pt-0">
-                <div 
-                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#FFF5F9] via-[#FAF0F6] to-[#F5E6EF] border border-[#F0BED6]/80 shadow-[0_4px_16px_rgba(184,60,126,0.06)] flex items-center justify-center shrink-0 mb-3 sm:mb-4"
-                  aria-hidden="true"
-                >
-                  <div className="w-8 h-8 rounded-full border border-dashed border-[#C8874E]/40 flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#C8874E]/60 shadow-[0_0_8px_rgba(200,135,78,0.4)]" />
-                  </div>
+                <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
+                  <Image 
+                    src="/images/luces/pilar-enciende-luz.webp" 
+                    alt="Enciende su luz" 
+                    width={508} 
+                    height={726} 
+                    priority 
+                    className="h-[72px] sm:h-[84px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
+                  />
                 </div>
                 <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
                   Enciende su luz
@@ -839,13 +841,15 @@ export default function CieloLlenoDeLucesClient() {
 
               {/* Pilar 2: Comparte su recuerdo */}
               <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
-                <div 
-                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#FFF5F9] via-[#FAF0F6] to-[#F5E6EF] border border-[#F0BED6]/80 shadow-[0_4px_16px_rgba(184,60,126,0.06)] flex items-center justify-center shrink-0 mb-3 sm:mb-4"
-                  aria-hidden="true"
-                >
-                  <div className="w-8 h-8 rounded-full border border-dashed border-[#B83C7E]/40 flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#B83C7E]/60 shadow-[0_0_8px_rgba(184,60,126,0.4)]" />
-                  </div>
+                <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
+                  <Image 
+                    src="/images/luces/pilar-comparte-recuerdo.webp" 
+                    alt="Comparte su recuerdo" 
+                    width={715} 
+                    height={601} 
+                    priority 
+                    className="h-[64px] sm:h-[76px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(244,114,182,0.25)] transition-transform duration-300 hover:scale-105"
+                  />
                 </div>
                 <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
                   Comparte su recuerdo
@@ -857,13 +861,15 @@ export default function CieloLlenoDeLucesClient() {
 
               {/* Pilar 3: Vuelve a iluminarla */}
               <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
-                <div 
-                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#FFF5F9] via-[#FAF0F6] to-[#F5E6EF] border border-[#F0BED6]/80 shadow-[0_4px_16px_rgba(184,60,126,0.06)] flex items-center justify-center shrink-0 mb-3 sm:mb-4"
-                  aria-hidden="true"
-                >
-                  <div className="w-8 h-8 rounded-full border border-dashed border-[#C8874E]/40 flex items-center justify-center">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#C8874E]/60 shadow-[0_0_8px_rgba(200,135,78,0.4)]" />
-                  </div>
+                <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
+                  <Image 
+                    src="/images/luces/pilar-vuelve-a-iluminar.webp" 
+                    alt="Vuelve a iluminarla" 
+                    width={896} 
+                    height={408} 
+                    priority 
+                    className="w-[86px] sm:w-[102px] h-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
+                  />
                 </div>
                 <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
                   Vuelve a iluminarla
