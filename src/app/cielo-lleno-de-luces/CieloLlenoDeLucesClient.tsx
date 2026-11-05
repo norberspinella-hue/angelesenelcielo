@@ -796,10 +796,18 @@ export default function CieloLlenoDeLucesClient() {
       {/* ========================================================================= */}
       {/* SECCIÓN 2: ¿QUÉ ES CIELO LLENO DE LUCES? (FASE 2)                         */}
       {/* ========================================================================= */}
-      <section id="que-es-cielo-de-luces" className="relative w-full overflow-hidden py-12 sm:py-16 lg:py-20 z-10 min-w-0 -mt-1">
-        
+      <section 
+        id="que-es-cielo-de-luces" 
+        className="relative w-full overflow-hidden -mt-24 sm:-mt-32 lg:-mt-40 pt-28 sm:pt-36 lg:pt-48 pb-14 sm:pb-18 lg:pb-24 z-10 min-w-0"
+      >
         {/* Fondo WebP adaptativo: Fondo 02 ¿Qué es Cielo lleno de luces? */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+        <div 
+          className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 35%, black 46%, black 100%)',
+            maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 35%, black 46%, black 100%)',
+          }}
+        >
           {/* Escritorio / Tablet horizontal (>= 768px) */}
           <div className="hidden md:block absolute inset-0">
             <Image 
@@ -823,11 +831,8 @@ export default function CieloLlenoDeLucesClient() {
             />
           </div>
 
-          {/* Transición suave superior (Hero -> Sección 2): Fundido de nubes cálidas del hero al cielo lavanda */}
-          <div className="absolute top-0 inset-x-0 h-24 sm:h-32 bg-gradient-to-b from-[#FDE4D8]/80 via-[#F7DCE6]/40 to-transparent" />
-
-          {/* Transición suave inferior: Fundido delicado al fondo base de la galería */}
-          <div className="absolute bottom-0 inset-x-0 h-20 sm:h-28 bg-gradient-to-t from-[#FFFDFB] via-[#FFFDFB]/60 to-transparent" />
+          {/* Degradado atmosférico sutil en el solapamiento superior */}
+          <div className="absolute top-0 inset-x-0 h-36 sm:h-48 bg-gradient-to-b from-[#FDE4D8]/50 via-[#F7DCE6]/25 to-transparent pointer-events-none" />
         </div>
 
         {/* Contenedor de contenido translúcido unificado */}
@@ -921,9 +926,61 @@ export default function CieloLlenoDeLucesClient() {
       </section>
 
       {/* ========================================================================= */}
+      {/* CAPA ATMOSFÉRICA DE TRANSICIÓN: FONDO 03 (LUCES DESTACADAS)               */}
+      {/* ========================================================================= */}
+      <section 
+        id="transicion-fondo-03" 
+        className="relative w-full overflow-hidden -mt-20 sm:-mt-28 lg:-mt-36 pt-24 sm:pt-32 lg:pt-40 pb-16 sm:pb-24 z-20 min-w-0"
+        style={{ minHeight: 'clamp(360px, 45vh, 520px)' }}
+      >
+        {/* Fondo WebP adaptativo: Fondo 03 Destacadas */}
+        <div 
+          className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 35%, black 46%, black 85%, rgba(0,0,0,0.5) 94%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 35%, black 46%, black 85%, rgba(0,0,0,0.5) 94%, transparent 100%)',
+          }}
+        >
+          {/* Escritorio / Tablet horizontal (>= 768px) */}
+          <div className="hidden md:block absolute inset-0">
+            <Image 
+              src="/images/luces/fondo_03_DESTACADAS_PC_1920x1080.webp" 
+              alt="Cielo lleno de luces - Transición de luces destacadas" 
+              fill 
+              priority 
+              quality={90}
+              className="object-cover object-top" 
+            />
+          </div>
+          {/* Móvil (< 768px) */}
+          <div className="block md:hidden absolute inset-0">
+            <Image 
+              src="/images/luces/fondo_03_DESTACADAS_MOVIL_1080x1920.webp" 
+              alt="Cielo lleno de luces - Transición de luces destacadas" 
+              fill 
+              priority 
+              quality={90}
+              className="object-cover object-top" 
+            />
+          </div>
+
+          {/* Transición atmosférica de unión Fondo 02 -> Fondo 03 */}
+          <div className="absolute top-0 inset-x-0 h-32 sm:h-44 bg-gradient-to-b from-[#E6D4EE]/35 via-[#F2DDEB]/20 to-transparent pointer-events-none" />
+        </div>
+
+        {/* Atmósfera celestial continua hacia la siguiente sección */}
+        <div className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col items-center justify-center text-center">
+          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-white/70 backdrop-blur-md border border-[#F0BED6]/60 shadow-[0_4px_20px_rgba(184,60,126,0.06)] text-[#8C3F71] text-xs sm:text-sm font-semibold">
+            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#B83C7E] animate-pulse" />
+            <span className="tracking-wide">Algunas luces que hoy iluminan nuestro cielo</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
       {/* BARRA DE FILTROS & BUSCADOR                                               */}
       {/* ========================================================================= */}
-      <section id="seccion-luces" className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-4 scroll-mt-24 min-w-0">
+      <section id="seccion-luces" className="relative z-30 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12 pb-4 scroll-mt-24 min-w-0">
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-[#F6E1EE] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 w-full max-w-full min-w-0">
           
           {/* Buscador de perritos */}
