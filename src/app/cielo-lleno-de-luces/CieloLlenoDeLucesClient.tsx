@@ -794,193 +794,161 @@ export default function CieloLlenoDeLucesClient() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECCIÓN 2: ¿QUÉ ES CIELO LLENO DE LUCES? (FASE 2)                         */}
+      {/* ZONA DE FONDO CONTINUO UNIFICADO (DESDE FASE 2 HASTA EL CIERRE)           */}
       {/* ========================================================================= */}
-      <section 
-        id="que-es-cielo-de-luces" 
-        className="relative w-full overflow-hidden -mt-24 sm:-mt-32 lg:-mt-40 pt-28 sm:pt-36 lg:pt-48 pb-14 sm:pb-18 lg:pb-24 z-10 min-w-0"
+      <div 
+        id="cielo-continuo-unificado" 
+        className="relative w-full overflow-hidden -mt-20 sm:-mt-24 lg:-mt-28 z-10 min-w-0"
+        style={{
+          background: 'linear-gradient(180deg, #FBF2F6 0%, #F5E5F0 12%, #EFE1ED 30%, #E9DCED 55%, #DFD0E8 80%, #D4C3E2 100%)',
+        }}
       >
-        {/* Fondo WebP adaptativo: Fondo 02 ¿Qué es Cielo lleno de luces? */}
-        <div 
-          className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none"
-          style={{
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 35%, black 46%, black 100%)',
-            maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 35%, black 46%, black 100%)',
-          }}
-        >
-          {/* Escritorio / Tablet horizontal (>= 768px) */}
-          <div className="hidden md:block absolute inset-0">
+        {/* Capa ambiental compartida: Imagen maestra de nubes celestial rosa y lavanda */}
+        <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+          {/* Versión Escritorio / Tablet (>= 768px): Imagen maestra oficial */}
+          <div 
+            className="hidden md:block absolute top-0 inset-x-0 w-full h-[1200px] lg:h-[1400px] xl:h-[1550px]"
+            style={{
+              WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+              maskImage: 'linear-gradient(to bottom, black 0%, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+            }}
+          >
             <Image 
               src="/images/luces/fondo_02_QUE_ES_PC_1920x1080.webp" 
-              alt="Cielo lleno de luces - ¿Qué es?" 
+              alt="Cielo continuo de nubes celestiales" 
               fill 
               priority 
               quality={90}
-              className="object-cover object-center" 
+              className="object-cover object-top" 
             />
           </div>
-          {/* Móvil (< 768px) */}
-          <div className="block md:hidden absolute inset-0">
+
+          {/* Versión Móvil (< 768px): Imagen maestra vertical oficial */}
+          <div 
+            className="block md:hidden absolute top-0 inset-x-0 w-full h-[1400px] sm:h-[1600px]"
+            style={{
+              WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+              maskImage: 'linear-gradient(to bottom, black 0%, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+            }}
+          >
             <Image 
               src="/images/luces/fondo_02_QUE_ES_MOVIL_1080x1920.webp" 
-              alt="Cielo lleno de luces - ¿Qué es?" 
+              alt="Cielo continuo de nubes celestiales" 
               fill 
               priority 
               quality={90}
-              className="object-cover object-center" 
+              className="object-cover object-top" 
             />
           </div>
 
-          {/* Degradado atmosférico sutil en el solapamiento superior */}
-          <div className="absolute top-0 inset-x-0 h-36 sm:h-48 bg-gradient-to-b from-[#FDE4D8]/50 via-[#F7DCE6]/25 to-transparent pointer-events-none" />
+          {/* Transición atmosférica suave y única desde el Hero */}
+          <div className="absolute top-0 inset-x-0 h-32 sm:h-44 bg-gradient-to-b from-[#FDE4D8]/65 via-[#F7DCE6]/35 to-transparent pointer-events-none" />
+
+          {/* Transición suave hacia lavanda más profundo para el cierre emocional */}
+          <div className="absolute bottom-0 inset-x-0 h-72 sm:h-96 bg-gradient-to-t from-[#D2BFE3]/40 via-[#DFD0E8]/20 to-transparent pointer-events-none" />
         </div>
 
-        {/* Contenedor de contenido translúcido unificado */}
-        <div className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 min-w-0">
-          <div className="bg-[#FFFDFB]/85 sm:bg-white/85 backdrop-blur-md rounded-[28px] sm:rounded-[32px] p-6 sm:p-8 lg:p-10 border border-[#F3D5E4]/70 shadow-[0_12px_40px_rgba(184,60,126,0.05)] transition-all">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
-              
-              {/* Columna Izquierda: Título y Explicación */}
-              <div className="lg:col-span-4 lg:pr-8 lg:border-r lg:border-[#F0BED6]/40 flex flex-col justify-center text-center lg:text-left">
-                <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-[#9E4D7F] uppercase mb-2">
-                  Homenaje celestial
-                </span>
-                <h2 className="font-playfair text-2xl sm:text-3xl lg:text-[30px] font-bold text-[#2D0F31] leading-tight">
-                  ¿Qué es Cielo lleno de luces?
-                </h2>
-                <p className="font-sans text-xs sm:text-sm text-[#6C5367] leading-relaxed mt-3 sm:mt-4">
-                  Un homenaje vivo y compartido, donde cada luz representa el amor, la huella y la historia de una mascota que siempre vivirá en nuestro corazón.
-                </p>
-              </div>
-
-              {/* Separador móvil sutil */}
-              <div className="block lg:hidden w-full h-px bg-gradient-to-r from-transparent via-[#F0BED6]/40 to-transparent -my-2" />
-
-              {/* Tres Columnas a la Derecha: Los Tres Pilares */}
-              <div className="lg:col-span-8 lg:pl-2 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#F0BED6]/40 gap-6 md:gap-0 items-start">
+        {/* ========================================================================= */}
+        {/* SECCIÓN 2: ¿QUÉ ES CIELO LLENO DE LUCES? (FASE 2)                         */}
+        {/* ========================================================================= */}
+        <section 
+          id="que-es-cielo-de-luces" 
+          className="relative z-10 w-full pt-28 sm:pt-36 lg:pt-44 pb-12 sm:pb-16 lg:pb-20 min-w-0 bg-transparent"
+        >
+          {/* Contenedor de contenido translúcido unificado */}
+          <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 min-w-0">
+            <div className="bg-[#FFFDFB]/85 sm:bg-white/85 backdrop-blur-md rounded-[28px] sm:rounded-[32px] p-6 sm:p-8 lg:p-10 border border-[#F3D5E4]/70 shadow-[0_12px_40px_rgba(184,60,126,0.05)] transition-all">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
                 
-                {/* Pilar 1: Enciende su luz */}
-                <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-4 md:pt-0">
-                  <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
-                    <Image 
-                      src="/images/luces/pilar-enciende-luz.webp" 
-                      alt="Enciende su luz" 
-                      width={508} 
-                      height={726} 
-                      priority 
-                      className="h-[72px] sm:h-[84px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
-                    />
-                  </div>
-                  <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
-                    Enciende su luz
-                  </h3>
-                  <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
-                    Una vela gratuita durante siete días.
+                {/* Columna Izquierda: Título y Explicación */}
+                <div className="lg:col-span-4 lg:pr-8 lg:border-r lg:border-[#F0BED6]/40 flex flex-col justify-center text-center lg:text-left">
+                  <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-[#9E4D7F] uppercase mb-2">
+                    Homenaje celestial
+                  </span>
+                  <h2 className="font-playfair text-2xl sm:text-3xl lg:text-[30px] font-bold text-[#2D0F31] leading-tight">
+                    ¿Qué es Cielo lleno de luces?
+                  </h2>
+                  <p className="font-sans text-xs sm:text-sm text-[#6C5367] leading-relaxed mt-3 sm:mt-4">
+                    Un homenaje vivo y compartido, donde cada luz representa el amor, la huella y la historia de una mascota que siempre vivirá en nuestro corazón.
                   </p>
                 </div>
 
-                {/* Pilar 2: Comparte su recuerdo */}
-                <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
-                  <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
-                    <Image 
-                      src="/images/luces/pilar-comparte-recuerdo.webp" 
-                      alt="Comparte su recuerdo" 
-                      width={715} 
-                      height={601} 
-                      priority 
-                      className="h-[64px] sm:h-[76px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(244,114,182,0.25)] transition-transform duration-300 hover:scale-105"
-                    />
-                  </div>
-                  <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
-                    Comparte su recuerdo
-                  </h3>
-                  <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
-                    Su nombre, fotografía e historia tienen un lugar en nuestro cielo.
-                  </p>
-                </div>
+                {/* Separador móvil sutil */}
+                <div className="block lg:hidden w-full h-px bg-gradient-to-r from-transparent via-[#F0BED6]/40 to-transparent -my-2" />
 
-                {/* Pilar 3: Vuelve a iluminarla */}
-                <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
-                  <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
-                    <Image 
-                      src="/images/luces/pilar-vuelve-a-iluminar.webp" 
-                      alt="Vuelve a iluminarla" 
-                      width={896} 
-                      height={408} 
-                      priority 
-                      className="w-[86px] sm:w-[102px] h-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
-                    />
+                {/* Tres Columnas a la Derecha: Los Tres Pilares */}
+                <div className="lg:col-span-8 lg:pl-2 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#F0BED6]/40 gap-6 md:gap-0 items-start">
+                  
+                  {/* Pilar 1: Enciende su luz */}
+                  <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-4 md:pt-0">
+                    <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
+                      <Image 
+                        src="/images/luces/pilar-enciende-luz.webp" 
+                        alt="Enciende su luz" 
+                        width={508} 
+                        height={726} 
+                        priority 
+                        className="h-[72px] sm:h-[84px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
+                      />
+                    </div>
+                    <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
+                      Enciende su luz
+                    </h3>
+                    <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
+                      Una vela gratuita durante siete días.
+                    </p>
                   </div>
-                  <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
-                    Vuelve a iluminarla
-                  </h3>
-                  <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
-                    Cuando su llama descanse, podrás volver a encenderla gratuitamente.
-                  </p>
-                </div>
 
+                  {/* Pilar 2: Comparte su recuerdo */}
+                  <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
+                    <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
+                      <Image 
+                        src="/images/luces/pilar-comparte-recuerdo.webp" 
+                        alt="Comparte su recuerdo" 
+                        width={715} 
+                        height={601} 
+                        priority 
+                        className="h-[64px] sm:h-[76px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(244,114,182,0.25)] transition-transform duration-300 hover:scale-105"
+                      />
+                    </div>
+                    <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
+                      Comparte su recuerdo
+                    </h3>
+                    <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
+                      Su nombre, fotografía e historia tienen un lugar en nuestro cielo.
+                    </p>
+                  </div>
+
+                  {/* Pilar 3: Vuelve a iluminarla */}
+                  <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
+                    <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
+                      <Image 
+                        src="/images/luces/pilar-vuelve-a-iluminar.webp" 
+                        alt="Vuelve a iluminarla" 
+                        width={896} 
+                        height={408} 
+                        priority 
+                        className="w-[86px] sm:w-[102px] h-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
+                      />
+                    </div>
+                    <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
+                      Vuelve a iluminarla
+                    </h3>
+                    <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
+                      Cuando su llama descanse, podrás volver a encenderla gratuitamente.
+                    </p>
+                  </div>
+
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ========================================================================= */}
-      {/* CAPA ATMOSFÉRICA DE TRANSICIÓN: FONDO 03 (LUCES DESTACADAS)               */}
-      {/* ========================================================================= */}
-      <section 
-        id="transicion-fondo-03" 
-        className="relative w-full overflow-hidden -mt-20 sm:-mt-28 lg:-mt-36 pt-24 sm:pt-32 lg:pt-40 pb-16 sm:pb-24 z-20 min-w-0"
-        style={{ minHeight: 'clamp(360px, 45vh, 520px)' }}
-      >
-        {/* Fondo WebP adaptativo: Fondo 03 Destacadas */}
-        <div 
-          className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none"
-          style={{
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 35%, black 46%, black 85%, rgba(0,0,0,0.5) 94%, transparent 100%)',
-            maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.35) 20%, rgba(0,0,0,0.85) 35%, black 46%, black 85%, rgba(0,0,0,0.5) 94%, transparent 100%)',
-          }}
-        >
-          {/* Escritorio / Tablet horizontal (>= 768px) */}
-          <div className="hidden md:block absolute inset-0">
-            <Image 
-              src="/images/luces/fondo_03_DESTACADAS_PC_1920x1080.webp" 
-              alt="Cielo lleno de luces - Transición de luces destacadas" 
-              fill 
-              priority 
-              quality={90}
-              className="object-cover object-top" 
-            />
-          </div>
-          {/* Móvil (< 768px) */}
-          <div className="block md:hidden absolute inset-0">
-            <Image 
-              src="/images/luces/fondo_03_DESTACADAS_MOVIL_1080x1920.webp" 
-              alt="Cielo lleno de luces - Transición de luces destacadas" 
-              fill 
-              priority 
-              quality={90}
-              className="object-cover object-top" 
-            />
-          </div>
-
-          {/* Transición atmosférica de unión Fondo 02 -> Fondo 03 */}
-          <div className="absolute top-0 inset-x-0 h-32 sm:h-44 bg-gradient-to-b from-[#E6D4EE]/35 via-[#F2DDEB]/20 to-transparent pointer-events-none" />
-        </div>
-
-        {/* Atmósfera celestial continua hacia la siguiente sección */}
-        <div className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 flex flex-col items-center justify-center text-center">
-          <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 rounded-full bg-white/70 backdrop-blur-md border border-[#F0BED6]/60 shadow-[0_4px_20px_rgba(184,60,126,0.06)] text-[#8C3F71] text-xs sm:text-sm font-semibold">
-            <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-[#B83C7E] animate-pulse" />
-            <span className="tracking-wide">Algunas luces que hoy iluminan nuestro cielo</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* BARRA DE FILTROS & BUSCADOR                                               */}
-      {/* ========================================================================= */}
-      <section id="seccion-luces" className="relative z-30 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-12 pb-4 scroll-mt-24 min-w-0">
+        {/* ========================================================================= */}
+        {/* BARRA DE FILTROS & BUSCADOR                                               */}
+        {/* ========================================================================= */}
+        <section id="seccion-luces" className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-4 scroll-mt-24 min-w-0 bg-transparent">
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-[#F6E1EE] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 w-full max-w-full min-w-0">
           
           {/* Buscador de perritos */}
@@ -1271,7 +1239,9 @@ export default function CieloLlenoDeLucesClient() {
           </div>
         )}
 
-      </section>
+        </section>
+
+      </div>
 
       {/* ========================================================================= */}
       {/* MODAL 1: DETALLE DE VELA SELECCIONADA                                     */}
