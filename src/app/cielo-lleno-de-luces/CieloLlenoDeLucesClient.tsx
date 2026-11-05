@@ -652,17 +652,23 @@ export default function CieloLlenoDeLucesClient() {
       {/* HERO: PORTAL CELESTIAL «CIELO LLENO DE LUCES» (FASE 1)                    */}
       {/* ========================================================================= */}
       <section 
-        className={`relative overflow-hidden transition-all duration-300 ${
+        className={`relative z-10 overflow-hidden transition-all duration-300 ${
           hasTopBanner ? 'pt-52 sm:pt-56 md:pt-44 lg:pt-32' : 'pt-40 sm:pt-44 lg:pt-24'
-        } pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-12 flex flex-col justify-between`}
+        } pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between`}
         style={{
-          minHeight: 'clamp(720px, 94vh, 980px)',
+          minHeight: 'clamp(820px, 94vh, 1040px)',
           isolation: 'isolate',
         }}
       >
         
-        {/* Fondos WebP oficiales adaptativos por breakpoint (sin texto incrustado) */}
-        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+        {/* Fondos WebP oficiales adaptativos por breakpoint con máscara suave inferior que respeta al perrito */}
+        <div 
+          className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 86%, rgba(0,0,0,0.85) 91%, rgba(0,0,0,0.5) 95%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 0%, black 86%, rgba(0,0,0,0.85) 91%, rgba(0,0,0,0.5) 95%, transparent 100%)',
+          }}
+        >
           {/* Pantallas muy grandes / 2K / 4K (> 1920px) */}
           <div className="hidden 2xl:block absolute inset-0">
             <Image 
@@ -671,7 +677,7 @@ export default function CieloLlenoDeLucesClient() {
               fill 
               priority 
               quality={90}
-              className="object-cover object-left-bottom xl:object-center" 
+              className="object-cover object-left-top xl:object-top" 
             />
           </div>
           {/* Escritorio estándar (1024px - 1920px) */}
@@ -682,7 +688,7 @@ export default function CieloLlenoDeLucesClient() {
               fill 
               priority 
               quality={90}
-              className="object-cover object-left-bottom lg:object-center" 
+              className="object-cover object-left-top lg:object-top" 
             />
           </div>
           {/* Tablet (640px - 1024px) */}
@@ -693,7 +699,7 @@ export default function CieloLlenoDeLucesClient() {
               fill 
               priority 
               quality={90}
-              className="object-cover object-bottom" 
+              className="object-cover object-top" 
             />
           </div>
           {/* Móvil (< 640px) */}
@@ -704,7 +710,7 @@ export default function CieloLlenoDeLucesClient() {
               fill 
               priority 
               quality={90}
-              className="object-cover object-bottom" 
+              className="object-cover object-top" 
             />
           </div>
         </div>
@@ -713,7 +719,7 @@ export default function CieloLlenoDeLucesClient() {
         <div className="max-w-[1360px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center relative z-10 my-auto min-w-0">
           
           {/* COLUMNA IZQUIERDA (Desktop): Área visual libre para contemplar el portal, escaleras y perrito */}
-          <div className="hidden lg:block lg:col-span-6 xl:col-span-7 pointer-events-none min-h-[460px] xl:min-h-[520px]" />
+          <div className="hidden lg:block lg:col-span-6 xl:col-span-7 pointer-events-none min-h-[480px] xl:min-h-[540px]" />
 
           {/* COLUMNA DERECHA (Desktop) / SUPERIOR (Móvil): Textos y CTAs */}
           <div className="lg:col-span-6 xl:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5 relative w-full max-w-full min-w-0 px-2 sm:px-0">
@@ -788,7 +794,7 @@ export default function CieloLlenoDeLucesClient() {
           </div>
 
           {/* En Móvil: Espacio libre para contemplar el portal celestial y el perrito en la parte inferior */}
-          <div className="block lg:hidden w-full h-[320px] sm:h-[400px] pointer-events-none select-none" />
+          <div className="block lg:hidden w-full h-[360px] sm:h-[440px] pointer-events-none select-none" />
 
         </div>
       </section>
@@ -798,7 +804,7 @@ export default function CieloLlenoDeLucesClient() {
       {/* ========================================================================= */}
       <div 
         id="cielo-continuo-unificado" 
-        className="relative w-full overflow-hidden -mt-20 sm:-mt-24 lg:-mt-28 z-10 min-w-0"
+        className="relative w-full overflow-hidden -mt-24 sm:-mt-28 lg:-mt-32 z-0 min-w-0"
         style={{
           background: 'linear-gradient(180deg, #FBF2F6 0%, #F5E5F0 12%, #EFE1ED 30%, #E9DCED 55%, #DFD0E8 80%, #D4C3E2 100%)',
         }}
@@ -840,9 +846,6 @@ export default function CieloLlenoDeLucesClient() {
               className="object-cover object-top" 
             />
           </div>
-
-          {/* Transición atmosférica suave y única desde el Hero */}
-          <div className="absolute top-0 inset-x-0 h-32 sm:h-44 bg-gradient-to-b from-[#FDE4D8]/65 via-[#F7DCE6]/35 to-transparent pointer-events-none" />
 
           {/* Transición suave hacia lavanda más profundo para el cierre emocional */}
           <div className="absolute bottom-0 inset-x-0 h-72 sm:h-96 bg-gradient-to-t from-[#D2BFE3]/40 via-[#DFD0E8]/20 to-transparent pointer-events-none" />
