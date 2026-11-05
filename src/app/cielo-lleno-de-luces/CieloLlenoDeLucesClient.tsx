@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
 import { OctubreBanner } from '@/components/landing/OctubreBanner';
@@ -184,6 +185,8 @@ const SEED_CANDLES: AltarCandle[] = [
 ];
 
 export default function CieloLlenoDeLucesClient() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
   const isPersistentAltarEnabled = process.env.NEXT_PUBLIC_ENABLE_PERSISTENT_ALTAR !== 'false';
   const [hasTopBanner, setHasTopBanner] = useState(true);
   const [candles, setCandles] = useState<AltarCandle[]>(SEED_CANDLES);
@@ -606,7 +609,7 @@ export default function CieloLlenoDeLucesClient() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDFB] text-[#2D0F31] flex flex-col selection:bg-[#F3D5E4] selection:text-[#8C3F71] relative">
+    <div className="min-h-screen bg-[#FFFDFB] text-[#2D0F31] flex flex-col selection:bg-[#F3D5E4] selection:text-[#8C3F71] relative w-full max-w-full overflow-x-hidden">
       
       {/* Toast flotante */}
       {toastMessage && (
@@ -684,13 +687,13 @@ export default function CieloLlenoDeLucesClient() {
         </div>
 
         {/* Contenedor principal: Grilla en desktop (portal a la izq, texto a la dcha) */}
-        <div className="max-w-[1360px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10 my-auto">
+        <div className="max-w-[1360px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center relative z-10 my-auto min-w-0">
           
           {/* COLUMNA IZQUIERDA (Desktop): Área visual libre para contemplar el portal, escaleras y perrito */}
           <div className="hidden lg:block lg:col-span-6 xl:col-span-7 pointer-events-none min-h-[460px] xl:min-h-[520px]" />
 
           {/* COLUMNA DERECHA (Desktop) / SUPERIOR (Móvil): Textos y CTAs */}
-          <div className="lg:col-span-6 xl:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5 relative">
+          <div className="lg:col-span-6 xl:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5 relative w-full max-w-full min-w-0 px-2 sm:px-0">
             
             {/* Halo sutil de fondo para máxima legibilidad tipográfica */}
             <div 
@@ -701,7 +704,7 @@ export default function CieloLlenoDeLucesClient() {
             />
 
             {/* Título Oficial: «Cielo lleno de luces» */}
-            <h1 className="font-playfair text-3xl sm:text-5xl lg:text-[44px] xl:text-[52px] font-bold tracking-tight text-[#2D0F31] leading-[1.12]">
+            <h1 className="font-playfair text-3xl sm:text-5xl lg:text-[44px] xl:text-[52px] font-bold tracking-tight text-[#2D0F31] leading-[1.12] w-full max-w-full break-words">
               Cielo lleno <br className="hidden sm:inline" />
               <span className="relative inline-block text-[#B83C7E]">
                 de luces <span className="inline-block font-sans text-2xl sm:text-4xl text-[#B83C7E] ml-1">♡</span>
@@ -712,17 +715,17 @@ export default function CieloLlenoDeLucesClient() {
             </h1>
 
             {/* Subtítulo Oficial: «Un lugar donde el amor sigue brillando». */}
-            <p className="font-playfair italic text-base sm:text-xl text-[#8C3F71] font-semibold leading-snug">
+            <p className="font-playfair italic text-base sm:text-xl text-[#8C3F71] font-semibold leading-snug w-full max-w-full break-words">
               «Un lugar donde el amor sigue brillando».
             </p>
 
             {/* Texto Emocional Oficial */}
-            <p className="font-sans text-xs sm:text-base text-[#523A4E] max-w-md sm:max-w-lg leading-relaxed font-medium">
+            <p className="font-sans text-xs sm:text-base text-[#523A4E] max-w-md sm:max-w-lg leading-relaxed font-medium w-full max-w-full break-words">
               Enciende una luz por tu mascota y deja que su recuerdo siga iluminando nuestro cielo.
             </p>
 
             {/* Botones de Acción Oficiales */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <div className="pt-2 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto max-w-full">
               {/* Botón Principal: «Enciende una luz» */}
               <button
                 type="button"
@@ -770,8 +773,8 @@ export default function CieloLlenoDeLucesClient() {
       {/* ========================================================================= */}
       {/* BARRA DE FILTROS & BUSCADOR                                               */}
       {/* ========================================================================= */}
-      <section id="seccion-luces" className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-4 scroll-mt-24">
-        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-[#F6E1EE] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <section id="seccion-luces" className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-4 scroll-mt-24 min-w-0">
+        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-[#F6E1EE] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 w-full max-w-full min-w-0">
           
           {/* Buscador de perritos */}
           <div className="relative w-full md:w-80">
@@ -788,7 +791,7 @@ export default function CieloLlenoDeLucesClient() {
           </div>
 
           {/* Píldoras de filtro: Icono corazón para Llamas encendidas / Llamas apagadas */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto w-full max-w-full min-w-0 pb-2 md:pb-0 scrollbar-none">
             <button
               onClick={() => setFilterMode('todos')}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
@@ -1066,9 +1069,9 @@ export default function CieloLlenoDeLucesClient() {
       {/* ========================================================================= */}
       {/* MODAL 1: DETALLE DE VELA SELECCIONADA                                     */}
       {/* ========================================================================= */}
-      {selectedCandle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-center space-y-4 relative text-[#2D0F31] max-h-[90vh] overflow-y-auto">
+      {mounted && selectedCandle && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-3 sm:p-4 bg-[#150719]/80 backdrop-blur-md overflow-y-auto animate-fade-in">
+          <div className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-center space-y-4 relative text-[#2D0F31] max-h-[92vh] overflow-y-auto my-auto">
             
             <button
               onClick={() => setSelectedCandle(null)}
@@ -1231,15 +1234,16 @@ export default function CieloLlenoDeLucesClient() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* ========================================================================= */}
       {/* MODAL 2: FORMULARIO PARA ENCENDER UNA NUEVA VELA                          */}
       {/* ========================================================================= */}
-      {showNewCandleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-left space-y-4 relative text-[#2D0F31] max-h-[90vh] overflow-y-auto">
+      {mounted && showNewCandleModal && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-3 sm:p-4 bg-[#150719]/80 backdrop-blur-md overflow-y-auto animate-fade-in">
+          <div className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-left space-y-4 relative text-[#2D0F31] max-h-[92vh] overflow-y-auto my-auto">
             
             <button
               onClick={() => setShowNewCandleModal(false)}
@@ -1511,7 +1515,8 @@ export default function CieloLlenoDeLucesClient() {
             )}
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Footer oficial (idéntico a Cartas al Cielo y landing) */}
