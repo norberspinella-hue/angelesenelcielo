@@ -796,89 +796,125 @@ export default function CieloLlenoDeLucesClient() {
       {/* ========================================================================= */}
       {/* SECCIÓN 2: ¿QUÉ ES CIELO LLENO DE LUCES? (FASE 2)                         */}
       {/* ========================================================================= */}
-      <section id="que-es-cielo-de-luces" className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10 min-w-0">
-        <div className="bg-[#FFFDFB]/85 sm:bg-white/85 backdrop-blur-md rounded-[28px] sm:rounded-[32px] p-6 sm:p-8 lg:p-10 border border-[#F3D5E4]/70 shadow-[0_12px_40px_rgba(184,60,126,0.05)] transition-all">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
-            
-            {/* Columna Izquierda: Título y Explicación */}
-            <div className="lg:col-span-4 lg:pr-8 lg:border-r lg:border-[#F0BED6]/40 flex flex-col justify-center text-center lg:text-left">
-              <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-[#9E4D7F] uppercase mb-2">
-                Homenaje celestial
-              </span>
-              <h2 className="font-playfair text-2xl sm:text-3xl lg:text-[30px] font-bold text-[#2D0F31] leading-tight">
-                ¿Qué es Cielo lleno de luces?
-              </h2>
-              <p className="font-sans text-xs sm:text-sm text-[#6C5367] leading-relaxed mt-3 sm:mt-4">
-                Un homenaje vivo y compartido, donde cada luz representa el amor, la huella y la historia de una mascota que siempre vivirá en nuestro corazón.
-              </p>
-            </div>
+      <section id="que-es-cielo-de-luces" className="relative w-full overflow-hidden py-12 sm:py-16 lg:py-20 z-10 min-w-0 -mt-1">
+        
+        {/* Fondo WebP adaptativo: Fondo 02 ¿Qué es Cielo lleno de luces? */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none">
+          {/* Escritorio / Tablet horizontal (>= 768px) */}
+          <div className="hidden md:block absolute inset-0">
+            <Image 
+              src="/images/luces/fondo_02_QUE_ES_PC_1920x1080.webp" 
+              alt="Cielo lleno de luces - ¿Qué es?" 
+              fill 
+              priority 
+              quality={90}
+              className="object-cover object-center" 
+            />
+          </div>
+          {/* Móvil (< 768px) */}
+          <div className="block md:hidden absolute inset-0">
+            <Image 
+              src="/images/luces/fondo_02_QUE_ES_MOVIL_1080x1920.webp" 
+              alt="Cielo lleno de luces - ¿Qué es?" 
+              fill 
+              priority 
+              quality={90}
+              className="object-cover object-center" 
+            />
+          </div>
 
-            {/* Separador móvil sutil */}
-            <div className="block lg:hidden w-full h-px bg-gradient-to-r from-transparent via-[#F0BED6]/40 to-transparent -my-2" />
+          {/* Transición suave superior (Hero -> Sección 2): Fundido de nubes cálidas del hero al cielo lavanda */}
+          <div className="absolute top-0 inset-x-0 h-24 sm:h-32 bg-gradient-to-b from-[#FDE4D8]/80 via-[#F7DCE6]/40 to-transparent" />
 
-            {/* Tres Columnas a la Derecha: Los Tres Pilares */}
-            <div className="lg:col-span-8 lg:pl-2 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#F0BED6]/40 gap-6 md:gap-0 items-start">
+          {/* Transición suave inferior: Fundido delicado al fondo base de la galería */}
+          <div className="absolute bottom-0 inset-x-0 h-20 sm:h-28 bg-gradient-to-t from-[#FFFDFB] via-[#FFFDFB]/60 to-transparent" />
+        </div>
+
+        {/* Contenedor de contenido translúcido unificado */}
+        <div className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 min-w-0">
+          <div className="bg-[#FFFDFB]/85 sm:bg-white/85 backdrop-blur-md rounded-[28px] sm:rounded-[32px] p-6 sm:p-8 lg:p-10 border border-[#F3D5E4]/70 shadow-[0_12px_40px_rgba(184,60,126,0.05)] transition-all">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
               
-              {/* Pilar 1: Enciende su luz */}
-              <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-4 md:pt-0">
-                <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
-                  <Image 
-                    src="/images/luces/pilar-enciende-luz.webp" 
-                    alt="Enciende su luz" 
-                    width={508} 
-                    height={726} 
-                    priority 
-                    className="h-[72px] sm:h-[84px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-                <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
-                  Enciende su luz
-                </h3>
-                <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
-                  Una vela gratuita durante siete días.
+              {/* Columna Izquierda: Título y Explicación */}
+              <div className="lg:col-span-4 lg:pr-8 lg:border-r lg:border-[#F0BED6]/40 flex flex-col justify-center text-center lg:text-left">
+                <span className="text-[11px] sm:text-xs font-semibold tracking-wider text-[#9E4D7F] uppercase mb-2">
+                  Homenaje celestial
+                </span>
+                <h2 className="font-playfair text-2xl sm:text-3xl lg:text-[30px] font-bold text-[#2D0F31] leading-tight">
+                  ¿Qué es Cielo lleno de luces?
+                </h2>
+                <p className="font-sans text-xs sm:text-sm text-[#6C5367] leading-relaxed mt-3 sm:mt-4">
+                  Un homenaje vivo y compartido, donde cada luz representa el amor, la huella y la historia de una mascota que siempre vivirá en nuestro corazón.
                 </p>
               </div>
 
-              {/* Pilar 2: Comparte su recuerdo */}
-              <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
-                <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
-                  <Image 
-                    src="/images/luces/pilar-comparte-recuerdo.webp" 
-                    alt="Comparte su recuerdo" 
-                    width={715} 
-                    height={601} 
-                    priority 
-                    className="h-[64px] sm:h-[76px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(244,114,182,0.25)] transition-transform duration-300 hover:scale-105"
-                  />
-                </div>
-                <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
-                  Comparte su recuerdo
-                </h3>
-                <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
-                  Su nombre, fotografía e historia tienen un lugar en nuestro cielo.
-                </p>
-              </div>
+              {/* Separador móvil sutil */}
+              <div className="block lg:hidden w-full h-px bg-gradient-to-r from-transparent via-[#F0BED6]/40 to-transparent -my-2" />
 
-              {/* Pilar 3: Vuelve a iluminarla */}
-              <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
-                <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
-                  <Image 
-                    src="/images/luces/pilar-vuelve-a-iluminar.webp" 
-                    alt="Vuelve a iluminarla" 
-                    width={896} 
-                    height={408} 
-                    priority 
-                    className="w-[86px] sm:w-[102px] h-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
-                  />
+              {/* Tres Columnas a la Derecha: Los Tres Pilares */}
+              <div className="lg:col-span-8 lg:pl-2 grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#F0BED6]/40 gap-6 md:gap-0 items-start">
+                
+                {/* Pilar 1: Enciende su luz */}
+                <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-4 md:pt-0">
+                  <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
+                    <Image 
+                      src="/images/luces/pilar-enciende-luz.webp" 
+                      alt="Enciende su luz" 
+                      width={508} 
+                      height={726} 
+                      priority 
+                      className="h-[72px] sm:h-[84px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
+                    Enciende su luz
+                  </h3>
+                  <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
+                    Una vela gratuita durante siete días.
+                  </p>
                 </div>
-                <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
-                  Vuelve a iluminarla
-                </h3>
-                <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
-                  Cuando su llama descanse, podrás volver a encenderla gratuitamente.
-                </p>
-              </div>
 
+                {/* Pilar 2: Comparte su recuerdo */}
+                <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
+                  <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
+                    <Image 
+                      src="/images/luces/pilar-comparte-recuerdo.webp" 
+                      alt="Comparte su recuerdo" 
+                      width={715} 
+                      height={601} 
+                      priority 
+                      className="h-[64px] sm:h-[76px] w-auto object-contain drop-shadow-[0_4px_16px_rgba(244,114,182,0.25)] transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
+                    Comparte su recuerdo
+                  </h3>
+                  <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
+                    Su nombre, fotografía e historia tienen un lugar en nuestro cielo.
+                  </p>
+                </div>
+
+                {/* Pilar 3: Vuelve a iluminarla */}
+                <div className="flex flex-col items-center text-center px-3 sm:px-4 lg:px-5 pt-6 md:pt-0">
+                  <div className="h-[80px] sm:h-[92px] flex items-center justify-center shrink-0 mb-3">
+                    <Image 
+                      src="/images/luces/pilar-vuelve-a-iluminar.webp" 
+                      alt="Vuelve a iluminarla" 
+                      width={896} 
+                      height={408} 
+                      priority 
+                      className="w-[86px] sm:w-[102px] h-auto object-contain drop-shadow-[0_4px_16px_rgba(245,158,11,0.25)] transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                  <h3 className="font-playfair font-bold text-base sm:text-lg text-[#2D0F31]">
+                    Vuelve a iluminarla
+                  </h3>
+                  <p className="font-sans text-xs sm:text-sm text-[#7A6478] leading-relaxed mt-1.5 max-w-[220px]">
+                    Cuando su llama descanse, podrás volver a encenderla gratuitamente.
+                  </p>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>

@@ -1,0 +1,24 @@
+PACK DE FONDOS — CIELO LLENO DE LUCES
+Referencia visual: mockup maestro aportado y aprobado por el usuario.
+Hero: reutilizados los WebP ya aprobados e integrados, SIN MODIFICAR su composición.
+Secciones 2–5: fondos ambientales recreados siguiendo la paleta y el carácter del mockup. No son extracciones pixel a pixel, porque el mockup contiene texto y tarjetas superpuestos.
+Cada sección tiene versión PC 1920x1080 y móvil 1080x1920. NO hay textos, botones, mascotas, contadores ni tarjetas incrustadas.
+Fase 2: detrás del único bloque editorial translúcido.
+Fase 3: detrás del carrusel de luces destacadas reales.
+Fase 4: detrás del buscador, filtros y galería de velas reales.
+Fase 5: velas y flores en los lados, centro libre para frase y firma HTML.
+NOTA: comprobar en la web los cortes entre fondos y usar fundidos de transición muy suaves cuando sea necesario, sin alterar imágenes ni el hero.
+No implementar cifras ni nombres de mascotas ficticios del mockup.
+No alterar el sistema de velas, permisos, APIs, modal, Mural Global, Stripe, LIVE, certificados o Stories.
+
+INVENTARIO:
+fondo_01_HERO_PORTAL_PC_1920x1080.webp | fuente: fondo_hero_PC_2560x1440.webp
+fondo_01_HERO_PORTAL_MOVIL_1080x1920.webp | fuente: fondo_hero_MOVIL_1080x1920.webp
+fondo_02_QUE_ES_PC_1920x1080.webp | fuente: cielo_pastel_de_nubes_luminosas.png
+fondo_02_QUE_ES_MOVIL_1080x1920.webp | fuente: cielo_pastel_entre_nubes_luminosas.png
+fondo_03_DESTACADAS_PC_1920x1080.webp | fuente: cielo_celestial_de_nubes_pastel_luminosas.png
+fondo_03_DESTACADAS_MOVIL_1080x1920.webp | fuente: cielo_de_nubes_pastel_luminosas.png
+fondo_04_GALERIA_PC_1920x1080.webp | fuente: cielo_pastel_de_nubes_luminosas.png
+fondo_04_GALERIA_MOVIL_1080x1920.webp | fuente: cielo_pastel_de_ensueño_al_atardecer.png
+fondo_05_CIERRE_PC_1920x1080.webp | fuente: homenaje_celestial_de_huellas_y_faroles.png
+fondo_05_CIERRE_MOVIL_1080x1920.webp | fuente: farolillos_de_huellas_en_un_cielo_lavanda.png
