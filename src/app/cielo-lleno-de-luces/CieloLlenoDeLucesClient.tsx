@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -195,6 +195,35 @@ export default function CieloLlenoDeLucesClient() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'todos' | 'vivas' | 'reavivar' | 'perro' | 'gato' | 'refugios'>('todos');
   
+  // Luces destacadas (Fase 3: Carrusel horizontal de homenajes con fotografía real)
+  const [featuredCandles, setFeaturedCandles] = useState<AltarCandle[]>(() => {
+    return SEED_CANDLES.filter(c => c.photoUrl && c.photoUrl.trim() !== '');
+  });
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkCarouselScroll = useCallback(() => {
+    if (!carouselRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+    setCanScrollLeft(scrollLeft > 10);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+  }, []);
+
+  const handleCarouselScroll = (direction: 'left' | 'right') => {
+    if (!carouselRef.current) return;
+    const { clientWidth } = carouselRef.current;
+    const scrollAmount = direction === 'left' ? -clientWidth * 0.8 : clientWidth * 0.8;
+    carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    setTimeout(checkCarouselScroll, 350);
+  };
+
+  useEffect(() => {
+    checkCarouselScroll();
+    window.addEventListener('resize', checkCarouselScroll);
+    return () => window.removeEventListener('resize', checkCarouselScroll);
+  }, [checkCarouselScroll, featuredCandles]);
+  
   // Modales
   const [selectedCandle, setSelectedCandle] = useState<AltarCandle | null>(null);
   const [showNewCandleModal, setShowNewCandleModal] = useState(false);
@@ -299,6 +328,17 @@ export default function CieloLlenoDeLucesClient() {
             memorialId: c.memorial_id || null,
           }));
           setCandles(mapped);
+
+          // Actualizar luces destacadas con las velas reales que tienen fotografía propia
+          if (!searchQuery.trim() && filterMode === 'todos') {
+            const withPhotos = mapped.filter(c => c.photoUrl && c.photoUrl.trim() !== '' && !c.photoUrl.includes('golden_retriever_celestial_clean'));
+            if (withPhotos.length > 0) {
+              setFeaturedCandles(withPhotos);
+            } else {
+              const anyPhotos = mapped.filter(c => c.photoUrl && c.photoUrl.trim() !== '');
+              if (anyPhotos.length > 0) setFeaturedCandles(anyPhotos);
+            }
+          }
         }
       } catch (err) {
         console.error('Error fetching persistent altar candles:', err);
@@ -963,8 +1003,125 @@ export default function CieloLlenoDeLucesClient() {
         </section>
 
         {/* ========================================================================= */}
-        {/* BARRA DE FILTROS & BUSCADOR                                               */}
+        {/* SECCIÓN 3: ALGUNAS LUCES QUE HOY ILUMINAN NUESTRO CIELO (FASE 3)          */}
         {/* ========================================================================= */}
+        <section 
+          id="luces-destacadas" 
+          className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 sm:pb-16 lg:pb-20 min-w-0 bg-transparent"
+        >
+          {/* Título centrado con la tipografía caligráfica oficial Allura */}
+          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 lg:mb-10 px-2 min-w-0">
+            <h2 
+              className="text-3xl sm:text-4xl lg:text-[46px] text-[#2D0F31] font-normal leading-[1.3] tracking-wide"
+              style={{ fontFamily: "'Allura', cursive" }}
+            >
+              Algunas luces que hoy iluminan nuestro cielo
+            </h2>
+            <div className="w-24 sm:w-32 h-0.5 mx-auto mt-2 bg-gradient-to-r from-transparent via-[#F0BED6] to-transparent" />
+          </div>
+
+          {/* Contenedor del Carrusel con Flechas de Navegación Discretas */}
+          <div className="relative w-full min-w-0">
+            
+            {/* Flecha Izquierda Discreta */}
+            <button
+              type="button"
+              onClick={() => handleCarouselScroll('left')}
+              disabled={!canScrollLeft}
+              aria-label="Ver luces anteriores"
+              className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-white/90 hover:bg-white text-[#6E4F66] hover:text-[#2D0F31] shadow-[0_4px_14px_rgba(184,60,126,0.18)] border border-white flex items-center justify-center transition-all duration-200 cursor-pointer disabled:opacity-0 disabled:pointer-events-none hover:scale-105 active:scale-95"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Carrusel Horizontal Desplazable (soporte táctil + teclado + ratón) */}
+            <div 
+              ref={carouselRef}
+              onScroll={checkCarouselScroll}
+              tabIndex={0}
+              aria-label="Carrusel de luces destacadas"
+              className="flex items-stretch gap-3 sm:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none py-2 px-1 focus:outline-none focus:ring-2 focus:ring-[#F0BED6]/50 rounded-2xl"
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+              }}
+            >
+              {featuredCandles.map((candle) => (
+                <div
+                  key={`destacada-${candle.id}`}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedCandle(candle)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedCandle(candle);
+                    }
+                  }}
+                  aria-label={`Ver recuerdo de ${candle.petName}`}
+                  className="group relative shrink-0 snap-start rounded-[20px] sm:rounded-[22px] overflow-hidden cursor-pointer select-none transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_36px_rgba(184,60,126,0.20)] border border-white/70 shadow-[0_8px_24px_rgba(184,60,126,0.08)] bg-white/60 backdrop-blur-sm w-[76vw] max-w-[270px] sm:w-[calc((100%-1rem)/2)] md:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-4*1rem)/5)]"
+                >
+                  {/* Foto Real de la Mascota */}
+                  <div className="relative w-full aspect-[4/5] overflow-hidden bg-gradient-to-b from-[#FBF2F6] to-[#F5E5F0]">
+                    <Image 
+                      src={candle.photoUrl || '/images/comunidad/golden_retriever_celestial_clean.webp'}
+                      alt={candle.petName}
+                      fill
+                      sizes="(max-width: 640px) 76vw, (max-width: 1024px) 33vw, 20vw"
+                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+
+                    {/* Sutil viñeta para realzar legibilidad y calidez */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/10 pointer-events-none" />
+
+                    {/* Pequeña vela oficial integrada con halo suave */}
+                    <div className="absolute top-2.5 right-2.5 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/85 backdrop-blur-md border border-white/80 p-1 flex items-center justify-center shadow-[0_2px_10px_rgba(245,158,11,0.30)] group-hover:scale-110 transition-transform duration-300">
+                      <Image 
+                        src="/images/luces/pilar-enciende-luz.webp" 
+                        alt="Vela encendida" 
+                        width={40} 
+                        height={57} 
+                        className="h-6 sm:h-7 w-auto object-contain drop-shadow-[0_2px_4px_rgba(245,158,11,0.45)]"
+                      />
+                    </div>
+
+                    {/* Banda inferior translúcida con el nombre de la mascota */}
+                    <div className="absolute bottom-0 inset-x-0 p-3 sm:p-3.5 bg-white/85 backdrop-blur-md border-t border-white/60 flex items-center justify-between gap-2 transition-colors duration-300 group-hover:bg-white/95">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-playfair font-bold text-sm sm:text-base text-[#2D0F31] truncate group-hover:text-[#9E4D7F] transition-colors">
+                          {candle.petName}
+                        </p>
+                        <p className="text-[11px] text-[#7A6478] truncate">
+                          {candle.authorName ? `Por ${candle.authorName}` : (candle.isNeedsReignition ? 'Llama en reposo' : 'Llama encendida')}
+                        </p>
+                      </div>
+                      <div className="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-[#9E4D7F] bg-[#FAF1F7] px-2 py-0.5 rounded-full border border-[#F0BED6]/40">
+                        <span>✨</span>
+                        <span>Ver</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Flecha Derecha Discreta */}
+            <button
+              type="button"
+              onClick={() => handleCarouselScroll('right')}
+              disabled={!canScrollRight}
+              aria-label="Ver más luces"
+              className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-white/90 hover:bg-white text-[#6E4F66] hover:text-[#2D0F31] shadow-[0_4px_14px_rgba(184,60,126,0.18)] border border-white flex items-center justify-center transition-all duration-200 cursor-pointer disabled:opacity-0 disabled:pointer-events-none hover:scale-105 active:scale-95"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+          </div>
+        </section>
         <section id="seccion-luces" className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-4 scroll-mt-24 min-w-0 bg-transparent">
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-[#F6E1EE] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 w-full max-w-full min-w-0">
           
