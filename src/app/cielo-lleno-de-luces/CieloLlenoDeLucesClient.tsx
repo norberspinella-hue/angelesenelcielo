@@ -1060,48 +1060,69 @@ export default function CieloLlenoDeLucesClient() {
                       setSelectedCandle(candle);
                     }
                   }}
-                  aria-label={`Ver recuerdo de ${candle.petName}`}
-                  className="group relative shrink-0 snap-start rounded-[20px] sm:rounded-[22px] overflow-hidden cursor-pointer select-none transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_16px_36px_rgba(184,60,126,0.20)] border border-white/70 shadow-[0_8px_24px_rgba(184,60,126,0.08)] bg-white/60 backdrop-blur-sm w-[76vw] max-w-[270px] sm:w-[calc((100%-1rem)/2)] md:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-4*1rem)/5)]"
+                  aria-label={`Homenaje celestial a ${candle.petName}`}
+                  className="group relative shrink-0 snap-start rounded-[24px] overflow-hidden cursor-pointer select-none transition-all duration-300 hover:-translate-y-1.5 border-2 border-[#F6DCEB]/90 hover:border-[#E8C288]/90 shadow-[0_8px_24px_rgba(184,60,126,0.08)] hover:shadow-[0_14px_34px_rgba(184,60,126,0.18)] bg-gradient-to-b from-[#FFFDFE] via-[#FDF5F9] to-[#FBF0F6] w-[76vw] max-w-[270px] sm:w-[calc((100%-1rem)/2)] md:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-4*1rem)/5)] p-2.5 sm:p-3 flex flex-col justify-between"
                 >
-                  {/* Foto Real de la Mascota */}
-                  <div className="relative w-full aspect-[4/5] overflow-hidden bg-gradient-to-b from-[#FBF2F6] to-[#F5E5F0]">
-                    <Image 
-                      src={candle.photoUrl || '/images/comunidad/golden_retriever_celestial_clean.webp'}
-                      alt={candle.petName}
-                      fill
-                      sizes="(max-width: 640px) 76vw, (max-width: 1024px) 33vw, 20vw"
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
-                    />
-
-                    {/* Sutil viñeta para realzar legibilidad y calidez */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/10 pointer-events-none" />
-
-                    {/* Pequeña vela oficial integrada con halo suave */}
-                    <div className="absolute top-2.5 right-2.5 z-10 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/85 backdrop-blur-md border border-white/80 p-1 flex items-center justify-center shadow-[0_2px_10px_rgba(245,158,11,0.30)] group-hover:scale-110 transition-transform duration-300">
-                      <Image 
-                        src="/images/luces/pilar-enciende-luz.webp" 
-                        alt="Vela encendida" 
-                        width={40} 
-                        height={57} 
-                        className="h-6 sm:h-7 w-auto object-contain drop-shadow-[0_2px_4px_rgba(245,158,11,0.45)]"
-                      />
+                  {/* Marco de fotografía protagonista y ambientación celestial */}
+                  <div className="relative w-full aspect-[4/5] rounded-[20px] overflow-hidden bg-gradient-to-b from-[#FDEAF2] via-[#F9E2EE] to-[#EFE1ED] border border-[#FBE5F1] shadow-inner">
+                    
+                    {/* Ambientación celestial: cielo pastel, nubes suaves y flores rosadas */}
+                    <div className="absolute inset-0 pointer-events-none select-none z-0">
+                      {/* Destellos dorados en las esquinas */}
+                      <span className="absolute top-2 left-2 text-[#E8C288] text-[10px] opacity-80 animate-pulse">✦</span>
+                      <span className="absolute top-2.5 right-3 text-[#F5B5D3] text-[9px] opacity-75">✨</span>
+                      
+                      {/* Flores rosadas celestiales delicadas */}
+                      <svg className="absolute -top-1 -right-1 w-11 h-11 text-[#F5B5D3] opacity-75" viewBox="0 0 100 100" fill="none">
+                        <path d="M50 20C48 28 40 32 32 32C40 36 44 44 44 52C48 44 56 44 64 48C60 40 64 32 68 24C60 26 54 22 50 20Z" fill="currentColor" fillOpacity="0.45" />
+                        <circle cx="48" cy="34" r="5" fill="#E8C288" fillOpacity="0.85" />
+                      </svg>
+                      <svg className="absolute bottom-1 -left-1 w-10 h-10 text-[#F5B5D3] opacity-70" viewBox="0 0 100 100" fill="none">
+                        <path d="M30 40C35 45 42 45 48 42C45 48 46 56 50 62C44 58 36 60 30 64C32 58 28 50 24 46C30 46 32 42 30 40Z" fill="currentColor" fillOpacity="0.4" />
+                        <circle cx="36" cy="50" r="4" fill="#E8C288" fillOpacity="0.8" />
+                      </svg>
                     </div>
 
-                    {/* Banda inferior translúcida con el nombre de la mascota */}
-                    <div className="absolute bottom-0 inset-x-0 p-3 sm:p-3.5 bg-white/85 backdrop-blur-md border-t border-white/60 flex items-center justify-between gap-2 transition-colors duration-300 group-hover:bg-white/95">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-playfair font-bold text-sm sm:text-base text-[#2D0F31] truncate group-hover:text-[#9E4D7F] transition-colors">
+                    {/* Fotografía Real de la Mascota (Protagonista íntegra, sin cortes faciales) */}
+                    <div className="relative w-full h-full overflow-hidden z-[1]">
+                      <Image 
+                        src={candle.photoUrl || '/images/comunidad/golden_retriever_celestial_clean.webp'}
+                        alt={candle.petName}
+                        fill
+                        sizes="(max-width: 640px) 76vw, (max-width: 1024px) 33vw, 20vw"
+                        className="object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out"
+                      />
+                      {/* Velo celestial muy suave para integrar la fotografía con las nubes y flores */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#2D0F31]/15 via-transparent to-white/10 pointer-events-none" />
+                    </div>
+
+                    {/* Banda inferior translúcida rosa-marfil con nombre real y corazón decorativo */}
+                    <div className="absolute bottom-0 inset-x-0 z-[2] px-3.5 py-2.5 bg-[#FFF9F6]/85 backdrop-blur-md border-t border-[#F8E2EE]/90 flex items-center justify-between transition-colors duration-300 group-hover:bg-[#FFF9F6]/95">
+                      <div className="flex items-center gap-1.5 min-w-0 pr-9">
+                        <p className="font-playfair font-bold text-sm sm:text-base text-[#2D0F31] truncate group-hover:text-[#9E4D7F] transition-colors tracking-wide">
                           {candle.petName}
                         </p>
-                        <p className="text-[11px] text-[#7A6478] truncate">
-                          {candle.authorName ? `Por ${candle.authorName}` : (candle.isNeedsReignition ? 'Llama en reposo' : 'Llama encendida')}
-                        </p>
-                      </div>
-                      <div className="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-[#9E4D7F] bg-[#FAF1F7] px-2 py-0.5 rounded-full border border-[#F0BED6]/40">
-                        <span>✨</span>
-                        <span>Ver</span>
+                        <span className="text-[#C4679B] text-xs shrink-0 select-none" aria-hidden="true">
+                          ♡
+                        </span>
                       </div>
                     </div>
+
+                    {/* Vela luminosa con huella y resplandor suave en la esquina inferior derecha */}
+                    <div className="absolute bottom-1.5 right-1.5 z-20 flex items-center justify-center pointer-events-none">
+                      {/* Resplandor dorado suave */}
+                      <div className="absolute -inset-1 rounded-full bg-amber-400/30 blur-sm pointer-events-none" />
+                      <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/95 backdrop-blur-sm border border-[#FBE3B5] p-0.5 flex items-center justify-center shadow-[0_2px_10px_rgba(245,158,11,0.38)] group-hover:scale-110 transition-transform duration-300">
+                        <Image 
+                          src="/images/luces/pilar-enciende-luz.webp" 
+                          alt="Vela encendida" 
+                          width={40} 
+                          height={57} 
+                          className="h-6 sm:h-7 w-auto object-contain drop-shadow-[0_2px_4px_rgba(245,158,11,0.5)]"
+                        />
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               ))}
