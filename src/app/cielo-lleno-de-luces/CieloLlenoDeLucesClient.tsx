@@ -665,8 +665,8 @@ export default function CieloLlenoDeLucesClient() {
         <div 
           className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none"
           style={{
-            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 87%, rgba(0,0,0,0.85) 90%, rgba(0,0,0,0.50) 93%, rgba(0,0,0,0.18) 95%, transparent 97%, transparent 100%)',
-            maskImage: 'linear-gradient(to bottom, black 0%, black 87%, rgba(0,0,0,0.85) 90%, rgba(0,0,0,0.50) 93%, rgba(0,0,0,0.18) 95%, transparent 97%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 86%, rgba(0,0,0,0.92) 89%, rgba(0,0,0,0.65) 93%, rgba(0,0,0,0.25) 96%, transparent 98.5%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, black 0%, black 86%, rgba(0,0,0,0.92) 89%, rgba(0,0,0,0.65) 93%, rgba(0,0,0,0.25) 96%, transparent 98.5%, transparent 100%)',
           }}
         >
           {/* Pantallas muy grandes / 2K / 4K (> 1920px) */}
@@ -714,6 +714,14 @@ export default function CieloLlenoDeLucesClient() {
             />
           </div>
         </div>
+
+        {/* Zona de transición atmosférica celestial real (difuminado cromático progresivo: rosa marfil a rosa lavanda) */}
+        <div 
+          className="absolute bottom-0 inset-x-0 h-44 sm:h-52 lg:h-60 pointer-events-none select-none z-[1]"
+          style={{
+            background: 'linear-gradient(180deg, transparent 0%, rgba(253, 234, 226, 0.25) 30%, rgba(249, 222, 233, 0.45) 60%, rgba(245, 218, 237, 0.25) 85%, transparent 98%, transparent 100%)',
+          }}
+        />
 
         {/* Contenedor principal: Grilla en desktop (portal a la izq, texto a la dcha) */}
         <div className="max-w-[1360px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center relative z-10 my-auto min-w-0">
@@ -804,7 +812,7 @@ export default function CieloLlenoDeLucesClient() {
       {/* ========================================================================= */}
       <div 
         id="cielo-continuo-unificado" 
-        className="relative w-full overflow-hidden -mt-24 sm:-mt-28 lg:-mt-32 z-0 min-w-0"
+        className="relative w-full overflow-hidden -mt-36 sm:-mt-36 lg:-mt-40 z-0 min-w-0"
         style={{
           background: 'linear-gradient(180deg, #FBF2F6 0%, #F5E5F0 12%, #EFE1ED 30%, #E9DCED 55%, #DFD0E8 80%, #D4C3E2 100%)',
         }}
@@ -813,16 +821,16 @@ export default function CieloLlenoDeLucesClient() {
         <div 
           className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden"
           style={{
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 50px, black 100%)',
-            maskImage: 'linear-gradient(to bottom, transparent 0%, black 50px, black 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 80px, black 100%)',
+            maskImage: 'linear-gradient(to bottom, transparent 0%, black 80px, black 100%)',
           }}
         >
           {/* Versión Escritorio / Tablet (>= 768px): Imagen maestra oficial */}
           <div 
             className="hidden md:block absolute top-0 inset-x-0 w-full h-[1200px] lg:h-[1400px] xl:h-[1550px]"
             style={{
-              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 30px, black 70px, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
-              maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 30px, black 70px, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 120px, rgba(0,0,0,0.5) 240px, black 360px, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+              maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 120px, rgba(0,0,0,0.5) 240px, black 360px, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
             }}
           >
             <Image 
@@ -839,8 +847,8 @@ export default function CieloLlenoDeLucesClient() {
           <div 
             className="block md:hidden absolute top-0 inset-x-0 w-full h-[1400px] sm:h-[1600px]"
             style={{
-              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 30px, black 70px, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
-              maskImage: 'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.5) 30px, black 70px, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+              WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 100px, rgba(0,0,0,0.5) 200px, black 300px, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
+              maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 100px, rgba(0,0,0,0.5) 200px, black 300px, black 60%, rgba(0,0,0,0.6) 80%, transparent 100%)',
             }}
           >
             <Image 
@@ -862,7 +870,7 @@ export default function CieloLlenoDeLucesClient() {
         {/* ========================================================================= */}
         <section 
           id="que-es-cielo-de-luces" 
-          className="relative z-10 w-full pt-28 sm:pt-36 lg:pt-44 pb-12 sm:pb-16 lg:pb-20 min-w-0 bg-transparent"
+          className="relative z-10 w-full pt-40 sm:pt-44 lg:pt-52 pb-12 sm:pb-16 lg:pb-20 min-w-0 bg-transparent"
         >
           {/* Contenedor de contenido translúcido unificado */}
           <div className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 min-w-0">
