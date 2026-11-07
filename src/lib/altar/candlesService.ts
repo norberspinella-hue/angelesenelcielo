@@ -384,7 +384,7 @@ export class CandlesService {
   }
 
   /**
-   * Listado público de velas con paginación, búsqueda y filtros
+   * Listado público de velas con paginación, búsqueda y filtros desde Supabase
    */
   static async getPublicCandles(params: {
     filter?: 'todos' | 'vivas' | 'reavivar' | 'perro' | 'gato' | 'refugios';
@@ -392,9 +392,54 @@ export class CandlesService {
     limit?: number;
     offset?: number;
   }): Promise<{ candles: AltarCandlePublic[]; total: number }> {
-    const raw = readLocalCandles().filter(c => c.status === 'active');
-    const now = new Date().getTime();
+    try {
+      const supabase = createAdminClient();
+      let query = (supabase as any)
+        .from('altar_candles')
+        .select('*', { count: 'exact' })
+        .eq('status', 'active');
 
+      if (params.search && params.search.trim()) {
+        const q = params.search.trim();
+        query = query.or(`pet_name.ilike.%${q}%,author_name.ilike.%${q}%,dedication.ilike.%${q}%`);
+      }
+
+      if (params.filter) {
+        const nowIso = new Date().toISOString();
+        if (params.filter === 'vivas') {
+          query = query.or(`is_eternal.eq.true,expires_at.gt.${nowIso}`);
+        } else if (params.filter === 'reavivar') {
+          query = query.eq('is_eternal', false).lte('expires_at', nowIso);
+        } else if (params.filter === 'perro') {
+          query = query.eq('species', 'perro');
+        } else if (params.filter === 'gato') {
+          query = query.eq('species', 'gato');
+        } else if (params.filter === 'refugios') {
+          query = query.eq('is_shelter_pet', true);
+        }
+      }
+
+      const offset = params.offset || 0;
+      const limit = params.limit || 50;
+
+      query = query
+        .order('is_eternal', { ascending: false })
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+
+      const { data, count, error } = await query;
+      if (!error && data && data.length > 0) {
+        return {
+          candles: data.map(computePresentationFields),
+          total: count ?? data.length,
+        };
+      }
+    } catch (err) {
+      console.warn('Aviso: consulta a Supabase falló en getPublicCandles, usando almacén local:', err);
+    }
+
+    // Réplica local de reserva si Supabase no está conectado o en entornos de prueba aislados
+    const raw = readLocalCandles().filter(c => c.status === 'active');
     let filtered = raw.map(computePresentationFields);
 
     if (params.search && params.search.trim()) {
@@ -414,7 +459,6 @@ export class CandlesService {
       if (params.filter === 'refugios') filtered = filtered.filter(c => c.is_shelter_pet);
     }
 
-    // Ordenar: vivas primero, luego por fecha de creación descendente
     filtered.sort((a, b) => {
       if (a.is_lit !== b.is_lit) return a.is_lit ? -1 : 1;
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -429,7 +473,7 @@ export class CandlesService {
   }
 
   /**
-   * Creación protegida de una nueva vela comunitaria gratuita
+   * Creación protegida y atómica de una nueva vela comunitaria en Supabase
    */
   static async createCandle(
     input: CreateCandleInput,
@@ -444,7 +488,7 @@ export class CandlesService {
       throw new Error('Petición rechazada por control antispam.');
     }
 
-    // 2. Validación de campos obligatorios
+    // 2. Validación estricta de campos
     const petName = input.pet_name?.trim();
     if (!petName || petName.length > 50) {
       throw new Error('El nombre de la mascota es obligatorio y no puede superar 50 caracteres.');
@@ -467,33 +511,64 @@ export class CandlesService {
 
     const authorName = input.author_name?.trim() || 'Familia amorosa';
 
-    // 3. Control de límites (Rate limit: máx 3 por hora por IP hash)
+    // 3. Control de límites y prevención de duplicados
     const ipH = hashIp(ip || '127.0.0.1');
-    const existing = readLocalCandles();
-    const oneHourAgo = Date.now() - 60 * 60 * 1000;
-    const recentByIp = existing.filter(c => c.ip_hash === ipH && new Date(c.created_at).getTime() > oneHourAgo);
-    if (recentByIp.length >= 3) {
-      throw new Error('Has alcanzado el límite de velas por hora. Por favor inténtalo más tarde.');
+    const supabase = createAdminClient();
+
+    try {
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+
+      const [{ data: recentByIp }, { data: dupCandles }] = await Promise.all([
+        (supabase as any)
+          .from('altar_candles')
+          .select('id')
+          .eq('ip_hash', ipH)
+          .gt('created_at', oneHourAgo),
+        (supabase as any)
+          .from('altar_candles')
+          .select('id')
+          .ilike('pet_name', petName)
+          .eq('dedication', dedication)
+          .gt('created_at', twoHoursAgo)
+      ]);
+
+      if (recentByIp && recentByIp.length >= 3) {
+        throw new Error('Has alcanzado el límite de velas por hora. Por favor inténtalo más tarde.');
+      }
+      if (dupCandles && dupCandles.length > 0) {
+        throw new Error('Ya se ha encendido una vela idéntica recientemente.');
+      }
+    } catch (checkErr: any) {
+      if (checkErr.message?.includes('límite de velas') || checkErr.message?.includes('vela idéntica')) {
+        throw checkErr;
+      }
+      // Validación complementaria sobre réplica local ante contingencias
+      const existing = readLocalCandles();
+      const oneHourAgoMs = Date.now() - 60 * 60 * 1000;
+      const recentLocal = existing.filter(c => c.ip_hash === ipH && new Date(c.created_at).getTime() > oneHourAgoMs);
+      if (recentLocal.length >= 3) {
+        throw new Error('Has alcanzado el límite de velas por hora. Por favor inténtalo más tarde.');
+      }
+      const twoHoursAgoMs = Date.now() - 2 * 60 * 60 * 1000;
+      const dupLocal = existing.some(
+        c => c.pet_name.toLowerCase() === petName.toLowerCase() &&
+             c.dedication.toLowerCase() === dedication.toLowerCase() &&
+             new Date(c.created_at).getTime() > twoHoursAgoMs
+      );
+      if (dupLocal) {
+        throw new Error('Ya se ha encendido una vela idéntica recientemente.');
+      }
     }
 
-    // 4. Prevención de duplicados exactos en ventana de 2 horas
-    const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
-    const isDuplicate = existing.some(
-      c => c.pet_name.toLowerCase() === petName.toLowerCase() &&
-           c.dedication.toLowerCase() === dedication.toLowerCase() &&
-           new Date(c.created_at).getTime() > twoHoursAgo
-    );
-    if (isDuplicate) {
-      throw new Error('Ya se ha encendido una vela idéntica recientemente.');
-    }
-
-    // 5. Generación de tokens seguros y marcas temporales
+    // 4. Generación criptográfica de identificador y tokens
     const tokens = generateSecureTokens();
+    const newId = crypto.randomUUID();
     const nowIso = new Date().toISOString();
     const expiresIso = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
-    const newRecord: AltarCandlePrivateRecord = {
-      id: crypto.randomUUID(),
+    const insertPayload: AltarCandlePrivateRecord = {
+      id: newId,
       pet_name: petName,
       species,
       author_name: authorName,
@@ -522,25 +597,72 @@ export class CandlesService {
       days_remaining: 7,
     };
 
-    existing.unshift(newRecord);
-    writeLocalCandles(existing);
+    // 5. INSERCIÓN ATÓMICA EN SUPABASE COMO ÚNICA FUENTE DE VERDAD
+    // REGLA CRÍTICA: Si Supabase rechaza o no confirma la inserción, SE LANZA ERROR INMEDIATO.
+    const { data: insertedDbRecord, error: insertError } = await (supabase as any)
+      .from('altar_candles')
+      .insert([
+        {
+          id: insertPayload.id,
+          pet_name: insertPayload.pet_name,
+          species: insertPayload.species,
+          author_name: insertPayload.author_name,
+          dedication: insertPayload.dedication,
+          photo_url: insertPayload.photo_url,
+          email: insertPayload.email,
+          manage_token_hash: insertPayload.manage_token_hash,
+          unsubscribe_token_hash: insertPayload.unsubscribe_token_hash,
+          reminder_opt_in: insertPayload.reminder_opt_in,
+          commercial_opt_in: insertPayload.commercial_opt_in,
+          opted_out_at: insertPayload.opted_out_at,
+          ip_hash: insertPayload.ip_hash,
+          is_from_mural: insertPayload.is_from_mural,
+          is_eternal: insertPayload.is_eternal,
+          memorial_id: insertPayload.memorial_id,
+          mural_plan: insertPayload.mural_plan,
+          warmth_count: insertPayload.warmth_count,
+          is_shelter_pet: insertPayload.is_shelter_pet,
+          shelter_name: insertPayload.shelter_name,
+          status: insertPayload.status,
+          created_at: insertPayload.created_at,
+          expires_at: insertPayload.expires_at,
+          reignited_at: insertPayload.reignited_at,
+          reignite_count: insertPayload.reignite_count,
+        }
+      ])
+      .select('*')
+      .single();
 
-    // Confirmación transaccional segura (separada del cron; no envía emails si confirmation_email_enabled = false)
+    if (insertError || !insertedDbRecord) {
+      console.error('Error insertando vela en Supabase:', insertError);
+      throw new Error('No se pudo guardar la vela en la base de datos persistente. Tu homenaje no se ha perdido; por favor inténtalo de nuevo.');
+    }
+
+    // 6. Actualización secundaria en réplica local para resiliencia (no bloqueante)
+    try {
+      const existing = readLocalCandles();
+      existing.unshift(insertedDbRecord as AltarCandlePrivateRecord);
+      writeLocalCandles(existing);
+    } catch (cacheErr) {
+      // Normal en entornos serverless con filesystem de solo lectura
+    }
+
+    // 7. Notificación por correo fail-safe (nunca aborta una vela ya persistida)
     await this.sendConfirmationEmail(
-      computePresentationFields(newRecord),
+      computePresentationFields(insertedDbRecord),
       email,
       tokens.manageToken,
       tokens.unsubscribeToken
     ).catch(err => console.warn('Aviso de confirmación omitido:', err.message));
 
     return {
-      candle: computePresentationFields(newRecord),
+      candle: computePresentationFields(insertedDbRecord),
       manageToken: tokens.manageToken,
     };
   }
 
   /**
-   * Reavivar llama extinguida (7 nuevos días gratuitos e ilimitados)
+   * Reavivar llama extinguida (7 nuevos días gratuitos e ilimitados) en Supabase
    */
   static async reignite(candleId: string, manageToken: string): Promise<AltarCandlePublic> {
     if (!await this.isFeatureEnabled()) {
@@ -552,21 +674,33 @@ export class CandlesService {
     }
 
     const tokenHash = hashValue(manageToken.trim());
-    const existing = readLocalCandles();
-    const index = existing.findIndex(c => c.id === candleId);
+    const supabase = createAdminClient();
 
-    if (index === -1) {
+    // 1. Obtener la vela desde Supabase como fuente de verdad
+    let candle: AltarCandlePrivateRecord | null = null;
+    const { data: dbCandle } = await (supabase as any)
+      .from('altar_candles')
+      .select('*')
+      .eq('id', candleId)
+      .maybeSingle();
+
+    if (dbCandle) {
+      candle = dbCandle;
+    } else {
+      const existing = readLocalCandles();
+      candle = existing.find(c => c.id === candleId) || null;
+    }
+
+    if (!candle) {
       throw new Error('Homenaje no encontrado.');
     }
 
-    const candle = existing[index];
-
-    // Verificar token criptográfico
+    // 2. Verificar token criptográfico
     if (candle.manage_token_hash && candle.manage_token_hash !== tokenHash) {
       throw new Error('El token de gestión no coincide con este homenaje.');
     }
 
-    // Protección contra reencendidos masivos en ráfaga (máx 1 cada 6 horas)
+    // 3. Protección contra reencendidos masivos en ráfaga (máx 1 cada 6 horas)
     if (candle.reignited_at) {
       const lastReignite = new Date(candle.reignited_at).getTime();
       const sixHoursAgo = Date.now() - 6 * 60 * 60 * 1000;
@@ -577,34 +711,57 @@ export class CandlesService {
 
     const nowIso = new Date().toISOString();
     const newExpiresIso = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const newReigniteCount = (candle.reignite_count || 0) + 1;
 
-    candle.expires_at = newExpiresIso;
-    candle.reignited_at = nowIso;
-    candle.reignite_count = (candle.reignite_count || 0) + 1;
-    candle.pre_reminder_sent_at = null;
-    candle.extinguished_notice_sent_at = null;
+    // 4. Actualización atómica persistente en Supabase
+    const { data: updatedRecord, error: updateErr } = await (supabase as any)
+      .from('altar_candles')
+      .update({
+        expires_at: newExpiresIso,
+        reignited_at: nowIso,
+        reignite_count: newReigniteCount,
+        pre_reminder_sent_at: null,
+        extinguished_notice_sent_at: null,
+        status: 'active'
+      })
+      .eq('id', candleId)
+      .select('*')
+      .maybeSingle();
 
-    existing[index] = candle;
-    writeLocalCandles(existing);
+    if (updateErr) {
+      console.error('Error al actualizar reavivado en Supabase:', updateErr);
+      throw new Error('No se pudo reavivar la vela en la base de datos persistente.');
+    }
 
+    // 5. Actualizar réplica local secundaria
     try {
-      const supabase = createAdminClient();
-      await (supabase as any)
-        .from('altar_candles')
-        .update({
+      const existing = readLocalCandles();
+      const idx = existing.findIndex(c => c.id === candleId);
+      if (idx !== -1) {
+        existing[idx] = {
+          ...existing[idx],
           expires_at: newExpiresIso,
           reignited_at: nowIso,
-          reignite_count: candle.reignite_count,
+          reignite_count: newReigniteCount,
           pre_reminder_sent_at: null,
           extinguished_notice_sent_at: null,
           status: 'active'
-        })
-        .eq('id', candleId);
-    } catch {
-      // Silencioso en modo local
-    }
+        };
+        writeLocalCandles(existing);
+      }
+    } catch {}
 
-    return computePresentationFields(candle);
+    const finalRecord = updatedRecord || {
+      ...candle,
+      expires_at: newExpiresIso,
+      reignited_at: nowIso,
+      reignite_count: newReigniteCount,
+      pre_reminder_sent_at: null,
+      extinguished_notice_sent_at: null,
+      status: 'active'
+    };
+
+    return computePresentationFields(finalRecord);
   }
 
   /**
@@ -650,12 +807,39 @@ export class CandlesService {
   }
 
   /**
-   * Enviar abrazo de calor / luz comunitaria
+   * Enviar abrazo de calor / luz comunitaria persistido en Supabase
    */
   static async sendWarmth(candleId: string): Promise<number> {
     if (!await this.isFeatureEnabled()) {
       throw new Error('El servicio de calor se encuentra temporalmente en modo de contingencia.');
     }
+
+    try {
+      const supabase = createAdminClient();
+      const { data: c } = await (supabase as any)
+        .from('altar_candles')
+        .select('warmth_count')
+        .eq('id', candleId)
+        .maybeSingle();
+      if (c) {
+        const newWarmth = (c.warmth_count || 0) + 1;
+        await (supabase as any)
+          .from('altar_candles')
+          .update({ warmth_count: newWarmth })
+          .eq('id', candleId);
+        
+        try {
+          const existing = readLocalCandles();
+          const localC = existing.find(x => x.id === candleId);
+          if (localC) {
+            localC.warmth_count = newWarmth;
+            writeLocalCandles(existing);
+          }
+        } catch {}
+
+        return newWarmth;
+      }
+    } catch {}
 
     const existing = readLocalCandles();
     const candle = existing.find(c => c.id === candleId);
@@ -731,12 +915,14 @@ export class CandlesService {
    */
   static async isFeatureEnabled(): Promise<boolean> {
     if (process.env.ALTAR_PERSISTENCE_ENABLED === 'false') return false;
+    if (process.env.ALTAR_PERSISTENCE_ENABLED === 'true') return true;
     try {
       const settings = await getPersistentSettings();
-      return settings.persistence_enabled === true;
-    } catch {
-      return false;
-    }
+      if (typeof settings.persistence_enabled === 'boolean') {
+        return settings.persistence_enabled;
+      }
+    } catch {}
+    return true;
   }
 
   static async isCronEnabled(): Promise<boolean> {

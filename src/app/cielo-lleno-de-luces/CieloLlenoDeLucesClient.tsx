@@ -661,8 +661,8 @@ export default function CieloLlenoDeLucesClient() {
         });
 
         const data = await res.json();
-        if (!res.ok || !data.success) {
-          throw new Error(data.error || 'No se pudo encender la vela');
+        if (!res.ok || !data.success || !data.candle?.id) {
+          throw new Error(data.error || 'No se pudo encender la vela en el servidor persistente.');
         }
 
         const newCandle: AltarCandle = {
@@ -685,26 +685,24 @@ export default function CieloLlenoDeLucesClient() {
             localStorage.setItem(`altar_manage_${data.candle.id}`, data.manageToken);
           } catch {}
         }
-      } else {
-        const newEntry: AltarCandle = {
-          id: 'user-candle-' + Date.now(),
-          petName: newPetName.trim(),
-          species: newSpecies,
-          authorName: newAuthor.trim() || 'Familia amorosa',
-          dedication: newDedication.trim() || 'Una luz eterna que nunca se apagará en el Cielo de Luces.',
-          photoUrl: uploadedPhotoPreview || '/images/comunidad/golden_retriever_celestial_clean.webp',
-          litDate: 'Encendida hoy',
-          daysRemaining: 7,
-          isNeedsReignition: false,
-          warmthCount: 1,
-        };
-        setCandles(prev => [newEntry, ...prev]);
-      }
 
-      setNewCandleCelebration(true);
-      showToast(`¡Vela encendida en el Cielo de Luces por ${newPetName}!`);
+        // CONFIRMACIÓN DE ÉXITO ESTRICTAMENTE TRAS LA ESCRITURA EN SUPABASE
+        setNewCandleCelebration(true);
+        showToast(`¡Vela encendida en el Cielo de Luces por ${newPetName}!`);
+
+        // Limpiar formulario únicamente tras confirmar persistencia real
+        setNewPetName('');
+        setNewDedication('');
+        setNewAuthor('');
+        setNewEmail('');
+        setUploadedPhotoPreview(null);
+      } else {
+        // Bloqueo explícito: nunca fingir éxito en memoria local ni crear velas temporales
+        throw new Error('El servicio de encendido de velas no está disponible temporalmente. No se ha podido guardar tu homenaje.');
+      }
     } catch (err: any) {
-      showToast(err.message || 'Error al encender la vela.');
+      // Notificar claramente el fallo sin limpiar los datos para permitir reintentar
+      showToast(err.message || 'Error al encender la vela. Por favor, inténtalo de nuevo.');
     } finally {
       setIsSubmitting(false);
     }
