@@ -229,19 +229,32 @@ export default function CieloLlenoDeLucesClient() {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [activeCarouselIndex, setActiveCarouselIndex] = useState(0);
 
   const checkCarouselScroll = useCallback(() => {
     if (!carouselRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
     setCanScrollLeft(scrollLeft > 10);
     setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-  }, []);
+
+    // Calcular la tarjeta protagonista activa
+    const cardStep = typeof window !== 'undefined' && window.innerWidth >= 768 ? 254 + 24 : 254 + 16;
+    const index = Math.round(scrollLeft / cardStep);
+    setActiveCarouselIndex(Math.min(Math.max(index, 0), featuredCandles.length - 1));
+  }, [featuredCandles.length]);
 
   const handleCarouselScroll = (direction: 'left' | 'right') => {
     if (!carouselRef.current) return;
     const { clientWidth } = carouselRef.current;
     const scrollAmount = direction === 'left' ? -clientWidth * 0.8 : clientWidth * 0.8;
     carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    setTimeout(checkCarouselScroll, 350);
+  };
+
+  const scrollToCarouselIndex = (index: number) => {
+    if (!carouselRef.current) return;
+    const cardStep = typeof window !== 'undefined' && window.innerWidth >= 768 ? 254 + 24 : 254 + 16;
+    carouselRef.current.scrollTo({ left: index * cardStep, behavior: 'smooth' });
     setTimeout(checkCarouselScroll, 350);
   };
 
@@ -1066,7 +1079,7 @@ export default function CieloLlenoDeLucesClient() {
               onScroll={checkCarouselScroll}
               tabIndex={0}
               aria-label="Carrusel de luces destacadas"
-              className="flex items-stretch gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none py-6 px-6 focus:outline-none focus:ring-2 focus:ring-[#F0BED6]/50 rounded-2xl"
+              className="flex items-stretch gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none py-6 px-[calc((100%-254px)/2)] md:px-6 focus:outline-none focus:ring-2 focus:ring-[#F0BED6]/50 rounded-2xl"
               style={{
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
@@ -1078,6 +1091,29 @@ export default function CieloLlenoDeLucesClient() {
                   candle={candle}
                   onSendWarmth={handleSendWarmth}
                   onSelect={setSelectedCandle}
+                />
+              ))}
+            </div>
+
+            {/* Indicadores de posición discretos en tono oro rosa */}
+            <div 
+              className="flex items-center justify-center gap-1.5 sm:gap-2 mt-3 sm:mt-5 select-none"
+              role="tablist"
+              aria-label="Indicadores de posición del carrusel"
+            >
+              {featuredCandles.slice(0, Math.min(featuredCandles.length, 8)).map((c, i) => (
+                <button
+                  key={`indicator-${c.id}`}
+                  type="button"
+                  onClick={() => scrollToCarouselIndex(i)}
+                  aria-label={`Ver homenaje de ${c.petName}`}
+                  aria-selected={activeCarouselIndex === i}
+                  role="tab"
+                  className={`transition-all duration-300 rounded-full cursor-pointer ${
+                    activeCarouselIndex === i
+                      ? 'w-7 sm:w-8 h-2 sm:h-2.5 bg-gradient-to-r from-[#F0BED6] via-[#E28DAA] to-[#D9629B] shadow-[0_0_8px_rgba(226,141,170,0.65)]'
+                      : 'w-2 sm:w-2.5 h-2 sm:h-2.5 bg-[#F2D8E8] hover:bg-[#E8C2D8]'
+                  }`}
                 />
               ))}
             </div>

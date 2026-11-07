@@ -42,7 +42,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
     <article
       role="article"
       aria-label={`Homenaje celestial a ${candle.petName}`}
-      className={`group relative shrink-0 snap-start w-[254px] h-[366px] rounded-[22px] overflow-visible select-none transition-all duration-300 hover:-translate-y-1.5 flex flex-col ${className}`}
+      className={`group relative shrink-0 snap-center md:snap-start w-[254px] h-[366px] rounded-[22px] overflow-visible select-none transition-all duration-300 hover:-translate-y-1.5 flex flex-col ${className}`}
       style={{
         isolation: 'isolate',
         boxShadow: `
