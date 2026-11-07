@@ -4,6 +4,8 @@ import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import TarjetaHomenajeCelestial from '@/components/luces/TarjetaHomenajeCelestial';
+import TarjetaLuzGaleria from '@/components/luces/TarjetaLuzGaleria';
+import CierreCelestial from '@/components/luces/CierreCelestial';
 import Link from 'next/link';
 import { OctubreBanner } from '@/components/landing/OctubreBanner';
 import { CartasAlCieloHeader } from '@/components/comunidad/CartasAlCieloHeader';
@@ -1133,7 +1135,28 @@ export default function CieloLlenoDeLucesClient() {
 
           </div>
         </section>
-        <section id="seccion-luces" className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-4 scroll-mt-24 min-w-0 bg-transparent">
+        <section id="seccion-luces" className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-4 scroll-mt-24 min-w-0 bg-transparent">
+          {/* Título oficial Allura, subtítulo y separador ornamental dorado oficial */}
+          <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 px-2 min-w-0">
+            <h2 
+              className="text-3xl sm:text-4xl lg:text-[46px] text-[#2D0F31] font-normal leading-[1.3] tracking-wide"
+              style={{ fontFamily: "'Allura', cursive" }}
+            >
+              Todas las luces de nuestro cielo
+            </h2>
+            <p className="font-playfair italic text-xs sm:text-sm text-[#7A5872] mt-1 sm:mt-1.5 max-w-md mx-auto">
+              Descubre cada historia, busca a tu angelito y déjate acompañar por su luz.
+            </p>
+            <div className="my-2.5 w-[140px] h-[12px] mx-auto flex items-center justify-center opacity-95">
+              <Image
+                src="/images/luces/separador-ornamental-dorado.svg"
+                alt="Separador ornamental dorado"
+                width={140}
+                height={12}
+                className="object-contain"
+              />
+            </div>
+          </div>
         <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-5 border border-[#F6E1EE] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 w-full max-w-full min-w-0">
           
           {/* Buscador de perritos */}
@@ -1229,12 +1252,6 @@ export default function CieloLlenoDeLucesClient() {
           </div>
 
         </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* EL LAMPADARIO DE LAS CATEDRALES (TARJETAS DE VELAS DE LA MAQUETA)          */}
-      {/* ========================================================================= */}
-      <section className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1">
         
         {/* Banner informativo: Apadrinar o escoger un plan en Ángeles en el Cielo */}
         <div className="mb-6 p-4 rounded-3xl bg-gradient-to-r from-[#FFF9F3] via-[#FFF3EB] to-[#FFF0F6] border border-[#FADCC7] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -1281,150 +1298,22 @@ export default function CieloLlenoDeLucesClient() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
-            {filteredCandles.map((candle) => {
-              const isNeedsReignition = candle.isNeedsReignition;
-              const isEternal = candle.isEternal;
-
-              return (
-                <div
-                  key={candle.id}
-                  onClick={() => setSelectedCandle(candle)}
-                  className="group relative bg-white/90 backdrop-blur-md rounded-[28px] p-4 sm:p-5 border border-white/80 shadow-[0_12px_36px_rgba(140,60,110,0.08)] hover:shadow-[0_18px_44px_rgba(184,60,126,0.18)] hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col justify-between text-center select-none overflow-hidden"
-                  style={{
-                    background: isEternal
-                      ? 'linear-gradient(180deg, rgba(255, 253, 245, 0.98) 0%, rgba(255, 248, 252, 0.95) 100%)'
-                      : isNeedsReignition
-                        ? 'linear-gradient(180deg, rgba(255, 251, 235, 0.95) 0%, rgba(255, 255, 255, 0.95) 100%)'
-                        : 'linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 248, 252, 0.95) 100%)',
-                    borderColor: isEternal ? '#FDE68A' : isNeedsReignition ? '#FED7AA' : '#F7E3EE',
-                  }}
-                >
-                  
-                  {/* Badge de Llama Eterna o Refugio */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-1 z-20">
-                    {isEternal && (
-                      <span className="px-2.5 py-1 rounded-full bg-gradient-to-r from-[#FFFBEB] to-[#FEF3C7] border border-[#FDE68A] text-[10px] font-bold text-[#92400E] flex items-center gap-1.5 shadow-xs">
-                        <Image 
-                          src="/images/icons/plans/icon-plan-estrella.svg" 
-                          alt="Estrella" 
-                          width={20} 
-                          height={20} 
-                          className="w-5 h-5 object-contain shrink-0" 
-                        />
-                        <span>Llama Eterna</span>
-                      </span>
-                    )}
-                    {candle.isShelterPet && (
-                      <span className="px-2 py-0.5 rounded-full bg-[#FFF0F6] border border-[#F0BED6] text-[9.5px] font-bold text-[#8C3F71] flex items-center gap-1 shadow-xs">
-                        <Image src="/images/icons/plans/pawrosa.svg" alt="Huella" width={10} height={10} />
-                        <span>Refugio</span>
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Contador de corazones arriba a la derecha con relleno rosa */}
-                  <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-sm border border-[#F3D5E4] text-[11px] font-bold text-[#DF6197] flex items-center gap-1 shadow-xs z-20">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="#DF6197" className="shrink-0 overflow-visible">
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
-                    <span>{candle.warmthCount}</span>
-                  </span>
-
-                  {/* IMAGEN DE LA VELA ENCENDIDA (.webp oficial) */}
-                  <div className="relative w-full h-44 sm:h-48 rounded-2xl overflow-hidden mb-1">
-                    <Image 
-                      src="/images/luces/vela_encendida_WEB_1080x1350.webp" 
-                      alt="Vela encendida" 
-                      fill 
-                      className="object-cover object-center group-hover:scale-105 transition-transform duration-500" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-60" />
-                  </div>
-
-                  {/* RETRATO CIRCULAR CON HALO DORADO (Superpuesto en el frente de la vela) */}
-                  <div className="relative -mt-9 mb-2 flex justify-center z-10">
-                    <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full border-[3px] border-[#F59E0B] shadow-[0_4px_14px_rgba(245,158,11,0.38)] overflow-hidden bg-white ring-2 ring-white relative">
-                      <Image 
-                        src={candle.photoUrl || '/images/comunidad/golden_retriever_celestial_clean.webp'} 
-                        alt={candle.petName} 
-                        fill 
-                        className="object-cover" 
-                      />
-                    </div>
-                  </div>
-
-                  {/* DATOS DEL PERRO / GATO */}
-                  <div className="space-y-1 px-1">
-                    <h3 className="font-playfair text-lg sm:text-xl font-bold text-[#2D0F31] group-hover:text-[#B83C7E] transition-colors leading-tight">
-                      {candle.petName}
-                    </h3>
-                    <p className="text-xs text-[#5C3C58] italic line-clamp-2 min-h-[32px] flex items-center justify-center font-serif">
-                      «{candle.dedication}»
-                    </p>
-                    <p className="text-[10.5px] text-[#9A7893] truncate">
-                      {candle.authorName}
-                    </p>
-                  </div>
-
-                  {/* ESTADO DE LA VELA (LLAMAS ENCENDIDAS CON CORAZÓN / LLAMAS APAGADAS) */}
-                  <div className="my-2.5">
-                    {isEternal ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFFBEB] text-[#92400E] text-[11px] font-bold border border-[#FDE68A]">
-                        <Image 
-                          src="/images/icons/plans/icon-plan-estrella.svg" 
-                          alt="Estrella" 
-                          width={20} 
-                          height={20} 
-                          className="w-5 h-5 object-contain shrink-0" 
-                        />
-                        <span>Llama Eterna (Siempre encendida)</span>
-                      </span>
-                    ) : isNeedsReignition ? (
-                      <span className="inline-block px-3 py-1 rounded-full bg-[#FEF3C7] text-[#92400E] text-[10px] font-bold border border-[#FDE68A] animate-pulse">
-                        ⏳ Llama apagada · Toca para encenderla
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F0FDF4] text-[#166534] text-[11px] font-medium border border-[#BBF7D0]">
-                        <Image 
-                          src="/images/icons/plans/icon-plan-eterno.svg" 
-                          alt="Corazón" 
-                          width={20} 
-                          height={20} 
-                          className="w-5 h-5 object-contain shrink-0" 
-                        />
-                        <span>Llama encendida · Quedan {candle.daysRemaining} días</span>
-                      </span>
-                    )}
-                  </div>
-
-                  {/* BOTÓN «Te acompaño» CON CORAZÓN RELLENO ROSA Y ENLACE «Ver su recuerdo →» */}
-                  <div className="space-y-2 pt-1 border-t border-[#F5E2EE]">
-                    <button
-                      onClick={(e) => handleSendWarmth(candle.id, e)}
-                      className="w-full py-2 px-3 rounded-full text-xs font-bold text-[#B83C7E] bg-[#FFF0F6] hover:bg-[#FFE3EE] border border-[#F0BED6] transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="#DF6197" className="shrink-0 overflow-visible">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                      </svg>
-                      <span>Te acompaño</span>
-                    </button>
-
-                    <button
-                      onClick={() => setSelectedCandle(candle)}
-                      className="text-[11px] font-semibold text-[#8C3F71] hover:text-[#B83C7E] transition-colors block w-full py-0.5"
-                    >
-                      Ver su recuerdo →
-                    </button>
-                  </div>
-
-                </div>
-              );
-            })}
-          </div>
-        )}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-4 lg:gap-5 justify-items-center w-full">
+            {filteredCandles.map((candle) => (
+              <TarjetaLuzGaleria
+                key={candle.id}
+                candle={candle}
+                onSelect={(c) => setSelectedCandle(c as AltarCandle)}
+              />
+            ))}
+          </div>        )}
 
         </section>
+
+        {/* ========================================================================= */}
+        {/* SECCIÓN 5: CIERRE CELESTIAL «Ángeles en el Cielo» (FASE 5)                 */}
+        {/* ========================================================================= */}
+        <CierreCelestial />
 
       </div>
 
