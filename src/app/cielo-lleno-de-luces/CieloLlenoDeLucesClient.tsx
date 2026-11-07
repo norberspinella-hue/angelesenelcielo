@@ -1446,7 +1446,7 @@ export default function CieloLlenoDeLucesClient() {
             </button>
 
             {/* Vela y foto */}
-            <div className="relative w-24 h-24 mx-auto rounded-full border-[3px] border-[#F59E0B] shadow-[0_4px_16px_rgba(116,52,90,0.18)] overflow-hidden bg-white ring-4 ring-white/80">
+            <div className="relative w-24 h-24 mx-auto rounded-full border-[2.5px] border-[#F0BED6] shadow-[0_0_14px_rgba(240,190,214,0.45),0_4px_12px_rgba(116,52,90,0.15)] overflow-hidden bg-[#FAF3F7]">
               <Image 
                 src={selectedCandle.photoUrl || '/images/comunidad/golden_retriever_celestial_clean.webp'} 
                 alt={selectedCandle.petName} 
