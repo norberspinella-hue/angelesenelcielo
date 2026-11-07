@@ -85,19 +85,16 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
 
       {/* 3. SUBCONTENEDOR INFERIOR: FONDO VISIBLE DIRECTO DEL MURAL GLOBAL (NUBES CELESTIALES) */}
       <div
-        className="relative z-10 flex-1 rounded-t-[20px] overflow-hidden border-t border-white/90 shadow-[0_-3px_14px_rgba(184,60,126,0.08)] flex flex-col justify-between pt-2.5 pb-3 px-3.5 pl-[64px]"
+        className="relative z-10 flex-1 rounded-t-[20px] overflow-hidden border-t border-white/95 shadow-[0_-3px_14px_rgba(184,60,126,0.08)] flex flex-col justify-between pt-2.5 pb-3 px-3.5 pl-[64px]"
         style={{
           backgroundImage: "url('/images/mural-preview/card-heaven-front-master.webp')",
           backgroundSize: 'cover',
-          backgroundPosition: 'center 88%',
+          backgroundPosition: 'center bottom',
         }}
       >
-        {/* Velo muy sutil para contraste y legibilidad sin ocultar las nubes */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/18 via-white/10 to-[#FFF5FA]/18 pointer-events-none z-0" />
-
-        {/* Cabecera de la placa: Nombre y Separador Ornamental Dorado */}
+        {/* Cabecera del subcontenedor: Nombre y Separador Ornamental Dorado */}
         <div className="relative z-1 flex flex-col items-center text-center">
-          <h3 className="font-playfair font-bold text-[21px] text-[#2D0F31] tracking-[-0.2px] leading-tight drop-shadow-[0_1px_2px_rgba(255,255,255,0.85)]">
+          <h3 className="font-playfair font-bold text-[21px] text-[#2D0F31] tracking-[-0.2px] leading-tight drop-shadow-[0_1px_3px_rgba(255,255,255,0.95)]">
             {candle.petName}
           </h3>
 
@@ -113,7 +110,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
           </div>
 
           {/* Dedicatoria centrada en cursiva */}
-          <p className="font-playfair italic text-[11.5px] leading-[1.32] text-[#381232] line-clamp-3 max-w-[172px] drop-shadow-[0_1px_2px_rgba(255,255,255,0.80)]">
+          <p className="font-playfair italic text-[11.5px] leading-[1.32] text-[#381232] line-clamp-3 max-w-[172px] drop-shadow-[0_1px_3px_rgba(255,255,255,0.95)]">
             “{candle.dedication || 'Siempre en nuestro recuerdo, iluminando el cielo con tu amor incondicional.'}”
           </p>
         </div>
@@ -126,7 +123,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
               e.stopPropagation();
               onSendWarmth(candle.id, e);
             }}
-            className="w-[188px] h-[34px] rounded-full bg-white/78 hover:bg-white/92 backdrop-blur-xs border border-[#ECC9DE]/90 text-[#843E78] font-semibold text-[11.5px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-[0_2px_6px_rgba(132,62,120,0.08)] active:scale-95"
+            className="w-[188px] h-[34px] rounded-full bg-white/85 hover:bg-white/95 backdrop-blur-xs border border-[#ECC9DE]/90 text-[#843E78] font-semibold text-[11.5px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-[0_2px_6px_rgba(132,62,120,0.10)] active:scale-95"
           >
             <span className="text-[#C4679B] text-xs">♡</span>
             <span>Te acompaño</span>
@@ -138,7 +135,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
               e.stopPropagation();
               onSelect(candle);
             }}
-            className="text-[11px] text-[#843E78] hover:text-[#2D0F31] underline font-semibold cursor-pointer transition-colors inline-flex items-center gap-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]"
+            className="text-[11px] text-[#843E78] hover:text-[#2D0F31] underline font-semibold cursor-pointer transition-colors inline-flex items-center gap-0.5 drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]"
           >
             <span>Ver su recuerdo</span>
             <span>→</span>
