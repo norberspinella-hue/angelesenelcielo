@@ -65,8 +65,8 @@ const SEED_CANDLES: AltarCandle[] = [
     petName: 'Chloe',
     species: 'perro',
     authorName: 'Familia Mendoza',
-    dedication: 'Tu luz sigue guiando nuestros días.',
-    photoUrl: '/images/comunidad/golden_retriever_celestial_clean.webp',
+    dedication: 'Te fuiste como llegaste de manera inesperada, pero nos llenaste de vida y de amor. Nos enseñaste a querer de nuevo. Te echaremos de menos siempre.',
+    photoUrl: '/images/comunidad/chloe.jpg',
     litDate: 'Hace 1 día',
     daysRemaining: 7,
     isNeedsReignition: false,
@@ -79,7 +79,7 @@ const SEED_CANDLES: AltarCandle[] = [
     species: 'gato',
     authorName: 'Elena y Sofía',
     dedication: 'Siempre en mi corazón, pequeña estrella.',
-    photoUrl: '/images/comunidad/pet-luna.webp',
+    photoUrl: '/images/comunidad/pet-luna-clean.webp',
     litDate: 'Hace 2 días',
     daysRemaining: 5,
     isNeedsReignition: false,
@@ -90,12 +90,25 @@ const SEED_CANDLES: AltarCandle[] = [
     petName: 'Max',
     species: 'perro',
     authorName: 'Carlos M.',
-    dedication: 'Gracias por todas nuestras aventuras.',
-    photoUrl: '/images/comunidad/pet-coco.webp',
+    dedication: 'Me acompañaste en cada paso del camino, fuiste es y serás mi guía, mi apoyo y mi fuerza. Te ame toda tu vida y te amare toda la mia.',
+    photoUrl: '/images/comunidad/max_real_mural.jpg',
     litDate: 'Hace 3 días',
     daysRemaining: 4,
     isNeedsReignition: false,
     warmthCount: 32,
+  },
+  {
+    id: 'candle-menus',
+    petName: 'Menus',
+    species: 'gato',
+    authorName: 'Familia de Menus',
+    dedication: 'Fuiste un luchador, luchaste contra tu enfermedad. Siempre fuiste y serás mi guerrero.',
+    photoUrl: '/images/comunidad/menus_real_mural.jpg',
+    litDate: 'Hace 3 días',
+    daysRemaining: 7,
+    isNeedsReignition: false,
+    isEternal: true,
+    warmthCount: 29,
   },
   {
     id: 'candle-nube',
@@ -343,15 +356,12 @@ export default function CieloLlenoDeLucesClient() {
           }));
           setCandles(mapped);
 
-          // Actualizar luces destacadas con las velas reales que tienen fotografía propia
+          // Actualizar luces destacadas priorizando las velas oficiales aprobadas con fotografía real
           if (!searchQuery.trim() && filterMode === 'todos') {
-            const withPhotos = mapped.filter(c => c.photoUrl && c.photoUrl.trim() !== '' && !c.photoUrl.includes('golden_retriever_celestial_clean'));
-            if (withPhotos.length > 0) {
-              setFeaturedCandles(withPhotos);
-            } else {
-              const anyPhotos = mapped.filter(c => c.photoUrl && c.photoUrl.trim() !== '');
-              if (anyPhotos.length > 0) setFeaturedCandles(anyPhotos);
-            }
+            const seedIds = new Set(SEED_CANDLES.map(s => s.id));
+            const dbExtras = mapped.filter(c => !seedIds.has(c.id) && c.photoUrl && c.photoUrl.trim() !== '');
+            const combined = [...SEED_CANDLES.filter(c => c.photoUrl && c.photoUrl.trim() !== ''), ...dbExtras];
+            setFeaturedCandles(combined);
           }
         }
       } catch (err) {
@@ -1021,7 +1031,7 @@ export default function CieloLlenoDeLucesClient() {
         {/* ========================================================================= */}
         <section 
           id="luces-destacadas" 
-          className="relative z-10 w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-12 sm:pb-16 lg:pb-20 min-w-0 bg-transparent"
+          className="relative z-10 w-full max-w-[1580px] mx-auto px-4 sm:px-8 lg:px-14 xl:px-16 pt-6 sm:pt-8 pb-12 sm:pb-16 lg:pb-20 min-w-0 bg-transparent"
         >
           {/* Título centrado con la tipografía caligráfica oficial Allura */}
           <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8 lg:mb-10 px-2 min-w-0">
@@ -1034,18 +1044,18 @@ export default function CieloLlenoDeLucesClient() {
             <div className="w-24 sm:w-32 h-0.5 mx-auto mt-2 bg-gradient-to-r from-transparent via-[#F0BED6] to-transparent" />
           </div>
 
-          {/* Contenedor del Carrusel con Flechas de Navegación Discretas */}
-          <div className="relative w-full min-w-0">
+          {/* Contenedor del Carrusel Centrado con Flechas de Navegación Exteriores (Sin tapar las tarjetas) */}
+          <div className="relative w-full max-w-[1414px] mx-auto min-w-0">
             
-            {/* Flecha Izquierda Discreta */}
+            {/* Flecha Izquierda Exterior (Fuera de las tarjetas en escritorio) */}
             <button
               type="button"
               onClick={() => handleCarouselScroll('left')}
               disabled={!canScrollLeft}
               aria-label="Ver luces anteriores"
-              className="absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-white/90 hover:bg-white text-[#6E4F66] hover:text-[#2D0F31] shadow-[0_4px_14px_rgba(184,60,126,0.18)] border border-white flex items-center justify-center transition-all duration-200 cursor-pointer disabled:opacity-0 disabled:pointer-events-none hover:scale-105 active:scale-95"
+              className="hidden xl:flex absolute -left-7 2xl:-left-14 top-1/2 -translate-y-1/2 z-20 w-11 h-11 lg:w-12 lg:h-12 rounded-full bg-white/95 hover:bg-white text-[#6E4F66] hover:text-[#2D0F31] shadow-[0_4px_16px_rgba(184,60,126,0.20)] border border-[#F6E1EE] items-center justify-center transition-all duration-200 cursor-pointer disabled:opacity-0 disabled:pointer-events-none hover:scale-110 active:scale-95"
             >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
@@ -1056,7 +1066,7 @@ export default function CieloLlenoDeLucesClient() {
               onScroll={checkCarouselScroll}
               tabIndex={0}
               aria-label="Carrusel de luces destacadas"
-              className="flex items-stretch gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none py-6 px-4 focus:outline-none focus:ring-2 focus:ring-[#F0BED6]/50 rounded-2xl"
+              className="flex items-stretch gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none py-6 px-6 focus:outline-none focus:ring-2 focus:ring-[#F0BED6]/50 rounded-2xl"
               style={{
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
@@ -1072,15 +1082,15 @@ export default function CieloLlenoDeLucesClient() {
               ))}
             </div>
 
-            {/* Flecha Derecha Discreta */}
+            {/* Flecha Derecha Exterior (Fuera de las tarjetas en escritorio) */}
             <button
               type="button"
               onClick={() => handleCarouselScroll('right')}
               disabled={!canScrollRight}
               aria-label="Ver más luces"
-              className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full bg-white/90 hover:bg-white text-[#6E4F66] hover:text-[#2D0F31] shadow-[0_4px_14px_rgba(184,60,126,0.18)] border border-white flex items-center justify-center transition-all duration-200 cursor-pointer disabled:opacity-0 disabled:pointer-events-none hover:scale-105 active:scale-95"
+              className="hidden xl:flex absolute -right-7 2xl:-right-14 top-1/2 -translate-y-1/2 z-20 w-11 h-11 lg:w-12 lg:h-12 rounded-full bg-white/95 hover:bg-white text-[#6E4F66] hover:text-[#2D0F31] shadow-[0_4px_16px_rgba(184,60,126,0.20)] border border-[#F6E1EE] items-center justify-center transition-all duration-200 cursor-pointer disabled:opacity-0 disabled:pointer-events-none hover:scale-110 active:scale-95"
             >
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 lg:w-6 lg:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
