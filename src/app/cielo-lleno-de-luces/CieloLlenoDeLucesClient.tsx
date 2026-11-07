@@ -1064,57 +1064,73 @@ export default function CieloLlenoDeLucesClient() {
               {featuredCandles.map((candle) => (
                 <div
                   key={`destacada-${candle.id}`}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setSelectedCandle(candle)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedCandle(candle);
-                    }
-                  }}
+                  role="article"
                   aria-label={`Homenaje celestial a ${candle.petName}`}
-                  className="group relative shrink-0 snap-start w-[190px] h-[175px] rounded-[20px] overflow-hidden cursor-pointer select-none transition-all duration-300 hover:-translate-y-1.5 border border-[#F6DCEB]/95 hover:border-[#E8C288]/95 shadow-[0_8px_22px_rgba(184,60,126,0.10)] hover:shadow-[0_12px_28px_rgba(184,60,126,0.18)] bg-white"
+                  className="group relative shrink-0 snap-start w-[254px] min-h-[366px] rounded-[22px] overflow-hidden bg-gradient-to-b from-white via-[#FFFDFE] to-[#FAF2F7] border border-[#F6DCEB]/90 shadow-[0_8px_24px_rgba(184,60,126,0.10)] hover:shadow-[0_14px_30px_rgba(184,60,126,0.18)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between p-0 select-none relative"
                 >
-                  {/* Capa A — Plantilla celestial maestra (Estructura técnica lista para recibir public/images/luces/plantilla-tarjeta-destacada.webp) */}
-                  <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#FDF4F8] via-[#F9E7F2] to-[#FDF7FA] pointer-events-none" />
+                  {/* Zona Superior: Vela, Flores y Foto Circular de la Mascota con Marco Dorado */}
+                  <div className="relative w-full h-[170px] bg-gradient-to-b from-[#FFF9F6] to-white">
+                    {/* Vela celestial con huella y flores en la izquierda */}
+                    <div className="absolute top-0 left-0 w-[138px] h-[146px] z-[1] overflow-hidden pointer-events-none">
+                      <Image 
+                        src="/images/luces/vela-homenaje-pilar-escena.webp" 
+                        alt="Vela celestial con huella y flores" 
+                        fill 
+                        sizes="138px"
+                        className="object-contain object-left-top" 
+                      />
+                      <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+                    </div>
 
-                  {/* Capa B — Fotografía real (78-82% de altura, protagonista con degradado suave inferior para fundirse con las nubes) */}
-                  <div className="absolute top-0 inset-x-0 h-[80%] z-10 overflow-hidden">
-                    <Image 
-                      src={candle.photoUrl || '/images/comunidad/golden_retriever_celestial_clean.webp'}
-                      alt={candle.petName}
-                      fill
-                      sizes="190px"
-                      className="object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-500 ease-out"
-                    />
-                    {/* Degradado suave en el borde inferior para fundirse con la escena y placa */}
-                    <div className="absolute inset-x-0 bottom-0 h-7 bg-gradient-to-t from-[#FFF9F6] to-transparent pointer-events-none" />
-                  </div>
+                    {/* Badge superior derecho con contador de abrazos de luz */}
+                    <div className="absolute top-2.5 right-3 z-10 flex items-center gap-1 bg-white/92 backdrop-blur-xs px-2.5 py-0.5 rounded-full border border-[#F6DCEB]/65 shadow-xs text-[11px] font-bold text-[#9E4D7F]">
+                      <span className="text-[#C4679B] text-[10px]">♥</span>
+                      <span>{candle.warmthCount}</span>
+                    </div>
 
-                  {/* Capa D — Placa inferior integrada (18-22% de altura, marfil rosada con Playfair Display y corazón) */}
-                  <div className="absolute bottom-0 inset-x-0 h-[20%] z-20 px-3 bg-[#FFF9F6]/92 backdrop-blur-sm border-t border-[#F6E0EC]/85 flex items-center justify-between transition-colors duration-300 group-hover:bg-[#FFF9F6]">
-                    <div className="flex items-center gap-1.5 min-w-0 pr-8">
-                      <p className="font-playfair font-bold text-sm text-[#2D0F31] truncate group-hover:text-[#9E4D7F] transition-colors tracking-wide">
-                        {candle.petName}
-                      </p>
-                      <span className="text-[#C4679B] text-xs shrink-0 select-none" aria-hidden="true">
-                        ♡
-                      </span>
+                    {/* Fotografía Circular con Marco Dorado Radiante y Cálido */}
+                    <div className="absolute top-8 left-[122px] w-[108px] h-[108px] rounded-full z-[3] p-[3.5px] bg-gradient-to-br from-[#FFF6D8] via-[#E8C288] to-[#C2933C] shadow-[0_0_16px_rgba(232,194,136,0.65),0_4px_14px_rgba(45,15,49,0.15)] flex items-center justify-center">
+                      <div className="w-full h-full rounded-full overflow-hidden relative bg-[#FDF4F8] border border-[#FFF8E7]">
+                        <Image 
+                          src={candle.photoUrl || '/images/comunidad/golden_retriever_celestial_clean.webp'}
+                          alt={candle.petName}
+                          fill
+                          sizes="108px"
+                          className="object-cover object-[center_25%]"
+                        />
+                      </div>
+                      <div className="absolute top-0.5 right-4 w-2 h-2 rounded-full bg-white blur-[0.5px] shadow-[0_0_8px_#FFF2B2] pointer-events-none" />
                     </div>
                   </div>
 
-                  {/* Capa E — Vela oficial con huella (40-52px) en esquina inferior derecha, superponiéndose parcialmente a foto y placa */}
-                  <div className="absolute bottom-1 right-2 z-30 flex items-center justify-center pointer-events-none">
-                    {/* Resplandor dorado suave */}
-                    <div className="absolute -inset-1 rounded-full bg-amber-400/35 blur-sm pointer-events-none" />
-                    <Image 
-                      src="/images/luces/pilar-enciende-luz.webp" 
-                      alt="Vela encendida" 
-                      width={34} 
-                      height={46} 
-                      className="h-[46px] w-auto object-contain drop-shadow-[0_2px_4px_rgba(245,158,11,0.45)] group-hover:scale-105 transition-transform duration-300"
-                    />
+                  {/* Zona Central: Nombre y Dedicatoria Real */}
+                  <div className="px-5 pt-1 text-center flex flex-col items-center z-[5]">
+                    <h3 className="font-playfair font-bold text-[22px] text-[#2D0F31] mb-1 tracking-tight">
+                      {candle.petName}
+                    </h3>
+                    <p className="font-playfair italic text-[12.5px] leading-snug text-[#4A1B43] max-w-[215px] line-clamp-3 mb-2">
+                      “{candle.dedication || 'Siempre en nuestro recuerdo, iluminando el cielo con tu amor.'}”
+                    </p>
+                  </div>
+
+                  {/* Zona Inferior: Botón «Te acompaño» y Enlace «Ver su recuerdo» */}
+                  <div className="pb-4 pt-1 flex flex-col items-center gap-2 z-[5] w-full">
+                    <button
+                      type="button"
+                      onClick={(e) => handleSendWarmth(candle.id, e)}
+                      className="w-[198px] h-[38px] rounded-full bg-[#FAF1F7] hover:bg-[#F5E2EF] border border-[#ECC9DE] text-[#843E78] font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs active:scale-95"
+                    >
+                      <span className="text-[#C4679B] text-sm">♡</span>
+                      <span>Te acompaño</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCandle(candle)}
+                      className="text-xs text-[#843E78] hover:text-[#2D0F31] underline font-medium cursor-pointer transition-colors inline-flex items-center gap-0.5"
+                    >
+                      <span>Ver su recuerdo</span>
+                      <span>→</span>
+                    </button>
                   </div>
                 </div>
               ))}
