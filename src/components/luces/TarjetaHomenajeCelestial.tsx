@@ -44,8 +44,8 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
       aria-label={`Homenaje celestial a ${candle.petName}`}
       className={`group relative shrink-0 snap-start w-[254px] h-[366px] rounded-[22px] overflow-hidden select-none bg-[#FAF3F7] border border-[#F6DCEB]/95 shadow-[0_8px_28px_rgba(184,60,126,0.14)] hover:shadow-[0_14px_34px_rgba(184,60,126,0.20)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col ${className}`}
     >
-      {/* 1. ZONA SUPERIOR: FOTOGRAFÍA PROTAGONISTA (se extiende ligeramente bajo el subcontenedor para sellar esquinas) */}
-      <div className="relative w-full h-[188px] overflow-hidden bg-[#FDF4F8] shrink-0">
+      {/* 1. ZONA SUPERIOR: FOTOGRAFÍA PROTAGONISTA (se extiende hasta 215px para continuar limpiamente detrás de las curvas) */}
+      <div className="absolute top-0 left-0 w-full h-[215px] overflow-hidden bg-[#FDF4F8] z-1">
         <Image
           src={candle.photoUrl || '/images/comunidad/xena.jpg'}
           alt={candle.petName}
@@ -57,13 +57,13 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
 
         {/* Resplandor cálido sutil de luz (sin estrellas artificiales) */}
         {isLit && (
-          <div className="absolute -bottom-4 -left-4 w-[100px] h-[100px] rounded-full bg-radial from-amber-300/20 via-rose-300/5 to-transparent pointer-events-none blur-md" />
+          <div className="absolute bottom-5 -left-4 w-[100px] h-[100px] rounded-full bg-radial from-amber-300/20 via-rose-300/5 to-transparent pointer-events-none blur-md" />
         )}
       </div>
 
-      {/* 2. SUBCONTENEDOR INFERIOR: FONDO VISIBLE DIRECTO DEL MURAL GLOBAL (NUBES CELESTIALES) */}
+      {/* 2. SUBCONTENEDOR INFERIOR: ESQUINAS REDONDEADAS RESTAURADAS rounded-t-[20px] Y FONDO DIRECTO DEL MURAL */}
       <div
-        className="relative z-10 -mt-[11px] w-full flex-1 overflow-hidden border-t border-white/95 shadow-[0_-4px_14px_rgba(184,60,126,0.08)] flex flex-col justify-between pt-2.5 pb-3 px-3.5"
+        className="absolute bottom-0 left-0 w-full h-[190px] z-10 rounded-t-[20px] overflow-hidden shadow-[0_-4px_16px_rgba(184,60,126,0.10)] flex flex-col justify-between pt-2.5 pb-3 px-3.5"
         style={{
           backgroundImage: "url('/images/mural-preview/card-heaven-front-master.webp')",
           backgroundSize: 'cover',
