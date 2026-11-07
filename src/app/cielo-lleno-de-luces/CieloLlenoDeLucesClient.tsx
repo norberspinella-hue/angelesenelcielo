@@ -604,7 +604,14 @@ export default function CieloLlenoDeLucesClient() {
     if (e) e.stopPropagation();
     setCandles(prev => prev.map(c => {
       if (c.id === candleId) {
-        return { ...c, warmthCount: c.warmthCount + 1 };
+        return { ...c, warmthCount: (c.warmthCount || 0) + 1 };
+      }
+      return c;
+    }));
+
+    setFeaturedCandles(prev => prev.map(c => {
+      if (c.id === candleId) {
+        return { ...c, warmthCount: (c.warmthCount || 0) + 1 };
       }
       return c;
     }));
@@ -1296,6 +1303,7 @@ export default function CieloLlenoDeLucesClient() {
                 key={candle.id}
                 candle={candle}
                 onSelect={(c) => setSelectedCandle(c as AltarCandle)}
+                onSendWarmth={handleSendWarmth}
               />
             ))}
           </div>        )}

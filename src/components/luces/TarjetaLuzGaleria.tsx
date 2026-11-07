@@ -26,6 +26,7 @@ export interface CandleGaleriaData {
 interface TarjetaLuzGaleriaProps<T extends CandleGaleriaData = CandleGaleriaData> {
   candle: T;
   onSelect: (candle: T) => void;
+  onSendWarmth?: (id: string, e: React.MouseEvent) => void;
   className?: string;
 }
 
@@ -44,6 +45,7 @@ interface TarjetaLuzGaleriaProps<T extends CandleGaleriaData = CandleGaleriaData
 export default function TarjetaLuzGaleria<T extends CandleGaleriaData = CandleGaleriaData>({
   candle,
   onSelect,
+  onSendWarmth,
   className = '',
 }: TarjetaLuzGaleriaProps<T>) {
   // Fotografía original limpia de la mascota
@@ -128,16 +130,23 @@ export default function TarjetaLuzGaleria<T extends CandleGaleriaData = CandleGa
             }}
           />
 
-          {/* Contenido frontal: ÚNICAMENTE Nombre real + Corazón decorativo */}
+          {/* Contenido frontal: Nombre real + Contador de corazones recibido */}
           <div className="relative z-10 flex items-center gap-1.5 min-w-0 pr-10">
-            <h3 className="font-playfair font-bold text-[15px] sm:text-[16.5px] lg:text-[17.5px] text-[#2D0F31] leading-tight tracking-[-0.2px] truncate drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)]">
+            <h3 className="font-playfair font-bold text-[14.5px] sm:text-[16px] lg:text-[17px] text-[#2D0F31] leading-tight tracking-[-0.2px] truncate drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)]">
               {candle.petName}
             </h3>
             <span
-              className="text-[#D9629B] text-[12px] sm:text-[13px] drop-shadow-sm select-none shrink-0"
-              aria-hidden="true"
+              onClick={(e) => {
+                if (onSendWarmth) {
+                  e.stopPropagation();
+                  onSendWarmth(candle.id, e);
+                }
+              }}
+              className="inline-flex items-center gap-0.5 text-[#8C3F71] hover:text-[#B83C7E] font-semibold text-[11px] sm:text-[12px] select-none shrink-0 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)] cursor-pointer transition-colors"
+              title={`${candle.warmthCount || 0} abrazos de luz. Haz clic para acompañar.`}
             >
-              ♥
+              <span className="text-[#D9629B] text-[11px] sm:text-[12px]" aria-hidden="true">♥</span>
+              <span className="font-sans font-bold leading-none">{candle.warmthCount || 0}</span>
             </span>
           </div>
 

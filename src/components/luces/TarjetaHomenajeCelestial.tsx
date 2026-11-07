@@ -83,6 +83,22 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
           {isLit && (
             <div className="absolute bottom-5 -left-4 w-[100px] h-[100px] rounded-full bg-radial from-amber-300/20 via-rose-300/5 to-transparent pointer-events-none blur-md" />
           )}
+
+          {/* Contador oficial de corazones / abrazos de luz recibidos */}
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              onSendWarmth(candle.id, e);
+            }}
+            className="absolute top-3 right-3 z-15 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/90 hover:bg-white backdrop-blur-md border border-[#F2CADB]/90 shadow-[0_2px_8px_rgba(116,52,90,0.12)] text-[#8C3F71] transition-all cursor-pointer group-hover:scale-105 active:scale-95"
+            title={`${candle.warmthCount || 0} abrazos de luz recibidos. Haz clic para acompañar.`}
+            aria-label={`${candle.warmthCount || 0} abrazos de luz`}
+          >
+            <span className="text-[#D9629B] text-xs select-none" aria-hidden="true">♥</span>
+            <span className="font-sans font-bold text-xs text-[#8C3F71] leading-none select-none tracking-tight">
+              {candle.warmthCount || 0}
+            </span>
+          </div>
         </div>
 
         {/* 2. SUBCONTENEDOR INFERIOR: ESQUINAS REDONDEADAS RESTAURADAS rounded-t-[20px] Y FONDO DIRECTO DEL MURAL */}
