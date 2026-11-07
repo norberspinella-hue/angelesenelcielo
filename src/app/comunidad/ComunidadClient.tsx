@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { OctubreBanner } from '@/components/landing/OctubreBanner';
 import { CartasAlCieloHeader } from '@/components/comunidad/CartasAlCieloHeader';
 
 export interface CommunityMemory {
@@ -28,7 +27,6 @@ interface Props {
 }
 
 export default function ComunidadClient({ initialMemories }: Props) {
-  const [hasTopBanner, setHasTopBanner] = useState(false);
   const [memories, setMemories] = useState<CommunityMemory[]>(initialMemories);
   const [activeFilter, setActiveFilter] = useState<'todos' | 'perro' | 'gato' | 'otro'>('todos');
   const [sortBy, setSortBy] = useState<'recientes' | 'velas'>('recientes');
@@ -780,19 +778,14 @@ export default function ComunidadClient({ initialMemories }: Props) {
   return (
     <div className="min-h-screen text-[#2D0F31] bg-[#FBF6F8]">
       
-      {/* Cintillo Día de las Mascotas (Octubre) */}
-      <OctubreBanner onVisibilityChange={setHasTopBanner} />
-
       {/* Menú Propio Oficial de Cartas al Cielo */}
-      <CartasAlCieloHeader hasTopBanner={hasTopBanner} />
+      <CartasAlCieloHeader />
 
       {/* ========================================================================= */}
       {/* HERO SECTION CON FONDO COMPLETO PANORÁMICO Y DIFUMINADO SUAVE             */}
       {/* ========================================================================= */}
       <section 
-        className={`hero-chihuahua-bg relative bg-cover bg-no-repeat bg-top pb-28 sm:pb-36 transition-all duration-500 overflow-hidden ${
-          hasTopBanner ? 'pt-[160px] sm:pt-[180px] md:pt-[190px]' : 'pt-[105px] sm:pt-[125px] md:pt-[135px]'
-        }`}
+        className="hero-chihuahua-bg relative bg-cover bg-no-repeat bg-top pb-28 sm:pb-36 transition-all duration-500 overflow-hidden pt-[105px] sm:pt-[125px] md:pt-[135px]"
       >
         {/* Manto difuminado inferior (funde de forma invisible con la galería) */}
         <div 
@@ -1699,7 +1692,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
       {/* MODAL 1: LEER CARTA COMPLETA */}
       {selectedMemoryForRead && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#180A1C]/75 backdrop-blur-md overflow-y-auto animate-fade-in"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 bg-[#180A1C]/75 backdrop-blur-md overflow-y-auto animate-fade-in"
           onClick={() => setSelectedMemoryForRead(null)}
         >
           <div 
@@ -1896,7 +1889,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
       {/* MODAL 3: SUMAR MI LUZ EN LA VELA SEMANAL (DOMINGOS DE LUZ) */}
       {showWeeklyCandleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-left space-y-4 relative text-[#2D0F31]">
             <button
               onClick={() => setShowWeeklyCandleModal(false)}
@@ -2040,7 +2033,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
       {/* MODAL 2: CONFIRMACIÓN Y CELEBRACIÓN TRAS PUBLICAR */}
       {showCelebrationModal && publishedMemory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-center space-y-4 relative text-[#2D0F31]">
             <button
               onClick={() => setShowCelebrationModal(false)}

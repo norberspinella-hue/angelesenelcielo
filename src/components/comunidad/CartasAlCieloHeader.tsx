@@ -12,7 +12,7 @@ interface CartasAlCieloHeaderProps {
 
 export function CartasAlCieloHeader({ 
   hasTopBanner = false,
-  showGarland = true,
+  showGarland = false,
 }: CartasAlCieloHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();

@@ -7,7 +7,7 @@ import { PapelPicadoGarland } from '@/components/landing/PapelPicadoGarland';
 
 export function Header({ 
   hasTopBanner = false,
-  showGarland = true,
+  showGarland = false,
 }: { 
   hasTopBanner?: boolean;
   showGarland?: boolean;

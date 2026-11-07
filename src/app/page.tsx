@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { OctubreBanner } from '@/components/landing/OctubreBanner';
 import { Header } from '@/components/landing/Header';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { OfferStrip } from '@/components/landing/OfferStrip';
@@ -17,12 +16,10 @@ import { HeavenCTAButton } from '@/components/ui/HeavenCTAButton';
 import { TrustStrip } from '@/components/landing/TrustStrip';
 
 export default function AngelesEnElCieloLanding() {
-  const [hasTopBanner, setHasTopBanner] = useState(false);
 
   return (
     <>
-      <OctubreBanner onVisibilityChange={setHasTopBanner} />
-      <Header hasTopBanner={hasTopBanner} />
+      <Header />
       
       <main>
         <HeroSection />

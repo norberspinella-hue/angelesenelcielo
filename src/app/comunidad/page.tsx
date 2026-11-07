@@ -248,7 +248,7 @@ export default async function ComunidadPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FFF8F4]">
-      {/* Main Cartas al Cielo Component (includes OctubreBanner & CartasAlCieloHeader) */}
+      {/* Main Cartas al Cielo Component (includes CartasAlCieloHeader) */}
       <div className="flex-1">
         <ComunidadClient initialMemories={initialMemories} />
       </div>

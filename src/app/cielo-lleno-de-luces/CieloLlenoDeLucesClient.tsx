@@ -7,7 +7,6 @@ import TarjetaHomenajeCelestial from '@/components/luces/TarjetaHomenajeCelestia
 import TarjetaLuzGaleria from '@/components/luces/TarjetaLuzGaleria';
 import CierreCelestial from '@/components/luces/CierreCelestial';
 import Link from 'next/link';
-import { OctubreBanner } from '@/components/landing/OctubreBanner';
 import { CartasAlCieloHeader } from '@/components/comunidad/CartasAlCieloHeader';
 import { Footer } from '@/components/landing/Footer';
 import type { AltarStats } from '@/types/altar';
@@ -218,7 +217,6 @@ export default function CieloLlenoDeLucesClient() {
   useEffect(() => { setMounted(true); }, []);
 
   const isPersistentAltarEnabled = process.env.NEXT_PUBLIC_ENABLE_PERSISTENT_ALTAR !== 'false';
-  const [hasTopBanner, setHasTopBanner] = useState(true);
   const [candles, setCandles] = useState<AltarCandle[]>(SEED_CANDLES);
   const [stats, setStats] = useState<AltarStats | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -719,19 +717,15 @@ export default function CieloLlenoDeLucesClient() {
         </div>
       )}
 
-      {/* 1. Cintillo del 27 de Octubre (Día de Muertos de las Mascotas) */}
-      <OctubreBanner onVisibilityChange={setHasTopBanner} />
-
-      {/* 2. Cabecera Cápsula Flotante con Papel Picado (Idéntica a todaslasmascotasvanalcielo) */}
-      <CartasAlCieloHeader hasTopBanner={hasTopBanner} showGarland={true} />
+      
+      {/* Cabecera Cápsula Flotante (Idéntica a todaslasmascotasvanalcielo) */}
+      <CartasAlCieloHeader />
 
       {/* ========================================================================= */}
       {/* HERO: PORTAL CELESTIAL «CIELO LLENO DE LUCES» (FASE 1)                    */}
       {/* ========================================================================= */}
       <section 
-        className={`relative z-10 overflow-hidden transition-all duration-300 ${
-          hasTopBanner ? 'pt-52 sm:pt-56 md:pt-44 lg:pt-32' : 'pt-40 sm:pt-44 lg:pt-24'
-        } pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between`}
+        className="relative z-10 overflow-hidden transition-all duration-300 pt-40 sm:pt-44 lg:pt-24 pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between"
         style={{
           minHeight: 'clamp(820px, 94vh, 1040px)',
           isolation: 'isolate',
@@ -828,14 +822,14 @@ export default function CieloLlenoDeLucesClient() {
               </span>
             </h1>
 
-            {/* Subtítulo Oficial: «Un lugar donde el amor sigue brillando». */}
+            {/* Subtítulo Oficial: Porque hay amores que nunca dejan de brillar. */}
             <p className="font-playfair italic text-base sm:text-xl text-[#8C3F71] font-semibold leading-snug w-full max-w-full break-words">
-              «Un lugar donde el amor sigue brillando».
+              Porque hay amores que nunca dejan de brillar.
             </p>
 
             {/* Texto Emocional Oficial */}
             <p className="font-sans text-xs sm:text-base text-[#523A4E] max-w-md sm:max-w-lg leading-relaxed font-medium w-full max-w-full break-words">
-              Enciende una luz por tu mascota y deja que su recuerdo siga iluminando nuestro cielo.
+              Aunque ya no esté a tu lado, su luz sigue viviendo en ti. Enciende una vela en su memoria y deja que su recuerdo ilumine nuestro cielo.
             </p>
 
             {/* Botones de Acción Oficiales */}
@@ -853,7 +847,7 @@ export default function CieloLlenoDeLucesClient() {
                   <path d="M12 2C10.5 4.2 10 5.8 10 7.2C10 8.8 10.9 9.8 12 9.8C13.1 9.8 14 8.8 14 7.2C14 5.8 13.5 4.2 12 2Z" fill="#FFFFFF"/>
                   <rect x="8" y="12" width="8" height="10" rx="1.8" fill="#FFFFFF"/>
                 </svg>
-                <span>Enciende una luz</span>
+                <span>Enciende una luz por él</span>
                 <span className="text-base sm:text-lg">→</span>
               </button>
 
