@@ -1056,94 +1056,20 @@ export default function CieloLlenoDeLucesClient() {
               onScroll={checkCarouselScroll}
               tabIndex={0}
               aria-label="Carrusel de luces destacadas"
-              className="flex items-stretch gap-3 sm:gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none py-2 px-1 focus:outline-none focus:ring-2 focus:ring-[#F0BED6]/50 rounded-2xl"
+              className="flex items-stretch gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory scrollbar-none py-6 px-4 focus:outline-none focus:ring-2 focus:ring-[#F0BED6]/50 rounded-2xl"
               style={{
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
               }}
             >
-              {featuredCandles.map((candle) => {
-                const isXena = candle.id === 'candle-xena';
-
-                if (isXena) {
-                  return (
-                    <TarjetaHomenajeCelestial
-                      key={`destacada-${candle.id}`}
-                      candle={candle}
-                      onSendWarmth={handleSendWarmth}
-                      onSelect={setSelectedCandle}
-                    />
-                  );
-                }
-
-                return (
-                  <div
-                    key={`destacada-${candle.id}`}
-                    role="article"
-                    aria-label={`Homenaje celestial a ${candle.petName}`}
-                    className="group relative shrink-0 snap-start w-[254px] min-h-[366px] rounded-[22px] overflow-hidden bg-gradient-to-b from-white via-[#FFFDFE] to-[#FAF2F7] border border-[#F6DCEB]/90 shadow-[0_8px_24px_rgba(184,60,126,0.10)] hover:shadow-[0_14px_30px_rgba(184,60,126,0.18)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between p-0 select-none relative"
-                  >
-                    {/* Zona Superior: Vela, Flores y Foto Circular de la Mascota con Marco Dorado */}
-                    <div className="relative w-full h-[170px] bg-gradient-to-b from-[#FFF9F6] to-white">
-                      {/* Vela celestial con huella y flores en la izquierda */}
-                      <div className="absolute top-0 left-0 w-[138px] h-[146px] z-[1] overflow-hidden pointer-events-none">
-                        <Image 
-                          src="/images/luces/vela-homenaje-pilar-escena.webp" 
-                          alt="Vela celestial con huella y flores" 
-                          fill 
-                          sizes="138px"
-                          className="object-contain object-left-top" 
-                        />
-                        <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-                      </div>
-
-                      {/* Fotografía Circular con Marco Dorado Radiante y Cálido */}
-                      <div className="absolute top-8 left-[122px] w-[108px] h-[108px] rounded-full z-[3] p-[3.5px] bg-gradient-to-br from-[#FFF6D8] via-[#E8C288] to-[#C2933C] shadow-[0_0_16px_rgba(232,194,136,0.65),0_4px_14px_rgba(45,15,49,0.15)] flex items-center justify-center">
-                        <div className="w-full h-full rounded-full overflow-hidden relative bg-[#FDF4F8] border border-[#FFF8E7]">
-                          <Image 
-                            src={candle.photoUrl || '/images/comunidad/golden_retriever_celestial_clean.webp'}
-                            alt={candle.petName}
-                            fill
-                            sizes="108px"
-                            className="object-cover object-[center_25%]"
-                          />
-                        </div>
-                        <div className="absolute top-0.5 right-4 w-2 h-2 rounded-full bg-white blur-[0.5px] shadow-[0_0_8px_#FFF2B2] pointer-events-none" />
-                      </div>
-                    </div>
-
-                    {/* Zona Central: Nombre y Dedicatoria Real */}
-                    <div className="px-5 pt-1 text-center flex flex-col items-center z-[5]">
-                      <h3 className="font-playfair font-bold text-[22px] text-[#2D0F31] mb-1 tracking-tight">
-                        {candle.petName}
-                      </h3>
-                      <p className="font-playfair italic text-[12.5px] leading-snug text-[#4A1B43] max-w-[215px] line-clamp-3 mb-2">
-                        “{candle.dedication || 'Siempre en nuestro recuerdo, iluminando el cielo con tu amor.'}”
-                      </p>
-                    </div>
-
-                    {/* Zona Inferior: Botón «Te acompaño» y Enlace «Ver su recuerdo» */}
-                    <div className="pb-4 pt-1 flex flex-col items-center gap-2 z-[5] w-full">
-                      <button
-                        type="button"
-                        onClick={(e) => handleSendWarmth(candle.id, e)}
-                        className="w-[198px] h-[38px] rounded-full bg-[#FAF1F7] hover:bg-[#F5E2EF] border border-[#ECC9DE] text-[#843E78] font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs active:scale-95"
-                      >
-                        <span className="text-[#C4679B] text-sm">♡</span>
-                        <span>Te acompaño</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedCandle(candle)}
-                        className="text-xs text-[#843E78] hover:text-[#2D0F31] underline font-medium cursor-pointer transition-colors inline-flex items-center gap-0.5"
-                      >
-                        <span>Ver su recuerdo</span>
-                        <span>→</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+              {featuredCandles.map((candle) => (
+                <TarjetaHomenajeCelestial
+                  key={`destacada-${candle.id}`}
+                  candle={candle}
+                  onSendWarmth={handleSendWarmth}
+                  onSelect={setSelectedCandle}
+                />
+              ))}
             </div>
 
             {/* Flecha Derecha Discreta */}
