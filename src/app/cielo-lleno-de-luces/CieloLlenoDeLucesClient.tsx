@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Image from 'next/image';
+import TarjetaHomenajeCelestial from '@/components/luces/TarjetaHomenajeCelestial';
 import Link from 'next/link';
 import { OctubreBanner } from '@/components/landing/OctubreBanner';
 import { CartasAlCieloHeader } from '@/components/comunidad/CartasAlCieloHeader';
@@ -1066,63 +1067,12 @@ export default function CieloLlenoDeLucesClient() {
 
                 if (isXena) {
                   return (
-                    <div
+                    <TarjetaHomenajeCelestial
                       key={`destacada-${candle.id}`}
-                      role="article"
-                      aria-label={`Homenaje celestial a ${candle.petName}`}
-                      className="group relative shrink-0 snap-start w-[254px] h-[366px] rounded-[22px] overflow-hidden bg-[#FAF2F7] border border-[#F6DCEB]/90 shadow-[0_8px_24px_rgba(184,60,126,0.12)] hover:shadow-[0_14px_30px_rgba(184,60,126,0.20)] transition-all duration-300 hover:-translate-y-1.5 select-none relative"
-                    >
-                      {/* Capa 0: Foto real de Xena colocada detrás de la abertura de la medalla dorada */}
-                      <div className="absolute top-[32px] left-[131.5px] w-[98px] h-[98px] rounded-full overflow-hidden z-[1] bg-[#FDF4F8]">
-                        <Image
-                          src={candle.photoUrl || '/images/comunidad/xena.jpg'}
-                          alt={candle.petName}
-                          fill
-                          sizes="98px"
-                          className="object-cover object-[center_25%]"
-                        />
-                      </div>
-
-                      {/* Capa 1: Plantilla celestial maestra (vela, flores, medalla dorada, placa marfil limpia, cielo melocotón/lavanda) */}
-                      <Image
-                        src="/images/luces/plantilla-tarjeta-destacada.webp"
-                        alt="Plantilla celestial oficial"
-                        fill
-                        sizes="254px"
-                        priority
-                        className="object-cover z-[2] pointer-events-none"
-                      />
-
-                      {/* Capa 2: Nombre y dedicatoria real sobre placa marfil limpia */}
-                      <div className="absolute top-[154px] inset-x-0 z-[3] flex flex-col items-center px-[18px]">
-                        <h3 className="font-playfair font-bold text-[23px] text-[#2D0F31] tracking-tight mb-1 text-center leading-tight">
-                          {candle.petName}
-                        </h3>
-                        <p className="font-playfair italic text-[12.5px] leading-[1.35] text-[#4A1B43] text-center max-w-[206px] line-clamp-3">
-                          “{candle.dedication || 'Siempre en nuestro recuerdo, iluminando el cielo con tu amor incondicional.'}”
-                        </p>
-                      </div>
-
-                      {/* Capa 3: Botón interactivo «♡ Te acompaño» sobre fondo celestial */}
-                      <button
-                        type="button"
-                        onClick={(e) => handleSendWarmth(candle.id, e)}
-                        className="absolute top-[286px] left-[28px] w-[198px] h-[38px] rounded-full bg-[#FAF1F7] hover:bg-[#F5E2EF] border border-[#ECC9DE] text-[#843E78] font-semibold text-[12.5px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs active:scale-95 z-[4]"
-                      >
-                        <span className="text-[#C4679B] text-[13.5px]">♡</span>
-                        <span>Te acompaño</span>
-                      </button>
-
-                      {/* Capa 4: Enlace «Ver su recuerdo →» para apertura del modal */}
-                      <button
-                        type="button"
-                        onClick={() => setSelectedCandle(candle)}
-                        className="absolute top-[334px] inset-x-0 flex items-center justify-center gap-1 text-xs text-[#843E78] hover:text-[#2D0F31] underline font-medium cursor-pointer transition-colors z-[4]"
-                      >
-                        <span>Ver su recuerdo</span>
-                        <span>→</span>
-                      </button>
-                    </div>
+                      candle={candle}
+                      onSendWarmth={handleSendWarmth}
+                      onSelect={setSelectedCandle}
+                    />
                   );
                 }
 

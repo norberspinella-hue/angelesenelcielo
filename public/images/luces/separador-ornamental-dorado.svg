@@ -1,0 +1,30 @@
+<svg width="140" height="14" viewBox="0 0 140 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold-sep-grad" x1="0" y1="7" x2="140" y2="7" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E8C288" stop-opacity="0" />
+      <stop offset="25%" stop-color="#E8C288" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#FFF2CE" stop-opacity="1" />
+      <stop offset="75%" stop-color="#E8C288" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#E8C288" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="heart-gold" x1="66" y1="2" x2="74" y2="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFF5D6" />
+      <stop offset="50%" stop-color="#E8C288" />
+      <stop offset="100%" stop-color="#C2933C" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left delicate branch & flourishes -->
+  <path d="M10 7H62" stroke="url(#gold-sep-grad)" stroke-width="0.8" stroke-linecap="round" />
+  <circle cx="56" cy="7" r="1.2" fill="#E8C288" opacity="0.9" />
+  <path d="M42 5C45 6 48 7 52 7" stroke="url(#gold-sep-grad)" stroke-width="0.6" stroke-linecap="round" />
+
+  <!-- Center Heart with halo -->
+  <path d="M70 11.5C70 11.5 65.5 8.2 65.5 5.5C65.5 3.8 66.8 2.5 68.2 2.5C69.2 2.5 70 3.2 70 3.2C70 3.2 70.8 2.5 71.8 2.5C73.2 2.5 74.5 3.8 74.5 5.5C74.5 8.2 70 11.5 70 11.5Z" 
+        fill="url(#heart-gold)" />
+
+  <!-- Right delicate branch & flourishes -->
+  <path d="M78 7H130" stroke="url(#gold-sep-grad)" stroke-width="0.8" stroke-linecap="round" />
+  <circle cx="84" cy="7" r="1.2" fill="#E8C288" opacity="0.9" />
+  <path d="M88 7C92 7 95 6 98 5" stroke="url(#gold-sep-grad)" stroke-width="0.6" stroke-linecap="round" />
+</svg>
