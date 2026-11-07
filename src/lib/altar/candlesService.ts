@@ -428,7 +428,7 @@ export class CandlesService {
         .range(offset, offset + limit - 1);
 
       const { data, count, error } = await query;
-      if (!error && data && data.length > 0) {
+      if (!error && Array.isArray(data)) {
         return {
           candles: data.map(computePresentationFields),
           total: count ?? data.length,
@@ -537,10 +537,10 @@ export class CandlesService {
         throw new Error('Has alcanzado el límite de velas por hora. Por favor inténtalo más tarde.');
       }
       if (dupCandles && dupCandles.length > 0) {
-        throw new Error('Ya se ha encendido una vela idéntica recientemente.');
+        throw new Error('Esta vela ya fue guardada recientemente en nuestro cielo. Tu homenaje está seguro y puedes recuperarlo o gestionarlo con tu correo electrónico.');
       }
     } catch (checkErr: any) {
-      if (checkErr.message?.includes('límite de velas') || checkErr.message?.includes('vela idéntica')) {
+      if (checkErr.message?.includes('límite de velas') || checkErr.message?.includes('guardada recientemente')) {
         throw checkErr;
       }
       // Validación complementaria sobre réplica local ante contingencias
@@ -557,7 +557,7 @@ export class CandlesService {
              new Date(c.created_at).getTime() > twoHoursAgoMs
       );
       if (dupLocal) {
-        throw new Error('Ya se ha encendido una vela idéntica recientemente.');
+        throw new Error('Esta vela ya fue guardada recientemente en nuestro cielo. Tu homenaje está seguro y puedes recuperarlo o gestionarlo con tu correo electrónico.');
       }
     }
 
