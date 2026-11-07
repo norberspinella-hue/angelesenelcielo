@@ -212,6 +212,41 @@ const SEED_CANDLES: AltarCandle[] = [
   },
 ];
 
+// Estructura versionada para historial local de visitas y abrazos de luz
+export interface StoredWarmthRecord {
+  lastSeenWarmthCount: number;
+  lastViewedAt: string;
+}
+
+export const WARMTH_HISTORY_STORAGE_KEY = 'cielo_luces_warmth_history_v1';
+
+export function getStoredWarmthHistory(): Record<string, StoredWarmthRecord> {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = localStorage.getItem(WARMTH_HISTORY_STORAGE_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (typeof parsed !== 'object' || parsed === null) return {};
+    return parsed as Record<string, StoredWarmthRecord>;
+  } catch {
+    return {};
+  }
+}
+
+export function saveWarmthRecord(candleId: string, warmthCount: number): void {
+  if (typeof window === 'undefined' || !candleId) return;
+  try {
+    const history = getStoredWarmthHistory();
+    history[candleId] = {
+      lastSeenWarmthCount: Math.max(0, Number(warmthCount) || 0),
+      lastViewedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(WARMTH_HISTORY_STORAGE_KEY, JSON.stringify(history));
+  } catch {
+    // Failsafe ante modo incógnito estricto o cuota de almacenamiento llena
+  }
+}
+
 export default function CieloLlenoDeLucesClient() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
@@ -266,6 +301,7 @@ export default function CieloLlenoDeLucesClient() {
   
   // Modales
   const [selectedCandle, setSelectedCandle] = useState<AltarCandle | null>(null);
+  const [newWarmthSinceLastVisit, setNewWarmthSinceLastVisit] = useState<number>(0);
   const [showNewCandleModal, setShowNewCandleModal] = useState(false);
   const [newCandleCelebration, setNewCandleCelebration] = useState(false);
   const [latestManageToken, setLatestManageToken] = useState<string | null>(null);
@@ -274,12 +310,38 @@ export default function CieloLlenoDeLucesClient() {
   const [recoveryEmailInput, setRecoveryEmailInput] = useState('');
   const [isRecovering, setIsRecovering] = useState(false);
 
+  // Apertura de ficha de homenaje calculando novedades de abrazos
+  const handleOpenCandleModal = useCallback((candle: AltarCandle) => {
+    const currentCount = typeof candle.warmthCount === 'number' ? candle.warmthCount : 0;
+    const history = getStoredWarmthHistory();
+    const existingRecord = history[candle.id];
+
+    if (existingRecord && typeof existingRecord.lastSeenWarmthCount === 'number') {
+      const diff = Math.max(0, currentCount - existingRecord.lastSeenWarmthCount);
+      setNewWarmthSinceLastVisit(diff);
+    } else {
+      // Primera visita: no mostrar novedades; registrar el contador actual como punto de partida
+      setNewWarmthSinceLastVisit(0);
+    }
+
+    // Registrar de inmediato en localStorage para que aperturas consecutivas den 0 novedades
+    saveWarmthRecord(candle.id, currentCount);
+    setSelectedCandle(candle);
+  }, []);
+
+  const handleCloseCandleModal = useCallback(() => {
+    setSelectedCandle(null);
+    setNewWarmthSinceLastVisit(0);
+    setShowRecoveryForm(false);
+    setManualTokenInput('');
+  }, []);
+
   // Bloqueo de scroll en body cuando un modal está abierto y cierre mediante tecla Escape
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setShowNewCandleModal(false);
-        setSelectedCandle(null);
+        handleCloseCandleModal();
       }
     };
 
@@ -415,7 +477,7 @@ export default function CieloLlenoDeLucesClient() {
             // Auto-seleccionar la vela si ya cargó
             const target = candles.find(c => c.id === data.candleId);
             if (target) {
-              setSelectedCandle(target);
+              handleOpenCandleModal(target);
             }
             showToast('✓ Dispositivo vinculado con éxito para gestionar este homenaje.');
           } else {
@@ -429,13 +491,13 @@ export default function CieloLlenoDeLucesClient() {
       // 2. Apertura directa por enlace de aviso previo o reposo (?candleId=...&action=reignite)
       const target = candles.find(c => c.id === candleIdParam);
       if (target) {
-        setSelectedCandle(target);
+        handleOpenCandleModal(target);
         if (actionParam === 'reignite') {
           showToast(`Homenaje de ${target.petName} abierto. Confirma el reavivado en el panel.`);
         }
       }
     }
-  }, [candles]);
+  }, [candles, handleOpenCandleModal]);
 
   // Contadores vivos
   const activeCandlesCount = stats ? stats.active_candles_count : candles.filter(c => !c.isNeedsReignition).length;
@@ -495,6 +557,9 @@ export default function CieloLlenoDeLucesClient() {
       try {
         localStorage.setItem(`altar_manage_${candleId}`, customToken.trim());
       } catch {}
+
+      const targetCandle = candles.find(c => c.id === candleId) || (selectedCandle?.id === candleId ? selectedCandle : null);
+      saveWarmthRecord(candleId, (targetCandle?.warmthCount || 0) + 1);
 
       setCandles(prev => prev.map(c => {
         if (c.id === candleId) {
@@ -561,6 +626,9 @@ export default function CieloLlenoDeLucesClient() {
       token = localStorage.getItem(`altar_manage_${candleId}`) || '';
     } catch {}
 
+    const currentCandle = candles.find(c => c.id === candleId) || (selectedCandle?.id === candleId ? selectedCandle : null);
+    saveWarmthRecord(candleId, (currentCandle?.warmthCount || 0) + 1);
+
     setCandles(prev => prev.map(c => {
       if (c.id === candleId) {
         return {
@@ -602,6 +670,11 @@ export default function CieloLlenoDeLucesClient() {
   // Acción: Acompañar / Enviar calor
   const handleSendWarmth = async (candleId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+
+    const currentCandle = candles.find(c => c.id === candleId) || (selectedCandle?.id === candleId ? selectedCandle : null);
+    const updatedWarmth = (currentCandle?.warmthCount || 0) + 1;
+    saveWarmthRecord(candleId, updatedWarmth);
+
     setCandles(prev => prev.map(c => {
       if (c.id === candleId) {
         return { ...c, warmthCount: (c.warmthCount || 0) + 1 };
@@ -1122,7 +1195,7 @@ export default function CieloLlenoDeLucesClient() {
                   key={`destacada-${candle.id}`}
                   candle={candle}
                   onSendWarmth={handleSendWarmth}
-                  onSelect={setSelectedCandle}
+                  onSelect={handleOpenCandleModal}
                 />
               ))}
             </div>
@@ -1333,7 +1406,7 @@ export default function CieloLlenoDeLucesClient() {
               <TarjetaLuzGaleria
                 key={candle.id}
                 candle={candle}
-                onSelect={(c) => setSelectedCandle(c as AltarCandle)}
+                onSelect={(c) => handleOpenCandleModal(c as AltarCandle)}
                 onSendWarmth={handleSendWarmth}
               />
             ))}
@@ -1355,7 +1428,7 @@ export default function CieloLlenoDeLucesClient() {
         <div 
           className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-[#0D0312]/85 backdrop-blur-md overflow-y-auto [&::-webkit-scrollbar]:hidden [scrollbar-width:none] animate-fade-in"
           onClick={(e) => {
-            if (e.target === e.currentTarget) setSelectedCandle(null);
+            if (e.target === e.currentTarget) handleCloseCandleModal();
           }}
         >
           <div 
@@ -1365,7 +1438,7 @@ export default function CieloLlenoDeLucesClient() {
             
             <button
               type="button"
-              onClick={() => setSelectedCandle(null)}
+              onClick={handleCloseCandleModal}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center cursor-pointer transition-colors z-20 font-bold select-none"
               aria-label="Cerrar modal"
             >
@@ -1404,6 +1477,31 @@ export default function CieloLlenoDeLucesClient() {
             <div className="p-4 rounded-2xl bg-[#FFF9F6] border border-[#F5E2CC] text-xs sm:text-sm text-[#5C3C58] italic font-serif leading-relaxed">
               «{selectedCandle.dedication}»
             </div>
+
+            {/* Novedades de abrazos de luz desde la última visita */}
+            {newWarmthSinceLastVisit > 0 && (
+              <div 
+                className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#FFF5F8] via-[#FFF9F6] to-[#FFF0F6] border border-[#F0BED6] text-left shadow-sm flex items-start gap-3 transition-all animate-fade-in"
+                role="status"
+                aria-live="polite"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#FFEBF3] border border-[#F0BED6] flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="#B83C7E" className="shrink-0" aria-hidden="true">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </div>
+                <div className="space-y-0.5 flex-1 min-w-0">
+                  <p className="text-xs sm:text-[13px] font-semibold text-[#6E1C44] leading-snug">
+                    {newWarmthSinceLastVisit === 1
+                      ? `Desde tu última visita, ${selectedCandle.petName} ha recibido un nuevo abrazo de luz.`
+                      : `Desde tu última visita, ${selectedCandle.petName} ha recibido ${newWarmthSinceLastVisit} nuevos abrazos de luz.`}
+                  </p>
+                  <p className="text-[11px] sm:text-xs text-[#8C6D83] italic font-serif">
+                    Hay corazones que siguen acompañando su recuerdo.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Estado de días o aviso de apagado */}
             <div className="text-xs font-semibold text-[#8C3F71] flex items-center justify-center gap-2">
