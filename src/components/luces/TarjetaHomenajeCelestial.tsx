@@ -44,8 +44,8 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
       aria-label={`Homenaje celestial a ${candle.petName}`}
       className={`group relative shrink-0 snap-start w-[254px] h-[366px] rounded-[22px] overflow-hidden select-none bg-[#FAF3F7] border border-[#F6DCEB]/95 shadow-[0_8px_28px_rgba(184,60,126,0.14)] hover:shadow-[0_14px_34px_rgba(184,60,126,0.20)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col ${className}`}
     >
-      {/* 1. ZONA SUPERIOR: FOTOGRAFÍA PROTAGONISTA (182px, termina en la unión con el subcontenedor) */}
-      <div className="relative w-full h-[182px] overflow-hidden bg-[#FDF4F8] shrink-0">
+      {/* 1. ZONA SUPERIOR: FOTOGRAFÍA PROTAGONISTA (se extiende ligeramente bajo el subcontenedor para sellar esquinas) */}
+      <div className="relative w-full h-[188px] overflow-hidden bg-[#FDF4F8] shrink-0">
         <Image
           src={candle.photoUrl || '/images/comunidad/xena.jpg'}
           alt={candle.petName}
@@ -55,45 +55,40 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
           className="object-cover object-[center_25%] group-hover:scale-105 transition-transform duration-700 ease-out"
         />
 
-        {/* Resplandor cálido de la vela sobre la esquina inferior izquierda de la foto */}
+        {/* Resplandor cálido sutil de luz (sin estrellas artificiales) */}
         {isLit && (
-          <div className="absolute -bottom-4 -left-4 w-[120px] h-[120px] rounded-full bg-radial from-amber-300/28 via-rose-300/10 to-transparent pointer-events-none blur-md" />
+          <div className="absolute -bottom-4 -left-4 w-[100px] h-[100px] rounded-full bg-radial from-amber-300/20 via-rose-300/5 to-transparent pointer-events-none blur-md" />
         )}
-
-        {/* Destellos celestiales sutiles */}
-        <span className="absolute top-3.5 right-4 text-[#FFEBA3] text-[11px] opacity-85 select-none pointer-events-none [text-shadow:0_0_6px_rgba(255,235,163,0.9)]">✦</span>
-        <span className="absolute top-9 right-8 text-[#FFD4EA] text-[8px] opacity-75 select-none pointer-events-none">✨</span>
       </div>
 
-      {/* 2. VELA OFICIAL SUPERPUESTA EN LA ESQUINA INFERIOR IZQUIERDA */}
-      {/* Recurso oficial pilar-enciende-luz.webp con transparencia alfa */}
-      <div className="absolute top-[124px] left-[6px] z-25 w-[74px] h-[106px] pointer-events-none">
-        {/* Sombra de contacto */}
-        <div className="absolute bottom-[2px] left-[10px] w-[54px] h-[14px] rounded-full bg-black/16 blur-[4px]" />
-
-        {/* Imagen de la vela oficial (estática, sin animación, no interactiva) */}
-        <div className="relative w-full h-full">
-          <Image
-            src="/images/luces/pilar-enciende-luz.webp"
-            alt="Vela oficial del proyecto"
-            fill
-            sizes="74px"
-            className="object-contain object-bottom drop-shadow-[0_4px_10px_rgba(232,194,136,0.40)] transition-transform duration-500 group-hover:scale-105"
-          />
-        </div>
-      </div>
-
-      {/* 3. SUBCONTENEDOR INFERIOR: FONDO VISIBLE DIRECTO DEL MURAL GLOBAL (NUBES CELESTIALES) */}
+      {/* 2. SUBCONTENEDOR INFERIOR: FONDO VISIBLE DIRECTO DEL MURAL GLOBAL (NUBES CELESTIALES) */}
       <div
-        className="relative z-10 flex-1 rounded-t-[20px] overflow-hidden border-t border-white/95 shadow-[0_-3px_14px_rgba(184,60,126,0.08)] flex flex-col justify-between pt-2.5 pb-3 px-3.5 pl-[64px]"
+        className="relative z-10 -mt-1.5 flex-1 rounded-t-[20px] overflow-hidden border-t border-white/95 shadow-[0_-4px_14px_rgba(184,60,126,0.08)] flex flex-col justify-between pt-2.5 pb-3 px-3.5"
         style={{
           backgroundImage: "url('/images/mural-preview/card-heaven-front-master.webp')",
           backgroundSize: 'cover',
           backgroundPosition: 'center bottom',
         }}
       >
-        {/* Cabecera del subcontenedor: Nombre y Separador Ornamental Dorado */}
-        <div className="relative z-1 flex flex-col items-center text-center">
+        {/* VELA OFICIAL SUPERPUESTA: Íntegramente dentro del subcontenedor inferior (esquina superior izquierda) */}
+        <div className="absolute top-1.5 left-2 z-20 w-[48px] h-[68px] pointer-events-none">
+          {/* Sombra de contacto */}
+          <div className="absolute bottom-[2px] left-[6px] w-[36px] h-[10px] rounded-full bg-black/16 blur-[3px]" />
+
+          {/* Imagen oficial pilar-enciende-luz.webp (estática, sin animación, no interactiva) */}
+          <div className="relative w-full h-full">
+            <Image
+              src="/images/luces/pilar-enciende-luz.webp"
+              alt="Vela oficial del proyecto"
+              fill
+              sizes="48px"
+              className="object-contain object-bottom drop-shadow-[0_2px_8px_rgba(232,194,136,0.50)] transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
+        </div>
+
+        {/* Cabecera del subcontenedor: Nombre y Separador Ornamental 100% CENTRADOS respecto al ancho total */}
+        <div className="relative z-1 flex flex-col items-center text-center w-full">
           <h3 className="font-playfair font-bold text-[21px] text-[#2D0F31] tracking-[-0.2px] leading-tight drop-shadow-[0_1px_3px_rgba(255,255,255,0.95)]">
             {candle.petName}
           </h3>
@@ -115,8 +110,8 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
           </p>
         </div>
 
-        {/* Acciones: Botón «♡ Te acompaño» y enlace «Ver su recuerdo →» */}
-        <div className="relative z-1 flex flex-col items-center gap-1.5 mt-1 -ml-[50px] w-[222px]">
+        {/* Acciones: Botón «♡ Te acompaño» y enlace «Ver su recuerdo →» 100% CENTRADOS */}
+        <div className="relative z-1 flex flex-col items-center gap-1.5 mt-1 w-full">
           <button
             type="button"
             onClick={(e) => {
