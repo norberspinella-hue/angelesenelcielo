@@ -1432,21 +1432,21 @@ export default function CieloLlenoDeLucesClient() {
           }}
         >
           <div 
-            className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-[0_24px_64px_rgba(0,0,0,0.50)] border border-white text-center space-y-4 relative text-[#2D0F31] max-h-[92vh] overflow-y-auto my-auto z-10"
+            className="rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-[0_24px_64px_rgba(45,15,49,0.55),0_0_24px_rgba(240,190,214,0.30)] border border-[#F0BED6]/90 text-center space-y-4 relative text-[#2D0F31] max-h-[92vh] overflow-y-auto my-auto z-10 bg-[#F8E4EF] bg-cover bg-top bg-no-repeat bg-[url('/images/luces/modal-celestial-mobile-1080x1920.webp')] md:bg-[url('/images/luces/modal-celestial-desktop-1200x1600.webp')]"
             onClick={(e) => e.stopPropagation()}
           >
             
             <button
               type="button"
               onClick={handleCloseCandleModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center cursor-pointer transition-colors z-20 font-bold select-none"
+              className="absolute top-4 right-4 text-[#7A285A] hover:text-[#2D0F31] w-9 h-9 rounded-full bg-white/75 hover:bg-white/95 backdrop-blur-md border border-[#F0BED6]/90 flex items-center justify-center cursor-pointer transition-colors z-20 font-bold shadow-xs select-none"
               aria-label="Cerrar modal"
             >
               ✕
             </button>
 
             {/* Vela y foto */}
-            <div className="relative w-24 h-24 mx-auto rounded-full border-[3px] border-[#F59E0B] shadow-lg overflow-hidden bg-white ring-4 ring-[#FFF0F6]">
+            <div className="relative w-24 h-24 mx-auto rounded-full border-[3px] border-[#F59E0B] shadow-[0_4px_16px_rgba(116,52,90,0.18)] overflow-hidden bg-white ring-4 ring-white/80">
               <Image 
                 src={selectedCandle.photoUrl || '/images/comunidad/golden_retriever_celestial_clean.webp'} 
                 alt={selectedCandle.petName} 
@@ -1456,32 +1456,32 @@ export default function CieloLlenoDeLucesClient() {
             </div>
 
             <div>
-              <div className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-[#FFF0F6] border border-[#F0BED6] text-[10.5px] font-bold text-[#8C3F71] mb-1">
+              <div className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-white/85 backdrop-blur-md border border-[#F0BED6] text-[10.5px] font-bold text-[#8C3F71] mb-1 shadow-xs">
                 <span>🕯️</span>
                 <span>Vela del Cielo de Luces</span>
               </div>
-              <h3 className="font-playfair text-2xl font-bold text-[#2D0F31]">
+              <h3 className="font-playfair text-2xl font-bold text-[#2D0F31] drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]">
                 {selectedCandle.petName}
               </h3>
-              <p className="text-xs text-[#8C6D83] italic">
+              <p className="text-xs text-[#5C3252] italic font-medium drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]">
                 Encendida por {selectedCandle.authorName} · {selectedCandle.litDate}
               </p>
               {selectedCandle.socialHandle && (
-                <p className="text-[11px] font-semibold text-[#8C3F71] mt-0.5">
+                <p className="text-[11px] font-semibold text-[#8C3F71] mt-0.5 drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]">
                   📸 {selectedCandle.socialHandle}
                 </p>
               )}
             </div>
 
-            {/* Dedicatoria completa */}
-            <div className="p-4 rounded-2xl bg-[#FFF9F6] border border-[#F5E2CC] text-xs sm:text-sm text-[#5C3C58] italic font-serif leading-relaxed">
+            {/* Dedicatoria completa en panel cristal marfil rosado */}
+            <div className="p-4 rounded-2xl bg-[#FFF8FB]/90 backdrop-blur-md border border-[#F0BED6]/90 text-xs sm:text-sm text-[#4A1E3E] italic font-serif leading-relaxed shadow-xs">
               «{selectedCandle.dedication}»
             </div>
 
             {/* Novedades de abrazos de luz desde la última visita */}
             {newWarmthSinceLastVisit > 0 && (
               <div 
-                className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#FFF5F8] via-[#FFF9F6] to-[#FFF0F6] border border-[#F0BED6] text-left shadow-sm flex items-start gap-3 transition-all animate-fade-in"
+                className="p-3.5 sm:p-4 rounded-2xl bg-[#FFF5F8]/92 backdrop-blur-md border border-[#F0BED6] text-left shadow-sm flex items-start gap-3 transition-all animate-fade-in"
                 role="status"
                 aria-live="polite"
               >
@@ -1504,7 +1504,7 @@ export default function CieloLlenoDeLucesClient() {
             )}
 
             {/* Estado de días o aviso de apagado */}
-            <div className="text-xs font-semibold text-[#8C3F71] flex items-center justify-center gap-2">
+            <div className="text-xs font-semibold text-[#8C3F71] flex items-center justify-center gap-2 p-2 rounded-xl bg-white/70 backdrop-blur-xs border border-[#F0BED6]/60 shadow-xs">
               {selectedCandle.isEternal ? (
                 <span className="flex items-center gap-1 text-[#92400E]">
                   <Image src="/images/icons/plans/icon-plan-estrella.svg" alt="Estrella" width={14} height={14} className="w-3.5 h-3.5 object-contain" />
@@ -1617,7 +1617,7 @@ export default function CieloLlenoDeLucesClient() {
 
               <Link
                 href="/comunidad"
-                className="w-full py-2.5 rounded-2xl font-semibold text-[#6C5367] bg-gray-100 hover:bg-gray-200 text-xs transition-all text-center"
+                className="w-full py-2.5 rounded-2xl font-semibold text-[#5C3252] bg-white/80 hover:bg-white border border-[#ECC9DE]/80 text-xs transition-all text-center shadow-xs backdrop-blur-xs"
               >
                 Ver Cartas al Cielo
               </Link>
