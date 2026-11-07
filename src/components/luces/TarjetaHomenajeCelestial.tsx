@@ -42,7 +42,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
     <article
       role="article"
       aria-label={`Homenaje celestial a ${candle.petName}`}
-      className={`group relative shrink-0 snap-start w-[254px] h-[366px] rounded-[22px] overflow-hidden select-none bg-[#FAF3F7] border border-[#F6DCEB]/95 shadow-[0_8px_28px_rgba(184,60,126,0.14)] hover:shadow-[0_14px_34px_rgba(184,60,126,0.20)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col ${className}`}
+      className={`group relative shrink-0 snap-start w-[254px] h-[366px] rounded-[22px] overflow-hidden select-none bg-[#FAF3F7] border-[1.5px] border-[#ECC4B2] shadow-[0_0_16px_rgba(235,196,168,0.45),0_0_4px_rgba(246,219,203,0.65),0_8px_28px_rgba(184,60,126,0.14),inset_0_0_8px_rgba(255,245,240,0.35)] hover:shadow-[0_0_22px_rgba(235,196,168,0.60),0_0_6px_rgba(246,219,203,0.80),0_12px_32px_rgba(184,60,126,0.20),inset_0_0_10px_rgba(255,245,240,0.50)] transition-all duration-300 hover:-translate-y-1.5 flex flex-col ${className}`}
     >
       {/* 1. ZONA SUPERIOR: FOTOGRAFÍA PROTAGONISTA (se extiende hasta 215px para continuar limpiamente detrás de las curvas) */}
       <div className="absolute top-0 left-0 w-full h-[215px] overflow-hidden bg-[#FDF4F8] z-1">
@@ -70,6 +70,31 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
           backgroundPosition: 'center bottom',
         }}
       >
+        {/* Borde superior curvado elegante y celestial (oro rosa fino que acompaña rounded-t-[20px]) */}
+        <svg
+          className="absolute top-0 left-0 w-full h-[24px] pointer-events-none z-25 overflow-visible"
+          viewBox="0 0 254 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id={`roseGoldSeam-${candle.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#ECC4B2" stopOpacity="0.9" />
+              <stop offset="25%" stopColor="#FBF0EA" stopOpacity="1" />
+              <stop offset="50%" stopColor="#F2C7B8" stopOpacity="0.95" />
+              <stop offset="75%" stopColor="#FBF0EA" stopOpacity="1" />
+              <stop offset="100%" stopColor="#ECC4B2" stopOpacity="0.9" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M 0.75 20 A 19.25 19.25 0 0 1 20 0.75 L 234 0.75 A 19.25 19.25 0 0 1 253.25 20"
+            stroke={`url(#roseGoldSeam-${candle.id})`}
+            strokeWidth="1.5"
+            strokeLinecap="butt"
+            fill="none"
+          />
+        </svg>
+
         {/* VELA OFICIAL SUPERPUESTA: Íntegramente dentro del subcontenedor inferior (esquina superior izquierda) */}
         <div className="absolute top-1.5 left-2 z-20 w-[48px] h-[68px] pointer-events-none">
           {/* Sombra de contacto */}
