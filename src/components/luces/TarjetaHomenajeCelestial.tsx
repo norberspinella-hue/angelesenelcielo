@@ -63,7 +63,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
 
       {/* 2. SUBCONTENEDOR INFERIOR: FONDO VISIBLE DIRECTO DEL MURAL GLOBAL (NUBES CELESTIALES) */}
       <div
-        className="relative z-10 -mt-1.5 flex-1 rounded-t-[20px] overflow-hidden border-t border-white/95 shadow-[0_-4px_14px_rgba(184,60,126,0.08)] flex flex-col justify-between pt-2.5 pb-3 px-3.5"
+        className="relative z-10 -mt-[11px] w-full flex-1 overflow-hidden border-t border-white/95 shadow-[0_-4px_14px_rgba(184,60,126,0.08)] flex flex-col justify-between pt-2.5 pb-3 px-3.5"
         style={{
           backgroundImage: "url('/images/mural-preview/card-heaven-front-master.webp')",
           backgroundSize: 'cover',
