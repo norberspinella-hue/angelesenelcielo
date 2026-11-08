@@ -18,7 +18,7 @@ const SUPABASE_CHANNEL_NAME = 'live_tiktok_realtime_stream_v3';
 // Cache en memoria de tokens validados en el servidor con TTL de 15 minutos
 const verifiedTokensMap = new Map<string, number>();
 const rejectedTokensMap = new Map<string, number>();
-const TOKEN_CACHE_TTL_MS = 15 * 60 * 1000;
+const TOKEN_CACHE_TTL_MS = 30 * 1000; // Reducido a 30s para garantizar revocación ágil ante rotación de secreto
 const REJECTED_CACHE_TTL_MS = 60 * 1000;
 
 async function verifyTokenWithServer(token: string): Promise<boolean> {
@@ -37,7 +37,14 @@ async function verifyTokenWithServer(token: string): Promise<boolean> {
   }
 
   try {
-    const res = await fetch(`/api/live-tiktok/auth?token=${encodeURIComponent(token)}`);
+    const res = await fetch('/api/live-tiktok/auth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ action: 'verify' }),
+    });
     const data = await res.json();
     if (res.ok && data.valid === true) {
       verifiedTokensMap.set(token, now);

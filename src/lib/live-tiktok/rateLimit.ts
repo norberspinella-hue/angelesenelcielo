@@ -36,7 +36,7 @@ function isValidIp(ip: string): boolean {
 
 /**
  * Seudonimiza la IP para almacenamiento seguro mediante HMAC-SHA256.
- * Nunca almacena IPs en texto claro en la base de datos.
+ * Cero almacenamiento de IPs en texto claro en base de datos.
  */
 function getPseudonymizedKey(ip: string, secret: string): string {
   return crypto.createHmac('sha256', secret).update(`live_tiktok_pin:${ip.trim()}`).digest('hex');
@@ -49,14 +49,17 @@ export interface LiveRateLimitResult {
   error?: string;
 }
 
-// Fallback en memoria para resiliencia ante contingencias de red serverless
-const memoryFailedAttempts = new Map<string, { count: number; lastAttempt: number; blockedUntil?: number }>();
 const MAX_ATTEMPTS = 5;
-const WINDOW_MS = 15 * 60 * 1000; // 15 minutos
-const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutos
+const WINDOW_SECONDS = 900; // 15 minutos
+const LOCKOUT_SECONDS = 900; // 15 minutos
+
+// Memoria local auxiliar de contingencia
+const localMemoryFallback = new Map<string, { count: number; lastAttempt: number; blockedUntil?: number }>();
 
 /**
  * Comprueba si la IP está bloqueada por exceso de intentos fallidos.
+ * POLÍTICA FAIL-CLOSED: Si la base de datos o la RPC de seguridad no responde en producción,
+ * el acceso se bloquea con HTTP 503 por seguridad preventiva (nunca se degrada en acceso abierto).
  */
 export async function checkLiveRateLimit(req: NextRequest, secret: string): Promise<LiveRateLimitResult> {
   const ip = getClientIp(req);
@@ -64,40 +67,66 @@ export async function checkLiveRateLimit(req: NextRequest, secret: string): Prom
   const now = Date.now();
 
   // 1. Comprobación rápida en memoria local de la instancia serverless
-  const mem = memoryFailedAttempts.get(key);
+  const mem = localMemoryFallback.get(key);
   if (mem && mem.blockedUntil && mem.blockedUntil > now) {
     const remainingSeconds = Math.ceil((mem.blockedUntil - now) / 1000);
     return {
       allowed: false,
       status: 429,
       remainingSeconds,
-      error: `Demasiados intentos fallidos. Acceso bloqueado durante ${remainingSeconds} segundos.`,
+      error: `Demasiados intentos fallidos. Acceso temporalmente bloqueado durante ${remainingSeconds} segundos.`,
     };
   }
 
   // 2. Comprobación atómica distribuida en Supabase PostgreSQL RPC (compartida entre lambdas)
+  const isSupabaseConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+  if (!isSupabaseConfigured) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('FAIL-CLOSED: Infraestructura de base de datos no configurada en producción.');
+      return {
+        allowed: false,
+        status: 503,
+        error: 'Servicio de seguridad temporalmente no disponible.',
+      };
+    }
+    // Entorno local de testing sin BD configurada
+    return { allowed: true };
+  }
+
   try {
     const supabase = createAdminClient();
     const { data, error } = await (supabase as any).rpc('check_admin_rate_limit', { p_key: key });
 
-    if (!error && data) {
-      const row = Array.isArray(data) ? data[0] : data;
-      if (row && row.is_blocked) {
-        const remainingSeconds = row.remaining_seconds || 900;
-        return {
-          allowed: false,
-          status: 429,
-          remainingSeconds,
-          error: `Demasiados intentos fallidos. Acceso bloqueado durante ${remainingSeconds} segundos.`,
-        };
-      }
+    if (error) {
+      console.error('FAIL-CLOSED: Error en check_admin_rate_limit RPC:', error.message);
+      return {
+        allowed: false,
+        status: 503,
+        error: 'Servicio de seguridad temporalmente no disponible. Intente nuevamente en unos minutos.',
+      };
     }
-  } catch (err) {
-    // Si la BD remota no responde temporalmente, el limitador en memoria continúa activo
-    console.warn('Aviso: RPC check_admin_rate_limit no disponible, usando memoria:', err);
-  }
 
-  return { allowed: true };
+    const row = Array.isArray(data) ? data[0] : data;
+    if (row && row.is_blocked) {
+      const remainingSeconds = row.remaining_seconds || LOCKOUT_SECONDS;
+      return {
+        allowed: false,
+        status: 429,
+        remainingSeconds,
+        error: `Demasiados intentos fallidos. Acceso temporalmente bloqueado durante ${remainingSeconds} segundos.`,
+      };
+    }
+
+    return { allowed: true };
+  } catch (err: any) {
+    console.error('FAIL-CLOSED: Excepción en limitador distribuido:', err?.message || err);
+    return {
+      allowed: false,
+      status: 503,
+      error: 'Servicio de seguridad temporalmente no disponible. Intente nuevamente en unos minutos.',
+    };
+  }
 }
 
 /**
@@ -108,9 +137,9 @@ export async function recordLiveFailedAttempt(req: NextRequest, secret: string):
   const key = getPseudonymizedKey(ip, secret);
   const now = Date.now();
 
-  // 1. Registro en memoria
-  const mem = memoryFailedAttempts.get(key) || { count: 0, lastAttempt: now };
-  if (now - mem.lastAttempt > WINDOW_MS) {
+  // 1. Registro en memoria local
+  const mem = localMemoryFallback.get(key) || { count: 0, lastAttempt: now };
+  if (now - mem.lastAttempt > WINDOW_SECONDS * 1000) {
     mem.count = 1;
   } else {
     mem.count += 1;
@@ -118,22 +147,25 @@ export async function recordLiveFailedAttempt(req: NextRequest, secret: string):
   mem.lastAttempt = now;
 
   if (mem.count >= MAX_ATTEMPTS) {
-    mem.blockedUntil = now + LOCKOUT_MS;
+    mem.blockedUntil = now + (LOCKOUT_SECONDS * 1000);
   }
-  memoryFailedAttempts.set(key, mem);
+  localMemoryFallback.set(key, mem);
 
   // 2. Registro atómico distribuido en Supabase PostgreSQL RPC
+  const isSupabaseConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  if (!isSupabaseConfigured) return;
+
   try {
     const supabase = createAdminClient();
     await (supabase as any).rpc('record_admin_failed_attempt', {
       p_key: key,
       p_scope: 'live_tiktok',
       p_max_attempts: MAX_ATTEMPTS,
-      p_window_seconds: Math.floor(WINDOW_MS / 1000),
-      p_lockout_seconds: Math.floor(LOCKOUT_MS / 1000),
+      p_window_seconds: WINDOW_SECONDS,
+      p_lockout_seconds: LOCKOUT_SECONDS,
     });
   } catch (err) {
-    console.warn('Aviso: RPC record_admin_failed_attempt no disponible:', err);
+    console.error('Error registrando intento fallido en Supabase:', err);
   }
 }
 
@@ -144,14 +176,15 @@ export async function clearLiveAttemptsOnSuccess(req: NextRequest, secret: strin
   const ip = getClientIp(req);
   const key = getPseudonymizedKey(ip, secret);
 
-  // 1. Limpieza en memoria
-  memoryFailedAttempts.delete(key);
+  localMemoryFallback.delete(key);
 
-  // 2. Limpieza distribuida en Supabase PostgreSQL RPC
+  const isSupabaseConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  if (!isSupabaseConfigured) return;
+
   try {
     const supabase = createAdminClient();
     await (supabase as any).rpc('clear_admin_attempts', { p_key: key });
   } catch (err) {
-    console.warn('Aviso: RPC clear_admin_attempts no disponible:', err);
+    console.warn('Aviso no bloqueante al limpiar intentos tras éxito legítimo:', err);
   }
 }

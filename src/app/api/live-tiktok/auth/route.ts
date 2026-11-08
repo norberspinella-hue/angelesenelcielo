@@ -99,6 +99,25 @@ function isValidStreamToken(token: string, secret: string): boolean {
   return matchCurr || matchPrev;
 }
 
+/**
+ * Extrae el token de forma segura sin exponerlo en los parámetros de la URL:
+ * 1. Cabecera HTTP 'Authorization: Bearer <token>' (Preferida y estándar)
+ * 2. Cuerpo JSON en peticiones POST
+ */
+function extractBearerToken(req: NextRequest, body?: any): string | null {
+  const authHeader = req.headers.get('authorization');
+  if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+    const candidate = authHeader.substring(7).trim();
+    if (candidate) return candidate;
+  }
+
+  if (body && typeof body.token === 'string') {
+    return body.token.trim();
+  }
+
+  return null;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const config = getLiveAuthConfig();
@@ -109,41 +128,51 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1. Limitación de tasa (Rate Limiting) compartido y atómico
-    const rateLimit = await checkLiveRateLimit(req, config.secret);
-    if (!rateLimit.allowed) {
-      return NextResponse.json(
-        { error: rateLimit.error || 'Demasiados intentos fallidos. Inténtelo más tarde.' },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(rateLimit.remainingSeconds || 900),
-          },
-        }
-      );
-    }
-
-    // 2. Extracción segura del cuerpo
-    let body: any;
+    let body: any = {};
     try {
       body = await req.json();
     } catch {
       return NextResponse.json({ error: 'Formato de solicitud no válido.' }, { status: 400 });
     }
 
-    const { pin } = body || {};
+    // ACCIÓN 1: Verificación segura de token (sin credenciales en URL)
+    if (body.action === 'verify' || req.headers.has('authorization')) {
+      const token = extractBearerToken(req, body);
+      if (!token) {
+        return NextResponse.json({ valid: false }, { status: 400 });
+      }
+      const valid = isValidStreamToken(token, config.secret);
+      return NextResponse.json({ valid });
+    }
+
+    // ACCIÓN 2: Autenticación por PIN del presentador
+    // 1. Limitación de tasa atómica Fail-Closed en base de datos
+    const rateLimit = await checkLiveRateLimit(req, config.secret);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: rateLimit.error || 'Demasiados intentos fallidos. Inténtelo más tarde.' },
+        {
+          status: rateLimit.status || 429,
+          headers: rateLimit.remainingSeconds
+            ? { 'Retry-After': String(rateLimit.remainingSeconds) }
+            : undefined,
+        }
+      );
+    }
+
+    const { pin } = body;
     if (!pin || typeof pin !== 'string') {
       return NextResponse.json({ error: 'PIN requerido.' }, { status: 400 });
     }
 
-    // 3. Verificación de credenciales con comparación temporal segura
+    // 2. Verificación de credenciales con comparación temporal segura
     const isPinValid = timingSafeCompare(pin.trim(), config.expectedPin);
     if (!isPinValid) {
       await recordLiveFailedAttempt(req, config.secret);
       return NextResponse.json({ error: 'Credenciales de emisión no válidas.' }, { status: 401 });
     }
 
-    // 4. Éxito: limpiar intentos y emitir token criptográfico
+    // 3. Éxito: limpiar intentos y emitir token criptográfico
     await clearLiveAttemptsOnSuccess(req, config.secret);
     const token = generateSessionToken(config.secret);
 
@@ -165,9 +194,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ valid: false });
     }
 
-    const token = req.nextUrl.searchParams.get('token');
+    // Extracción segura exclusivamente mediante cabecera 'Authorization: Bearer <token>'
+    // Cero soporte a credenciales transmitidas por querystring (?token=...) para evitar
+    // registros en logs de servidores proxy, historial o herramientas de monitorización.
+    const token = extractBearerToken(req);
     if (!token) {
-      return NextResponse.json({ valid: false }, { status: 400 });
+      return NextResponse.json(
+        { valid: false, error: 'Token de emisión requerido en cabecera Authorization: Bearer' },
+        { status: 401 }
+      );
     }
 
     const valid = isValidStreamToken(token, config.secret);
