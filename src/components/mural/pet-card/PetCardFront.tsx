@@ -8,7 +8,8 @@ interface PetCardFrontProps {
   loading: boolean;
   thumbnailUrl: string;
   isShelterPet: boolean;
-  onClose: () => void;
+  onClose?: () => void;
+  showCloseButton?: boolean;
   onFlip: () => void;
   frontRef?: React.RefObject<HTMLDivElement>;
 }
@@ -19,6 +20,7 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
   thumbnailUrl,
   isShelterPet,
   onClose,
+  showCloseButton = false,
   onFlip,
   frontRef,
 }) => {
@@ -56,18 +58,20 @@ export const PetCardFront: React.FC<PetCardFrontProps> = ({
         MozOsxFontSmoothing: 'grayscale',
       }}
     >
-      {/* 1. Botón X de cerrar en la esquina (Rosado premium) */}
-      <button
-        data-download-ignore="true"
-        onClick={(e) => {
-          e.stopPropagation();
-          onClose();
-        }}
-        className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-[#FCE7F3]/90 hover:bg-[#FBCFE8] text-[#BE185D] hover:text-[#9D174D] border border-[#FBCFE8] flex items-center justify-center transition-colors z-30 text-xs font-bold shadow-xs cursor-pointer"
-        title="Cerrar"
-      >
-        ✕
-      </button>
+      {/* 1. Botón X de cerrar en la esquina (opcional, solo si showCloseButton=true) */}
+      {showCloseButton && onClose && (
+        <button
+          data-download-ignore="true"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-[#FCE7F3]/90 hover:bg-[#FBCFE8] text-[#BE185D] hover:text-[#9D174D] border border-[#FBCFE8] flex items-center justify-center transition-colors z-30 text-xs font-bold shadow-xs cursor-pointer"
+          title="Cerrar"
+        >
+          ✕
+        </button>
+      )}
 
       {/* 2. Distintivo Corazón de Ángel (para protectoras) */}
       {isShelterPet && (

@@ -43,6 +43,17 @@ export function PetProfileCard({
     setMounted(true);
   }, []);
 
+  // Manejo de tecla Escape para cerrar el modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   // 1. Carga de datos dinámicos desde Supabase con cascada de rescate
   useEffect(() => {
     const fetchPetData = async () => {
