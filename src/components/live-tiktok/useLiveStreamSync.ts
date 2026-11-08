@@ -15,23 +15,37 @@ const AUTH_TOKEN_KEY = 'angeles_live_tiktok_auth_token_v3';
 const BROADCAST_CHANNEL_NAME = 'angeles_live_tiktok_sync_v3';
 const SUPABASE_CHANNEL_NAME = 'live_tiktok_realtime_stream_v3';
 
-// Cache en memoria de tokens validados en el servidor para evitar llamadas repetidas
-const verifiedTokensCache = new Set<string>();
-const rejectedTokensCache = new Set<string>();
+// Cache en memoria de tokens validados en el servidor con TTL de 15 minutos
+const verifiedTokensMap = new Map<string, number>();
+const rejectedTokensMap = new Map<string, number>();
+const TOKEN_CACHE_TTL_MS = 15 * 60 * 1000;
+const REJECTED_CACHE_TTL_MS = 60 * 1000;
 
 async function verifyTokenWithServer(token: string): Promise<boolean> {
-  if (!token) return false;
-  if (verifiedTokensCache.has(token)) return true;
-  if (rejectedTokensCache.has(token)) return false;
+  if (!token || typeof token !== 'string') return false;
+  if (!/^[a-f0-9]{64}$/i.test(token)) return false;
+
+  const now = Date.now();
+  const cachedVerified = verifiedTokensMap.get(token);
+  if (cachedVerified && now - cachedVerified < TOKEN_CACHE_TTL_MS) {
+    return true;
+  }
+
+  const cachedRejected = rejectedTokensMap.get(token);
+  if (cachedRejected && now - cachedRejected < REJECTED_CACHE_TTL_MS) {
+    return false;
+  }
 
   try {
     const res = await fetch(`/api/live-tiktok/auth?token=${encodeURIComponent(token)}`);
     const data = await res.json();
     if (res.ok && data.valid === true) {
-      verifiedTokensCache.add(token);
+      verifiedTokensMap.set(token, now);
+      rejectedTokensMap.delete(token);
       return true;
     }
-    rejectedTokensCache.add(token);
+    rejectedTokensMap.set(token, now);
+    verifiedTokensMap.delete(token);
     return false;
   } catch (e) {
     console.warn('Error verificando token con servidor:', e);
@@ -143,7 +157,7 @@ export function useLiveStreamSync({ isController = false }: UseLiveStreamSyncOpt
       const data = await res.json();
       if (res.ok && data.token) {
         setAuthToken(data.token);
-        verifiedTokensCache.add(data.token);
+        verifiedTokensMap.set(data.token, Date.now());
         if (typeof window !== 'undefined') {
           localStorage.setItem(AUTH_TOKEN_KEY, data.token);
         }
@@ -338,16 +352,27 @@ export function useLiveStreamSync({ isController = false }: UseLiveStreamSyncOpt
           if (!data || !data.type) return;
 
           if (data.type === 'STATE_UPDATE' && data.payload) {
-            setState((prev) => {
-              if (data.payload.lastUpdated >= (prev.lastUpdated || 0)) {
-                return {
-                  ...data.payload,
-                  muralStarsCount: prev.muralStarsCount, // Preservar contador de consulta real
-                };
+            const token = data.authToken;
+            if (!token) {
+              console.warn('Comando BroadcastChannel descartado: sin token de emisión');
+              return;
+            }
+            verifyTokenWithServer(token).then((isValid) => {
+              if (!isValid) {
+                console.warn('Comando BroadcastChannel RECHAZADO: token no válido');
+                return;
               }
-              return prev;
+              setState((prev) => {
+                if (data.payload.lastUpdated >= (prev.lastUpdated || 0)) {
+                  return {
+                    ...data.payload,
+                    muralStarsCount: prev.muralStarsCount,
+                  };
+                }
+                return prev;
+              });
+              setSyncStatus('synced');
             });
-            setSyncStatus('synced');
           } else if (data.type === 'REQUEST_STATE' && isController) {
             if (bc) {
               bc.postMessage({
