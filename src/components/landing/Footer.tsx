@@ -1,7 +1,23 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { trackWhatsAppClick } from '@/lib/analytics';
 
 export function Footer() {
+  const pathname = usePathname();
+  const footerMessage = 'Hola, he visitado Ángeles en el Cielo y me gustaría recibir información para crear un recuerdo de mi mascota.';
+  const footerWaUrl = `https://wa.me/34610319143?text=${encodeURIComponent(footerMessage)}`;
+
+  const handleFooterWaClick = () => {
+    trackWhatsAppClick({
+      page: pathname || '/',
+      location: 'footer',
+      query_type: 'general',
+    });
+  };
+
   return (
     <footer className="py-12 border-t border-white/40 mt-16 text-center">
       <div className="flex justify-center mb-6">
@@ -42,10 +58,11 @@ export function Footer() {
           <span>TikTok</span>
         </a>
 
-                <a
-          href="https://wa.me/34610319143?text=Hola,%20tengo%20una%20consulta%20sobre%20el%20memorial%20de%20%C3%81ngeles%20en%20el%20Cielo%20%F0%9F%90%BE"
+        <a
+          href={footerWaUrl}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleFooterWaClick}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 hover:bg-white text-[#4A3F6B] hover:text-[#25D366] border border-[#F3DCE7] shadow-sm hover:shadow transition-all text-xs font-semibold"
           title="Atención por WhatsApp (+34 610 31 91 43)"
         >
@@ -55,7 +72,7 @@ export function Footer() {
           <span>WhatsApp (+34 610 31 91 43)</span>
         </a>
 
-<a
+        <a
           href="https://www.facebook.com/profile.php?id=61595498662151"
           target="_blank"
           rel="noopener noreferrer"

@@ -1,35 +1,59 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useCookieConsent } from '@/context/CookieConsentContext';
 
 export default function CookieBanner() {
-  const pathname = usePathname()
-  const [visible, setVisible] = useState(false)
+  const pathname = usePathname();
+  const bannerRef = useRef<HTMLDivElement>(null);
+  const { isBannerVisible, acceptCookies, rejectCookies, setBannerHeight } = useCookieConsent();
+  const isMural = pathname === '/mural-global';
 
+  // Medición dinámica y continua de la altura real del banner (adaptable a zooms de texto, fuentes o preferencias)
   useEffect(() => {
-    if (pathname?.startsWith('/live-tiktok')) return
-    const consent = localStorage.getItem('cookie-consent')
-    if (!consent) setVisible(true)
-  }, [pathname])
+    if (!bannerRef.current || !isBannerVisible) {
+      setBannerHeight(0);
+      return;
+    }
 
-  const handleAccept = () => {
-    localStorage.setItem('cookie-consent', 'accepted')
-    setVisible(false)
-  }
+    const el = bannerRef.current;
+    const measure = () => {
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        setBannerHeight(Math.round(rect.height));
+      }
+    };
 
-  const handleReject = () => {
-    localStorage.setItem('cookie-consent', 'rejected')
-    setVisible(false)
-  }
+    measure();
 
-  if (pathname?.startsWith('/live-tiktok')) return null
-  if (!visible) return null
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(measure);
+      resizeObserver.observe(el);
+    }
+
+    window.addEventListener('resize', measure);
+    return () => {
+      if (resizeObserver) resizeObserver.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [isBannerVisible, setBannerHeight, pathname]);
+
+  if (pathname?.startsWith('/live-tiktok')) return null;
+  if (!isBannerVisible) return null;
 
   return (
     <div
-      className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[calc(100vw-24px)] sm:w-[min(680px,calc(100vw-32px))] rounded-[20px] p-4 sm:p-6 z-[9999] flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5 box-border"
+      ref={bannerRef}
+      role="region"
+      aria-label="Consentimiento de cookies"
+      className={`fixed left-1/2 -translate-x-1/2 w-[calc(100vw-24px)] sm:w-[min(680px,calc(100vw-32px))] rounded-[20px] p-4 sm:p-6 z-[9999] flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5 box-border transition-all duration-300 pointer-events-auto ${
+        isMural
+          ? 'top-[62px] sm:top-[76px] lg:top-auto lg:bottom-6'
+          : 'bottom-4 sm:bottom-6'
+      }`}
       style={{
         background: 'rgba(255,255,255,0.96)',
         backdropFilter: 'blur(16px)',
@@ -69,8 +93,9 @@ export default function CookieBanner() {
       {/* Botones */}
       <div className="flex sm:flex-col gap-2 w-full sm:w-auto shrink-0 justify-end">
         <button
-          onClick={handleAccept}
-          className="flex-1 sm:flex-initial"
+          type="button"
+          onClick={acceptCookies}
+          className="flex-1 sm:flex-initial cursor-pointer hover:opacity-90 active:scale-95 transition-all"
           style={{
             padding: '8px 16px',
             borderRadius: 999,
@@ -79,7 +104,6 @@ export default function CookieBanner() {
             color: '#fff',
             fontSize: 12,
             fontWeight: 700,
-            cursor: 'pointer',
             whiteSpace: 'nowrap',
             boxShadow: '0 4px 12px rgba(236,95,150,0.35)',
           }}
@@ -87,8 +111,9 @@ export default function CookieBanner() {
           Aceptar ✦
         </button>
         <button
-          onClick={handleReject}
-          className="flex-1 sm:flex-initial"
+          type="button"
+          onClick={rejectCookies}
+          className="flex-1 sm:flex-initial cursor-pointer hover:bg-white/80 active:scale-95 transition-all"
           style={{
             padding: '8px 16px',
             borderRadius: 999,
@@ -97,7 +122,6 @@ export default function CookieBanner() {
             color: '#9B8FB0',
             fontSize: 12,
             fontWeight: 600,
-            cursor: 'pointer',
             whiteSpace: 'nowrap',
           }}
         >
@@ -105,5 +129,5 @@ export default function CookieBanner() {
         </button>
       </div>
     </div>
-  )
+  );
 }

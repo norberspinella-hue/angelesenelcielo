@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useCurrency } from '@/context/CurrencyContext';
 import { PLANS, slotsLabel } from '@/lib/plans';
 import { CurrencySelector } from '@/components/ui/CurrencySelector';
+import { trackWhatsAppClick } from '@/lib/analytics';
 
 export function PricingSection() {
   const { formatPrice, taxGuarantee, currency } = useCurrency();
@@ -286,7 +287,8 @@ export function PricingSection() {
           href="https://wa.me/34610319143?text=Hola,%20somos%20una%20empresa%20y%20nos%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20un%20espacio%20en%20el%20mural%20de%20%C3%81ngeles%20en%20el%20Cielo"
           target="_blank"
           rel="noopener noreferrer"
-          className="underline hover:text-[#6D4C99] transition-colors"
+          onClick={() => trackWhatsAppClick({ page: '/', location: 'pricing_section', query_type: 'empresas' })}
+          className="underline hover:text-[#6D4C99] transition-colors plausible-event-name=WhatsApp_Click"
         >
           whatsapp (+34 610 31 91 43)
         </a>{' '}

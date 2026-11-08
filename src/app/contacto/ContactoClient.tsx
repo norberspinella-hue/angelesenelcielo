@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { trackWhatsAppClick } from '@/lib/analytics';
 
 export function ContactoClient() {
   const [formData, setFormData] = useState({
@@ -173,9 +174,10 @@ export function ContactoClient() {
             </div>
           </div>
           <a
-            href="https://wa.me/34610319143?text=Hola,%20tengo%20una%20consulta%20sobre%20el%20memorial%20de%20%C3%81ngeles%20en%20el%20Cielo%20%F0%9F%90%BE"
+            href="https://wa.me/34610319143?text=Hola,%20me%20gustar%C3%ADa%20recibir%20atenci%C3%B3n%20personalizada%20sobre%20%C3%81ngeles%20en%20el%20Cielo."
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackWhatsAppClick({ page: '/contacto', location: 'contact_page', query_type: 'soporte' })}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] active:bg-[#1DA850] text-white font-semibold text-xs sm:text-sm shadow-sm hover:shadow transition-all shrink-0"
           >
             <span>WhatsApp (+34 610 31 91 43)</span>

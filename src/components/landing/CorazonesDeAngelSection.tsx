@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ApadrinarDrawer } from '@/components/solidario/ApadrinarDrawer'
 import SponsorshipCertificateA4 from '@/components/certificates/SponsorshipCertificateA4'
+import { trackWhatsAppClick } from '@/lib/analytics'
 
 export function CorazonesDeAngelSection() {
   const [isShelterModalOpen, setIsShelterModalOpen] = useState(false)
@@ -488,7 +489,8 @@ export function CorazonesDeAngelSection() {
                     href={`https://wa.me/34610319143?text=${encodeURIComponent(`Hola, acabo de enviar la solicitud del programa piloto para la protectora ${shelterName} en ${shelterCity}.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2.5 rounded-full bg-white hover:bg-emerald-100 text-emerald-800 font-semibold text-xs border border-emerald-300 transition-colors inline-flex items-center justify-center gap-1.5"
+                    onClick={() => trackWhatsAppClick({ page: '/', location: 'shelter_modal', query_type: 'protectoras' })}
+                    className="px-4 py-2.5 rounded-full bg-white hover:bg-emerald-100 text-emerald-800 font-semibold text-xs border border-emerald-300 transition-colors inline-flex items-center justify-center gap-1.5 plausible-event-name=WhatsApp_Click"
                   >
                     <span>💬</span>
                     <span>Escribir también por WhatsApp</span>

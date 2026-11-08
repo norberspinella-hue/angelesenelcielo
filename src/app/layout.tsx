@@ -5,6 +5,7 @@ import "./globals.css";
 import CookieBanner from '@/components/CookieBanner';
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton';
 import { CurrencyProvider } from '@/context/CurrencyContext';
+import { CookieConsentProvider } from '@/context/CookieConsentContext';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -83,9 +84,11 @@ export default function RootLayout({
       </head>
       <body className={`${inter.variable} ${playfair.variable} antialiased overflow-x-hidden w-full`}>
         <CurrencyProvider>
-          {children}
-          <CookieBanner />
-          <WhatsAppButton />
+          <CookieConsentProvider>
+            {children}
+            <CookieBanner />
+            <WhatsAppButton />
+          </CookieConsentProvider>
         </CurrencyProvider>
       </body>
     </html>
