@@ -262,7 +262,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                 textShadow: '0 1px 2px rgba(255,255,255,0.8)'
               }}
             >
-              Al apadrinar su constelación 3×3, el <strong>50% del importe</strong> se destina como donación directa al refugio para alimentar y cuidar a los perros que aún esperan adopción.
+              Por cada apadrinamiento de 9,99 €, reservamos <strong>5 € para apoyar a las protectoras</strong> a través de Corazones de Ángel para cuidar a los perros que aún esperan adopción.
             </p>
           </div>
         </div>
@@ -308,7 +308,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                 2
               </div>
               <span className={`text-[10px] font-semibold ${step === 2 ? 'text-[#1E2A78]' : 'text-gray-400'}`}>
-                Dedicatoria & 50%
+                Dedicatoria & Ayuda
               </span>
             </div>
           </div>
@@ -445,7 +445,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                 </div>
                 <div className="text-right shrink-0">
                   <span className="text-xs font-bold text-pink-700 block">9 Estrellas</span>
-                  <span className="text-[10px] text-emerald-700 font-semibold">50% Donación</span>
+                  <span className="text-[10px] text-emerald-700 font-semibold">5 € Solidarios</span>
                 </div>
               </div>
 
@@ -533,7 +533,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                     <span className="font-bold">9,99 €</span>
                   </div>
                   <div className="flex justify-between text-xs text-emerald-800 font-bold bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200">
-                    <span>💖 50% Donación directa a {selectedPet.shelterName}:</span>
+                    <span>💖 Aportación fija a {selectedPet.shelterName}:</span>
                     <span>5,00 €</span>
                   </div>
                   <div className="flex justify-between text-xs text-purple-800 font-semibold">
@@ -563,7 +563,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                   boxShadow: '0 8px 20px -2px rgba(16, 185, 129, 0.4)'
                 }}
               >
-                <span>{loading ? 'Preparando pasarela segura...' : `Completar Apadrinamiento y Donar 5,00 € →`}</span>
+                <span>{loading ? 'Preparando pasarela segura...' : `Completar Apadrinamiento (9,99 €) →`}</span>
               </button>
 
               <span className="text-[10px] text-center text-gray-400 block mt-2">

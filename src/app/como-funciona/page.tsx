@@ -280,10 +280,10 @@ export default function ComoFuncionaPage() {
                       Creemos con el corazón que el amor que nuestros angelitos nos dejaron no debe quedarse solo en el recuerdo, sino convertirse en un <strong>puente de vida y esperanza</strong> para quienes todavía están en la tierra esperando una oportunidad.
                     </p>
                     <p>
-                      Por eso, <strong>de todos los ingresos que recibimos de cada peludito en los planes de 2x2 en adelante</strong>, realizamos <strong>aportaciones mensuales directas a las protectoras y refugios inscritos</strong>. Cada vez que una familia honra a su peque en el cielo, ayuda a llenar comederos, costear tratamientos veterinarios y ofrecer abrigo a animales rescatados.
+                      Por eso, <strong>destinamos el 10 % del importe final de las ventas de los planes del Mural Global de 2×2 o superiores</strong> a nuestra iniciativa solidaria <strong>Corazones de Ángel</strong>. Las ayudas se gestionan trimestralmente para apoyar con alimentación, tratamientos veterinarios y cuidados a animales rescatados.
                     </p>
                     <p>
-                      Además, a través de nuestra iniciativa especial <strong>Corazones de Ángel</strong>, puedes apadrinar directamente a un perrito que espera en un refugio, donde el <strong>50% de la recaudación</strong> se destina íntegramente a su asociación para cuidarlo mientras llega su hogar definitivo.
+                      Además, a través de los apadrinamientos solidarios, <strong>por cada apadrinamiento de 9,99 €, reservamos 5 € para apoyar a las protectoras a través de Corazones de Ángel</strong> y cuidar a los peluditos mientras llega su hogar definitivo.
                     </p>
                     <p className="font-playfair italic text-[#8A2B53] text-sm sm:text-base pt-1">
                       «Así, la huella de amor de quien tanto quisiste se transforma en alimento, medicina y cobijo para un alma que hoy lo necesita de verdad.»

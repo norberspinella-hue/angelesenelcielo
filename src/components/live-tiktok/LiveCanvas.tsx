@@ -752,7 +752,7 @@ export function LiveCanvas({
                   </div>
 
                   <div className="bg-gradient-to-r from-[#B83C7E]/30 to-[#8C3F71]/30 border border-[#F0BED6]/30 rounded-xl p-2.5 text-[11px] text-pink-200 font-semibold leading-snug">
-                    🎁 El 50% de cada recuerdo apadrina a los compañeros que siguen esperando un hogar en el refugio.
+                    🎁 Por cada apadrinamiento de 9,99 €, reservamos 5 € para apoyar a las protectoras a través de Corazones de Ángel.
                   </div>
                 </div>
               </div>

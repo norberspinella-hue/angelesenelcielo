@@ -154,7 +154,7 @@ export function CorazonesDeAngelSection() {
                 Ángel de Protectora
               </h3>
               <p className="body-copy text-sm sm:text-base leading-relaxed mb-3">
-                Invitamos a protectoras colaboradoras a publicar hasta 5 perros fallecidos bajo su custodia sin ningún coste. Tendrán su luz y su historia preservadas para siempre en el mural.
+                Cada protectora aprobada puede incorporar gratuitamente hasta cinco angelitos, con un espacio individual de 1×1 ampliable a 3×3 mediante apadrinamiento.
               </p>
 
               {/* Imagen Ilustrativa Tarjeta 1 (220x220) con suave opacidad */}
@@ -246,7 +246,7 @@ export function CorazonesDeAngelSection() {
                 Ayuda a un Ángelito, dale 9 estrellas en el cielo.
               </h3>
               <p className="body-copy text-sm sm:text-base leading-relaxed mb-3">
-                Una protectora le da una luz; tú puedes hacer que brille como se merece. Al patrocinar su constelación 3×3, el 50% del importe se destina como donación directa al refugio para alimentar y cuidar a los perros que aún esperan adopción.
+                Una protectora le da una luz; tú puedes hacer que brille como se merece. Por cada apadrinamiento de 9,99 €, reservamos 5 € para apoyar a las protectoras a través de Corazones de Ángel para cuidar a los perros que aún esperan adopción.
               </p>
 
               {/* Cuadrícula 3x3 Miniatura ilustrativa Ampliada con paleta suave pastel */}
@@ -460,7 +460,7 @@ export function CorazonesDeAngelSection() {
               </h3>
             </div>
             <p className="text-xs text-[#5D4E75] mb-5 leading-relaxed">
-              Publica 5 angelitos que hayan fallecido en tu protectora o refugio de forma 100% gratuita. Los prepararemos con amor para el Mural Global.
+              Cada protectora aprobada puede incorporar gratuitamente hasta cinco angelitos, con un espacio individual de 1×1 ampliable a 3×3 mediante apadrinamiento. Los prepararemos con amor para el Mural Global.
             </p>
 
             {submitted ? (
