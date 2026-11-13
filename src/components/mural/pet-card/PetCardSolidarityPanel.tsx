@@ -83,7 +83,7 @@ export const PetCardSolidarityPanel: React.FC<PetCardSolidarityPanelProps> = ({
         <span className="text-[11px] text-[#706A95] mt-1.5 block">
           Actualmente tiene <strong className="text-[#BE185D]">1 sola estrella</strong> en el cielo. ¡Apadrínalo para transformar su recuerdo en una{' '}
           <strong className="text-[#1E2A78]">constelación de 9 estrellas (3x3)</strong>! Por cada apadrinamiento de 9,99 €, reservamos{' '}
-          <strong className="text-[#BE185D] font-bold">5 € para apoyar a las protectoras</strong> a través de Corazones de Ángel.
+          <strong className="text-[#BE185D] font-bold">5 € para ayudar a las protectoras</strong> a través de Corazones de Ángel.
         </span>
       </p>
 
@@ -104,7 +104,7 @@ export const PetCardSolidarityPanel: React.FC<PetCardSolidarityPanelProps> = ({
         }}
       >
         <span>💖</span>
-        <span>Apadrinar con 9 estrellas (9,99 €)</span>
+        <span>Ampliar su homenaje a 9 estrellas · 9,99 €</span>
         <span className="text-base leading-none font-bold">›</span>
       </button>
     </div>

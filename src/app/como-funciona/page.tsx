@@ -283,7 +283,7 @@ export default function ComoFuncionaPage() {
                       Por eso, <strong>destinamos el 10 % del importe final de las ventas de los planes del Mural Global de 2×2 o superiores</strong> a nuestra iniciativa solidaria <strong>Corazones de Ángel</strong>. Las ayudas se gestionan trimestralmente para apoyar con alimentación, tratamientos veterinarios y cuidados a animales rescatados.
                     </p>
                     <p>
-                      Además, a través de los apadrinamientos solidarios, <strong>por cada apadrinamiento de 9,99 €, reservamos 5 € para apoyar a las protectoras a través de Corazones de Ángel</strong> y cuidar a los peluditos mientras llega su hogar definitivo.
+                      Además, a través de los apadrinamientos solidarios, <strong>por cada apadrinamiento de 9,99 €, reservamos 5 € para ayudar a las protectoras a través de Corazones de Ángel</strong> y cuidar a los peluditos mientras llega su hogar definitivo.
                     </p>
                     <p className="font-playfair italic text-[#8A2B53] text-sm sm:text-base pt-1">
                       «Así, la huella de amor de quien tanto quisiste se transforma en alimento, medicina y cobijo para un alma que hoy lo necesita de verdad.»

@@ -246,7 +246,7 @@ export function CorazonesDeAngelSection() {
                 Ayuda a un Ángelito, dale 9 estrellas en el cielo.
               </h3>
               <p className="body-copy text-sm sm:text-base leading-relaxed mb-3">
-                Una protectora le da una luz; tú puedes hacer que brille como se merece. Por cada apadrinamiento de 9,99 €, reservamos 5 € para apoyar a las protectoras a través de Corazones de Ángel para cuidar a los perros que aún esperan adopción.
+                Una protectora le da una luz; tú puedes hacer que brille como se merece. Por cada apadrinamiento de 9,99 €, reservamos 5 € para ayudar a las protectoras a través de Corazones de Ángel para cuidar a los perros que aún esperan adopción.
               </p>
 
               {/* Cuadrícula 3x3 Miniatura ilustrativa Ampliada con paleta suave pastel */}

@@ -262,7 +262,7 @@ export function ApadrinarDrawer({ isOpen, onClose, preSelectedPet }: ApadrinarDr
                 textShadow: '0 1px 2px rgba(255,255,255,0.8)'
               }}
             >
-              Por cada apadrinamiento de 9,99 €, reservamos <strong>5 € para apoyar a las protectoras</strong> a través de Corazones de Ángel para cuidar a los perros que aún esperan adopción.
+              Por cada apadrinamiento de 9,99 €, reservamos <strong>5 € para ayudar a las protectoras</strong> a través de Corazones de Ángel para cuidar a los perros que aún esperan adopción.
             </p>
           </div>
         </div>
