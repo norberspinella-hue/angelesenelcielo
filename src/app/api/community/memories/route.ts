@@ -3,7 +3,48 @@ import { createAdminClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
-// GET: Obtener recuerdos de la comunidad
+export interface PublicCommunityMemoryDto {
+  id: string;
+  petName: string;
+  species: 'perro' | 'gato' | 'otro';
+  photoUrl: string;
+  message: string;
+  authorName: string;
+  yearsOrDates: string;
+  instagram: string;
+  tiktok: string;
+  candlesCount: number;
+  supportCount: number;
+  hugsCount: number;
+  profileSlug: string | null;
+  createdAt: string;
+}
+
+function sanitizeToPublicMemory(m: any): PublicCommunityMemoryDto {
+  const isChloe = String(m.pet_name || '').toLowerCase() === 'chloe';
+  const rawStory = (typeof m.story_answers === 'object' && m.story_answers !== null) ? m.story_answers : {};
+
+  return {
+    id: String(m.id || ''),
+    petName: String(m.pet_name || ''),
+    species: m.species === 'gato' ? 'gato' : m.species === 'perro' ? 'perro' : 'otro',
+    photoUrl: isChloe 
+      ? (m.photo_url || '/images/comunidad/chloe.jpg') 
+      : (m.photo_url || '/images/comunidad/pet-max.webp'),
+    message: String(m.dedication || ''),
+    authorName: String(rawStory.authorName || `Familia de ${m.pet_name || 'tu ángel'}`),
+    yearsOrDates: String(rawStory.yearsOrDates || ''),
+    instagram: String(rawStory.instagram || ''),
+    tiktok: String(rawStory.tiktok || ''),
+    candlesCount: Number(rawStory.candlesCount || 0),
+    supportCount: Number(rawStory.supportCount || 0),
+    hugsCount: Number(rawStory.hugsCount || 0),
+    profileSlug: m.profile_slug ? String(m.profile_slug) : null,
+    createdAt: String(m.created_at || ''),
+  };
+}
+
+// GET: Obtener recuerdos de la comunidad con lista explícita de campos públicos (Whitelisting estricto)
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -35,22 +76,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const memories = (data || []).map((m: any) => ({
-      id: m.id,
-      petName: m.pet_name,
-      species: m.species,
-      photoUrl: m.pet_name === 'Chloe' ? (m.photo_url || '/images/comunidad/chloe.jpg') : (m.photo_url || '/images/placeholders/first.webp'),
-      message: m.dedication,
-      authorName: m.story_answers?.authorName || `Familia de ${m.pet_name}`,
-      yearsOrDates: m.story_answers?.yearsOrDates || '',
-      instagram: m.story_answers?.instagram || '',
-      tiktok: m.story_answers?.tiktok || '',
-      candlesCount: m.story_answers?.candlesCount || 0,
-      supportCount: m.story_answers?.supportCount || 0,
-      hugsCount: m.story_answers?.hugsCount || 0,
-      profileSlug: m.profile_slug,
-      createdAt: m.created_at,
-    }));
+    // Filtrar mediante whitelist estricta: NUNCA se expone story_answers completo, ni emails, ni identificadores privados
+    const memories: PublicCommunityMemoryDto[] = (data || []).map(sanitizeToPublicMemory);
 
     return NextResponse.json({ memories });
   } catch (err: any) {

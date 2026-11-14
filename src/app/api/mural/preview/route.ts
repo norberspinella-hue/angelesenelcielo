@@ -18,7 +18,13 @@ export async function GET() {
 
   const latest = (latestData || [])
     .filter((p: any) => !p.story_answers?.isShelter)
-    .slice(0, 8);
+    .slice(0, 8)
+    .map((p: any) => ({
+      id: String(p.id),
+      pet_name: String(p.pet_name || ''),
+      photo_url: String(p.photo_url || '/images/placeholders/first.webp'),
+      profile_slug: String(p.profile_slug || ''),
+    }));
 
   // Últimos 8 fundadores
   const { data: foundersData } = await (supabase
@@ -32,7 +38,13 @@ export async function GET() {
 
   const founders = (foundersData || [])
     .filter((p: any) => !p.story_answers?.isShelter)
-    .slice(0, 8);
+    .slice(0, 8)
+    .map((p: any) => ({
+      id: String(p.id),
+      pet_name: String(p.pet_name || ''),
+      photo_url: String(p.photo_url || '/images/placeholders/first.webp'),
+      profile_slug: String(p.profile_slug || ''),
+    }));
 
   return NextResponse.json(
     { latest, founders },
