@@ -831,9 +831,9 @@ export default function CieloLlenoDeLucesClient() {
       {/* 2. HERO: PORTADA «CIELO LLENO DE LUCES»                                   */}
       {/* ========================================================================= */}
       <section 
-        className="relative z-10 overflow-hidden transition-all duration-300 pt-28 sm:pt-32 lg:pt-24 pb-12 sm:pb-16 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between"
+        className="relative z-10 overflow-hidden transition-all duration-300 pt-24 sm:pt-32 lg:pt-24 pb-16 sm:pb-16 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between"
         style={{
-          minHeight: 'clamp(740px, 92vh, 1020px)',
+          minHeight: 'clamp(820px, 94vh, 1020px)',
           isolation: 'isolate',
         }}
       >
@@ -848,27 +848,27 @@ export default function CieloLlenoDeLucesClient() {
         >
           <div className="hidden 2xl:block absolute inset-0">
             <Image 
-              src="/images/luces/fondo_hero_PC_2560x1440.webp" 
+              src="/images/luces/mural_lila_pc_ultrawide_2560x1200.webp" 
               alt="Cielo lleno de luces" 
               fill 
               priority 
               quality={90}
-              className="object-cover object-left-top xl:object-top" 
+              className="object-cover object-right-top xl:object-right" 
             />
           </div>
           <div className="hidden lg:block 2xl:hidden absolute inset-0">
             <Image 
-              src="/images/luces/fondo_hero_PC_1920x1080.webp" 
+              src="/images/luces/mural_lila_pc_1920x1080.webp" 
               alt="Cielo lleno de luces" 
               fill 
               priority 
               quality={90}
-              className="object-cover object-left-top lg:object-top" 
+              className="object-cover object-right-top lg:object-right" 
             />
           </div>
           <div className="hidden sm:block lg:hidden absolute inset-0">
             <Image 
-              src="/images/luces/fondo_hero_MOVIL_1080x1350.webp" 
+              src="/images/luces/mural_lila_movil_1080x1350.webp" 
               alt="Cielo lleno de luces" 
               fill 
               priority 
@@ -878,7 +878,7 @@ export default function CieloLlenoDeLucesClient() {
           </div>
           <div className="block sm:hidden absolute inset-0">
             <Image 
-              src="/images/luces/fondo_hero_MOVIL_1080x1920.webp" 
+              src="/images/luces/mural_lila_movil_1080x1920.webp" 
               alt="Cielo lleno de luces" 
               fill 
               priority 
@@ -896,13 +896,10 @@ export default function CieloLlenoDeLucesClient() {
           }}
         />
 
-        {/* Contenedor principal: Grilla en desktop (perrito alado y arco a la izq, texto a la dcha) */}
+        {/* Contenedor principal: Grilla en desktop (texto a la izquierda, perrito alado y arco despejados a la derecha) */}
         <div className="max-w-[1360px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center relative z-10 my-auto min-w-0">
           
-          {/* Columna Izquierda: Perro alado y arco celestial en escritorio */}
-          <div className="hidden lg:block lg:col-span-6 xl:col-span-6 pointer-events-none min-h-[460px] xl:min-h-[520px]" />
-
-          {/* Columna Derecha: Título, invitación, botones y aviso de 7 días */}
+          {/* Columna Izquierda: Título, subtítulo, texto descriptivo, botones y contador */}
           <div className="lg:col-span-6 xl:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-4.5 relative w-full max-w-full min-w-0 px-2 sm:px-0">
             
             {/* Halo sutil de fondo para contraste óptimo */}
@@ -928,6 +925,9 @@ export default function CieloLlenoDeLucesClient() {
             <p className="font-playfair italic text-base sm:text-xl text-[#762759] font-semibold leading-snug w-full max-w-full break-words">
               Porque hay amores que nunca dejan de brillar.
             </p>
+
+            {/* En Móvil: Ventana visual despejada para contemplar el perrito alado y el arco sin solapamiento de botones */}
+            <div className="block lg:hidden w-full h-[280px] sm:h-[340px] pointer-events-none select-none" />
 
             {/* Texto de invitación */}
             <p className="font-sans text-xs sm:text-base text-[#493344] max-w-md sm:max-w-lg leading-relaxed font-medium w-full max-w-full break-words">
@@ -984,8 +984,8 @@ export default function CieloLlenoDeLucesClient() {
 
           </div>
 
-          {/* En Móvil: Espacio libre controlado para contemplar la ilustración sin cortes */}
-          <div className="block lg:hidden w-full h-[260px] sm:h-[320px] pointer-events-none select-none" />
+          {/* Columna Derecha: Zona despejada para el perro alado, arco y escaleras celestiales */}
+          <div className="hidden lg:block lg:col-span-6 xl:col-span-6 pointer-events-none min-h-[460px] xl:min-h-[520px]" />
 
         </div>
       </section>
@@ -1606,7 +1606,7 @@ export default function CieloLlenoDeLucesClient() {
                         💜 Tu angelito sigue teniendo su lugar en nuestro cielo. Si encendiste su vela desde otro navegador o dispositivo, la recuperación por correo todavía no está disponible.
                       </p>
                       <p className="text-[11px] text-[#A16207] leading-tight">
-                        Podrás volver a encender su vela gratuitamente durante 7 días desde este mismo navegador si la creaste aquí, o introduciendo su clave privada de gestión si la conservas:
+                        Cada vez que enciendas su vela, brillará durante 7 días. Podrás volver a encenderla gratis desde el navegador donde la creaste, o utilizando tu clave privada de gestión si la conservas:
                       </p>
                       <div className="flex gap-2 pt-0.5">
                         <input
