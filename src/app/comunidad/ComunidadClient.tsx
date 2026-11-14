@@ -206,7 +206,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
           instagram: cleanInstagram,
           tiktok: cleanTiktok,
           isPublic,
-          socialShareAllowed: true,
+          socialShareAllowed: false,
           anniversaryDate: '',
           anniversaryEmail: '',
         }),
@@ -808,11 +808,11 @@ export default function ComunidadClient({ initialMemories }: Props) {
       {/* HERO SECTION CON FONDO COMPLETO PANORÁMICO Y DIFUMINADO SUAVE             */}
       {/* ========================================================================= */}
       <section 
-        className="hero-chihuahua-bg relative bg-cover bg-no-repeat bg-top pb-28 sm:pb-36 transition-all duration-500 overflow-hidden pt-[105px] sm:pt-[125px] md:pt-[135px]"
+        className="hero-chihuahua-bg relative bg-cover bg-no-repeat bg-top pb-10 sm:pb-24 lg:pb-32 transition-all duration-500 overflow-hidden pt-[105px] sm:pt-[125px] md:pt-[135px]"
       >
         {/* Manto difuminado inferior (funde de forma invisible con la galería) */}
         <div 
-          className="absolute bottom-0 left-0 right-0 h-44 sm:h-56 pointer-events-none z-10"
+          className="absolute bottom-0 left-0 right-0 h-28 sm:h-44 lg:h-56 pointer-events-none z-10"
           style={{
             background: 'linear-gradient(180deg, rgba(251, 246, 248, 0) 0%, rgba(251, 246, 248, 0.5) 40%, rgba(251, 246, 248, 0.92) 80%, #FBF6F8 100%)',
           }}
@@ -943,7 +943,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
             {/* COLUMNA DERECHA: Tarjeta Flotante con Marca de Agua y Campos (Réplica Exacta Canva) */}
             <div id="formulario-recuerdo" className="lg:col-span-6 pt-7 relative scroll-mt-28">
-              <div className="relative rounded-[28px] bg-[#FFF9F6] p-5 sm:p-8 shadow-[0_24px_60px_rgba(120,50,95,0.11),0_6px_18px_rgba(0,0,0,0.03)] border border-[rgba(255,240,235,0.9)] max-w-lg ml-auto overflow-visible text-[#2D0F31] mb-6 sm:mb-0">
+              <div className="relative rounded-[28px] bg-[#FFF9F6] p-5 sm:p-8 shadow-[0_24px_60px_rgba(120,50,95,0.11),0_6px_18px_rgba(0,0,0,0.03)] border border-[rgba(255,240,235,0.9)] max-w-lg ml-auto overflow-visible text-[#2D0F31] mb-0">
                 
                 {/* Marca de agua dorada en la esquina superior derecha */}
                 <svg className="absolute -top-3 -right-2 w-28 h-28 pointer-events-none select-none rotate-[18deg]" viewBox="0 0 100 100" fill="none">
@@ -1133,18 +1133,18 @@ export default function ComunidadClient({ initialMemories }: Props) {
                     )}
                   </div>
 
-                  {/* Aviso de comunidad, redes sociales oficiales y privacidad */}
-                  <div className="p-3.5 rounded-2xl bg-[#FFF5F9] border border-[#F3D3E5] text-left space-y-2 shadow-[0_2px_8px_rgba(164,80,155,0.04)]">
+                  {/* Aviso informativo de publicación y privacidad */}
+                  <div className="p-3.5 rounded-2xl bg-[#FFF7FA] border border-[#F0D5E5] text-left space-y-2 shadow-[0_2px_8px_rgba(164,80,155,0.04)]">
                     <div className="flex items-center gap-2 text-xs font-bold text-[#8C3F71]">
                       <span>🕊️</span>
-                      <span>Homenaje en comunidad y redes oficiales</span>
+                      <span>Publicación en Cartas al Cielo</span>
                     </div>
                     <p className="text-[11.5px] text-[#6B4E63] leading-relaxed">
-                      Tu carta y fotografía formarán parte del santuario público de <strong>Cartas al Cielo</strong> y podrán ser seleccionadas con profundo respeto y cariño en nuestras cuentas oficiales de Instagram (<span className="font-semibold text-[#8C3F71]">@angeles_en_el_cielo_</span>) y TikTok (<span className="font-semibold text-[#8C3F71]">@angeles_en_elcielo</span>) para honrar su memoria y acompañar a otras familias en duelo.
+                      El nombre, fotografía y dedicatoria se publican en el Libro de los Ángeles para que otras familias puedan acompañarte. Tu correo electrónico se utiliza exclusivamente para la gestión de tu recuerdo y nunca se muestra públicamente.
                     </p>
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#8C5D7E] pt-1.5 border-t border-[#F3D3E5]/70">
+                    <div className="flex items-center gap-1.5 text-[11px] text-[#8C5D7E] pt-1.5 border-t border-[#F0D5E5]/70">
                       <span>🔒</span>
-                      <span><strong>Privacidad garantizada:</strong> Tu correo electrónico es estrictamente confidencial y nunca se publica ni se comparte.</span>
+                      <span>Tratamiento confidencial conforme a nuestra <a href="/privacidad" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#8C3F71] hover:text-[#B8589E]">política de privacidad</a>.</span>
                     </div>
                   </div>
 
@@ -1802,20 +1802,31 @@ export default function ComunidadClient({ initialMemories }: Props) {
             <div className="p-6 sm:p-7 pt-2 space-y-4">
               
               {/* Título y Datos del Ángel */}
-              <div className="flex flex-col items-center text-center">
-                <div className="flex items-center gap-2">
-                  <span className="text-[#D98218] text-xl">★</span>
-                  <h2 id="dialog-pet-name" className="font-playfair font-bold text-[#2D0F31] text-2xl sm:text-3xl">
+              <div className="flex flex-col items-center text-center px-1">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <span className="text-[#D98218] text-lg sm:text-xl select-none" aria-hidden="true">★</span>
+                  <h2 id="dialog-pet-name" className="font-playfair font-bold text-[#2D0F31] text-2xl sm:text-3xl tracking-tight">
                     {selectedMemoryForRead.petName}
                   </h2>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#8C3F71] mt-1">
-                  <span>🐾 En memoria eterna · {selectedMemoryForRead.yearsOrDates || 'Siempre en el corazón'}</span>
+
+                {/* Metadatos del Ángel y la Familia (Adaptación elegante 320-430px sin huérfanos) */}
+                <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-center max-w-[360px] sm:max-w-none mx-auto leading-relaxed">
+                  <span className="inline-flex items-center gap-1 font-semibold text-[#8C3F71] whitespace-nowrap">
+                    <span>🐾</span>
+                    <span>En memoria eterna</span>
+                  </span>
+
+                  {selectedMemoryForRead.yearsOrDates && (
+                    <span className="inline-flex items-center gap-1.5 font-medium text-[#6B4E63] whitespace-nowrap before:content-['•'] before:text-[#C5A3BA] before:font-bold">
+                      <span>{selectedMemoryForRead.yearsOrDates}</span>
+                    </span>
+                  )}
+
                   {selectedMemoryForRead.authorName && (
-                    <>
-                      <span>·</span>
-                      <span className="text-[#775C73]">{selectedMemoryForRead.authorName}</span>
-                    </>
+                    <span className="inline-flex items-center gap-1.5 font-medium text-[#775C73] whitespace-nowrap before:content-['•'] before:text-[#C5A3BA] before:font-bold">
+                      <span>{selectedMemoryForRead.authorName}</span>
+                    </span>
                   )}
                 </div>
               </div>
