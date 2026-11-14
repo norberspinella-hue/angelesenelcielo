@@ -900,10 +900,10 @@ export default function CieloLlenoDeLucesClient() {
         <div className="max-w-[1360px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center relative z-10 my-auto min-w-0">
           
           {/* Columna Izquierda: Perro alado y arco celestial en escritorio */}
-          <div className="hidden lg:block lg:col-span-6 xl:col-span-7 pointer-events-none min-h-[460px] xl:min-h-[520px]" />
+          <div className="hidden lg:block lg:col-span-6 xl:col-span-6 pointer-events-none min-h-[460px] xl:min-h-[520px]" />
 
           {/* Columna Derecha: Título, invitación, botones y aviso de 7 días */}
-          <div className="lg:col-span-6 xl:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-4.5 relative w-full max-w-full min-w-0 px-2 sm:px-0">
+          <div className="lg:col-span-6 xl:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-4.5 relative w-full max-w-full min-w-0 px-2 sm:px-0">
             
             {/* Halo sutil de fondo para contraste óptimo */}
             <div 
@@ -946,13 +946,13 @@ export default function CieloLlenoDeLucesClient() {
                     setNewCandleCelebration(false);
                     setShowNewCandleModal(true);
                   }}
-                  className="w-full sm:w-auto justify-center px-7 sm:px-8 py-3.5 rounded-full font-bold text-white text-sm sm:text-base shadow-[0_10px_28px_rgba(134,36,94,0.36)] hover:shadow-[0_14px_34px_rgba(134,36,94,0.46)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2.5 cursor-pointer bg-[#86245E] hover:bg-[#721C4F]"
+                  className="w-full sm:w-auto shrink-0 whitespace-nowrap justify-center px-6 sm:px-8 py-3.5 rounded-full font-bold text-white text-sm sm:text-base shadow-[0_10px_28px_rgba(134,36,94,0.36)] hover:shadow-[0_14px_34px_rgba(134,36,94,0.46)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2.5 cursor-pointer bg-[#86245E] hover:bg-[#721C4F]"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2C10.5 4.2 10 5.8 10 7.2C10 8.8 10.9 9.8 12 9.8C13.1 9.8 14 8.8 14 7.2C14 5.8 13.5 4.2 12 2Z" fill="#FFFFFF"/>
                     <rect x="8" y="12" width="8" height="10" rx="1.8" fill="#FFFFFF"/>
                   </svg>
-                  <span>Enciende una vela en su memoria</span>
+                  <span className="whitespace-nowrap">Enciende una vela en su memoria</span>
                   <span className="text-base sm:text-lg">→</span>
                 </button>
 
@@ -960,7 +960,7 @@ export default function CieloLlenoDeLucesClient() {
                 <button
                   type="button"
                   onClick={handleScrollToLights}
-                  className="w-full sm:w-auto justify-center px-6 sm:px-7 py-3.5 rounded-full font-bold text-[#762759] bg-white/95 hover:bg-[#FFF0F6] border border-[#F0BED6] text-xs sm:text-sm flex items-center gap-2 transition-all shadow-sm hover:shadow hover:-translate-y-0.5 cursor-pointer"
+                  className="w-full sm:w-auto shrink-0 whitespace-nowrap justify-center px-5 sm:px-6 py-3.5 rounded-full font-bold text-[#762759] bg-white/95 hover:bg-[#FFF0F6] border border-[#F0BED6] text-xs sm:text-sm flex items-center gap-2 transition-all shadow-sm hover:shadow hover:-translate-y-0.5 cursor-pointer"
                 >
                   <span>Ver todas las luces</span>
                   <span className="text-sm">↓</span>
@@ -1693,14 +1693,14 @@ export default function CieloLlenoDeLucesClient() {
         >
           <div 
             ref={modalContainerRef}
-            className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-[0_24px_64px_rgba(0,0,0,0.50)] border border-[#F0BED6]/60 text-left space-y-4 relative text-[#30142D] max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto my-auto z-10"
+            className="rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-[0_24px_64px_rgba(45,15,49,0.55),0_0_24px_rgba(240,190,214,0.30)] border border-[#F0BED6]/90 relative text-[#30142D] max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto my-auto z-10 bg-[#F8E4EF] bg-cover bg-top bg-no-repeat bg-[url('/images/luces/modal-celestial-mobile-1080x1920.webp')] md:bg-[url('/images/luces/modal-celestial-desktop-1200x1600.webp')]"
             onClick={(e) => e.stopPropagation()}
           >
             
             <button
               type="button"
               onClick={handleCloseNewCandleModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center cursor-pointer transition-colors z-20 font-bold select-none"
+              className="absolute top-4 right-4 text-[#762759] hover:text-[#30142D] w-9 h-9 rounded-full bg-white/70 hover:bg-white flex items-center justify-center cursor-pointer transition-colors z-20 font-bold border border-[#F0BED6]/80 select-none shadow-xs"
               aria-label="Cerrar ventana"
             >
               ✕
@@ -1708,8 +1708,8 @@ export default function CieloLlenoDeLucesClient() {
 
             {!newCandleCelebration ? (
               <>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-2xl shadow-inner">
+                <div className="flex items-center gap-3 bg-white/75 backdrop-blur-md p-3.5 rounded-2xl border border-white/80 shadow-xs">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50/90 border border-amber-200 flex items-center justify-center text-2xl shadow-inner shrink-0">
                     🕯️
                   </div>
                   <div>
@@ -1736,7 +1736,7 @@ export default function CieloLlenoDeLucesClient() {
                       value={newPetName}
                       onChange={(e) => setNewPetName(e.target.value)}
                       placeholder="Ej. Toby, Chloe, Luna..."
-                      className="w-full px-3.5 py-2.5 rounded-2xl border border-[#D9CBD6] bg-[#FAF1EC] text-sm text-[#30142D] outline-none focus:border-[#86245E] focus:bg-white transition-colors"
+                      className="w-full px-3.5 py-2.5 rounded-2xl border border-[#F0BED6] bg-white/90 backdrop-blur-md text-sm text-[#30142D] outline-none focus:border-[#86245E] focus:bg-white focus:ring-2 focus:ring-[#86245E]/20 transition-all shadow-xs"
                     />
                   </div>
 
@@ -1745,7 +1745,7 @@ export default function CieloLlenoDeLucesClient() {
                     <label className="block text-xs font-bold text-[#493344] mb-1">
                       Fotografía para la vela <span className="font-normal text-[#762759]">(opcional, pública)</span>
                     </label>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 bg-white/70 backdrop-blur-xs p-2.5 rounded-2xl border border-white/80">
                       <div className="w-12 h-12 rounded-full border-2 border-amber-300 overflow-hidden bg-white shrink-0 relative flex items-center justify-center shadow-xs">
                         {uploadedPhotoPreview ? (
                           <Image src={uploadedPhotoPreview} alt="Foto de la mascota" fill className="object-cover" />
@@ -1763,7 +1763,7 @@ export default function CieloLlenoDeLucesClient() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3.5 py-1.5 rounded-xl border border-[#D9CBD6] bg-white hover:bg-[#FAF1EC] text-xs font-semibold text-[#762759] transition-all cursor-pointer"
+                        className="px-3.5 py-1.5 rounded-xl border border-[#F0BED6] bg-white hover:bg-[#FAF1EC] text-xs font-semibold text-[#762759] transition-all cursor-pointer shadow-2xs"
                       >
                         {uploadedPhotoPreview ? 'Cambiar fotografía' : 'Subir fotografía'}
                       </button>
@@ -1782,7 +1782,7 @@ export default function CieloLlenoDeLucesClient() {
                         className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                           newSpecies === 'perro'
                             ? 'bg-[#86245E] text-white shadow-xs'
-                            : 'bg-[#F9EFF5] text-[#493344] hover:bg-[#F2DEEC]'
+                            : 'bg-white/85 backdrop-blur-xs text-[#493344] hover:bg-white border border-[#F0BED6]/60'
                         }`}
                       >
                         🐶 Perro
@@ -1793,7 +1793,7 @@ export default function CieloLlenoDeLucesClient() {
                         className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                           newSpecies === 'gato'
                             ? 'bg-[#86245E] text-white shadow-xs'
-                            : 'bg-[#F9EFF5] text-[#493344] hover:bg-[#F2DEEC]'
+                            : 'bg-white/85 backdrop-blur-xs text-[#493344] hover:bg-white border border-[#F0BED6]/60'
                         }`}
                       >
                         🐱 Gato
@@ -1804,7 +1804,7 @@ export default function CieloLlenoDeLucesClient() {
                         className={`py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                           newSpecies === 'otro'
                             ? 'bg-[#86245E] text-white shadow-xs'
-                            : 'bg-[#F9EFF5] text-[#493344] hover:bg-[#F2DEEC]'
+                            : 'bg-white/85 backdrop-blur-xs text-[#493344] hover:bg-white border border-[#F0BED6]/60'
                         }`}
                       >
                         <Image src="/images/icons/plans/pawrosa.svg" alt="Huella" width={13} height={13} className="object-contain" />
@@ -1823,7 +1823,7 @@ export default function CieloLlenoDeLucesClient() {
                       value={newAuthor}
                       onChange={(e) => setNewAuthor(e.target.value)}
                       placeholder="Ej. Familia Martínez, Tu mamá que te ama..."
-                      className="w-full px-3.5 py-2.5 rounded-2xl border border-[#D9CBD6] bg-[#FAF1EC] text-sm text-[#30142D] outline-none focus:border-[#86245E] focus:bg-white transition-colors"
+                      className="w-full px-3.5 py-2.5 rounded-2xl border border-[#F0BED6] bg-white/90 backdrop-blur-md text-sm text-[#30142D] outline-none focus:border-[#86245E] focus:bg-white focus:ring-2 focus:ring-[#86245E]/20 transition-all shadow-xs"
                     />
                   </div>
 
@@ -1837,12 +1837,12 @@ export default function CieloLlenoDeLucesClient() {
                       value={newDedication}
                       onChange={(e) => setNewDedication(e.target.value)}
                       placeholder="Ej. Siempre iluminarás mi camino y cada estrella del cielo..."
-                      className="w-full px-3.5 py-2.5 rounded-2xl border border-[#D9CBD6] bg-[#FAF1EC] text-sm text-[#30142D] outline-none focus:border-[#86245E] focus:bg-white resize-none transition-colors"
+                      className="w-full px-3.5 py-2.5 rounded-2xl border border-[#F0BED6] bg-white/90 backdrop-blur-md text-sm text-[#30142D] outline-none focus:border-[#86245E] focus:bg-white focus:ring-2 focus:ring-[#86245E]/20 resize-none transition-all shadow-xs"
                     />
                   </div>
 
                   {/* Correo electrónico (Privado para gestión y avisos) */}
-                  <div className="p-3.5 rounded-2xl bg-[#FFF9F3] border border-[#F5E2CC] space-y-2">
+                  <div className="p-3.5 rounded-2xl bg-[#FFF9F3]/90 backdrop-blur-md border border-[#F5E2CC] space-y-2 shadow-xs">
                     <div>
                       <label className="block text-[11px] font-bold text-[#8B4513] mb-1">
                         Tu correo electrónico para gestionar la vela * <span className="font-normal text-[#762759]">(privado, obligatorio)</span>
@@ -1902,7 +1902,7 @@ export default function CieloLlenoDeLucesClient() {
               /* ========================================================================= */
               /* 11. CONFIRMACIÓN PERSONALIZADA POST-ENCENDIDO                             */
               /* ========================================================================= */
-              <div className="text-center py-3 space-y-4">
+              <div className="text-center py-2 space-y-4">
                 
                 {/* Estilos para animación de encendido suave de la llama una sola vez */}
                 <style>{`
@@ -1915,12 +1915,12 @@ export default function CieloLlenoDeLucesClient() {
                     45% {
                       opacity: 1;
                       transform: scale(1.18);
-                      filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.75));
+                      filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.85));
                     }
                     100% {
                       opacity: 1;
                       transform: scale(1);
-                      filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.45));
+                      filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.55));
                     }
                   }
 
@@ -1935,43 +1935,62 @@ export default function CieloLlenoDeLucesClient() {
                       animation: none !important;
                       opacity: 1 !important;
                       transform: scale(1) !important;
-                      filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.45)) !important;
+                      filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.55)) !important;
                     }
                   }
                 `}</style>
 
-                {/* Fotografía de la mascota o huella con llama iluminada */}
-                <div className="relative w-20 h-20 mx-auto rounded-full border-2 border-amber-300 overflow-hidden bg-[#FAF3F7] shadow-[0_0_20px_rgba(245,158,11,0.30)] flex items-center justify-center">
-                  {createdCandle?.photoUrl && !createdCandle.photoUrl.includes('golden_retriever') ? (
-                    <Image src={createdCandle.photoUrl} alt={createdCandle.petName} fill className="object-cover" />
-                  ) : (
-                    <Image src="/images/icons/plans/pawrosa.svg" alt="Huella" width={32} height={32} className="object-contain opacity-80" />
-                  )}
-                  {/* Icono de llama: encendido suave una sola vez, luego fijo e iluminado */}
+                {/* 1 & 2. FOTOGRAFÍA PROTAGONISTA CON HALO DORADO Y LLAMA ENCENDIDA */}
+                <div className="relative mx-auto w-24 h-24 flex items-center justify-center my-1">
+                  {/* Halo resplandeciente dorado celestial alrededor de la foto y llama */}
+                  <div className="absolute inset-0 -m-3 rounded-full bg-gradient-to-tr from-amber-400/35 via-rose-300/25 to-amber-200/40 blur-lg pointer-events-none" />
+                  
+                  <div className="relative w-24 h-24 rounded-full border-3 border-amber-300/90 overflow-hidden bg-white shadow-[0_0_24px_rgba(245,158,11,0.45)] flex items-center justify-center">
+                    {createdCandle?.photoUrl && !createdCandle.photoUrl.includes('golden_retriever') ? (
+                      <Image src={createdCandle.photoUrl} alt={createdCandle.petName} fill className="object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-[#FAF3F7] flex items-center justify-center">
+                        <Image src="/images/icons/plans/pawrosa.svg" alt="Huella" width={38} height={38} className="object-contain opacity-85" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Llama encendida como protagonista emocional con halo dorado y animación suave */}
                   <div 
                     aria-hidden="true"
-                    className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white border border-amber-200 flex items-center justify-center text-sm shadow-xs flame-ignite-once"
+                    className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-300 flex items-center justify-center text-lg shadow-[0_2px_10px_rgba(245,158,11,0.50)] flame-ignite-once z-10"
                   >
                     🕯️
                   </div>
                 </div>
 
-                <div>
-                  <h3 id="modal-exito-titulo" className="font-playfair text-2xl font-bold text-[#30142D]">
+                {/* 3. TÍTULO CON DETALLES CELESTIALES */}
+                <div className="space-y-1">
+                  <h3 id="modal-exito-titulo" className="font-playfair text-2xl sm:text-[26px] font-bold text-[#30142D] leading-tight">
                     La vela de {createdCandle?.petName || 'tu angelito'} ya está encendida
                   </h3>
-                  <p className="text-xs text-[#493344] mt-1.5 max-w-xs mx-auto leading-relaxed">
-                    Su luz brillará durante <strong>7 días gratuitos</strong> en el Cielo de Luces. Tu acceso para volver a encenderla ha quedado guardado automáticamente en este dispositivo.
-                  </p>
+                  <div className="flex items-center justify-center gap-1.5 text-amber-500/80 text-xs">
+                    <span>✨</span>
+                    <span className="w-16 h-px bg-gradient-to-r from-transparent via-[#F0BED6] to-transparent"></span>
+                    <span>✨</span>
+                  </div>
                 </div>
 
+                {/* 4. DEDICATORIA SI EXISTE */}
                 {createdCandle?.dedication && (
-                  <div className="p-3.5 rounded-2xl bg-[#FFF9F6] border border-[#F5E2CC] text-xs text-[#493344] italic font-serif">
-                    «{createdCandle.dedication}»
+                  <div className="p-3.5 rounded-2xl bg-white/85 backdrop-blur-sm border border-[#F0BED6] text-xs sm:text-[13px] text-[#381232] italic font-serif leading-relaxed shadow-xs max-w-sm mx-auto">
+                    “{createdCandle.dedication}”
                   </div>
                 )}
 
-                {/* Botón Principal: Abre exactamente el homenaje recién creado */}
+                {/* 5. INFORMACIÓN DE SIETE DÍAS */}
+                <div className="p-3 rounded-2xl bg-white/70 backdrop-blur-xs border border-white/80 max-w-xs mx-auto">
+                  <p className="text-xs text-[#493344] leading-relaxed">
+                    Su luz brillará durante <strong className="text-[#86245E]">7 días gratuitos</strong> en el Cielo de Luces. Tu acceso para volver a encenderla ha quedado guardado automáticamente en este dispositivo.
+                  </p>
+                </div>
+
+                {/* 6. BOTÓN PRINCIPAL: «Ver su luz en el cielo» */}
                 <button
                   ref={successButtonRef}
                   type="button"
@@ -1981,7 +2000,7 @@ export default function CieloLlenoDeLucesClient() {
                       handleOpenCandleModal(createdCandle);
                     }
                   }}
-                  className="w-full py-3.5 px-6 rounded-full font-bold text-white text-sm bg-[#86245E] hover:bg-[#721C4F] shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#86245E] focus:ring-offset-2"
+                  className="w-full py-3.5 px-6 rounded-full font-bold text-white text-sm bg-[#86245E] hover:bg-[#721C4F] shadow-[0_4px_16px_rgba(134,36,94,0.35)] hover:shadow-[0_6px_20px_rgba(134,36,94,0.45)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#86245E] focus:ring-offset-2"
                 >
                   <span>Ver su luz en el cielo</span>
                   <span>→</span>
@@ -1999,7 +2018,7 @@ export default function CieloLlenoDeLucesClient() {
                         window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + window.location.href)}`, '_blank');
                       }
                     }}
-                    className="w-full py-2.5 px-4 rounded-full font-bold text-white text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer bg-gradient-to-r from-[#25D366] to-[#128C7E]"
+                    className="w-full py-2.5 px-4 rounded-full font-bold text-white text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:opacity-95 transition-opacity"
                   >
                     <span>Compartir en WhatsApp o Estado</span>
                     <span>↗</span>
@@ -2008,7 +2027,7 @@ export default function CieloLlenoDeLucesClient() {
                   <button
                     type="button"
                     onClick={handleCloseNewCandleModal}
-                    className="w-full py-2 px-4 rounded-full font-semibold text-[#493344] bg-gray-100 hover:bg-gray-200 text-xs transition-all cursor-pointer"
+                    className="w-full py-2 px-4 rounded-full font-semibold text-[#493344] bg-white/70 hover:bg-white text-xs transition-all cursor-pointer border border-[#F0BED6]/60"
                   >
                     Cerrar y contemplar el santuario
                   </button>
