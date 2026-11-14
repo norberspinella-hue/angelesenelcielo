@@ -33,14 +33,14 @@ interface TarjetaLuzGaleriaProps<T extends CandleGaleriaData = CandleGaleriaData
 /**
  * TarjetaLuzGaleria - Tarjeta compacta horizontal de la galería «Todas las luces de nuestro cielo»
  * 
- * FASE 4: Propuesta de galería compacta horizontal
- * - Formato compacto horizontal adaptado para cuadrícula de 5 columnas en escritorio y 2 en móvil.
- * - Fotografía real de la mascota como protagonista (ocupa ~70% superior).
- * - Banda inferior rosa-marfil celestial con fondo oficial de nubes y esquinas redondeadas suaves.
- * - Únicamente el nombre real y el corazón decorativo (♥) en el frontal.
- * - Vela oficial (/images/luces/pilar-enciende-luz.webp) estática en esquina inferior derecha.
- * - Resplandor exterior oro rosa Variante B aprobado en Fase 3.
- * - Toda la tarjeta es un botón interactivo que abre el modal memorial completo al hacer clic.
+ * REQUISITO CRÍTICO DE DISEÑO CONSERVADO:
+ * - Se preserva ESTRICTAMENTE el fondo ilustrado original de la franja inferior:
+ *   /images/mural-preview/card-heaven-front-master.webp
+ * - Misma composición, encuadre y vela oficial (/images/luces/pilar-enciende-luz.webp).
+ * - Mejora de legibilidad con paleta aprobada:
+ *   - Nombre de la mascota: ciruela oscuro #30142D
+ *   - Cifra de corazones: frambuesa oscuro #762759
+ * - Distinción textual y con icono del estado de la vela (encendida / en reposo / eterna).
  */
 export default function TarjetaLuzGaleria<T extends CandleGaleriaData = CandleGaleriaData>({
   candle,
@@ -66,7 +66,7 @@ export default function TarjetaLuzGaleria<T extends CandleGaleriaData = CandleGa
       className={`group relative w-full max-w-[230px] h-[180px] sm:h-[188px] lg:h-[192px] rounded-[20px] cursor-pointer select-none transition-all duration-300 hover:-translate-y-1.5 focus:outline-none focus:ring-2 focus:ring-[#D9629B]/40 ${className}`}
       style={{
         isolation: 'isolate',
-        // Resplandor exterior oro rosa Variante B aprobado en Fase 3
+        // Resplandor exterior oro rosa Variante B aprobado
         boxShadow: `
           0 0 5px 1.5px rgba(255, 240, 225, 0.98),
           0 0 14px 4px rgba(255, 202, 190, 0.80),
@@ -76,7 +76,7 @@ export default function TarjetaLuzGaleria<T extends CandleGaleriaData = CandleGa
         `,
       }}
     >
-      {/* Halo y Borde Oro Rosa Luminoso Externo (No recortado por overflow) */}
+      {/* Halo y Borde Oro Rosa Luminoso Externo */}
       <div
         className="absolute -inset-[1.5px] rounded-[21.5px] pointer-events-none z-30"
         style={{
@@ -101,15 +101,37 @@ export default function TarjetaLuzGaleria<T extends CandleGaleriaData = CandleGa
             fill
             sizes="(max-width: 640px) 175px, (max-width: 1024px) 210px, 230px"
             priority={false}
-            className="object-cover object-[center_28%] transition-transform duration-700 ease-out group-hover:scale-105"
+            className={`object-cover object-[center_28%] transition-transform duration-700 ease-out group-hover:scale-105 ${
+              candle.isNeedsReignition ? 'filter saturate-[0.82]' : ''
+            }`}
           />
 
           {/* Sutil resplandor de luz celestial superior */}
           <div className="absolute top-0 left-0 w-24 h-24 bg-gradient-to-br from-white/35 via-white/10 to-transparent rounded-full pointer-events-none blur-[6px]" />
+
+          {/* Distinción textual y con icono del estado de la vela (nunca solo por color) */}
+          <div className="absolute top-2 left-2 z-10">
+            {candle.isEternal ? (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/92 backdrop-blur-md text-[#762759] text-[9.5px] font-bold border border-amber-300/80 shadow-xs select-none">
+                <span className="text-amber-500">⭐</span>
+                <span>Eterna</span>
+              </span>
+            ) : candle.isNeedsReignition ? (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#30142D]/88 backdrop-blur-md text-amber-200 text-[9.5px] font-bold shadow-xs select-none">
+                <span>⏳</span>
+                <span>En reposo</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/92 backdrop-blur-md text-[#166534] text-[9.5px] font-bold border border-[#DCFCE7] shadow-xs select-none">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse" />
+                <span>Encendida</span>
+              </span>
+            )}
+          </div>
         </div>
 
         {/* ================================================================= */}
-        {/* 2. PLACA INFERIOR ROSA-MARFIL CELESTIAL                           */}
+        {/* 2. PLACA INFERIOR ORIGINAL CON IMAGEN card-heaven-front-master     */}
         {/* ================================================================= */}
         <div
           className="absolute bottom-0 left-0 w-full h-[58px] sm:h-[60px] lg:h-[62px] z-10 rounded-t-[16px] overflow-hidden shadow-[0_-3px_12px_rgba(184,60,126,0.08)] flex items-center justify-between px-3 sm:px-3.5"
@@ -130,9 +152,9 @@ export default function TarjetaLuzGaleria<T extends CandleGaleriaData = CandleGa
             }}
           />
 
-          {/* Contenido frontal: Nombre real + Contador de corazones recibido */}
+          {/* Contenido frontal: Nombre real en ciruela oscuro #30142D + Contador de corazones en frambuesa oscuro #762759 */}
           <div className="relative z-10 flex items-center gap-1.5 min-w-0 pr-10">
-            <h3 className="font-playfair font-bold text-[14.5px] sm:text-[16px] lg:text-[17px] text-[#2D0F31] leading-tight tracking-[-0.2px] truncate drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)]">
+            <h3 className="font-playfair font-bold text-[14.5px] sm:text-[16px] lg:text-[17px] text-[#30142D] leading-tight tracking-[-0.2px] truncate drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)]">
               {candle.petName}
             </h3>
             <span
@@ -142,10 +164,10 @@ export default function TarjetaLuzGaleria<T extends CandleGaleriaData = CandleGa
                   onSendWarmth(candle.id, e);
                 }
               }}
-              className="inline-flex items-center gap-0.5 text-[#8C3F71] hover:text-[#B83C7E] font-semibold text-[11px] sm:text-[12px] select-none shrink-0 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)] cursor-pointer transition-colors"
+              className="inline-flex items-center gap-0.5 text-[#762759] hover:text-[#9E2B6C] font-bold text-[11px] sm:text-[12px] select-none shrink-0 drop-shadow-[0_1px_1px_rgba(255,255,255,0.9)] cursor-pointer transition-colors"
               title={`${candle.warmthCount || 0} abrazos de luz. Haz clic para acompañar.`}
             >
-              <span className="text-[#D9629B] text-[11px] sm:text-[12px]" aria-hidden="true">♥</span>
+              <span className="text-[#762759] text-[11px] sm:text-[12px]" aria-hidden="true">♥</span>
               <span className="font-sans font-bold leading-none">{candle.warmthCount || 0}</span>
             </span>
           </div>
