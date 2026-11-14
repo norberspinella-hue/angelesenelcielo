@@ -64,8 +64,11 @@ export async function GET(req: NextRequest) {
     if (species && species !== 'todos') {
       if (species === 'otro') {
         query = query.not('species', 'in', '("perro","gato")');
-      } else {
+      } else if (['perro', 'gato', 'conejo', 'pajaro', 'caballo'].includes(species)) {
         query = query.eq('species', species);
+      } else {
+        // Especie no reconocida: devolver lista vacía limpiamente sin provocar error 500 en DB
+        return NextResponse.json({ memories: [] });
       }
     }
 
