@@ -833,7 +833,7 @@ export default function CieloLlenoDeLucesClient() {
       <section 
         className="relative z-10 overflow-hidden transition-all duration-300 pt-20 sm:pt-24 lg:pt-24 pb-14 sm:pb-16 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between"
         style={{
-          minHeight: 'clamp(1040px, 130vw, 1140px)',
+          minHeight: 'clamp(980px, 125vw, 1120px)',
           isolation: 'isolate',
         }}
       >
@@ -846,7 +846,8 @@ export default function CieloLlenoDeLucesClient() {
             maskImage: 'linear-gradient(to bottom, black 0%, black 86%, rgba(0,0,0,0.92) 89%, rgba(0,0,0,0.65) 93%, rgba(0,0,0,0.25) 96%, transparent 98.5%, transparent 100%)',
           }}
         >
-          <div className="hidden 2xl:block absolute inset-0">
+          {/* Pantallas ultrawide (> 1920px) */}
+          <div className="hidden [@media(min-width:1921px)]:block absolute inset-0">
             <Image 
               src="/images/luces/mural_lila_pc_ultrawide_2560x1200.webp" 
               alt="Cielo lleno de luces" 
@@ -856,7 +857,8 @@ export default function CieloLlenoDeLucesClient() {
               className="object-cover object-right-top xl:object-right" 
             />
           </div>
-          <div className="hidden lg:block 2xl:hidden absolute inset-0">
+          {/* Escritorio estándar Full HD (1536px a 1920px) */}
+          <div className="hidden 2xl:block [@media(min-width:1921px)]:hidden absolute inset-0">
             <Image 
               src="/images/luces/mural_lila_pc_1920x1080.webp" 
               alt="Cielo lleno de luces" 
@@ -866,9 +868,21 @@ export default function CieloLlenoDeLucesClient() {
               className="object-cover object-right-top lg:object-right" 
             />
           </div>
+          {/* Portátiles y Laptops (1024px a 1535px) */}
+          <div className="hidden lg:block 2xl:hidden absolute inset-0">
+            <Image 
+              src="/images/luces/mural_lila_portatil_1366x768.webp" 
+              alt="Cielo lleno de luces" 
+              fill 
+              priority 
+              quality={90}
+              className="object-cover object-right-top lg:object-right" 
+            />
+          </div>
+          {/* Tablets verticales (640px a 1023px) */}
           <div className="hidden sm:block lg:hidden absolute inset-0">
             <Image 
-              src="/images/luces/mural_lila_movil_1080x1350.webp" 
+              src="/images/luces/mural_lila_tablet_vertical_900x1200.webp" 
               alt="Cielo lleno de luces" 
               fill 
               priority 
@@ -876,6 +890,7 @@ export default function CieloLlenoDeLucesClient() {
               className="object-cover object-top" 
             />
           </div>
+          {/* Móviles (< 640px: 390x844, 375x812, 360x800, 430x932) */}
           <div className="block sm:hidden absolute inset-0">
             <Image 
               src="/images/luces/mural_lila_movil_1080x1920.webp" 
@@ -927,7 +942,7 @@ export default function CieloLlenoDeLucesClient() {
             </p>
 
             {/* En Móvil: Ventana visual despejada para contemplar el portal, arco, arcoíris, perro alado y escaleras con 100% nitidez */}
-            <div className="block lg:hidden w-full h-[570px] sm:h-[620px] pointer-events-none select-none" />
+            <div className="block lg:hidden w-full h-[540px] sm:h-[580px] pointer-events-none select-none" />
 
             {/* Texto de invitación */}
             <p className="font-sans text-xs sm:text-base text-[#493344] max-w-[320px] sm:max-w-lg leading-relaxed font-medium w-full break-words text-center lg:text-left mx-auto lg:mx-0">
