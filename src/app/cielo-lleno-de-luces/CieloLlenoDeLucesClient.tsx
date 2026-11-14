@@ -373,6 +373,28 @@ export default function CieloLlenoDeLucesClient() {
   }, [showNewCandleModal, selectedCandle, handleCloseNewCandleModal, handleCloseCandleModal]);
 
   // Formulario nueva vela
+  const petNameInputRef = useRef<HTMLInputElement>(null);
+  const successButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Gestión de foco accesible al abrir el modal o la confirmación
+  useEffect(() => {
+    if (showNewCandleModal && !newCandleCelebration) {
+      const timer = setTimeout(() => {
+        petNameInputRef.current?.focus();
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [showNewCandleModal, newCandleCelebration]);
+
+  useEffect(() => {
+    if (showNewCandleModal && newCandleCelebration) {
+      const timer = setTimeout(() => {
+        successButtonRef.current?.focus();
+      }, 80);
+      return () => clearTimeout(timer);
+    }
+  }, [showNewCandleModal, newCandleCelebration]);
+
   const [newPetName, setNewPetName] = useState('');
   const [newSpecies, setNewSpecies] = useState<'perro' | 'gato' | 'otro'>('perro');
   const [newAuthor, setNewAuthor] = useState('');
@@ -1671,7 +1693,7 @@ export default function CieloLlenoDeLucesClient() {
         >
           <div 
             ref={modalContainerRef}
-            className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-[0_24px_64px_rgba(0,0,0,0.50)] border border-[#F0BED6]/60 text-left space-y-4 relative text-[#30142D] max-h-[92vh] overflow-y-auto my-auto z-10"
+            className="bg-white rounded-[32px] p-6 sm:p-8 max-w-md w-full shadow-[0_24px_64px_rgba(0,0,0,0.50)] border border-[#F0BED6]/60 text-left space-y-4 relative text-[#30142D] max-h-[min(92vh,calc(100dvh-2rem))] overflow-y-auto my-auto z-10"
             onClick={(e) => e.stopPropagation()}
           >
             
@@ -1708,6 +1730,7 @@ export default function CieloLlenoDeLucesClient() {
                       Nombre de tu angelito * <span className="font-normal text-[#762759]">(obligatorio, público)</span>
                     </label>
                     <input
+                      ref={petNameInputRef}
                       type="text"
                       required
                       value={newPetName}
@@ -1881,6 +1904,42 @@ export default function CieloLlenoDeLucesClient() {
               /* ========================================================================= */
               <div className="text-center py-3 space-y-4">
                 
+                {/* Estilos para animación de encendido suave de la llama una sola vez */}
+                <style>{`
+                  @keyframes flameSoftIgnite {
+                    0% {
+                      opacity: 0.25;
+                      transform: scale(0.68);
+                      filter: drop-shadow(0 0 0 rgba(245, 158, 11, 0));
+                    }
+                    45% {
+                      opacity: 1;
+                      transform: scale(1.18);
+                      filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.75));
+                    }
+                    100% {
+                      opacity: 1;
+                      transform: scale(1);
+                      filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.45));
+                    }
+                  }
+
+                  @media (prefers-reduced-motion: no-preference) {
+                    .flame-ignite-once {
+                      animation: flameSoftIgnite 1.25s cubic-bezier(0.16, 1, 0.3, 1) 1 forwards;
+                    }
+                  }
+
+                  @media (prefers-reduced-motion: reduce) {
+                    .flame-ignite-once {
+                      animation: none !important;
+                      opacity: 1 !important;
+                      transform: scale(1) !important;
+                      filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.45)) !important;
+                    }
+                  }
+                `}</style>
+
                 {/* Fotografía de la mascota o huella con llama iluminada */}
                 <div className="relative w-20 h-20 mx-auto rounded-full border-2 border-amber-300 overflow-hidden bg-[#FAF3F7] shadow-[0_0_20px_rgba(245,158,11,0.30)] flex items-center justify-center">
                   {createdCandle?.photoUrl && !createdCandle.photoUrl.includes('golden_retriever') ? (
@@ -1888,8 +1947,11 @@ export default function CieloLlenoDeLucesClient() {
                   ) : (
                     <Image src="/images/icons/plans/pawrosa.svg" alt="Huella" width={32} height={32} className="object-contain opacity-80" />
                   )}
-                  {/* Icono de llama animada suave */}
-                  <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white border border-amber-200 flex items-center justify-center text-sm shadow-xs motion-safe:animate-pulse">
+                  {/* Icono de llama: encendido suave una sola vez, luego fijo e iluminado */}
+                  <div 
+                    aria-hidden="true"
+                    className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white border border-amber-200 flex items-center justify-center text-sm shadow-xs flame-ignite-once"
+                  >
                     🕯️
                   </div>
                 </div>
@@ -1911,6 +1973,7 @@ export default function CieloLlenoDeLucesClient() {
 
                 {/* Botón Principal: Abre exactamente el homenaje recién creado */}
                 <button
+                  ref={successButtonRef}
                   type="button"
                   onClick={() => {
                     handleCloseNewCandleModal();
@@ -1918,7 +1981,7 @@ export default function CieloLlenoDeLucesClient() {
                       handleOpenCandleModal(createdCandle);
                     }
                   }}
-                  className="w-full py-3.5 px-6 rounded-full font-bold text-white text-sm bg-[#86245E] hover:bg-[#721C4F] shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3.5 px-6 rounded-full font-bold text-white text-sm bg-[#86245E] hover:bg-[#721C4F] shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#86245E] focus:ring-offset-2"
                 >
                   <span>Ver su luz en el cielo</span>
                   <span>→</span>
