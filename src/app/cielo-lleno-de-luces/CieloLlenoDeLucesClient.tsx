@@ -831,9 +831,9 @@ export default function CieloLlenoDeLucesClient() {
       {/* 2. HERO: PORTADA «CIELO LLENO DE LUCES»                                   */}
       {/* ========================================================================= */}
       <section 
-        className="relative z-10 overflow-hidden transition-all duration-300 pt-24 sm:pt-32 lg:pt-24 pb-16 sm:pb-16 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between"
+        className="relative z-10 overflow-hidden transition-all duration-300 pt-20 sm:pt-24 lg:pt-24 pb-14 sm:pb-16 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between"
         style={{
-          minHeight: 'clamp(820px, 94vh, 1020px)',
+          minHeight: 'clamp(1040px, 130vw, 1140px)',
           isolation: 'isolate',
         }}
       >
@@ -897,14 +897,14 @@ export default function CieloLlenoDeLucesClient() {
         />
 
         {/* Contenedor principal: Grilla en desktop (texto a la izquierda, perrito alado y arco despejados a la derecha) */}
-        <div className="max-w-[1360px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center relative z-10 my-auto min-w-0">
+        <div className="max-w-[1360px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center relative z-10 my-0 lg:my-auto min-w-0">
           
           {/* Columna Izquierda: Título, subtítulo, texto descriptivo, botones y contador */}
           <div className="lg:col-span-6 xl:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-4.5 relative w-full max-w-full min-w-0 px-2 sm:px-0">
             
-            {/* Halo sutil de fondo para contraste óptimo */}
+            {/* Halo sutil de fondo para contraste óptimo: SOLO EN ESCRITORIO (oculto en móvil para no generar borrón central) */}
             <div 
-              className="absolute -inset-4 sm:-inset-6 -z-10 rounded-3xl blur-2xl pointer-events-none opacity-80 lg:opacity-65"
+              className="hidden lg:block absolute -inset-4 sm:-inset-6 -z-10 rounded-3xl blur-2xl pointer-events-none opacity-65"
               style={{
                 background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.96) 0%, rgba(255, 250, 253, 0.82) 55%, rgba(255, 255, 255, 0) 100%)',
               }}
@@ -926,11 +926,11 @@ export default function CieloLlenoDeLucesClient() {
               Porque hay amores que nunca dejan de brillar.
             </p>
 
-            {/* En Móvil: Ventana visual despejada para contemplar el perrito alado y el arco sin solapamiento de botones */}
-            <div className="block lg:hidden w-full h-[280px] sm:h-[340px] pointer-events-none select-none" />
+            {/* En Móvil: Ventana visual despejada para contemplar el portal, arco, arcoíris, perro alado y escaleras con 100% nitidez */}
+            <div className="block lg:hidden w-full h-[570px] sm:h-[620px] pointer-events-none select-none" />
 
             {/* Texto de invitación */}
-            <p className="font-sans text-xs sm:text-base text-[#493344] max-w-md sm:max-w-lg leading-relaxed font-medium w-full max-w-full break-words">
+            <p className="font-sans text-xs sm:text-base text-[#493344] max-w-[320px] sm:max-w-lg leading-relaxed font-medium w-full break-words text-center lg:text-left mx-auto lg:mx-0">
               Aunque ya no esté a tu lado, su luz sigue viviendo en ti. Enciende una vela en su memoria y deja que su recuerdo ilumine nuestro cielo.
             </p>
 

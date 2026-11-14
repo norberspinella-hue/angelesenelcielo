@@ -55,6 +55,7 @@ export function WhatsAppButton() {
   if (pathname?.startsWith('/live-tiktok')) return null;
 
   const isMural = pathname === '/mural-global';
+  const isCieloLuces = pathname?.startsWith('/cielo-lleno-de-luces');
   const { message, queryType } = getContextualWhatsAppConfig(pathname || '/');
   const whatsappUrl = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
 
@@ -108,7 +109,7 @@ export function WhatsAppButton() {
         </div>
 
         {/* Invitación empática compacta en móvil (solo en páginas estándar para no saturar el canvas del mural) */}
-        {!isMural && (
+        {!isMural && !isCieloLuces && (
           <div className="sm:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur-md border border-[#F3DCE7] shadow-[0_2px_10px_rgba(180,140,190,0.16)] text-[11px] font-bold text-[#1E2A78] leading-none group-active:scale-95 transition-all">
             <span className="text-[12px]" aria-hidden="true">💬</span>
             <span>¿Necesitas ayuda?</span>
