@@ -831,7 +831,7 @@ export default function CieloLlenoDeLucesClient() {
       {/* 2. HERO: PORTADA «CIELO LLENO DE LUCES»                                   */}
       {/* ========================================================================= */}
       <section 
-        className="relative z-10 overflow-hidden transition-all duration-300 pt-20 sm:pt-24 lg:pt-24 pb-14 sm:pb-16 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between"
+        className="relative z-10 overflow-hidden transition-all duration-300 pt-20 sm:pt-24 lg:pt-24 pb-20 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-12 flex flex-col justify-between"
         style={{
           minHeight: 'clamp(980px, 125vw, 1120px)',
           isolation: 'isolate',
@@ -950,7 +950,7 @@ export default function CieloLlenoDeLucesClient() {
             </p>
 
             {/* Botones de acción y nota de 7 días */}
-            <div className="pt-2 flex flex-col items-center lg:items-start gap-2.5 w-full max-w-[360px] sm:max-w-none mx-auto lg:mx-0">
+            <div className="pt-2 flex flex-col items-center lg:items-start gap-2.5 w-full max-w-[340px] sm:max-w-none mx-auto lg:mx-0">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
                 
                 {/* Botón Principal: «Enciende una vela en su memoria» (#86245E) */}
