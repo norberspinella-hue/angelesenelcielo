@@ -45,8 +45,14 @@ export default function ComunidadClient({ initialMemories }: Props) {
   const [instagram, setInstagram] = useState('');
   const [tiktok, setTiktok] = useState('');
   const [isPublic, setIsPublic] = useState(true);
+  const [socialShareAllowed, setSocialShareAllowed] = useState(false);
+  const [showOptionalDetails, setShowOptionalDetails] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  // Focus and keyboard accessibility refs
+  const lastActiveTriggerRef = React.useRef<HTMLElement | null>(null);
+  const modalCloseButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -79,6 +85,36 @@ export default function ComunidadClient({ initialMemories }: Props) {
   const [candleEmail, setCandleEmail] = useState('');
   const [candleAnniversaryOptIn, setCandleAnniversaryOptIn] = useState(true);
   const [candleCelebration, setCandleCelebration] = useState(false);
+
+  // Keyboard Escape listener & focus restoration
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (selectedMemoryForRead) {
+          setSelectedMemoryForRead(null);
+          setTimeout(() => {
+            lastActiveTriggerRef.current?.focus();
+          }, 50);
+        } else if (showCelebrationModal) {
+          setShowCelebrationModal(false);
+        } else if (showWeeklyCandleModal) {
+          setShowWeeklyCandleModal(false);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedMemoryForRead, showCelebrationModal, showWeeklyCandleModal]);
+
+  React.useEffect(() => {
+    if (selectedMemoryForRead) {
+      setTimeout(() => {
+        modalCloseButtonRef.current?.focus();
+      }, 50);
+    }
+  }, [selectedMemoryForRead]);
+
+
 
   // Dedicatorias recientes de la Vela Semanal
   const [recentCandleDedications, setRecentCandleDedications] = useState([
@@ -615,7 +651,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
         <div className="relative w-full h-44 sm:h-48 bg-[#FAF4F9] overflow-hidden">
           <Image
             src={m.photoUrl}
-            alt={m.petName}
+            alt={`Fotografía de ${m.petName}`}
             fill
             unoptimized
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -629,71 +665,51 @@ export default function ComunidadClient({ initialMemories }: Props) {
             }}
           />
 
-          {/* División no uniforme como mancha de pintura a lo largo (Request 2) */}
+          {/* División no uniforme como mancha de pintura a lo largo */}
           <svg className="absolute -bottom-px left-0 w-full h-9 pointer-events-none z-20" viewBox="0 0 500 48" preserveAspectRatio="none">
             <path d="M0,22 Q30,6 65,18 T135,14 T205,24 T275,10 T345,22 T415,12 T485,20 Q495,16 500,18 L500,48 L0,48 Z" fill="#FFFFFF"/>
             <path d="M0,28 Q40,16 80,24 T160,20 T240,28 T320,18 T400,26 T480,22 Q495,24 500,25 L500,48 L0,48 Z" fill="#FFFFFF" opacity="0.65"/>
           </svg>
-
-          {/* Corazón de Ángel Oficial (Request 7 anterior) */}
-          <button
-            type="button"
-            onClick={() => handleReaction(m.id, 'heart')}
-            className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/95 backdrop-blur-sm shadow-[0_4px_12px_rgba(160,60,120,0.18)] border border-[rgba(246,214,229,0.9)] flex items-center justify-center p-1 hover:scale-115 active:scale-95 transition-all z-30 cursor-pointer"
-            title="Plan Eterno"
-          >
-            <Image 
-              src="/images/icons/plans/icon-plan-eterno.svg" alt="Plan Eterno" 
-              width={24} 
-              height={24} 
-              className="object-contain" 
-            />
-          </button>
         </div>
 
         {/* Zona de texto y dedicatoria */}
         <div className="p-3.5 pt-1 space-y-1 bg-white relative z-20">
           <div className="flex items-center justify-between gap-1">
             <div className="flex items-center gap-1.5 font-playfair font-bold text-[#2D0F31] text-base group-hover:text-[#8C3F71] transition-colors">
-              {/* Iconplanestrella junto al nombre (Request 3 - triplicado) */}
-              <Image 
-                src="/images/icons/plans/icon-plan-estrella.svg" 
-                alt="Estrella" 
-                width={45} 
-                height={45} 
-                className="object-contain drop-shadow-[0_2px_6px_rgba(217,130,24,0.35)] shrink-0" 
-              />
-              <span>{m.petName}</span>
+              <span className="text-[#D98218] drop-shadow-[0_1px_3px_rgba(217,130,24,0.3)]">★</span>
+              <span className="truncate">{m.petName}</span>
             </div>
             {m.yearsOrDates && (
-              <span className="text-[10px] text-[#9CA3AF] font-semibold">
+              <span className="text-[10px] text-[#9CA3AF] font-semibold shrink-0">
                 {m.yearsOrDates}
               </span>
             )}
           </div>
 
-          <p className="text-[11px] text-[#54465B] line-clamp-3 leading-snug font-normal italic pt-0.5">
-            {m.message}
+          <p className="text-xs text-[#54465B] line-clamp-3 leading-relaxed font-normal italic pt-0.5">
+            «{m.message}»
           </p>
 
-          {/* Botón para abrir modal de carta completa */}
-          <div className="pt-0.5">
+          {/* Botón accesible para abrir modal de carta completa con área táctil >= 44px */}
+          <div className="pt-1">
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
+                lastActiveTriggerRef.current = e.currentTarget;
                 setSelectedMemoryForRead(m);
               }}
-              className="text-[11.5px] font-semibold text-[#8C3F71] hover:text-[#C25796] hover:underline inline-flex items-center gap-1 cursor-pointer transition-colors"
+              aria-label={`Leer carta completa de ${m.petName}`}
+              className="min-h-[44px] inline-flex items-center gap-1.5 text-xs font-bold text-[#8C3F71] hover:text-[#C25796] hover:underline cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-[#B8589E] rounded-md px-1"
             >
               <span>Leer carta completa</span>
-              <span className="text-xs">→</span>
+              <span aria-hidden="true" className="text-sm">→</span>
             </button>
           </div>
 
           {/* Redes sociales (Instagram & TikTok) */}
           {(m.instagram || m.tiktok) && (
-            <div className="flex flex-wrap items-center gap-1.5 pt-2 pb-0.5">
+            <div className="flex flex-wrap items-center gap-1.5 pt-1 pb-0.5">
               {m.instagram && (
                 <a
                   href={`https://instagram.com/${m.instagram.replace(/^@/, '')}`}
@@ -708,7 +724,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                   </svg>
-                  <span>@{m.instagram.replace(/^@/, '')}</span>
+                  <span>@${m.instagram.replace(/^@/, '')}</span>
                 </a>
               )}
               {m.tiktok && (
@@ -723,7 +739,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68a6.34 6.34 0 0 0 10.86 4.47 6.27 6.27 0 0 0 1.88-4.48V8.78a8.28 8.28 0 0 0 4.85 1.56V6.89a4.84 4.84 0 0 1-1-.2z"/>
                   </svg>
-                  <span>@{m.tiktok.replace(/^@/, '')}</span>
+                  <span>@${m.tiktok.replace(/^@/, '')}</span>
                 </a>
               )}
             </div>
@@ -732,30 +748,34 @@ export default function ComunidadClient({ initialMemories }: Props) {
       </div>
 
       {reactionFeedback[m.id] && (
-        <div className="mx-3.5 mb-1 py-0.5 px-1 rounded bg-[#FFF8FA] border border-[#D89DBF] text-[9px] font-bold text-[#8C3F71] text-center">
+        <div className="mx-3.5 mb-1 py-0.5 px-1 rounded bg-[#FFF8FA] border border-[#D89DBF] text-[9px] font-bold text-[#8C3F71] text-center" role="status" aria-live="polite">
           {reactionFeedback[m.id]}
         </div>
       )}
 
-      {/* Contadores limpios como Imagen 3 (Request 7) */}
+      {/* Contadores semánticos y botones de reacción accesibles */}
       <div className="p-3.5 pt-2 border-t border-[#FAF0F6] flex items-center justify-between text-xs font-semibold bg-white relative z-20">
-        <div 
+        <button 
+          type="button"
           onClick={() => handleReaction(m.id, 'heart')}
-          className="flex items-center gap-2 cursor-pointer select-none hover:scale-105 transition-transform"
+          aria-label={`Enviar amor a ${m.petName} (${m.candlesCount} recibidos)`}
+          className="min-h-[44px] min-w-[44px] flex items-center gap-1.5 px-2.5 rounded-full hover:bg-[#FFF0F6] active:scale-95 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#DF6197]"
           title="Enviar amor"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#DF6197">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#DF6197" aria-hidden="true">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
           </svg>
           <span className="font-sans font-semibold text-[13px] text-[#775C73]">{m.candlesCount}</span>
-        </div>
+        </button>
 
-        <div 
+        <button 
+          type="button"
           onClick={() => handleReaction(m.id, 'paw')}
-          className="flex items-center gap-2 cursor-pointer select-none hover:scale-105 transition-transform"
+          aria-label={`Dejar huella de cariño para ${m.petName} (${m.supportCount} recibidas)`}
+          className="min-h-[44px] min-w-[44px] flex items-center gap-1.5 px-2.5 rounded-full hover:bg-[#FDF6ED] active:scale-95 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C99155]"
           title="Dejar huella"
         >
-          <svg width="21" height="21" viewBox="0 0 24 24">
+          <svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true">
             <defs>
               <linearGradient id={`pawGrad-${m.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#F2C694"/>
@@ -770,7 +790,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
             <circle cx="18.2" cy="10.2" r="2.3" fill={`url(#pawGrad-${m.id})`}/>
           </svg>
           <span className="font-sans font-semibold text-[13px] text-[#775C73]">{m.supportCount}</span>
-        </div>
+        </button>
       </div>
     </div>
   );
@@ -842,6 +862,41 @@ export default function ComunidadClient({ initialMemories }: Props) {
                 Un espacio para recordar, compartir y sentirnos acompañados. Cuéntanos cómo se llamaba tu pequeño y deja unas palabras. Aquí siempre habrá alguien dispuesto a escucharlo.
               </p>
 
+              {/* CTA PRINCIPALES: Escribir una carta / Leer las cartas */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1 pb-2">
+                <a
+                  href="#formulario-recuerdo"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('formulario-recuerdo')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="min-h-[48px] px-7 py-3 rounded-full font-bold text-white text-sm shadow-[0_8px_22px_rgba(175,80,155,0.38)] hover:shadow-[0_12px_28px_rgba(175,80,155,0.48)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer text-center select-none"
+                  style={{
+                    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(90deg, #A44F99 0%, #B8589E 35%, #CE5E9B 75%, #D7659F 100%)',
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ transform: 'rotate(-38deg)', marginTop: '-1px' }}>
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                  </svg>
+                  <span>Escribir una carta</span>
+                </a>
+
+                <a
+                  href="#galeria-recuerdos"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('galeria-recuerdos')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="min-h-[48px] px-6 py-3 rounded-full font-bold text-[#8C3F71] bg-white/95 hover:bg-white border border-[#E9D1E1] hover:border-[#B85F9F] shadow-[0_4px_14px_rgba(140,63,113,0.06)] hover:shadow-[0_6px_18px_rgba(140,63,113,0.12)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer text-center select-none text-sm"
+                >
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                  <span>Leer las cartas</span>
+                </a>
+              </div>
+
               {/* 3 Valores de Comunidad con iconos de Imagen 2 (Request 6) */}
               <div className="grid grid-cols-3 gap-3 pt-3 max-w-lg">
                 <div className="p-3.5 pt-3 rounded-[18px] bg-white/80 backdrop-blur-md border border-white/95 shadow-[0_4px_14px_rgba(140,63,113,0.06)] text-center space-y-1.5 hover:-translate-y-1 transition-transform group">
@@ -885,7 +940,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
             {/* COLUMNA DERECHA: Tarjeta Flotante con Marca de Agua y Campos (Réplica Exacta Canva) */}
             <div id="formulario-recuerdo" className="lg:col-span-6 pt-7 relative scroll-mt-28">
-              <div className="relative rounded-[28px] bg-[#FFF9F6] p-5 sm:p-9 shadow-[0_24px_60px_rgba(120,50,95,0.11),0_6px_18px_rgba(0,0,0,0.03)] border border-[rgba(255,240,235,0.9)] max-w-lg ml-auto overflow-visible text-[#2D0F31]">
+              <div className="relative rounded-[28px] bg-[#FFF9F6] p-5 sm:p-8 shadow-[0_24px_60px_rgba(120,50,95,0.11),0_6px_18px_rgba(0,0,0,0.03)] border border-[rgba(255,240,235,0.9)] max-w-lg ml-auto overflow-visible text-[#2D0F31]">
                 
                 {/* Marca de agua dorada en la esquina superior derecha */}
                 <svg className="absolute -top-3 -right-2 w-28 h-28 pointer-events-none select-none rotate-[18deg]" viewBox="0 0 100 100" fill="none">
@@ -903,7 +958,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                   </g>
                 </svg>
 
-                {/* Medallón superior con ICONPLANETERNO oficial (Request 4) */}
+                {/* Medallón superior con ICONPLANETERNO oficial */}
                 <div 
                   className="absolute -top-7 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-[#FFF9F6] border-[3.5px] border-[#F6D6E5] shadow-[0_8px_20px_rgba(168,90,159,0.35)] flex items-center justify-center z-20 p-1.5"
                 >
@@ -916,190 +971,245 @@ export default function ComunidadClient({ initialMemories }: Props) {
                   />
                 </div>
 
-                <div className="text-center pt-2 mb-5 relative z-10">
+                <div className="text-center pt-2 mb-4 relative z-10">
                   <h2 className="font-playfair text-[25px] font-bold text-[#2D0F31] mb-1 tracking-tight">
                     Hoy quiero recordar a...
                   </h2>
                   <p className="text-xs text-[#6C5B70] leading-relaxed">
-                    Escribe el nombre de tu ángel y, si lo deseas, comparte una foto y unas palabras. Es un espacio gratuito.
+                    Escribe el nombre de tu ángel y unas palabras para él. Es un espacio comunitario gratuito.
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-3.5 relative z-10">
+                <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
                   
-                  {/* Campo 1 con icono de huella dorada */}
-                  <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="#C69062">
-                        <ellipse cx="12" cy="16.5" rx="5" ry="4"/>
-                        <circle cx="6" cy="10" r="2.2"/>
-                        <circle cx="10" cy="6.8" r="2.2"/>
-                        <circle cx="14" cy="6.8" r="2.2"/>
-                        <circle cx="18" cy="10" r="2.2"/>
-                      </svg>
-                    </span>
-                    <input
-                      type="text"
-                      required
-                      value={petName}
-                      onChange={e => setPetName(e.target.value)}
-                      placeholder="¿Cómo se llamaba tu pequeño?"
-                      className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#D9CBD6] focus:border-[#B85F9F] focus:ring-[3.5px] focus:ring-[rgba(184,95,159,0.15)] focus:bg-white outline-none text-[13.5px] text-[#2D0F31] placeholder-[#94788D] placeholder:italic placeholder:font-serif transition-all bg-[#FAF1EC]"
-                    />
-                  </div>
-
-                  {/* Campo 2 con icono de corazón morado */}
-                  <div className="relative">
-                    <span className="absolute left-3.5 top-3 pointer-events-none flex items-center justify-center">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#9E457C">
-                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                      </svg>
-                    </span>
-                    <textarea
-                      required
-                      rows={3}
-                      value={message}
-                      onChange={e => setMessage(e.target.value)}
-                      placeholder="¿Qué te gustaría contarle hoy?&#10;Te echo de menos..."
-                      className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#D9CBD6] focus:border-[#B85F9F] focus:ring-[3.5px] focus:ring-[rgba(184,95,159,0.15)] focus:bg-white outline-none text-[13.5px] text-[#2D0F31] placeholder-[#94788D] placeholder:italic placeholder:font-serif transition-all resize-none bg-[#FAF1EC] h-24 leading-relaxed"
-                    />
-                  </div>
-
-                  {/* Fila opcional de Instagram y TikTok */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {/* Instagram */}
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center text-[#9E3D6F]">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                        </svg>
-                      </span>
-                      <input
-                        type="text"
-                        value={instagram}
-                        onChange={e => setInstagram(e.target.value)}
-                        placeholder="Instagram (@usuario)"
-                        className="w-full pl-10 pr-3 py-2 rounded-2xl border border-[#D9CBD6] focus:border-[#B85F9F] focus:ring-[3px] focus:ring-[rgba(184,95,159,0.15)] focus:bg-white outline-none text-[12.5px] text-[#2D0F31] placeholder-[#94788D] placeholder:italic transition-all bg-[#FAF1EC]"
-                      />
-                    </div>
-
-                    {/* TikTok */}
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center text-[#472242]">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68a6.34 6.34 0 0 0 10.86 4.47 6.27 6.27 0 0 0 1.88-4.48V8.78a8.28 8.28 0 0 0 4.85 1.56V6.89a4.84 4.84 0 0 1-1-.2z"/>
-                        </svg>
-                      </span>
-                      <input
-                        type="text"
-                        value={tiktok}
-                        onChange={e => setTiktok(e.target.value)}
-                        placeholder="TikTok (@usuario)"
-                        className="w-full pl-10 pr-3 py-2 rounded-2xl border border-[#D9CBD6] focus:border-[#B85F9F] focus:ring-[3px] focus:ring-[rgba(184,95,159,0.15)] focus:bg-white outline-none text-[12.5px] text-[#2D0F31] placeholder-[#94788D] placeholder:italic transition-all bg-[#FAF1EC]"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Añadir foto con marco punteado */}
+                  {/* Campo 1: Nombre de la mascota (Etiqueta visible persistente) */}
                   <div>
-                    {photoPreview ? (
-                      <div className="flex items-center gap-2 p-1.5 rounded-2xl border border-[#D6A8BF] bg-[#FFF8FA] h-[44px]">
-                        <div className="w-8 h-8 rounded-lg overflow-hidden relative shadow-sm border border-white flex-shrink-0">
-                          <Image src={photoPreview} alt="Preview" fill className="object-cover" />
-                        </div>
-                        <span className="text-[11px] font-bold text-[#843969] truncate flex-1">Foto seleccionada</span>
-                        <button
-                          type="button"
-                          onClick={removePhoto}
-                          className="text-xs text-red-500 font-bold px-2 hover:underline"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ) : (
-                      <label className="flex items-center justify-center gap-2.5 w-full h-[44px] px-3 rounded-2xl border-[1.5px] border-dashed border-[#D6A8BF] hover:border-[#B85F9F] bg-[#FFFBF8] hover:bg-[#FFF4F8] transition-all cursor-pointer group select-none">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9E457C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
-                          <circle cx="8.5" cy="8.5" r="1.5" fill="#9E457C"/>
-                          <polyline points="21 15 16 10 5 21"/>
+                    <label htmlFor="formPetName" className="block text-xs font-bold text-[#6D4964] mb-1.5">
+                      Nombre de tu ángel <span className="text-[#C25796]" title="Campo obligatorio">*</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#C69062">
+                          <ellipse cx="12" cy="16.5" rx="5" ry="4"/>
+                          <circle cx="6" cy="10" r="2.2"/>
+                          <circle cx="10" cy="6.8" r="2.2"/>
+                          <circle cx="14" cy="6.8" r="2.2"/>
+                          <circle cx="18" cy="10" r="2.2"/>
                         </svg>
-                        <span className="text-[12.5px] font-bold text-[#843969]">Añadir una foto</span>
-                        <span className="text-[11px] font-medium text-[#A68A9D] italic">(opcional)</span>
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          onChange={handlePhotoChange}
-                          className="hidden"
-                        />
-                      </label>
-                    )}
+                      </span>
+                      <input
+                        id="formPetName"
+                        type="text"
+                        required
+                        aria-required="true"
+                        value={petName}
+                        onChange={e => setPetName(e.target.value)}
+                        placeholder="Ej. Toby, Luna, Chloe, Max..."
+                        className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#D9CBD6] focus:border-[#B85F9F] focus:ring-[3.5px] focus:ring-[rgba(184,95,159,0.15)] focus:bg-white outline-none text-[13.5px] text-[#2D0F31] placeholder-[#94788D] placeholder:italic transition-all bg-[#FAF1EC]"
+                      />
+                    </div>
                   </div>
 
-                  {/* Aviso respetuoso sobre difusión y redes sociales (sin opción de desmarcar) */}
-                  <div className="p-3 rounded-2xl bg-[#FFF5F8] border border-[#F3D5E4] flex items-start gap-2.5 text-left">
-                    <span className="text-sm select-none shrink-0 mt-0.5">🕊️</span>
-                    <p className="text-[11px] text-[#6B4E63] leading-relaxed">
-                      <strong className="font-semibold text-[#8C3F71]">Homenaje en comunidad y redes:</strong> Al compartir tu carta, formará parte de nuestro santuario público y podrá ser seleccionada con profundo respeto en nuestras cuentas oficiales de <span className="font-semibold text-[#2D0F31]">Instagram (@angeles_en_el_cielo_)</span> y <span className="font-semibold text-[#2D0F31]">TikTok (@angeles_en_elcielo)</span> para honrar su memoria y acompañar a otras familias en su duelo.
+                  {/* Campo 2: Carta o recuerdo (Etiqueta visible persistente) */}
+                  <div>
+                    <label htmlFor="formMessage" className="block text-xs font-bold text-[#6D4964] mb-1.5">
+                      Tu carta o recuerdo <span className="text-[#C25796]" title="Campo obligatorio">*</span>
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-3 pointer-events-none flex items-center justify-center">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#9E457C">
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        </svg>
+                      </span>
+                      <textarea
+                        id="formMessage"
+                        required
+                        aria-required="true"
+                        rows={3}
+                        value={message}
+                        onChange={e => setMessage(e.target.value)}
+                        placeholder="Escribe lo que sientes en tu corazón..."
+                        className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#D9CBD6] focus:border-[#B85F9F] focus:ring-[3.5px] focus:ring-[rgba(184,95,159,0.15)] focus:bg-white outline-none text-[13.5px] text-[#2D0F31] placeholder-[#94788D] placeholder:italic transition-all resize-none bg-[#FAF1EC] h-24 leading-relaxed"
+                      />
+                    </div>
+                    {/* Ayuda emocional discreta */}
+                    <p className="text-[11.5px] text-[#7A6275] italic mt-1 leading-snug">
+                      Puedes contar cómo era, recordar un día juntos o escribirle directamente.
                     </p>
                   </div>
 
-                  {/* Opción de Recordatorio de Aniversario (Pilar 3) */}
-                  <div className="p-3 rounded-2xl bg-[#FFF9F3] border border-[#F5E2CC] flex flex-col gap-2 text-left">
-                    <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                      <input
-                        type="checkbox"
-                        checked={wantsAnniversaryReminder}
-                        onChange={(e) => setWantsAnniversaryReminder(e.target.checked)}
-                        className="mt-0.5 rounded border-[#D9CBD6] text-[#A06020] focus:ring-[#A06020] cursor-pointer"
-                      />
-                      <span className="text-[11.5px] text-[#6A4D3B] leading-snug">
-                        <strong className="font-semibold text-[#8B4513]">Recordatorio de aniversario:</strong> Deseo que me aviséis en su fecha especial para volver a encender su vela con la comunidad.
+                  {/* Sección colapsable: Añadir detalles (opcional) */}
+                  <div className="border border-[#F0DDE8] rounded-2xl bg-[#FFFBFD] p-3 space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowOptionalDetails(!showOptionalDetails)}
+                      className="w-full flex items-center justify-between text-xs font-bold text-[#8C3F71] hover:text-[#B8589E] transition-colors focus:outline-none"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span>✨</span>
+                        <span>Añadir detalles (fotografía, redes o recordatorio)</span>
                       </span>
-                    </label>
-                    {wantsAnniversaryReminder && (
-                      <div className="space-y-2 pt-1 border-t border-[#F5E2CC]/60">
+                      <span className="text-[11px] font-semibold text-[#A07090]">
+                        {showOptionalDetails ? 'Ocultar ▲' : 'Desplegar ▼'}
+                      </span>
+                    </button>
+
+                    {showOptionalDetails && (
+                      <div className="space-y-3 pt-2 border-t border-[#F0DDE8]">
+                        
+                        {/* Añadir foto */}
                         <div>
-                          <label className="block text-[11px] font-bold text-[#8B4513] mb-1">
-                            Fecha de aniversario o partida *
+                          <label className="block text-[11px] font-bold text-[#6D4964] mb-1">
+                            Fotografía de tu ángel (opcional)
                           </label>
-                          <input
-                            type="date"
-                            required
-                            value={anniversaryDate}
-                            onChange={(e) => setAnniversaryDate(e.target.value)}
-                            className="w-full px-3 py-1.5 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
-                          />
+                          {photoPreview ? (
+                            <div className="flex items-center gap-2 p-1.5 rounded-2xl border border-[#D6A8BF] bg-[#FFF8FA] h-[44px]">
+                              <div className="w-8 h-8 rounded-lg overflow-hidden relative shadow-sm border border-white flex-shrink-0">
+                                <Image src={photoPreview} alt="Preview" fill className="object-cover" />
+                              </div>
+                              <span className="text-[11px] font-bold text-[#843969] truncate flex-1">Foto seleccionada</span>
+                              <button
+                                type="button"
+                                onClick={removePhoto}
+                                className="text-xs text-red-500 font-bold px-2 hover:underline"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <label className="flex items-center justify-center gap-2.5 w-full h-[44px] px-3 rounded-2xl border-[1.5px] border-dashed border-[#D6A8BF] hover:border-[#B85F9F] bg-[#FFFBF8] hover:bg-[#FFF4F8] transition-all cursor-pointer group select-none">
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9E457C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
+                                <circle cx="8.5" cy="8.5" r="1.5" fill="#9E457C"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                              </svg>
+                              <span className="text-[12.5px] font-bold text-[#843969]">Subir una fotografía</span>
+                              <span className="text-[11px] font-medium text-[#A68A9D] italic">(opcional)</span>
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                onChange={handlePhotoChange}
+                                className="hidden"
+                              />
+                            </label>
+                          )}
                         </div>
-                        <div>
-                          <label className="block text-[11px] font-bold text-[#8B4513] mb-1">
-                            Tu correo electrónico para el aviso cariñoso *
+
+                        {/* Fila opcional de Instagram y TikTok con labels persistentes */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          <div>
+                            <label htmlFor="formInstagram" className="block text-[11px] font-bold text-[#6D4964] mb-1">
+                              Instagram (opcional)
+                            </label>
+                            <input
+                              id="formInstagram"
+                              type="text"
+                              value={instagram}
+                              onChange={e => setInstagram(e.target.value)}
+                              placeholder="@usuario"
+                              className="w-full px-3 py-1.5 rounded-xl border border-[#D9CBD6] focus:border-[#B85F9F] outline-none text-xs text-[#2D0F31] placeholder-[#94788D] bg-[#FAF1EC]"
+                            />
+                          </div>
+
+                          <div>
+                            <label htmlFor="formTiktok" className="block text-[11px] font-bold text-[#6D4964] mb-1">
+                              TikTok (opcional)
+                            </label>
+                            <input
+                              id="formTiktok"
+                              type="text"
+                              value={tiktok}
+                              onChange={e => setTiktok(e.target.value)}
+                              placeholder="@usuario"
+                              className="w-full px-3 py-1.5 rounded-xl border border-[#D9CBD6] focus:border-[#B85F9F] outline-none text-xs text-[#2D0F31] placeholder-[#94788D] bg-[#FAF1EC]"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Consentimiento diferenciado para redes sociales */}
+                        <div className="p-3 rounded-2xl bg-[#FFF5F8] border border-[#F3D5E4] text-left">
+                          <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={socialShareAllowed}
+                              onChange={(e) => setSocialShareAllowed(e.target.checked)}
+                              className="mt-0.5 rounded border-[#D9CBD6] text-[#A44F99] focus:ring-[#A44F99] cursor-pointer"
+                            />
+                            <span className="text-[11px] text-[#6B4E63] leading-relaxed">
+                              <strong className="font-semibold text-[#8C3F71]">Difusión en redes oficiales:</strong> Autorizo que esta carta pueda ser compartida con respeto y cariño en las cuentas oficiales de Instagram (@angeles_en_el_cielo_) y TikTok (@angeles_en_elcielo) de Ángeles en el Cielo para acompañar a otras familias en su duelo.
+                            </span>
                           </label>
-                          <input
-                            type="email"
-                            required
-                            value={anniversaryEmail}
-                            onChange={(e) => setAnniversaryEmail(e.target.value)}
-                            placeholder="Tu correo electrónico para el aviso cariñoso"
-                            className="w-full px-3 py-1.5 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
-                          />
                         </div>
+
+                        {/* Recordatorio de aniversario transparente */}
+                        <div className="p-3 rounded-2xl bg-[#FFF9F3] border border-[#F5E2CC] flex flex-col gap-2 text-left">
+                          <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={wantsAnniversaryReminder}
+                              onChange={(e) => setWantsAnniversaryReminder(e.target.checked)}
+                              className="mt-0.5 rounded border-[#D9CBD6] text-[#A06020] focus:ring-[#A06020] cursor-pointer"
+                            />
+                            <span className="text-[11.5px] text-[#6A4D3B] leading-snug">
+                              <strong className="font-semibold text-[#8B4513]">Recordatorio de aniversario:</strong> Deseo que me aviséis en su fecha especial para volver a encender su vela con la comunidad.
+                            </span>
+                          </label>
+                          {wantsAnniversaryReminder && (
+                            <div className="space-y-2 pt-1 border-t border-[#F5E2CC]/60">
+                              <p className="text-[11px] text-[#8B5A2B] bg-[#FFF8EE] p-2 rounded-xl border border-[#F2DEBA] leading-tight">
+                                ℹ️ El servicio automatizado de recordatorios por correo para Cartas al Cielo se encuentra actualmente en preparación técnica. Guardaremos tu fecha de forma segura y te avisaremos gratuitamente cuando esté operativo.
+                              </p>
+                              <div>
+                                <label htmlFor="formAnniversaryDate" className="block text-[11px] font-bold text-[#8B4513] mb-1">
+                                  Fecha de aniversario o partida *
+                                </label>
+                                <input
+                                  id="formAnniversaryDate"
+                                  type="date"
+                                  required
+                                  value={anniversaryDate}
+                                  onChange={(e) => setAnniversaryDate(e.target.value)}
+                                  className="w-full px-3 py-1.5 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
+                                />
+                              </div>
+                              <div>
+                                <label htmlFor="formAnniversaryEmail" className="block text-[11px] font-bold text-[#8B4513] mb-1">
+                                  Tu correo electrónico para el aviso cariñoso *
+                                </label>
+                                <input
+                                  id="formAnniversaryEmail"
+                                  type="email"
+                                  required
+                                  value={anniversaryEmail}
+                                  onChange={(e) => setAnniversaryEmail(e.target.value)}
+                                  placeholder="ejemplo@correo.com"
+                                  className="w-full px-3 py-1.5 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
                       </div>
                     )}
                   </div>
 
+                  {/* Aviso público de privacidad y publicación */}
+                  <div className="p-2.5 rounded-xl bg-[#FAF1F6] border border-[#ECD1E2] text-center text-xs text-[#7A5B73]">
+                    <span>🕊️ Tu carta será pública en el Libro de los Ángeles para que otras familias puedan acompañarte.</span>
+                  </div>
+
                   {submitError && (
-                    <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700">
+                    <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700" role="alert">
                       {submitError}
                     </div>
                   )}
 
-                  {/* Botón con avión de papel apuntando arriba y degradado Imagen 1 */}
+                  {/* Botón «Publicar mi carta» */}
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 px-7 rounded-full font-bold text-white text-sm transition-all duration-300 shadow-[0_10px_24px_rgba(175,80,155,0.38)] hover:shadow-[0_14px_28px_rgba(175,80,155,0.48)] hover:-translate-y-0.5 flex items-center justify-center gap-2.5 disabled:opacity-75 disabled:cursor-not-allowed"
+                    className="w-full py-3.5 px-7 rounded-full font-bold text-white text-sm transition-all duration-300 shadow-[0_10px_24px_rgba(175,80,155,0.38)] hover:shadow-[0_14px_28px_rgba(175,80,155,0.48)] hover:-translate-y-0.5 flex items-center justify-center gap-2.5 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
                     style={{
                       background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(90deg, #A44F99 0%, #B8589E 35%, #CE5E9B 75%, #D7659F 100%)',
                     }}
@@ -1107,14 +1217,14 @@ export default function ComunidadClient({ initialMemories }: Props) {
                     {isSubmitting ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Compartiendo tu recuerdo...</span>
+                        <span>Publicando tu carta...</span>
                       </>
                     ) : (
                       <>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" style={{ transform: 'rotate(-38deg)', marginTop: '-1px' }}>
                           <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
                         </svg>
-                        <span>Compartir mi recuerdo</span>
+                        <span>Publicar mi carta</span>
                       </>
                     )}
                   </button>
@@ -1149,17 +1259,17 @@ export default function ComunidadClient({ initialMemories }: Props) {
             <div>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-0.5">
                 <span className="text-[10.5px] font-bold text-[#A06020] uppercase tracking-wider">
-                  Ritual Semanal
+                  Ritual Comunitario Semanal
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#92400E] text-[10.5px] font-bold">
-                  {weeklyCandlesCount} luces vivas
+                <span className="px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#92400E] text-[10.5px] font-bold" title="Comunidad de Cartas al Cielo">
+                  {weeklyCandlesCount} luces en comunidad
                 </span>
               </div>
               <h3 className="font-playfair text-base sm:text-lg font-bold text-[#2D0F31] leading-tight">
                 Un manto de luz para que ningún angelito quede en soledad
               </h3>
               <p className="text-xs text-[#7A6275] mt-0.5 leading-snug">
-                Dedicada con amor a <strong className="font-semibold text-[#8C3F71]">Bobby</strong> (Refugio Nueva Vida) y a todos los que nos cuidan desde arriba.
+                Cada domingo recordamos con amor a todos los compañeros que partieron y nos cuidan desde arriba.
               </p>
             </div>
           </div>
@@ -1168,7 +1278,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
           <div className="shrink-0 flex items-center gap-2 w-full md:w-auto justify-center">
             <Link
               href="/cielo-lleno-de-luces"
-              className="w-full md:w-auto px-6 py-3 rounded-full font-bold text-white text-xs sm:text-sm shadow-[0_8px_20px_rgba(200,90,140,0.32)] hover:shadow-[0_12px_26px_rgba(200,90,140,0.42)] hover:-translate-y-0.5 transition-all flex items-center justify-center text-center cursor-pointer"
+              className="min-h-[44px] w-full md:w-auto px-6 py-2.5 rounded-full font-bold text-white text-xs sm:text-sm shadow-[0_8px_20px_rgba(200,90,140,0.32)] hover:shadow-[0_12px_26px_rgba(200,90,140,0.42)] hover:-translate-y-0.5 transition-all flex items-center justify-center text-center cursor-pointer"
               style={{
                 background: 'linear-gradient(135deg, #D9629B 0%, #C35694 50%, #9B3F77 100%)',
               }}
@@ -1183,15 +1293,15 @@ export default function ComunidadClient({ initialMemories }: Props) {
       {/* ========================================================================= */}
       {/* GALERÍA / FEED «RECUERDOS RECIENTES» (IDÉNTICO AL MOCKUP)                 */}
       {/* ========================================================================= */}
-      <section id="galeria-recuerdos" className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <section id="galeria-recuerdos" className="max-w-[1240px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 overflow-hidden">
         
-        {/* Título Oficial: El Libro de Los Ángeles en el Cielo (Misma fuente del Hero, 20% más pequeño) */}
+        {/* Título Oficial: El Libro de Los Ángeles en el Cielo */}
         <div id="libro-angeles-cielo" className="pt-2 pb-2 scroll-mt-24">
           <h2
-            className="inline-block"
+            className="inline-block break-words max-w-full"
             style={{
               fontFamily: 'var(--font-title), var(--font-playfair), Georgia, serif',
-              fontSize: 'clamp(1.9rem, 4.8vw, 3.68rem)',
+              fontSize: 'clamp(1.75rem, 4.2vw, 3.2rem)',
               fontWeight: 700,
               lineHeight: 1.25,
               paddingBottom: '0.18em',
@@ -1210,30 +1320,29 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#EDE2EB]">
           <div className="flex items-center gap-3">
-            {/* Iconplanestrella oficial (Request 3 - triplicado) */}
-            <Image
-              src="/images/icons/plans/icon-plan-estrella.svg"
-              alt="Estrella"
-              width={72}
-              height={72}
-              className="object-contain drop-shadow-[0_4px_10px_rgba(217,130,24,0.4)]"
-            />
-            <h2 className="font-playfair text-2xl font-bold text-[#2D0F31]">
+            <span className="text-2xl text-[#D98218]">★</span>
+            <h3 className="font-playfair text-xl sm:text-2xl font-bold text-[#2D0F31]">
               Recuerdos recientes
-            </h2>
+            </h3>
             <div className="w-16 h-px bg-[#EDE2EB] hidden sm:block" />
             <span className="text-xs text-[#B65D86] font-semibold hidden md:inline">
               Cada nombre deja una huella eterna ♥
             </span>
           </div>
 
-          {/* Selectores de animales réplica exacta Imagen 2 (Request 4) */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="inline-flex items-center gap-1.5 p-1 rounded-full bg-[rgba(246,238,244,0.75)] border border-[#EFE4EC]">
+          {/* Selectores de animales con role="tablist" y wrapping para 0 overflow */}
+          <div className="flex flex-wrap items-center gap-3 max-w-full">
+            <div 
+              role="tablist" 
+              aria-label="Filtrar cartas por tipo de mascota" 
+              className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl sm:rounded-full bg-[rgba(246,238,244,0.75)] border border-[#EFE4EC] max-w-full"
+            >
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeFilter === 'todos'}
                 onClick={() => { setActiveFilter('todos'); setCurrentPage(1); }}
-                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] ${
                   activeFilter === 'todos'
                     ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
                     : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
@@ -1245,8 +1354,10 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeFilter === 'perro'}
                 onClick={() => { setActiveFilter('perro'); setCurrentPage(1); }}
-                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] ${
                   activeFilter === 'perro'
                     ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
                     : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
@@ -1258,8 +1369,10 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeFilter === 'gato'}
                 onClick={() => { setActiveFilter('gato'); setCurrentPage(1); }}
-                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] ${
                   activeFilter === 'gato'
                     ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
                     : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
@@ -1271,8 +1384,10 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
               <button
                 type="button"
+                role="tab"
+                aria-selected={activeFilter === 'otro'}
                 onClick={() => { setActiveFilter('otro'); setCurrentPage(1); }}
-                className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] ${
                   activeFilter === 'otro'
                     ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
                     : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
@@ -1283,14 +1398,12 @@ export default function ComunidadClient({ initialMemories }: Props) {
               </button>
             </div>
 
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#D9CBD6] text-xs font-semibold text-[#5B2E58] cursor-pointer hover:border-[#B85F9F] transition-colors">
-              <span>Más recientes</span>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5B2E58" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#D9CBD6] text-xs font-semibold text-[#5B2E58] select-none min-h-[36px]">
+              <span>Orden: Más recientes</span>
             </div>
           </div>
         </div>
 
-        {/* Barra de Paginación */}
         <div className="flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-white/95 to-[#FDF8FC]/95 border border-[#F0DFEB] rounded-2xl px-4 sm:px-6 py-3 mb-6 shadow-[0_4px_18px_rgba(132,57,105,0.05)]">
           <div className="flex items-center gap-3">
             <div className="inline-flex items-center gap-2 bg-[#FFF1F7] border border-[#ECCEDB] px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold text-[#843969]">
@@ -1689,30 +1802,41 @@ export default function ComunidadClient({ initialMemories }: Props) {
         }
       `}</style>
 
-      {/* MODAL 1: LEER CARTA COMPLETA */}
+      {/* MODAL 1: LEER CARTA COMPLETA (Accesible, íntimo, papel marfil) */}
       {selectedMemoryForRead && (
         <div 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="dialog-pet-name"
+          aria-describedby="dialog-letter-content"
           className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 bg-[#180A1C]/75 backdrop-blur-md overflow-y-auto animate-fade-in"
-          onClick={() => setSelectedMemoryForRead(null)}
+          onClick={() => {
+            setSelectedMemoryForRead(null);
+            setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
+          }}
         >
           <div 
-            className="relative max-w-lg w-full bg-white rounded-[28px] overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-[#F3DFEB] my-auto text-[#2D0F31]"
+            className="relative max-w-lg w-full bg-[#FAF7F2] rounded-[28px] overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-[#EFE2D6] my-auto text-[#2D0F31]"
             onClick={e => e.stopPropagation()}
           >
-            {/* Botón Cerrar */}
+            {/* Botón Cerrar Accesible con área mínima 44x44px */}
             <button
-              onClick={() => setSelectedMemoryForRead(null)}
-              className="absolute top-4 right-4 z-30 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-[#775C73] hover:text-[#2D0F31] shadow-md border border-[#F0E3EB] flex items-center justify-center transition-all cursor-pointer font-bold text-sm"
-              aria-label="Cerrar modal"
+              ref={modalCloseButtonRef}
+              onClick={() => {
+                setSelectedMemoryForRead(null);
+                setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
+              }}
+              className="absolute top-4 right-4 z-30 min-w-[44px] min-h-[44px] rounded-full bg-white/95 hover:bg-white text-[#775C73] hover:text-[#2D0F31] shadow-md border border-[#F0E3EB] flex items-center justify-center transition-all cursor-pointer font-bold text-base focus:outline-none focus:ring-2 focus:ring-[#8C3F71]"
+              aria-label="Cerrar carta completa"
             >
               ✕
             </button>
 
             {/* Cabecera con Foto */}
-            <div className="relative w-full h-56 sm:h-64 bg-[#FAF4F9] overflow-hidden">
+            <div className="relative w-full h-56 sm:h-64 bg-[#F5EFE8] overflow-hidden">
               <Image
                 src={selectedMemoryForRead.photoUrl}
-                alt={selectedMemoryForRead.petName}
+                alt={`Fotografía de ${selectedMemoryForRead.petName}`}
                 fill
                 unoptimized
                 className="object-cover"
@@ -1720,42 +1844,24 @@ export default function ComunidadClient({ initialMemories }: Props) {
               <div 
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                  background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 40%, rgba(255,255,255,0.95) 100%)',
+                  background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 40%, rgba(250,247,242,0.98) 100%)',
                 }}
               />
-
-              {/* Medallón Corazón de Ángel */}
-              <div 
-                className="absolute top-3.5 left-3.5 w-9 h-9 rounded-full bg-white/95 backdrop-blur-sm shadow-md border border-[rgba(246,214,229,0.9)] flex items-center justify-center p-1"
-                title="Plan Eterno · Ángeles en el Cielo"
-              >
-                <Image 
-                  src="/images/icons/plans/icon-plan-eterno.svg" 
-                  alt="Plan Eterno" 
-                  width={26} 
-                  height={26} 
-                  className="object-contain" 
-                />
-              </div>
             </div>
 
-            {/* Contenido de la Carta */}
-            <div className="p-6 sm:p-7 pt-1 space-y-4">
+            {/* Contenido de la Carta en papel marfil suave */}
+            <div className="p-6 sm:p-7 pt-2 space-y-4">
               
               {/* Título y Datos del Ángel */}
               <div className="flex flex-col items-center text-center">
-                <div className="flex items-center gap-2 font-playfair font-bold text-[#2D0F31] text-2xl sm:text-3xl">
-                  <Image 
-                    src="/images/icons/plans/icon-plan-estrella.svg" 
-                    alt="Estrella" 
-                    width={40} 
-                    height={40} 
-                    className="object-contain drop-shadow-[0_2px_6px_rgba(217,130,24,0.35)] shrink-0" 
-                  />
-                  <span>{selectedMemoryForRead.petName}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#D98218] text-xl">★</span>
+                  <h2 id="dialog-pet-name" className="font-playfair font-bold text-[#2D0F31] text-2xl sm:text-3xl">
+                    {selectedMemoryForRead.petName}
+                  </h2>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#8C3F71] mt-0.5">
-                  <span>🐾 {selectedMemoryForRead.yearsOrDates || 'Siempre en el corazón'}</span>
+                <div className="flex items-center gap-2 text-xs font-semibold text-[#8C3F71] mt-1">
+                  <span>🐾 En memoria eterna · {selectedMemoryForRead.yearsOrDates || 'Siempre en el corazón'}</span>
                   {selectedMemoryForRead.authorName && (
                     <>
                       <span>·</span>
@@ -1765,9 +1871,12 @@ export default function ComunidadClient({ initialMemories }: Props) {
                 </div>
               </div>
 
-              {/* Carta Íntegra */}
-              <div className="p-5 rounded-2xl bg-[#FFF8FA] border border-[#F2D7E7] text-left relative">
-                <p className="font-serif italic text-[15px] sm:text-[16px] text-[#3E1C38] leading-relaxed whitespace-pre-wrap">
+              {/* Carta Íntegra en caja de papel delicado */}
+              <div 
+                id="dialog-letter-content"
+                className="p-5 sm:p-6 rounded-2xl bg-[#FFFDFB] border border-[#EBDCCF] text-left shadow-[inset_0_1px_3px_rgba(180,120,80,0.05)] relative"
+              >
+                <p className="font-serif italic text-[15px] sm:text-[16.5px] text-[#3E1C38] leading-relaxed whitespace-pre-wrap">
                   «{selectedMemoryForRead.message}»
                 </p>
               </div>
@@ -1787,7 +1896,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                         <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                         <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                       </svg>
-                      <span>@{selectedMemoryForRead.instagram.replace(/^@/, '')}</span>
+                      <span>@${selectedMemoryForRead.instagram.replace(/^@/, '')}</span>
                     </a>
                   )}
                   {selectedMemoryForRead.tiktok && (
@@ -1800,29 +1909,31 @@ export default function ComunidadClient({ initialMemories }: Props) {
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68a6.34 6.34 0 0 0 10.86 4.47 6.27 6.27 0 0 0 1.88-4.48V8.78a8.28 8.28 0 0 0 4.85 1.56V6.89a4.84 4.84 0 0 1-1-.2z"/>
                       </svg>
-                      <span>@{selectedMemoryForRead.tiktok.replace(/^@/, '')}</span>
+                      <span>@${selectedMemoryForRead.tiktok.replace(/^@/, '')}</span>
                     </a>
                   )}
                 </div>
               )}
 
-              {/* Barra de Reacciones dentro del Modal */}
-              <div className="pt-2 pb-1 border-t border-[#F5EAF2] flex items-center justify-around">
+              {/* Barra de Reacciones dentro del Modal con área accesible */}
+              <div className="pt-2 pb-1 border-t border-[#EBDCCF] flex items-center justify-around gap-2">
                 <button
                   type="button"
                   onClick={() => handleReaction(selectedMemoryForRead.id, 'heart')}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFF0F6] hover:bg-[#FFE3F0] text-[#9E3D6F] font-semibold text-xs transition-all active:scale-95 cursor-pointer"
+                  aria-label={`Enviar amor a ${selectedMemoryForRead.petName} (${selectedMemoryForRead.candlesCount} recibidos)`}
+                  className="min-h-[44px] flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFF0F6] hover:bg-[#FFE3F0] text-[#9E3D6F] font-semibold text-xs transition-all active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#DF6197]"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="#DF6197">
                     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                   </svg>
-                  <span>Encender vela ({selectedMemoryForRead.candlesCount})</span>
+                  <span>Enviar amor ({selectedMemoryForRead.candlesCount})</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleReaction(selectedMemoryForRead.id, 'paw')}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#FDF6ED] hover:bg-[#F9ECCF] text-[#A66F3E] font-semibold text-xs transition-all active:scale-95 cursor-pointer"
+                  aria-label={`Dejar huella de cariño para ${selectedMemoryForRead.petName} (${selectedMemoryForRead.supportCount} recibidas)`}
+                  className="min-h-[44px] flex items-center gap-2 px-4 py-2 rounded-full bg-[#FDF6ED] hover:bg-[#F9ECCF] text-[#A66F3E] font-semibold text-xs transition-all active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C99155]"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="#C99155">
                     <ellipse cx="12" cy="16.5" rx="5.3" ry="4.2"/>
@@ -1836,7 +1947,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
               </div>
 
               {reactionFeedback[selectedMemoryForRead.id] && (
-                <div className="py-1 px-3 rounded-xl bg-[#FFF8FA] border border-[#D89DBF] text-[11px] font-bold text-[#8C3F71] text-center animate-fade-in">
+                <div className="py-1 px-3 rounded-xl bg-[#FFF8FA] border border-[#D89DBF] text-[11px] font-bold text-[#8C3F71] text-center animate-fade-in" role="status" aria-live="polite">
                   {reactionFeedback[selectedMemoryForRead.id]}
                 </div>
               )}
@@ -1847,7 +1958,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                   type="button"
                   onClick={() => handleDownloadPostcard(selectedMemoryForRead)}
                   disabled={isGeneratingPostal}
-                  className="w-full py-3 px-4 rounded-2xl font-bold text-white text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(164,80,155,0.32)] hover:shadow-[0_12px_24px_rgba(164,80,155,0.42)] hover:-translate-y-0.5 transition-all cursor-pointer"
+                  className="w-full min-h-[44px] py-2.5 px-4 rounded-2xl font-bold text-white text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(164,80,155,0.32)] hover:shadow-[0_12px_24px_rgba(164,80,155,0.42)] hover:-translate-y-0.5 transition-all cursor-pointer"
                   style={{
                     background: 'linear-gradient(135deg, #A4509B 0%, #C85998 50%, #9B3D75 100%)',
                   }}
@@ -1863,7 +1974,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                 <button
                   type="button"
                   onClick={() => handleShareMemory(selectedMemoryForRead)}
-                  className="w-full py-2.5 px-4 rounded-2xl font-semibold text-[#6C5367] bg-white hover:bg-[#FAF4F9] border border-[#E8D2E2] text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  className="w-full min-h-[44px] py-2.5 px-4 rounded-2xl font-semibold text-[#6C5367] bg-white hover:bg-[#FAF4F9] border border-[#E8D2E2] text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <circle cx="18" cy="5" r="3"></circle>
@@ -1877,7 +1988,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
               </div>
 
               {postalFeedback && (
-                <div className="py-1 px-3 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] text-[11px] font-bold text-[#166534] text-center animate-fade-in">
+                <div className="py-1 px-3 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] text-[11px] font-bold text-[#166534] text-center animate-fade-in" role="status" aria-live="polite">
                   {postalFeedback}
                 </div>
               )}
@@ -1889,11 +2000,12 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
       {/* MODAL 3: SUMAR MI LUZ EN LA VELA SEMANAL (DOMINGOS DE LUZ) */}
       {showWeeklyCandleModal && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
+        <div role="dialog" aria-modal="true" aria-labelledby="dialog-candle-title" className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-left space-y-4 relative text-[#2D0F31]">
             <button
               onClick={() => setShowWeeklyCandleModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 min-w-[44px] min-h-[44px] rounded-full bg-gray-100 flex items-center justify-center font-bold text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#8C3F71]"
+              aria-label="Cerrar modal de vela semanal"
             >
               ✕
             </button>
@@ -2033,11 +2145,12 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
       {/* MODAL 2: CONFIRMACIÓN Y CELEBRACIÓN TRAS PUBLICAR */}
       {showCelebrationModal && publishedMemory && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
+        <div role="dialog" aria-modal="true" aria-labelledby="dialog-celebration-title" className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-[#1F0D24]/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-white text-center space-y-4 relative text-[#2D0F31]">
             <button
               onClick={() => setShowCelebrationModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 min-w-[44px] min-h-[44px] rounded-full bg-gray-100 flex items-center justify-center font-bold text-base cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#8C3F71]"
+              aria-label="Cerrar confirmación"
             >
               ✕
             </button>

@@ -63,7 +63,20 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { petName, message, species = 'perro', authorName, yearsOrDates, photoUrl, instagram, tiktok, isPublic = true } = body;
+    const { 
+      petName, 
+      message, 
+      species = 'perro', 
+      authorName, 
+      yearsOrDates, 
+      photoUrl, 
+      instagram, 
+      tiktok, 
+      isPublic = true,
+      socialShareAllowed = false,
+      anniversaryDate = '',
+      anniversaryEmail = '',
+    } = body;
 
     if (!petName || !message) {
       return NextResponse.json({ error: 'El nombre y el mensaje son obligatorios' }, { status: 400 });
@@ -94,6 +107,9 @@ export async function POST(req: NextRequest) {
         supportCount: 0,
         hugsCount: 0,
         isPublicAllowed: isPublic,
+        socialShareAllowed: Boolean(socialShareAllowed),
+        anniversaryDate: anniversaryDate ? String(anniversaryDate).trim() : '',
+        anniversaryEmail: anniversaryEmail ? String(anniversaryEmail).trim() : '',
       },
       plan_type: 'recuerdo_inicial',
       price_paid: 0.0,
