@@ -30,21 +30,6 @@ interface TarjetaHomenajeCelestialProps<T extends CandleHomenajeData = CandleHom
   className?: string;
 }
 
-/**
- * Truncado limpio que prioriza oraciones completas
- */
-function getSentenceSnippet(text?: string): string {
-  if (!text) return 'Siempre en nuestro recuerdo, iluminando el cielo.';
-  const trimmed = text.trim();
-  if (trimmed.length <= 95) return trimmed;
-  const sentenceEnd = trimmed.search(/[.!?](\s|$)/);
-  if (sentenceEnd !== -1 && sentenceEnd >= 25 && sentenceEnd <= 95) {
-    return trimmed.slice(0, sentenceEnd + 1);
-  }
-  const lastSpace = trimmed.slice(0, 95).lastIndexOf(' ');
-  return (lastSpace > 20 ? trimmed.slice(0, lastSpace) : trimmed.slice(0, 95)) + '...';
-}
-
 export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = CandleHomenajeData>({
   candle,
   onSendWarmth,
@@ -69,7 +54,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
         `,
       }}
     >
-      {/* Halo y Borde Oro Rosa Luminoso Externo */}
+      {/* Halo y Borde Oro Rosa Luminoso Externo (No recortado por overflow) */}
       <div
         className="absolute -inset-[1.5px] rounded-[23.5px] pointer-events-none z-30"
         style={{
@@ -81,9 +66,9 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
         }}
       />
 
-      {/* Contenedor Estructural Interior */}
+      {/* Contenedor Estructural Interior con overflow: hidden para recortar fotografía y subcontenedor a rounded-[22px] */}
       <div className="relative w-full h-full rounded-[22px] overflow-hidden bg-[#FAF3F7] shadow-[inset_0_0_8px_rgba(255,251,236,0.65)] flex flex-col">
-        {/* 1. ZONA SUPERIOR: FOTOGRAFÍA PROTAGONISTA ORIGINAL (215px) */}
+        {/* 1. ZONA SUPERIOR: FOTOGRAFÍA PROTAGONISTA (se extiende hasta 215px para continuar limpiamente detrás de las curvas) */}
         <div className="absolute top-0 left-0 w-full h-[215px] overflow-hidden bg-[#FDF4F8] z-1">
           <Image
             src={candle.photoUrl || '/images/comunidad/xena.jpg'}
@@ -94,7 +79,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
             className="object-cover object-[center_25%] group-hover:scale-105 transition-transform duration-700 ease-out"
           />
 
-          {/* Resplandor cálido sutil de luz */}
+          {/* Resplandor cálido sutil de luz (sin estrellas artificiales) */}
           {isLit && (
             <div className="absolute bottom-5 -left-4 w-[100px] h-[100px] rounded-full bg-radial from-amber-300/20 via-rose-300/5 to-transparent pointer-events-none blur-md" />
           )}
@@ -116,7 +101,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
           </div>
         </div>
 
-        {/* 2. SUBCONTENEDOR INFERIOR: FONDO CELESTIAL ILUSTRADO ORIGINAL RECUPERADO */}
+        {/* 2. SUBCONTENEDOR INFERIOR: ESQUINAS REDONDEADAS RESTAURADAS rounded-t-[20px] Y FONDO DIRECTO DEL MURAL */}
         <div
           className="absolute bottom-0 left-0 w-full h-[190px] z-10 rounded-t-[20px] overflow-hidden shadow-[0_-4px_16px_rgba(184,60,126,0.10)] flex flex-col justify-between pt-2.5 pb-3 px-3.5"
           style={{
@@ -125,7 +110,7 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
             backgroundPosition: 'center bottom',
           }}
         >
-          {/* Borde superior curvado luminoso */}
+          {/* Borde superior curvado luminoso (acompaña rounded-t-[20px]) */}
           <div
             className="absolute inset-x-0 top-0 h-[22px] pointer-events-none z-25 rounded-t-[20px]"
             style={{
@@ -136,74 +121,73 @@ export default function TarjetaHomenajeCelestial<T extends CandleHomenajeData = 
             }}
           />
 
-          {/* VELA OFICIAL SUPERPUESTA EN ESQUINA SUPERIOR IZQUIERDA */}
-          <div className="absolute top-1.5 left-2 z-20 w-[48px] h-[68px] pointer-events-none">
-            {/* Sombra de contacto */}
-            <div className="absolute bottom-[2px] left-[6px] w-[36px] h-[10px] rounded-full bg-black/16 blur-[3px]" />
+          {/* VELA OFICIAL SUPERPUESTA: Íntegramente dentro del subcontenedor inferior (esquina superior izquierda) */}
+        <div className="absolute top-1.5 left-2 z-20 w-[48px] h-[68px] pointer-events-none">
+          {/* Sombra de contacto */}
+          <div className="absolute bottom-[2px] left-[6px] w-[36px] h-[10px] rounded-full bg-black/16 blur-[3px]" />
 
-            {/* Imagen oficial pilar-enciende-luz.webp */}
-            <div className="relative w-full h-full">
-              <Image
-                src="/images/luces/pilar-enciende-luz.webp"
-                alt="Vela oficial del proyecto"
-                fill
-                sizes="48px"
-                className="object-contain object-bottom drop-shadow-[0_2px_8px_rgba(232,194,136,0.50)] transition-transform duration-500 group-hover:scale-105"
-              />
-            </div>
+          {/* Imagen oficial pilar-enciende-luz.webp (estática, sin animación, no interactiva) */}
+          <div className="relative w-full h-full">
+            <Image
+              src="/images/luces/pilar-enciende-luz.webp"
+              alt="Vela oficial del proyecto"
+              fill
+              sizes="48px"
+              className="object-contain object-bottom drop-shadow-[0_2px_8px_rgba(232,194,136,0.50)] transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
+        </div>
+
+        {/* Cabecera del subcontenedor: Nombre y Separador Ornamental 100% CENTRADOS respecto al ancho total */}
+        <div className="relative z-1 flex flex-col items-center text-center w-full">
+          <h3 className="font-playfair font-bold text-[21px] text-[#2D0F31] tracking-[-0.2px] leading-tight drop-shadow-[0_1px_3px_rgba(255,255,255,0.95)]">
+            {candle.petName}
+          </h3>
+
+          {/* Separador ornamental dorado oficial */}
+          <div className="my-1 w-[120px] h-[10px] flex items-center justify-center opacity-95">
+            <Image
+              src="/images/luces/separador-ornamental-dorado.svg"
+              alt="Adorno dorado"
+              width={120}
+              height={10}
+              className="object-contain"
+            />
           </div>
 
-          {/* Cabecera del subcontenedor: Nombre y Separador Ornamental CENTRADOS */}
-          <div className="relative z-1 flex flex-col items-center text-center w-full">
-            <h3 className="font-playfair font-bold text-[21px] text-[#2D0F31] tracking-[-0.2px] leading-tight drop-shadow-[0_1px_3px_rgba(255,255,255,0.95)]">
-              {candle.petName}
-            </h3>
+          {/* Dedicatoria centrada en cursiva */}
+          <p className="font-playfair italic text-[11.5px] leading-[1.32] text-[#381232] line-clamp-3 max-w-[172px] drop-shadow-[0_1px_3px_rgba(255,255,255,0.95)]">
+            “{candle.dedication || 'Siempre en nuestro recuerdo, iluminando el cielo con tu amor incondicional.'}”
+          </p>
+        </div>
 
-            {/* Separador ornamental dorado oficial */}
-            <div className="my-1 w-[120px] h-[10px] flex items-center justify-center opacity-95">
-              <Image
-                src="/images/luces/separador-ornamental-dorado.svg"
-                alt="Adorno dorado"
-                width={120}
-                height={10}
-                className="object-contain"
-              />
-            </div>
+        {/* Acciones: Botón «♡ Te acompaño» y enlace «Ver su recuerdo →» 100% CENTRADOS */}
+        <div className="relative z-1 flex flex-col items-center gap-1.5 mt-1 w-full">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSendWarmth(candle.id, e);
+            }}
+            className="w-[188px] h-[34px] rounded-full bg-white/85 hover:bg-white/95 backdrop-blur-xs border border-[#ECC9DE]/90 text-[#843E78] font-semibold text-[11.5px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-[0_2px_6px_rgba(132,62,120,0.10)] active:scale-95"
+          >
+            <span className="text-[#C4679B] text-xs">♡</span>
+            <span>Te acompaño</span>
+          </button>
 
-            {/* Dedicatoria centrada en cursiva con recorte por frases completas */}
-            <p className="font-playfair italic text-[11px] leading-[1.32] text-[#381232] line-clamp-3 max-w-[172px] drop-shadow-[0_1px_3px_rgba(255,255,255,0.95)]">
-              “{getSentenceSnippet(candle.dedication)}”
-            </p>
-          </div>
-
-          {/* Acciones: Botón «♡ Te acompaño» y NUEVO BOTÓN DESTACADO «Ver su recuerdo →» (#86245E) */}
-          <div className="relative z-1 flex flex-col items-center gap-1.5 mt-1 w-full">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSendWarmth(candle.id, e);
-              }}
-              className="w-[188px] h-[30px] rounded-full bg-white/85 hover:bg-white/95 backdrop-blur-xs border border-[#ECC9DE]/90 text-[#843E78] font-semibold text-[11px] flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-[0_2px_6px_rgba(132,62,120,0.10)] active:scale-95"
-            >
-              <span className="text-[#C4679B] text-xs">♡</span>
-              <span>Te acompaño</span>
-            </button>
-
-            {/* NUEVO BOTÓN CTA: Rosa frambuesa profundo #86245E, texto blanco, bordes redondeados y accesible */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSelect(candle);
-              }}
-              className="w-[188px] h-[32px] rounded-full bg-[#86245E] hover:bg-[#721C4F] active:scale-95 text-white font-bold text-[11.5px] flex items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(134,36,94,0.30)] hover:shadow-[0_4px_12px_rgba(134,36,94,0.40)] transition-all cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#86245E] focus:ring-offset-1 select-none"
-              aria-label={`Ver recuerdo de ${candle.petName}`}
-            >
-              <span>Ver su recuerdo</span>
-              <span aria-hidden="true">→</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(candle);
+            }}
+            className="w-[188px] h-[32px] rounded-full bg-[#86245E] hover:bg-[#721C4F] active:scale-95 text-white font-bold text-[11.5px] flex items-center justify-center gap-1.5 shadow-[0_2px_8px_rgba(134,36,94,0.30)] hover:shadow-[0_4px_12px_rgba(134,36,94,0.40)] transition-all cursor-pointer focus:outline-hidden focus:ring-2 focus:ring-[#86245E] focus:ring-offset-1 select-none"
+            aria-label={`Ver recuerdo de ${candle.petName}`}
+          >
+            <span>Ver su recuerdo</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
         </div>
       </div>
     </article>
