@@ -1602,14 +1602,13 @@ export default function CieloLlenoDeLucesClient() {
 
                   {showRecoveryForm && (
                     <div className="p-3.5 rounded-2xl bg-[#FFFBEB] border border-[#FDE68A] text-left space-y-2.5 animate-fade-in">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-[#92400E]">🔑 Reavivar desde este dispositivo</span>
-                        <span className="text-[10px] text-[#A16207]">Clave privada</span>
-                      </div>
-                      <p className="text-[11px] text-[#78350F] leading-tight">
-                        Esta vela se encendió desde otro equipo. Introduce tu clave privada de gestión:
+                      <p className="text-xs text-[#78350F] leading-relaxed font-medium">
+                        💜 Tu angelito sigue teniendo su lugar en nuestro cielo. Si encendiste su vela desde otro navegador o dispositivo, la recuperación por correo todavía no está disponible.
                       </p>
-                      <div className="flex gap-2">
+                      <p className="text-[11px] text-[#A16207] leading-tight">
+                        Podrás volver a encender su vela gratuitamente durante 7 días desde este mismo navegador si la creaste aquí, o introduciendo su clave privada de gestión si la conservas:
+                      </p>
+                      <div className="flex gap-2 pt-0.5">
                         <input
                           type="password"
                           value={manualTokenInput}
@@ -1620,22 +1619,9 @@ export default function CieloLlenoDeLucesClient() {
                         <button
                           type="button"
                           onClick={() => handleReigniteWithToken(selectedCandle.id, manualTokenInput)}
-                          className="px-3 py-1.5 rounded-xl bg-[#D97706] text-white text-xs font-bold hover:bg-[#B45309] transition-all cursor-pointer"
+                          className="px-3 py-1.5 rounded-xl bg-[#D97706] text-white text-xs font-bold hover:bg-[#B45309] transition-all cursor-pointer shrink-0"
                         >
                           Validar
-                        </button>
-                      </div>
-
-                      <div className="pt-1 border-t border-[#FDE68A]/60 flex items-center justify-between">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const emailPrompt = prompt('Introduce el correo electrónico con el que registraste esta vela:');
-                            if (emailPrompt) handleRequestRecovery(selectedCandle.id, emailPrompt);
-                          }}
-                          className="text-[10.5px] font-semibold text-[#762759] hover:underline cursor-pointer"
-                        >
-                          ¿Olvidaste tu clave privada?
                         </button>
                       </div>
                     </div>
@@ -1856,7 +1842,7 @@ export default function CieloLlenoDeLucesClient() {
                         className="w-full px-3.5 py-2 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#30142D] outline-none focus:border-[#86245E]"
                       />
                       <p className="text-[10.5px] text-[#493344] mt-1 leading-tight">
-                        🔒 Tu correo es estrictamente privado y no se publica. Se utiliza exclusivamente para enviarte tu enlace seguro de gestión y permitirte volver a encender la vela gratis desde cualquier dispositivo.
+                        🔒 Tu correo es privado y nunca se publica. Nos ayuda a identificar tu homenaje de forma segura. Podrás volver a encender su vela gratuitamente desde este mismo navegador.
                       </p>
                     </div>
 
