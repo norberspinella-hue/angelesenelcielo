@@ -56,6 +56,7 @@ export function WhatsAppButton() {
 
   const isMural = pathname === '/mural-global';
   const isCieloLuces = pathname?.startsWith('/cielo-lleno-de-luces');
+  const isComunidad = pathname?.startsWith('/comunidad');
   const { message, queryType } = getContextualWhatsAppConfig(pathname || '/');
   const whatsappUrl = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(message)}`;
 
@@ -73,20 +74,21 @@ export function WhatsAppButton() {
   // - En el resto de páginas: situado en la esquina inferior derecha. Si el banner de cookies está visible,
   //   se eleva dinámicamente según la altura real del banner (bannerHeight + 16px) medido de forma reactiva.
   const isCieloLucesBannerOpen = isCieloLuces && isBannerVisible;
-  const isDynamicBottom = !isMural && !isCieloLuces && isBannerVisible && bannerHeight > 0;
+  const isComunidadBannerOpen = isComunidad && isBannerVisible;
+  const isDynamicBottom = !isMural && !isCieloLuces && !isComunidad && isBannerVisible && bannerHeight > 0;
   const dynamicStyle = isDynamicBottom ? { bottom: `${bannerHeight + 16}px` } : undefined;
 
   const positionClasses = isMural
     ? 'bottom-[180px] right-2.5 sm:bottom-[235px] sm:right-6'
     : isBannerVisible
-    ? (isCieloLuces ? 'bottom-5 right-4 sm:bottom-6 sm:right-6' : (bannerHeight > 0 ? 'right-4 sm:right-6' : 'bottom-[148px] right-4 sm:bottom-[120px] sm:right-6'))
+    ? (isCieloLuces || isComunidad ? 'bottom-5 right-4 sm:bottom-6 sm:right-6' : (bannerHeight > 0 ? 'right-4 sm:right-6' : 'bottom-[148px] right-4 sm:bottom-[120px] sm:right-6'))
     : 'bottom-5 right-4 sm:bottom-6 sm:right-6';
 
   return (
     <aside
       aria-label="Atención por WhatsApp"
       style={dynamicStyle}
-      className={`fixed z-40 ${isCieloLucesBannerOpen ? 'hidden sm:flex' : 'flex'} items-center gap-2 pointer-events-none transition-all duration-300 ease-out ${positionClasses}`}
+      className={`fixed z-40 ${(isCieloLucesBannerOpen || isComunidadBannerOpen) ? 'hidden sm:flex' : 'flex'} items-center gap-2 pointer-events-none transition-all duration-300 ease-out ${positionClasses}`}
     >
       <a
         href={whatsappUrl}

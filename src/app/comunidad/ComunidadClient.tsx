@@ -206,6 +206,9 @@ export default function ComunidadClient({ initialMemories }: Props) {
           instagram: cleanInstagram,
           tiktok: cleanTiktok,
           isPublic,
+          socialShareAllowed: true,
+          anniversaryDate: '',
+          anniversaryEmail: '',
         }),
       });
 
@@ -940,7 +943,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
             {/* COLUMNA DERECHA: Tarjeta Flotante con Marca de Agua y Campos (Réplica Exacta Canva) */}
             <div id="formulario-recuerdo" className="lg:col-span-6 pt-7 relative scroll-mt-28">
-              <div className="relative rounded-[28px] bg-[#FFF9F6] p-5 sm:p-8 shadow-[0_24px_60px_rgba(120,50,95,0.11),0_6px_18px_rgba(0,0,0,0.03)] border border-[rgba(255,240,235,0.9)] max-w-lg ml-auto overflow-visible text-[#2D0F31]">
+              <div className="relative rounded-[28px] bg-[#FFF9F6] p-5 sm:p-8 shadow-[0_24px_60px_rgba(120,50,95,0.11),0_6px_18px_rgba(0,0,0,0.03)] border border-[rgba(255,240,235,0.9)] max-w-lg ml-auto overflow-visible text-[#2D0F31] mb-6 sm:mb-0">
                 
                 {/* Marca de agua dorada en la esquina superior derecha */}
                 <svg className="absolute -top-3 -right-2 w-28 h-28 pointer-events-none select-none rotate-[18deg]" viewBox="0 0 100 100" fill="none">
@@ -1047,7 +1050,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                     >
                       <span className="flex items-center gap-1.5">
                         <span>✨</span>
-                        <span>Añadir detalles (fotografía, redes o recordatorio)</span>
+                        <span>Añadir detalles (fotografía y redes sociales)</span>
                       </span>
                       <span className="text-[11px] font-semibold text-[#A07090]">
                         {showOptionalDetails ? 'Ocultar ▲' : 'Desplegar ▼'}
@@ -1126,77 +1129,23 @@ export default function ComunidadClient({ initialMemories }: Props) {
                           </div>
                         </div>
 
-                        {/* Consentimiento diferenciado para redes sociales */}
-                        <div className="p-3 rounded-2xl bg-[#FFF5F8] border border-[#F3D5E4] text-left">
-                          <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                            <input
-                              type="checkbox"
-                              checked={socialShareAllowed}
-                              onChange={(e) => setSocialShareAllowed(e.target.checked)}
-                              className="mt-0.5 rounded border-[#D9CBD6] text-[#A44F99] focus:ring-[#A44F99] cursor-pointer"
-                            />
-                            <span className="text-[11px] text-[#6B4E63] leading-relaxed">
-                              <strong className="font-semibold text-[#8C3F71]">Difusión en redes oficiales:</strong> Autorizo que esta carta pueda ser compartida con respeto y cariño en las cuentas oficiales de Instagram (@angeles_en_el_cielo_) y TikTok (@angeles_en_elcielo) de Ángeles en el Cielo para acompañar a otras familias en su duelo.
-                            </span>
-                          </label>
                         </div>
-
-                        {/* Recordatorio de aniversario transparente */}
-                        <div className="p-3 rounded-2xl bg-[#FFF9F3] border border-[#F5E2CC] flex flex-col gap-2 text-left">
-                          <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                            <input
-                              type="checkbox"
-                              checked={wantsAnniversaryReminder}
-                              onChange={(e) => setWantsAnniversaryReminder(e.target.checked)}
-                              className="mt-0.5 rounded border-[#D9CBD6] text-[#A06020] focus:ring-[#A06020] cursor-pointer"
-                            />
-                            <span className="text-[11.5px] text-[#6A4D3B] leading-snug">
-                              <strong className="font-semibold text-[#8B4513]">Recordatorio de aniversario:</strong> Deseo que me aviséis en su fecha especial para volver a encender su vela con la comunidad.
-                            </span>
-                          </label>
-                          {wantsAnniversaryReminder && (
-                            <div className="space-y-2 pt-1 border-t border-[#F5E2CC]/60">
-                              <p className="text-[11px] text-[#8B5A2B] bg-[#FFF8EE] p-2 rounded-xl border border-[#F2DEBA] leading-tight">
-                                ℹ️ El servicio automatizado de recordatorios por correo para Cartas al Cielo se encuentra actualmente en preparación técnica. Guardaremos tu fecha de forma segura y te avisaremos gratuitamente cuando esté operativo.
-                              </p>
-                              <div>
-                                <label htmlFor="formAnniversaryDate" className="block text-[11px] font-bold text-[#8B4513] mb-1">
-                                  Fecha de aniversario o partida *
-                                </label>
-                                <input
-                                  id="formAnniversaryDate"
-                                  type="date"
-                                  required
-                                  value={anniversaryDate}
-                                  onChange={(e) => setAnniversaryDate(e.target.value)}
-                                  className="w-full px-3 py-1.5 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
-                                />
-                              </div>
-                              <div>
-                                <label htmlFor="formAnniversaryEmail" className="block text-[11px] font-bold text-[#8B4513] mb-1">
-                                  Tu correo electrónico para el aviso cariñoso *
-                                </label>
-                                <input
-                                  id="formAnniversaryEmail"
-                                  type="email"
-                                  required
-                                  value={anniversaryEmail}
-                                  onChange={(e) => setAnniversaryEmail(e.target.value)}
-                                  placeholder="ejemplo@correo.com"
-                                  className="w-full px-3 py-1.5 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
-                                />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                      </div>
                     )}
                   </div>
 
-                  {/* Aviso público de privacidad y publicación */}
-                  <div className="p-2.5 rounded-xl bg-[#FAF1F6] border border-[#ECD1E2] text-center text-xs text-[#7A5B73]">
-                    <span>🕊️ Tu carta será pública en el Libro de los Ángeles para que otras familias puedan acompañarte.</span>
+                  {/* Aviso de comunidad, redes sociales oficiales y privacidad */}
+                  <div className="p-3.5 rounded-2xl bg-[#FFF5F9] border border-[#F3D3E5] text-left space-y-2 shadow-[0_2px_8px_rgba(164,80,155,0.04)]">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[#8C3F71]">
+                      <span>🕊️</span>
+                      <span>Homenaje en comunidad y redes oficiales</span>
+                    </div>
+                    <p className="text-[11.5px] text-[#6B4E63] leading-relaxed">
+                      Tu carta y fotografía formarán parte del santuario público de <strong>Cartas al Cielo</strong> y podrán ser seleccionadas con profundo respeto y cariño en nuestras cuentas oficiales de Instagram (<span className="font-semibold text-[#8C3F71]">@angeles_en_el_cielo_</span>) y TikTok (<span className="font-semibold text-[#8C3F71]">@angeles_en_elcielo</span>) para honrar su memoria y acompañar a otras familias en duelo.
+                    </p>
+                    <div className="flex items-center gap-1.5 text-[11px] text-[#8C5D7E] pt-1.5 border-t border-[#F3D3E5]/70">
+                      <span>🔒</span>
+                      <span><strong>Privacidad garantizada:</strong> Tu correo electrónico es estrictamente confidencial y nunca se publica ni se comparte.</span>
+                    </div>
                   </div>
 
                   {submitError && (
@@ -2052,30 +2001,6 @@ export default function ComunidadClient({ initialMemories }: Props) {
                       placeholder="Ej. Siempre iluminarás mi camino..."
                       className="w-full px-3.5 py-2.5 rounded-2xl border border-[#D9CBD6] bg-[#FAF1EC] text-sm text-[#2D0F31] outline-none focus:border-[#B85F9F] focus:bg-white"
                     />
-                  </div>
-
-                  {/* Pilar 3: Recordatorio de Aniversario */}
-                  <div className="p-3 rounded-2xl bg-[#FFF9F3] border border-[#F5E2CC] space-y-2">
-                    <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                      <input
-                        type="checkbox"
-                        checked={candleAnniversaryOptIn}
-                        onChange={(e) => setCandleAnniversaryOptIn(e.target.checked)}
-                        className="mt-0.5 rounded border-[#D9CBD6] text-[#A06020] focus:ring-[#A06020] cursor-pointer"
-                      />
-                      <span className="text-[11.5px] text-[#6A4D3B] leading-snug">
-                        <strong className="font-semibold text-[#8B4513]">Recordatorio de Aniversario:</strong> Deseo recibir un aviso cariñoso en sus fechas especiales para volver a encender su vela con la comunidad.
-                      </span>
-                    </label>
-                    {candleAnniversaryOptIn && (
-                      <input
-                        type="email"
-                        value={candleEmail}
-                        onChange={(e) => setCandleEmail(e.target.value)}
-                        placeholder="Tu correo electrónico (opcional)"
-                        className="w-full px-3 py-1.5 rounded-xl border border-[#E5CEBA] bg-white text-xs text-[#2D0F31] outline-none focus:border-[#C69062]"
-                      />
-                    )}
                   </div>
 
                   <button
