@@ -1373,7 +1373,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
               />
               <h2 id="libro-titulo">El Libro de los Ángeles</h2>
               <p className="text-xs sm:text-sm text-[#7A4253] text-center max-w-lg mx-auto mt-2 italic font-serif">
-                Un homenaje eterno por cada ángel. Abre su sobre para descubrir todas las cartas de su vida.
+                Un homenaje eterno por cada ángel. Abre su sobre para descubrir las cartas para este angelito.
               </p>
             </header>
 
@@ -1499,7 +1499,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                       setActiveTributeForCollection(firstFeaturedTribute);
                     }}
                   >
-                    <span>Abrir las cartas de su vida ({firstFeaturedTribute.letters.length} {firstFeaturedTribute.letters.length === 1 ? 'carta' : 'cartas'})</span>
+                    <span>Abrir las cartas para {firstFeaturedTribute.petName} ({firstFeaturedTribute.letters.length} {firstFeaturedTribute.letters.length === 1 ? 'carta llena de amor' : 'cartas llenas de amor'})</span>
                     <span aria-hidden="true">→</span>
                   </button>
                 </div>
@@ -1655,13 +1655,25 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
               <div className="space-y-4">
                 <div>
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF0E6] border border-[#D4B79E] text-xs font-bold text-[#8C3F71] mb-2">
-                    <span>Colección de Recuerdos</span>
-                  </div>
-                  <h3 className="font-playfair text-[#541731] text-3xl sm:text-4xl font-bold">
-                    Las cartas de su vida · {activeTributeForCollection.petName}
+                  {/* Título de la colección */}
+                  <span className="block font-serif text-xs sm:text-sm font-bold tracking-wider text-[#8C3F71] uppercase mb-1">
+                    Las cartas para mi angelito
+                  </span>
+
+                  {/* Nombre destacado debajo */}
+                  <h3 className="font-playfair text-[#541731] text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
+                    {activeTributeForCollection.petName}
                   </h3>
-                  <p className="text-sm font-sans text-[#7A4253] mt-1">
+
+                  {/* Subtítulo dinámico */}
+                  <p className="font-playfair italic text-base sm:text-lg text-[#8C3F71] mt-1 font-medium">
+                    {activeTributeForCollection.letters.length === 1 
+                      ? '1 carta llena de amor' 
+                      : `${activeTributeForCollection.letters.length} cartas llenas de amor`}
+                  </p>
+
+                  {/* Metadatos conmemorativos */}
+                  <p className="text-xs sm:text-sm font-sans text-[#7A4253] mt-1.5">
                     {[activeTributeForCollection.authorName, activeTributeForCollection.yearsOrDates, activeTributeForCollection.speciesLabel || (activeTributeForCollection.species === 'gato' ? 'Gatita' : activeTributeForCollection.species === 'perro' ? 'Perrita / Perro' : 'Compañero')].filter(Boolean).join(' · ')}
                   </p>
                 </div>
