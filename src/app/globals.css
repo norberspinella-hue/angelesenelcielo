@@ -29,6 +29,8 @@
 @tailwind utilities;
 
 :root {
+  --tinta: #541731;
+  --papel: #fff4e7;
   --color-primary: #1E2A78;
   --color-primary-hover: #151C5C;
   --color-accent: #C9A961;
@@ -1702,22 +1704,28 @@ p,
 }
 
 .libro-dialog {
-  color: inherit;
-  width: min(680px, calc(100% - 24px));
-  max-height: calc(100dvh - 32px);
+  color: #541731 !important;
+  background-color: #fff4e7 !important;
+  background-image: url('/images/cartas-al-cielo/libro/assets/papel.svg') !important;
+  border: 1px solid #d4b79e !important;
+  border-radius: 14px;
+  padding: clamp(20px, 4vw, 44px);
+  box-shadow: 0 20px 60px rgba(45, 15, 30, 0.45) !important;
+  width: min(720px, calc(100% - 24px));
+  max-height: calc(100dvh - 36px);
   overflow-y: auto;
   position: fixed;
   inset: 0;
   margin: auto;
-  z-index: 1000;
+  z-index: 100000;
 }
 
 .libro-dialog-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(35, 19, 52, 0.75);
-  backdrop-filter: blur(4px);
-  z-index: 999;
+  background: rgba(28, 12, 42, 0.82) !important;
+  backdrop-filter: blur(8px) !important;
+  z-index: 99999;
 }
 
 .libro-dialog p {

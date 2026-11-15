@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Link from 'next/link';
 import { DrawerStepper } from './drawer-steps/DrawerStepper';
 import { StepPlanAndSlot } from './drawer-steps/StepPlanAndSlot';
 import { StepPhotoAndData } from './drawer-steps/StepPhotoAndData';
@@ -180,23 +179,6 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounder
               </div>
               <div className="p-6 mt-2 bg-[#FFF8F4] border border-[#F8C7D8] rounded-2xl text-[#1E2A78] italic text-lg shadow-sm">
                 "{slotData.stars?.message || 'Siempre estarás en nuestro corazón.'}"
-              </div>
-
-              {/* Botón visible hacia Cartas al Cielo con el nombre prellenado y editable */}
-              <div className="mt-6 flex justify-center">
-                <Link
-                  href={`/comunidad?pet=${encodeURIComponent(slotData.stars?.name || '')}#formulario-recuerdo`}
-                  onClick={onClose}
-                  className="min-h-[48px] px-7 py-3 rounded-full font-bold text-white text-sm shadow-[0_8px_22px_rgba(175,80,155,0.38)] hover:shadow-[0_12px_28px_rgba(175,80,155,0.48)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer text-center select-none"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(90deg, #A44F99 0%, #B8589E 35%, #CE5E9B 75%, #D7659F 100%)',
-                  }}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ transform: 'rotate(-38deg)', marginTop: '-1px' }}>
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                  </svg>
-                  <span>Escribir una carta para {slotData.stars?.name || 'este angelito'}</span>
-                </Link>
               </div>
             </div>
           </div>
