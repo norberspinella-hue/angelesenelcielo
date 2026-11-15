@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
 
@@ -21,14 +22,20 @@ export default function DesdeElCorazonPage() {
           {/* Hero Header */}
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFF0F4] border border-[#F8C7D8] text-xs font-semibold text-[#E05282] mb-4 shadow-sm">
-              <span>❤️</span>
+              <Image 
+                src="/images/icons/plans/icon-plan-inicial.svg" 
+                alt="Icono Plan Inicial" 
+                width={16} 
+                height={16} 
+                className="w-4 h-4 object-contain" 
+              />
               <span>Desde el Corazón · Nuestro Porqué y Compromiso</span>
             </div>
             <h1 className="font-playfair text-3xl sm:text-4xl md:text-5xl font-bold text-[#1E2A78] leading-tight mb-4">
               Por qué nació este cielo... Por ellos y para siempre
             </h1>
             <p className="font-playfair italic text-lg sm:text-xl text-[#A05278] font-medium mb-4">
-              «Todas dejan huella. Algunas siguen caminando a nuestro lado. Otras ya brillan entre las nubes.»
+              Todas dejan huella. Algunas siguen caminando a nuestro lado. Otras ya brillan entre las nubes.
             </p>
             <p className="text-[#5A639C] text-base sm:text-lg leading-relaxed">
               Sabemos lo importante y delicado que es este paso para ti. Por eso compartimos la historia real que dio vida a Ángeles en el Cielo y nuestro compromiso humano con cada familia.
@@ -41,7 +48,13 @@ export default function DesdeElCorazonPage() {
 
             <div className="relative z-10">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFF0F4] border border-[#F8C7D8] text-xs font-semibold text-[#E05282] mb-4 shadow-sm">
-                <span>🐾</span>
+                <Image 
+                  src="/images/icons/plans/icon-plan-eterno.svg" 
+                  alt="Icono Plan Eterno" 
+                  width={16} 
+                  height={16} 
+                  className="w-4 h-4 object-contain" 
+                />
                 <span>En memoria de Juliette · El origen de Ángeles en el Cielo</span>
               </div>
               
@@ -60,7 +73,7 @@ export default function DesdeElCorazonPage() {
 
                 <div className="p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#FFF8F7] to-[#FAF5FF] border border-[#F6DCE6] my-6 shadow-sm">
                   <p className="font-playfair italic text-base sm:text-lg text-[#1E2A78] font-medium leading-relaxed mb-3">
-                    «Fue en ese dolor donde surgió la necesidad vital de transformar el duelo en algo que trascendiera su ausencia: crear un santuario donde todos nuestros angelitos fueran recordados para siempre. Un lugar donde todo el mundo pueda verlos, conocer sus historias y sentir la huella de amor que dejaron.»
+                    Fue en ese dolor donde surgió la necesidad vital de transformar el duelo en algo que trascendiera su ausencia: crear un santuario donde todos nuestros angelitos fueran recordados para siempre. Un lugar donde todo el mundo pueda verlos, conocer sus historias y sentir la huella de amor que dejaron.
                   </p>
                   <span className="text-xs font-bold text-[#C59B73] tracking-wide uppercase">
                     — En honor a Juliette y a todos los que llenaron nuestro corazón
@@ -73,7 +86,14 @@ export default function DesdeElCorazonPage() {
 
                 <div className="p-5 sm:p-6 rounded-2xl bg-[#FFF5F7] border border-[#FAD2E1] my-4 shadow-sm">
                   <h3 className="font-playfair font-bold text-lg text-[#8A2B53] mb-2 flex items-center gap-2">
-                    <span>🐾</span> Una huella por los que siguen esperando
+                    <Image 
+                      src="/images/icons/plans/icon-plan-eterno.svg" 
+                      alt="Icono Plan Eterno" 
+                      width={20} 
+                      height={20} 
+                      className="w-5 h-5 object-contain" 
+                    />
+                    <span>Una huella por los que siguen esperando</span>
                   </h3>
                   <p className="text-sm sm:text-base text-[#6B2E53] leading-relaxed">
                     Y hay un compromiso más, nacido del corazón: <strong>ayudar a protectoras y asociaciones de animales</strong> a seguir consiguiendo recursos para su día a día. Queremos que el amor que nos dejó Juliette y todos los angelitos sirva también para cuidar, alimentar y dar una segunda oportunidad a aquellos peludos que hoy siguen esperando un hogar en la tierra.

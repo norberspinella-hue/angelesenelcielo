@@ -52,7 +52,6 @@ export function Header({
           />
           <span>Desde el Corazón</span>
         </Link>
-        <Link href="/contacto" className="heaven-nav-link text-sm">Contacto</Link>
         <div className="relative inline-flex flex-col items-center justify-center cursor-default group" title="Tienda de recuerdos conmemorativos (Próximamente)">
           <span 
             className="absolute -top-3 left-1/2 -translate-x-1/2 text-[8.5px] font-bold px-2 py-0.5 rounded-full text-white tracking-wider select-none inline-flex items-center gap-0.5 rotate-6 group-hover:rotate-2 transition-transform duration-200 z-10 whitespace-nowrap"
@@ -67,6 +66,7 @@ export function Header({
           </span>
           <span className="heaven-nav-link text-sm opacity-80 group-hover:opacity-100 transition-opacity">Tienda</span>
         </div>
+        <Link href="/cielo-lleno-de-luces" className="heaven-nav-link text-sm">Cielo de Luces</Link>
         <Link href="/comunidad" className="heaven-nav-link text-sm">Cartas al Cielo</Link>
         <CurrencySelector size="sm" className="ml-1" />
       </nav>
@@ -124,14 +124,6 @@ export function Header({
               className="w-4 h-4 object-contain filter drop-shadow-[0_1px_3px_rgba(201,169,97,0.40)] group-hover:scale-110 transition-transform duration-200" 
             />
           </Link>
-          <Link 
-            href="/contacto" 
-            onClick={() => setIsMenuOpen(false)}
-            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
-          >
-            Contacto
-          </Link>
-          
           <div className="flex items-center gap-2 pt-2 border-t border-gray-100 w-full justify-center">
             <span className="text-[#1E2A78]/80 font-bold text-base">Tienda</span>
             <span 
@@ -146,6 +138,14 @@ export function Header({
               <span>Muy pronto</span>
             </span>
           </div>
+
+          <Link 
+            href="/cielo-lleno-de-luces" 
+            onClick={() => setIsMenuOpen(false)}
+            className="text-[#1E2A78] font-bold text-base hover:text-[#7C3AED] transition-colors py-1"
+          >
+            Cielo de Luces
+          </Link>
 
           <Link 
             href="/comunidad" 

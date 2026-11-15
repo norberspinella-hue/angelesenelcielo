@@ -50,7 +50,7 @@ export default function ComoFuncionaPage() {
             </h1>
 
             <p className="font-playfair italic text-lg sm:text-xl text-[#A05278] font-medium mb-4">
-              «Honra su vida, mantén viva su luz y comparte su historia para siempre en el cielo infinito.»
+              Honra su vida, mantén viva su luz y comparte su historia para siempre en el cielo infinito.
             </p>
 
             <p className="text-[#5A639C] text-base sm:text-lg leading-relaxed">
@@ -85,7 +85,7 @@ export default function ComoFuncionaPage() {
               {/* Cita de compromiso */}
               <div className="p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-[#FFF8F7] to-[#FAF5FF] border border-[#F6DCE6] my-6 text-center shadow-sm">
                 <p className="font-playfair italic text-base sm:text-lg text-[#1E2A78] font-medium leading-relaxed mb-3">
-                  «Cada paso está pensado con el máximo respeto por tu duelo: sin suscripciones ocultas, con permanencia para siempre y custodia oficial de su historia.»
+                  Cada paso está pensado con el máximo respeto por tu duelo: sin suscripciones ocultas, con permanencia para siempre y custodia oficial de su historia.
                 </p>
                 <div className="inline-flex items-center gap-2 text-xs font-bold text-[#C59B73] tracking-wide uppercase">
                   <Image src="/images/icons/plans/pawrosa.svg" alt="Huella" width={14} height={14} className="w-3.5 h-3.5 object-contain" />
@@ -286,7 +286,7 @@ export default function ComoFuncionaPage() {
                       Además, a través de los apadrinamientos solidarios, <strong>por cada apadrinamiento de 9,99 €, reservamos 5 € para ayudar a las protectoras a través de Corazones de Ángel</strong> y cuidar a los peluditos mientras llega su hogar definitivo.
                     </p>
                     <p className="font-playfair italic text-[#8A2B53] text-sm sm:text-base pt-1">
-                      «Así, la huella de amor de quien tanto quisiste se transforma en alimento, medicina y cobijo para un alma que hoy lo necesita de verdad.»
+                      Así, la huella de amor de quien tanto quisiste se transforma en alimento, medicina y cobijo para un alma que hoy lo necesita de verdad.
                     </p>
                   </div>
                 </div>
