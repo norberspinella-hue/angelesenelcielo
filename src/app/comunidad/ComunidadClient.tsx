@@ -977,6 +977,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
           <div className="flex items-center flex-wrap gap-1.5">
             <span className="text-white/60 text-[11px] hidden lg:inline mr-0.5">Escenarios:</span>
             <button
+              id="scenario-btn-chloe"
               type="button"
               onClick={() => selectScenario('tribute-chloe')}
               className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
@@ -989,6 +990,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
             </button>
 
             <button
+              id="scenario-btn-luna-spinella"
               type="button"
               onClick={() => selectScenario('tribute-luna-spinella')}
               className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
@@ -1001,6 +1003,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
             </button>
 
             <button
+              id="scenario-btn-luna-navarro"
               type="button"
               onClick={() => selectScenario('tribute-luna-navarro')}
               className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
@@ -1013,6 +1016,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
             </button>
 
             <button
+              id="scenario-btn-toby"
               type="button"
               onClick={() => selectScenario('tribute-toby-gomez')}
               className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
@@ -1025,6 +1029,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
             </button>
 
             <button
+              id="scenario-btn-bruno"
               type="button"
               onClick={() => selectScenario('tribute-bruno-morales')}
               className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
@@ -1038,6 +1043,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
             {activeTributeForCollection && (
               <button
+                id="scenario-btn-index"
                 type="button"
                 onClick={() => {
                   setActiveTributeForCollection(null);
@@ -1054,6 +1060,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
           <div className="flex items-center gap-2">
             <div className="inline-flex items-center p-0.5 rounded-full bg-white/10 border border-white/20">
               <button
+                id="role-btn-guardian"
                 type="button"
                 onClick={() => setReviewerRole('guardian')}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
@@ -1065,6 +1072,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                 🛡️ Modo Guardián
               </button>
               <button
+                id="role-btn-visitor"
                 type="button"
                 onClick={() => setReviewerRole('visitor')}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
@@ -1657,6 +1665,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                         Estás identificado como <strong>familia guardiana</strong> de {activeTributeForCollection.petName}. Puedes escribirle nuevas cartas en cualquier momento: aniversarios, cumpleaños o pensamientos íntimos.
                       </p>
                       <button
+                        id="btn-write-another-letter"
                         type="button"
                         onClick={() => setShowNewLetterForm(prev => !prev)}
                         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
