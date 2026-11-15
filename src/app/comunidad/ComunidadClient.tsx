@@ -1714,12 +1714,20 @@ export default function ComunidadClient({ initialMemories }: Props) {
                 </div>
 
                 {/* Acceso directo a las cartas en móvil */}
-                <div className="md:hidden pt-1">
+                <div className="md:hidden pt-2">
                   <a
                     href="#cartas-coleccion-lista"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#541731] bg-white border border-[#D4B79E] shadow-xs hover:bg-[#FFF8F4] transition-all"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const target = document.getElementById('cartas-coleccion-lista');
+                      if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }
+                    }}
+                    className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-[#541731] bg-[#FFF9F2] hover:bg-[#FFF2E5] border border-[#D4B79E] shadow-xs active:scale-[0.98] transition-all cursor-pointer"
                   >
-                    <span>↓ Ver las cartas ({activeTributeForCollection.letters.length})</span>
+                    <span>↓</span>
+                    <span>Ver las cartas ({activeTributeForCollection.letters.length})</span>
                   </a>
                 </div>
 
@@ -1734,12 +1742,12 @@ export default function ComunidadClient({ initialMemories }: Props) {
                         id="btn-write-another-letter"
                         type="button"
                         onClick={() => setShowNewLetterForm(prev => !prev)}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-white shadow-md hover:shadow-lg transition-all cursor-pointer border border-white/20 active:scale-[0.98]"
                         style={{
-                          background: 'linear-gradient(135deg, #A44F99 0%, #C35694 50%, #E07A70 100%)',
+                          background: 'linear-gradient(135deg, #722B55 0%, #8C3F71 50%, #541731 100%)',
                         }}
                       >
-                        <span>✉️</span>
+                        <span aria-hidden="true">✍️</span>
                         <span>{showNewLetterForm ? 'Ocultar formulario' : `Escribirle otra carta a ${activeTributeForCollection.petName}`}</span>
                       </button>
                     </div>
