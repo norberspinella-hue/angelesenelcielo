@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CartasAlCieloHeader } from '@/components/comunidad/CartasAlCieloHeader';
+import { INITIAL_MOCK_TRIBUTES, MockTribute, MockTributeLetter } from '@/lib/community/mockTributes';
 
 export interface CommunityMemory {
   id: string;
@@ -99,6 +100,118 @@ export default function ComunidadClient({ initialMemories }: Props) {
   const [wantsAnniversaryReminder, setWantsAnniversaryReminder] = useState(false);
   const [anniversaryEmail, setAnniversaryEmail] = useState('');
   const [anniversaryDate, setAnniversaryDate] = useState('');
+
+  // =========================================================================
+  // ESTADOS DEL PROTOTIPO EXPERIMENTAL: «LAS CARTAS DE SU VIDA» (MULTICARTA)
+  // =========================================================================
+  const [tributes, setTributes] = useState<MockTribute[]>(INITIAL_MOCK_TRIBUTES);
+  const [activeTributeForCollection, setActiveTributeForCollection] = useState<MockTribute | null>(null);
+  const [activeLetterForReader, setActiveLetterForReader] = useState<{ letter: MockTributeLetter; tribute: MockTribute } | null>(null);
+  const [reviewerRole, setReviewerRole] = useState<'guardian' | 'visitor'>('guardian');
+  const [showNewLetterForm, setShowNewLetterForm] = useState(false);
+  const [newLetterCategory, setNewLetterCategory] = useState<'cumpleanos' | 'aniversario' | 'espontanea' | 'despedida'>('cumpleanos');
+  const [newLetterTitle, setNewLetterTitle] = useState('');
+  const [newLetterMessage, setNewLetterMessage] = useState('');
+  const [newLetterAuthor, setNewLetterAuthor] = useState('');
+  const [newLetterDate, setNewLetterDate] = useState('15 de noviembre, 2026');
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Atajo para saltar directamente a los escenarios requeridos por la prueba
+  const selectScenario = (tributeId: string) => {
+    const target = tributes.find(t => t.id === tributeId);
+    if (target) {
+      setActiveTributeForCollection(target);
+      setShowNewLetterForm(false);
+      setTimeout(() => {
+        document.getElementById('libro-de-los-angeles')?.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+    }
+  };
+
+  // Reacción amorosa / velita para el tributo simulado
+  const handleReactionTribute = (tributeId: string, type: 'candle' | 'hug') => {
+    setTributes(prev => prev.map(t => {
+      if (t.id === tributeId) {
+        return {
+          ...t,
+          candlesCount: type === 'candle' ? t.candlesCount + 1 : t.candlesCount,
+          hugsCount: type === 'hug' ? t.hugsCount + 1 : t.hugsCount,
+        };
+      }
+      return t;
+    }));
+
+    if (activeTributeForCollection && activeTributeForCollection.id === tributeId) {
+      setActiveTributeForCollection(prev => prev ? {
+        ...prev,
+        candlesCount: type === 'candle' ? prev.candlesCount + 1 : prev.candlesCount,
+        hugsCount: type === 'hug' ? prev.hugsCount + 1 : prev.hugsCount,
+      } : null);
+    }
+
+    setToastMessage(type === 'candle' ? '🕯️ ¡Has encendido una velita de recuerdo!' : '🐾 ¡Has dejado un abrazo de consuelo!');
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  // Agregar nueva carta a la colección en Modo Guardián
+  const handleAddNewLetterToCollection = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeTributeForCollection || !newLetterMessage.trim()) return;
+
+    const categoryLabels: Record<string, string> = {
+      cumpleanos: '🎂 Cumpleaños en el cielo',
+      aniversario: '🕊️ Aniversario de partida',
+      espontanea: '🌿 Recuerdo espontáneo',
+      despedida: '💌 Carta de despedida',
+    };
+
+    const newLetter: MockTributeLetter = {
+      id: `letter-${Date.now()}`,
+      tributeId: activeTributeForCollection.id,
+      title: newLetterTitle.trim() || categoryLabels[newLetterCategory],
+      category: newLetterCategory,
+      categoryLabel: categoryLabels[newLetterCategory],
+      message: newLetterMessage.trim(),
+      authorName: newLetterAuthor.trim() || activeTributeForCollection.authorName,
+      displayDate: newLetterDate.trim() || '15 de noviembre, 2026',
+      publishedAt: new Date().toISOString(),
+      candlesCount: 1,
+      hugsCount: 0,
+      envelopeColor: activeTributeForCollection.letters.length % 3 === 0 ? 'crema' : activeTributeForCollection.letters.length % 3 === 1 ? 'lavanda' : 'rosa',
+    };
+
+    const updatedTributes = tributes.map(t => {
+      if (t.id === activeTributeForCollection.id) {
+        return {
+          ...t,
+          letters: [newLetter, ...t.letters],
+        };
+      }
+      return t;
+    });
+
+    setTributes(updatedTributes);
+    setActiveTributeForCollection(prev => prev ? {
+      ...prev,
+      letters: [newLetter, ...prev.letters],
+    } : null);
+
+    setNewLetterMessage('');
+    setNewLetterTitle('');
+    setShowNewLetterForm(false);
+    setToastMessage(`¡Nueva carta guardada con amor para ${activeTributeForCollection.petName}! (Total ahora: ${activeTributeForCollection.letters.length + 1} cartas)`);
+    setTimeout(() => setToastMessage(null), 5000);
+  };
+
+  // Restablecer datos simulados
+  const handleResetPrototypeData = () => {
+    setTributes(INITIAL_MOCK_TRIBUTES);
+    setActiveTributeForCollection(null);
+    setActiveLetterForReader(null);
+    setShowNewLetterForm(false);
+    setToastMessage('Datos de prueba del prototipo restablecidos.');
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   // Vela Semanal: Domingos de Luz & Altar Solidario
   const [weeklyCandlesCount, setWeeklyCandlesCount] = useState(438);
@@ -823,17 +936,159 @@ export default function ComunidadClient({ initialMemories }: Props) {
   );
 
 
-  // Cálculos para El Libro de los Ángeles (Carta Destacada + Más cartas con sobres)
-  const firstFeaturedLetter = filteredMemories[0] || null;
-  const otherLetters = filteredMemories.slice(1);
+  // Cálculos para El Libro de los Ángeles (Prototipo Multicarta: Un sobre por mascota)
+  const filteredTributes = tributes.filter(t => {
+    if (activeFilter === 'todos') return true;
+    return t.species === activeFilter;
+  });
+  const firstFeaturedTribute = filteredTributes[0] || null;
+  const otherTributes = filteredTributes.slice(1);
   const envelopesPerPage = 9; // 3 columnas x 3 filas
-  const totalLibroPages = Math.ceil(otherLetters.length / envelopesPerPage) || 1;
+  const totalLibroPages = Math.ceil(otherTributes.length / envelopesPerPage) || 1;
   const safeLibroPage = Math.min(Math.max(currentPage, 1), totalLibroPages);
   const startEnvelopeIndex = (safeLibroPage - 1) * envelopesPerPage;
+  const paginatedOtherTributes = otherTributes.slice(startEnvelopeIndex, startEnvelopeIndex + envelopesPerPage);
+
+  // Cálculos legado de memorias individuales
+  const firstFeaturedLetter = filteredMemories[0] || null;
+  const otherLetters = filteredMemories.slice(1);
   const paginatedOtherLetters = otherLetters.slice(startEnvelopeIndex, startEnvelopeIndex + envelopesPerPage);
   return (
     <div className="min-h-screen text-[#2D0F31] bg-[#24143C]">
       
+      {/* ========================================================================= */}
+      {/* BARRA SUPERIOR DE EVALUACIÓN: PROTOTIPO «LAS CARTAS DE SU VIDA»          */}
+      {/* ========================================================================= */}
+      <aside 
+        aria-label="Panel de control del prototipo" 
+        className="bg-[#1C0D26] border-b border-[#E8D4BB]/30 text-white py-2 px-3 sm:px-6 sticky top-0 z-[9999] shadow-xl"
+      >
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2">
+            <span className="bg-gradient-to-r from-[#D9629B] to-[#9B3F77] text-white px-2.5 py-0.5 rounded-full font-bold text-[10.5px] tracking-wider uppercase shadow-xs">
+              Prototipo Interactivo
+            </span>
+            <span className="font-semibold text-white/95 hidden sm:inline">
+              Las Cartas de su Vida · Colección Multicarta
+            </span>
+          </div>
+
+          {/* Atajos de escenarios de prueba */}
+          <div className="flex items-center flex-wrap gap-1.5">
+            <span className="text-white/60 text-[11px] hidden lg:inline mr-0.5">Escenarios:</span>
+            <button
+              type="button"
+              onClick={() => selectScenario('tribute-chloe')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                activeTributeForCollection?.id === 'tribute-chloe'
+                  ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                  : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+              }`}
+            >
+              🐱 Chloe (3 cartas)
+            </button>
+
+            <button
+              type="button"
+              onClick={() => selectScenario('tribute-luna-spinella')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                activeTributeForCollection?.id === 'tribute-luna-spinella'
+                  ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                  : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+              }`}
+            >
+              🐶 Luna Spinella (10 cartas)
+            </button>
+
+            <button
+              type="button"
+              onClick={() => selectScenario('tribute-luna-navarro')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                activeTributeForCollection?.id === 'tribute-luna-navarro'
+                  ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                  : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+              }`}
+            >
+              🐶 Luna Navarro (1 carta · Homónima)
+            </button>
+
+            <button
+              type="button"
+              onClick={() => selectScenario('tribute-toby-gomez')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                activeTributeForCollection?.id === 'tribute-toby-gomez'
+                  ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                  : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+              }`}
+            >
+              🕊️ Toby (Sin foto)
+            </button>
+
+            <button
+              type="button"
+              onClick={() => selectScenario('tribute-bruno-morales')}
+              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                activeTributeForCollection?.id === 'tribute-bruno-morales'
+                  ? 'bg-[#FFF0DD] text-[#24143C] border-[#D4B79E] font-bold shadow-sm'
+                  : 'bg-[#FFF0DD]/20 text-[#FFF0DD] border-[#D4B79E]/40 hover:bg-[#FFF0DD]/30'
+              }`}
+            >
+              ⭐ Bruno (Mural)
+            </button>
+
+            {activeTributeForCollection && (
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTributeForCollection(null);
+                  setShowNewLetterForm(false);
+                }}
+                className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#A44F99] text-white border border-white/30 hover:bg-[#B8589E] transition-all cursor-pointer"
+              >
+                📚 Volver al Índice General
+              </button>
+            )}
+          </div>
+
+          {/* Toggle de rol de revisor y reinicio */}
+          <div className="flex items-center gap-2">
+            <div className="inline-flex items-center p-0.5 rounded-full bg-white/10 border border-white/20">
+              <button
+                type="button"
+                onClick={() => setReviewerRole('guardian')}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                  reviewerRole === 'guardian'
+                    ? 'bg-[#D9629B] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white'
+                }`}
+              >
+                🛡️ Modo Guardián
+              </button>
+              <button
+                type="button"
+                onClick={() => setReviewerRole('visitor')}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                  reviewerRole === 'visitor'
+                    ? 'bg-[#D9629B] text-white shadow-xs'
+                    : 'text-white/70 hover:text-white'
+                }`}
+              >
+                👀 Modo Visitante
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleResetPrototypeData}
+              title="Restablecer datos de prueba"
+              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white text-xs transition-colors cursor-pointer border border-white/20"
+            >
+              🔄
+            </button>
+          </div>
+        </div>
+      </aside>
+
       {/* Menú Propio Oficial de Cartas al Cielo */}
       <CartasAlCieloHeader />
 
@@ -1053,208 +1308,633 @@ export default function ComunidadClient({ initialMemories }: Props) {
           <img src="/images/cartas-al-cielo/libro/fondos/jardin-escritorio-1440.webp" alt="" loading="lazy" />
         </picture>
 
-        {/* Sobre abierto sobre el título */}
-        <header>
-          <img 
-            className="libro-insignia" 
-            src="/images/cartas-al-cielo/libro/assets/sobre-abierto.webp" 
-            alt="Sobre abierto de El Libro de los Ángeles" 
-          />
-          <h2 id="libro-titulo">El Libro de los Ángeles</h2>
-        </header>
-
-        {/* SELECTOR ORIGINAL DE CARTAS RESTAURADO (IDÉNTICO A PRODUCCIÓN) */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 my-6 sm:my-8 max-w-4xl mx-auto px-2 relative z-10">
-          <div 
-            role="tablist" 
-            aria-label="Filtrar cartas por tipo de mascota" 
-            className="flex flex-wrap items-center justify-center gap-1.5 p-1 rounded-2xl sm:rounded-full bg-[rgba(246,238,244,0.75)] border border-[#EFE4EC] shadow-sm max-w-full"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeFilter === 'todos'}
-              onClick={() => { setActiveFilter('todos'); setCurrentPage(1); }}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
-                activeFilter === 'todos'
-                  ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
-                  : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
-              }`}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'todos' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
-              <span>Todos</span>
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeFilter === 'perro'}
-              onClick={() => { setActiveFilter('perro'); setCurrentPage(1); }}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
-                activeFilter === 'perro'
-                  ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
-                  : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
-              }`}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'perro' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
-              <span>Perros</span>
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeFilter === 'gato'}
-              onClick={() => { setActiveFilter('gato'); setCurrentPage(1); }}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
-                activeFilter === 'gato'
-                  ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
-                  : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
-              }`}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'gato' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
-              <span>Gatos</span>
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeFilter === 'otro'}
-              onClick={() => { setActiveFilter('otro'); setCurrentPage(1); }}
-              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
-                activeFilter === 'otro'
-                  ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
-                  : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
-              }`}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'otro' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
-              <span>Otras mascotas</span>
-            </button>
-          </div>
-
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#D9CBD6] text-xs font-semibold text-[#5B2E58] shadow-sm select-none min-h-[36px]">
-            <span>Orden: Más recientes</span>
-          </div>
-        </div>
-
         {/* ========================================================================= */}
-        {/* 4.2 CARTA REAL DESTACADA EN HOJA DE PAPEL MARFIL                          */}
+        {/* VISTA CONDICIONAL: NIVEL 1 (ÍNDICE GENERAL) VS NIVEL 2 (COLECCIÓN)        */}
         {/* ========================================================================= */}
-        {firstFeaturedLetter ? (
-          <article className={`libro-hoja libro-destacada ${!firstFeaturedLetter.photoUrl ? 'sin-foto' : ''}`}>
-            {firstFeaturedLetter.photoUrl && (
-              <figure className="libro-foto">
-                <img 
-                  src={firstFeaturedLetter.photoUrl} 
-                  alt={`Fotografía de ${firstFeaturedLetter.petName}`} 
-                  loading="lazy" 
-                />
-              </figure>
-            )}
-            <div className="space-y-3">
-              <h3 className="font-playfair text-[#541731] text-2xl sm:text-3xl font-bold">
-                Para {firstFeaturedLetter.petName}
-              </h3>
-              <p className="text-[#642944] leading-relaxed text-base sm:text-lg font-serif">
-                {previewLetterText(firstFeaturedLetter.message, 210)}
+        {!activeTributeForCollection ? (
+          <>
+            {/* 4.1 CABECERA DEL LIBRO DE LOS ÁNGELES */}
+            <header>
+              <img 
+                className="libro-insignia" 
+                src="/images/cartas-al-cielo/libro/assets/sobre-abierto.webp" 
+                alt="Sobre abierto de El Libro de los Ángeles" 
+              />
+              <h2 id="libro-titulo">El Libro de los Ángeles</h2>
+              <p className="text-xs sm:text-sm text-[#7A4253] text-center max-w-lg mx-auto mt-2 italic font-serif">
+                Un homenaje eterno por cada ángel. Abre su sobre para descubrir todas las cartas de su vida.
               </p>
-              <button 
-                type="button" 
-                className="libro-leer inline-flex items-center gap-2 text-[#541731] font-bold cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={(e) => {
-                  lastActiveTriggerRef.current = e.currentTarget;
-                  setSelectedMemoryForRead(firstFeaturedLetter);
-                }}
+            </header>
+
+            {/* SELECTOR ORIGINAL DE CARTAS RESTAURADO (IDÉNTICO A PRODUCCIÓN) */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 my-6 sm:my-8 max-w-4xl mx-auto px-2 relative z-10">
+              <div 
+                role="tablist" 
+                aria-label="Filtrar cartas por tipo de mascota" 
+                className="flex flex-wrap items-center justify-center gap-1.5 p-1 rounded-2xl sm:rounded-full bg-[rgba(246,238,244,0.75)] border border-[#EFE4EC] shadow-sm max-w-full"
               >
-                <span>Leer la carta para {firstFeaturedLetter.petName}</span>
-                <span aria-hidden="true">→</span>
-              </button>
-            </div>
-          </article>
-        ) : (
-          <div className="libro-hoja text-center py-12 text-[#834E54]">
-            Aún no hay cartas en el Libro para este filtro. ¡Sé el primero en escribir una!
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* 4.3 «MÁS CARTAS»: SOBRES DE ALTA RESOLUCIÓN CON PESTAÑA ASOMADA           */}
-        {/* ========================================================================= */}
-        {paginatedOtherLetters.length > 0 && (
-          <div className="mt-14 sm:mt-16 space-y-8">
-            <div className="text-center">
-              <h3 className="libro-mas font-playfair text-[#541731] text-2xl sm:text-3xl font-bold">
-                Más cartas
-              </h3>
-              <div className="w-20 h-0.5 bg-[#a87541]/40 mx-auto mt-2" />
-            </div>
-
-            <ul className="libro-indice">
-              {paginatedOtherLetters.map((letter, idx) => {
-                const globalIdx = (safeLibroPage - 1) * envelopesPerPage + idx;
-                const envelopeAsset = 
-                  globalIdx % 3 === 0 ? '/images/cartas-al-cielo/libro/assets/sobre-crema.webp' :
-                  globalIdx % 3 === 1 ? '/images/cartas-al-cielo/libro/assets/sobre-lavanda.webp' :
-                  '/images/cartas-al-cielo/libro/assets/sobre-rosa.webp';
-
-                return (
-                  <li key={letter.id} className="w-full">
-                    <button
-                      type="button"
-                      className="libro-sobre group focus:outline-none"
-                      aria-label={`Abrir la carta para ${letter.petName}`}
-                      onClick={(e) => {
-                        lastActiveTriggerRef.current = e.currentTarget;
-                        setSelectedMemoryForRead(letter);
-                      }}
-                    >
-                      {/* Hoja marfil que sobresale ligeramente */}
-                      <span className="libro-pestaña">
-                        <span className="block font-serif text-[14px] sm:text-[15px] leading-relaxed line-clamp-3 text-[#541731]/90">
-                          {previewLetterText(letter.message, 120)}
-                        </span>
-                      </span>
-
-                      {/* Sobre cerrado protagonista con textura WebP de alta resolución */}
-                      <span 
-                        className="libro-frente"
-                        style={{
-                          backgroundImage: `url('${envelopeAsset}')`,
-                        }}
-                      >
-                        <span className="relative z-10 font-playfair font-bold text-[#541731] text-base sm:text-lg lg:text-xl drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200">
-                          Para {letter.petName}
-                        </span>
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-
-            {/* Paginación funcional del Libro */}
-            {totalLibroPages > 1 && (
-              <div className="flex items-center justify-center gap-3 pt-6 relative z-10">
                 <button
                   type="button"
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={safeLibroPage <= 1}
-                  className="px-4 py-2 rounded-full border border-[#D4B79E] text-xs font-semibold text-[#541731] bg-white/80 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                  role="tab"
+                  aria-selected={activeFilter === 'todos'}
+                  onClick={() => { setActiveFilter('todos'); setCurrentPage(1); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                    activeFilter === 'todos'
+                      ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
+                      : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
+                  }`}
                 >
-                  ← Anterior
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'todos' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
+                  <span>Todos</span>
                 </button>
-                <span className="text-xs font-bold text-[#834E54] px-2 select-none">
-                  Página {safeLibroPage} de {totalLibroPages}
-                </span>
+
                 <button
                   type="button"
-                  onClick={() => setCurrentPage(p => Math.min(totalLibroPages, p + 1))}
-                  disabled={safeLibroPage >= totalLibroPages}
-                  className="px-4 py-2 rounded-full border border-[#D4B79E] text-xs font-semibold text-[#541731] bg-white/80 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                  role="tab"
+                  aria-selected={activeFilter === 'perro'}
+                  onClick={() => { setActiveFilter('perro'); setCurrentPage(1); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                    activeFilter === 'perro'
+                      ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
+                      : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
+                  }`}
                 >
-                  Siguiente →
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'perro' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
+                  <span>Perros</span>
+                </button>
+
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeFilter === 'gato'}
+                  onClick={() => { setActiveFilter('gato'); setCurrentPage(1); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                    activeFilter === 'gato'
+                      ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
+                      : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
+                  }`}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'gato' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
+                  <span>Gatos</span>
+                </button>
+
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeFilter === 'otro'}
+                  onClick={() => { setActiveFilter('otro'); setCurrentPage(1); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                    activeFilter === 'otro'
+                      ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
+                      : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
+                  }`}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'otro' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
+                  <span>Otras mascotas</span>
                 </button>
               </div>
+
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-[#D9CBD6] text-xs font-semibold text-[#5B2E58] shadow-sm select-none min-h-[36px]">
+                <span>Colecciones: {filteredTributes.length} ángeles</span>
+              </div>
+            </div>
+
+            {/* 4.2 CARTA DESTACADA EN HOJA DE PAPEL MARFIL */}
+            {firstFeaturedTribute ? (
+              <article className={`libro-hoja libro-destacada ${!firstFeaturedTribute.photoUrl ? 'sin-foto' : ''}`}>
+                {firstFeaturedTribute.photoUrl ? (
+                  <figure className="libro-foto">
+                    <img 
+                      src={firstFeaturedTribute.photoUrl} 
+                      alt={`Fotografía de ${firstFeaturedTribute.petName}`} 
+                      loading="lazy" 
+                    />
+                  </figure>
+                ) : (
+                  <div className="p-8 flex flex-col items-center justify-center text-center bg-[#FFF8F0] rounded-2xl border-2 border-dashed border-[#D4B79E]">
+                    <div className="w-16 h-16 rounded-full bg-[#FFFBF8] border-2 border-[#D4B79E] flex items-center justify-center text-3xl shadow-sm mb-2 text-[#A44F99]">
+                      🕊️
+                    </div>
+                    <span className="font-playfair text-xl font-bold text-[#541731]">{firstFeaturedTribute.petName}</span>
+                    <span className="text-xs text-[#7A4253] italic">En memoria eterna</span>
+                  </div>
+                )}
+                
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E1CEDF] text-[#541731] font-bold text-[11px] border border-[#B89CB6]">
+                      ✉️ Colección ({firstFeaturedTribute.letters.length} {firstFeaturedTribute.letters.length === 1 ? 'carta' : 'cartas'})
+                    </span>
+                    {firstFeaturedTribute.yearsOrDates && (
+                      <span className="text-xs text-[#7A4253] italic font-serif">
+                        {firstFeaturedTribute.yearsOrDates} · {firstFeaturedTribute.authorName}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="font-playfair text-[#541731] text-2xl sm:text-3xl font-bold">
+                    Para {firstFeaturedTribute.petName}
+                  </h3>
+                  
+                  <p className="text-[#642944] leading-relaxed text-base sm:text-lg font-serif">
+                    {previewLetterText(firstFeaturedTribute.letters[0]?.message || '', 210)}
+                  </p>
+                  
+                  <button 
+                    type="button" 
+                    className="libro-leer inline-flex items-center gap-2 text-[#541731] font-bold cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={(e) => {
+                      lastActiveTriggerRef.current = e.currentTarget;
+                      setActiveTributeForCollection(firstFeaturedTribute);
+                    }}
+                  >
+                    <span>Abrir las cartas de su vida ({firstFeaturedTribute.letters.length} {firstFeaturedTribute.letters.length === 1 ? 'carta' : 'cartas'})</span>
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </article>
+            ) : (
+              <div className="libro-hoja text-center py-12 text-[#834E54]">
+                Aún no hay cartas en el Libro para este filtro. ¡Sé el primero en escribir una!
+              </div>
             )}
+
+            {/* 4.3 «MÁS CARTAS»: SOBRES CON PESTAÑA ASOMADA Y CONTADOR DE COLECCIÓN */}
+            {paginatedOtherTributes.length > 0 && (
+              <div className="mt-14 sm:mt-16 space-y-8">
+                <div className="text-center">
+                  <h3 className="libro-mas font-playfair text-[#541731] text-2xl sm:text-3xl font-bold">
+                    Más cartas
+                  </h3>
+                  <div className="w-20 h-0.5 bg-[#a87541]/40 mx-auto mt-2" />
+                </div>
+
+                <ul className="libro-indice">
+                  {paginatedOtherTributes.map((tribute, idx) => {
+                    const globalIdx = (safeLibroPage - 1) * envelopesPerPage + idx;
+                    const envelopeAsset = 
+                      globalIdx % 3 === 0 ? '/images/cartas-al-cielo/libro/assets/sobre-crema.webp' :
+                      globalIdx % 3 === 1 ? '/images/cartas-al-cielo/libro/assets/sobre-lavanda.webp' :
+                      '/images/cartas-al-cielo/libro/assets/sobre-rosa.webp';
+
+                    const latestLetter = tribute.letters[0];
+
+                    return (
+                      <li key={tribute.id} className="w-full">
+                        <button
+                          type="button"
+                          className="libro-sobre group focus:outline-none"
+                          aria-label={`Abrir la colección de cartas para ${tribute.petName}`}
+                          onClick={(e) => {
+                            lastActiveTriggerRef.current = e.currentTarget;
+                            setActiveTributeForCollection(tribute);
+                          }}
+                        >
+                          {/* Hoja marfil que sobresale ligeramente */}
+                          <span className="libro-pestaña">
+                            <span className="block text-[11px] font-bold text-[#8C3F71] mb-0.5">
+                              {latestLetter?.displayDate || 'Carta de homenaje'}
+                            </span>
+                            <span className="block font-serif text-[14px] sm:text-[15px] leading-relaxed line-clamp-3 text-[#541731]/90">
+                              {previewLetterText(latestLetter?.message || '', 110)}
+                            </span>
+                          </span>
+
+                          {/* Sobre cerrado con Para [Nombre] y badge de colección */}
+                          <span 
+                            className="libro-frente"
+                            style={{
+                              backgroundImage: `url('${envelopeAsset}')`,
+                            }}
+                          >
+                            <span className="relative z-10 flex flex-col items-center justify-center text-center px-2">
+                              <span className="font-playfair font-bold text-[#541731] text-base sm:text-lg lg:text-xl drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200">
+                                Para {tribute.petName}
+                              </span>
+                              <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-[#7A4253] bg-white/85 px-2.5 py-0.5 rounded-full border border-[#D4B79E]/60 shadow-xs">
+                                ✉️ {tribute.letters.length > 1 ? `Colección (${tribute.letters.length} cartas)` : `1 carta`}
+                              </span>
+                            </span>
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                {/* Paginación funcional del Libro */}
+                {totalLibroPages > 1 && (
+                  <div className="flex items-center justify-center gap-3 pt-6 relative z-10">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={safeLibroPage <= 1}
+                      className="px-4 py-2 rounded-full border border-[#D4B79E] text-xs font-semibold text-[#541731] bg-white/80 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                    >
+                      ← Anterior
+                    </button>
+                    <span className="text-xs font-bold text-[#834E54] px-2 select-none">
+                      Página {safeLibroPage} de {totalLibroPages}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage(p => Math.min(totalLibroPages, p + 1))}
+                      disabled={safeLibroPage >= totalLibroPages}
+                      className="px-4 py-2 rounded-full border border-[#D4B79E] text-xs font-semibold text-[#541731] bg-white/80 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                    >
+                      Siguiente →
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        ) : (
+          /* ========================================================================= */
+          /* NIVEL 2: COLECCIÓN INDIVIDUAL «LAS CARTAS DE SU VIDA»                     */
+          /* ========================================================================= */
+          <div className="space-y-8 animate-fade-in relative z-10 max-w-5xl mx-auto px-2">
+            
+            {/* Barra superior de navegación interna de la colección */}
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-white/85 backdrop-blur-sm p-3 sm:p-4 rounded-2xl border border-[#D4B79E] shadow-sm">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTributeForCollection(null);
+                  setShowNewLetterForm(false);
+                }}
+                className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#541731] hover:text-[#8C3F71] transition-colors cursor-pointer"
+              >
+                <span className="text-base">←</span>
+                <span>Volver al Libro de los Ángeles (Todas las mascotas)</span>
+              </button>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#7A4253] font-semibold hidden sm:inline">Modo actual:</span>
+                <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
+                  reviewerRole === 'guardian'
+                    ? 'bg-[#E1CEDF] text-[#541731] border-[#B89CB6]'
+                    : 'bg-[#FFF0DD] text-[#7A4253] border-[#D4B79E]'
+                }`}>
+                  {reviewerRole === 'guardian' ? '🛡️ Familia Autorizada (Guardián)' : '👀 Visitante Público'}
+                </span>
+              </div>
+            </div>
+
+            {/* Tarjeta de Identidad y Cabecera de la Colección */}
+            <article className={`libro-hoja libro-destacada ${!activeTributeForCollection.photoUrl ? 'sin-foto' : ''}`}>
+              {activeTributeForCollection.photoUrl ? (
+                <figure className="libro-foto">
+                  <img 
+                    src={activeTributeForCollection.photoUrl} 
+                    alt={`Fotografía conmemorativa de ${activeTributeForCollection.petName}`} 
+                    loading="lazy" 
+                  />
+                </figure>
+              ) : (
+                <div className="p-8 flex flex-col items-center justify-center text-center bg-[#FFF8F0] rounded-2xl border-2 border-dashed border-[#D4B79E]">
+                  <div className="w-20 h-20 rounded-full bg-[#FFFBF8] border-2 border-[#D4B79E] flex items-center justify-center text-3xl shadow-sm mb-3 text-[#A44F99]">
+                    🕊️
+                  </div>
+                  <span className="font-playfair text-xl font-bold text-[#541731]">{activeTributeForCollection.petName}</span>
+                  <span className="text-xs text-[#7A4253] italic mt-1">Homenaje conmemorativo sin fotografía</span>
+                </div>
+              )}
+
+              <div className="space-y-4">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF0E6] border border-[#D4B79E] text-xs font-bold text-[#8C3F71] mb-2">
+                    <span>Colección de Recuerdos</span>
+                  </div>
+                  <h3 className="font-playfair text-[#541731] text-3xl sm:text-4xl font-bold">
+                    Las cartas de su vida · {activeTributeForCollection.petName}
+                  </h3>
+                  <p className="text-sm font-sans text-[#7A4253] mt-1">
+                    {[activeTributeForCollection.authorName, activeTributeForCollection.yearsOrDates, activeTributeForCollection.species === 'gato' ? 'Gato' : activeTributeForCollection.species === 'perro' ? 'Perro' : 'Compañero'].filter(Boolean).join(' · ')}
+                  </p>
+                </div>
+
+                {/* Escenario B: Distintivo de Vinculación al Mural Global */}
+                {activeTributeForCollection.muralSlot?.assigned && (
+                  <div className="p-3 rounded-2xl bg-gradient-to-r from-[#FFF5EA] to-[#FCE7F3] border border-[#E8D4BB] flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">✨</span>
+                      <div className="text-xs text-[#541731]">
+                        <span className="font-bold">Brilla en el Mural Global</span>
+                        <span className="block text-[#7A4253] text-[11px]">{activeTributeForCollection.muralSlot.slotLabel}</span>
+                      </div>
+                    </div>
+                    <Link
+                      href="/mural-global"
+                      className="px-3 py-1.5 rounded-full text-xs font-bold text-[#541731] bg-white border border-[#D4B79E] hover:bg-[#FFF8F4] transition-all cursor-pointer shadow-xs inline-flex items-center gap-1"
+                    >
+                      <span>Ver estrella</span>
+                      <span>↗</span>
+                    </Link>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-4 text-xs font-semibold text-[#642944] flex-wrap">
+                  <span className="inline-flex items-center gap-1.5">
+                    <span>✉️</span>
+                    <span>{activeTributeForCollection.letters.length} {activeTributeForCollection.letters.length === 1 ? 'carta publicada' : 'cartas publicadas'}</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span>🕯️</span>
+                    <span>{activeTributeForCollection.candlesCount} velas encendidas</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <span>🐾</span>
+                    <span>{activeTributeForCollection.hugsCount} abrazos de consuelo</span>
+                  </span>
+                </div>
+
+                {/* Acciones según Rol (Guardián vs Visitante) */}
+                <div className="pt-2 border-t border-[#D4B79E]/60">
+                  {reviewerRole === 'guardian' ? (
+                    <div className="space-y-3">
+                      <p className="text-xs text-[#7A4253] leading-relaxed">
+                        Estás identificado como <strong>familia guardiana</strong> de {activeTributeForCollection.petName}. Puedes escribirle nuevas cartas en cualquier momento: aniversarios, cumpleaños o pensamientos íntimos.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowNewLetterForm(prev => !prev)}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
+                        style={{
+                          background: 'linear-gradient(135deg, #A44F99 0%, #C35694 50%, #E07A70 100%)',
+                        }}
+                      >
+                        <span>✉️</span>
+                        <span>{showNewLetterForm ? 'Ocultar formulario' : `Escribirle otra carta a ${activeTributeForCollection.petName}`}</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-xs text-[#7A4253] leading-relaxed">
+                        Estás visitando la colección pública en homenaje a {activeTributeForCollection.petName}. Puedes leer sus recuerdos y dejarle una muestra de cariño a su familia.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleReactionTribute(activeTributeForCollection.id, 'candle')}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#541731] bg-[#FFF0DD] hover:bg-[#FFE6CC] border border-[#D4B79E] transition-all cursor-pointer shadow-xs"
+                        >
+                          <span>🕯️ Encender una vela en su honor</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleReactionTribute(activeTributeForCollection.id, 'hug')}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#541731] bg-[#FFF0DD] hover:bg-[#FFE6CC] border border-[#D4B79E] transition-all cursor-pointer shadow-xs"
+                        >
+                          <span>🐾 Dejar un abrazo</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setReviewerRole('guardian');
+                            setToastMessage('Has simulado el acceso como familia guardiana con tu Llave del Recuerdo.');
+                            setTimeout(() => setToastMessage(null), 4000);
+                          }}
+                          className="text-xs text-[#8C3F71] hover:underline font-semibold ml-2 cursor-pointer"
+                        >
+                          ¿Eres la familia de {activeTributeForCollection.petName}? Acceder como guardián
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </article>
+
+            {/* Formulario contextual para escribirle otra carta (Solo Guardián cuando showNewLetterForm === true) */}
+            {showNewLetterForm && reviewerRole === 'guardian' && (
+              <div className="libro-hoja p-6 sm:p-8 rounded-2xl border-2 border-[#A44F99]/40 bg-[#FFFBF8] shadow-lg animate-fade-in">
+                <div className="text-center max-w-md mx-auto mb-6">
+                  <h4 className="font-playfair text-2xl font-bold text-[#541731]">
+                    Escribirle otra carta a {activeTributeForCollection.petName}
+                  </h4>
+                  <p className="text-xs text-[#7A4253] mt-1">
+                    Esta carta se sumará de forma permanente y gratuita a la colección de {activeTributeForCollection.petName}.
+                  </p>
+                </div>
+
+                <form onSubmit={handleAddNewLetterToCollection} className="space-y-4 max-w-2xl mx-auto">
+                  {/* Motivo u Ocasión de la carta */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#541731] mb-2">
+                      Motivo de esta carta:
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { id: 'cumpleanos', label: '🎂 Cumpleaños en el cielo' },
+                        { id: 'aniversario', label: '🕊️ Aniversario de partida' },
+                        { id: 'espontanea', label: '🌿 Recuerdo espontáneo' },
+                        { id: 'despedida', label: '💌 Carta de amor' },
+                      ].map(cat => (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => setNewLetterCategory(cat.id as any)}
+                          className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                            newLetterCategory === cat.id
+                              ? 'bg-[#A44F99] text-white border-[#A44F99] shadow-sm font-bold'
+                              : 'bg-white text-[#541731] border-[#D4B79E] hover:bg-[#FFF8F4]'
+                          }`}
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Título opcional */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#541731] mb-1">
+                      Título o dedicatoria corta (opcional):
+                    </label>
+                    <input
+                      type="text"
+                      value={newLetterTitle}
+                      onChange={e => setNewLetterTitle(e.target.value)}
+                      placeholder="Ej. Pensando en ti hoy, Tu rincón bajo el sol, Dos primaveras..."
+                      className="w-full px-3.5 py-2 rounded-xl border border-[#D4B79E] bg-white text-xs text-[#541731] outline-none focus:border-[#722B55]"
+                    />
+                  </div>
+
+                  {/* Fecha de la carta */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-[#541731] mb-1">
+                        Fecha de esta carta:
+                      </label>
+                      <input
+                        type="text"
+                        value={newLetterDate}
+                        onChange={e => setNewLetterDate(e.target.value)}
+                        className="w-full px-3.5 py-2 rounded-xl border border-[#D4B79E] bg-white text-xs text-[#541731] outline-none focus:border-[#722B55]"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-[#541731] mb-1">
+                        Firma o autor:
+                      </label>
+                      <input
+                        type="text"
+                        value={newLetterAuthor}
+                        onChange={e => setNewLetterAuthor(e.target.value)}
+                        placeholder={activeTributeForCollection.authorName}
+                        className="w-full px-3.5 py-2 rounded-xl border border-[#D4B79E] bg-white text-xs text-[#541731] outline-none focus:border-[#722B55]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Mensaje de la carta */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#541731] mb-1">
+                      Mensaje de la carta <span className="text-[#A44F99]">*</span>:
+                    </label>
+                    <textarea
+                      required
+                      rows={5}
+                      value={newLetterMessage}
+                      onChange={e => setNewLetterMessage(e.target.value)}
+                      placeholder={`Escribe aquí lo que quieras decirle a ${activeTributeForCollection.petName}...`}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#D4B79E] bg-white text-xs sm:text-sm text-[#541731] font-serif leading-relaxed outline-none focus:border-[#722B55]"
+                    />
+                  </div>
+
+                  {/* Botones de acción */}
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowNewLetterForm(false)}
+                      className="px-4 py-2 rounded-full border border-gray-300 text-xs font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-6 py-2 rounded-full font-bold text-xs text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
+                      style={{
+                        background: 'linear-gradient(135deg, #A44F99 0%, #C35694 100%)',
+                      }}
+                    >
+                      Publicar en su colección
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Secuencia Cronológica de Sobres Individuales de esta Mascota */}
+            <div className="space-y-6 pt-4">
+              <div className="text-center">
+                <h4 className="font-playfair text-[#541731] text-2xl sm:text-3xl font-bold">
+                  Todas las cartas dedicadas a {activeTributeForCollection.petName} ({activeTributeForCollection.letters.length})
+                </h4>
+                <p className="text-xs sm:text-sm text-[#7A4253] italic font-serif mt-1">
+                  Pulsa sobre cualquier sobre para desplegar la carta completa en papel marfil.
+                </p>
+                <div className="w-20 h-0.5 bg-[#a87541]/40 mx-auto mt-2" />
+              </div>
+
+              <ul className="libro-indice">
+                {activeTributeForCollection.letters.map((letter, idx) => {
+                  const envelopeAsset = 
+                    letter.envelopeColor === 'crema' ? '/images/cartas-al-cielo/libro/assets/sobre-crema.webp' :
+                    letter.envelopeColor === 'lavanda' ? '/images/cartas-al-cielo/libro/assets/sobre-lavanda.webp' :
+                    '/images/cartas-al-cielo/libro/assets/sobre-rosa.webp';
+
+                  const letterNumber = activeTributeForCollection.letters.length - idx;
+
+                  return (
+                    <li key={letter.id} className="w-full">
+                      <button
+                        type="button"
+                        className="libro-sobre group focus:outline-none"
+                        aria-label={`Abrir carta: ${letter.title} para ${activeTributeForCollection.petName}`}
+                        onClick={(e) => {
+                          lastActiveTriggerRef.current = e.currentTarget;
+                          setActiveLetterForReader({ letter, tribute: activeTributeForCollection });
+                        }}
+                      >
+                        {/* Hoja marfil que sobresale con categoría, fecha y extracto */}
+                        <span className="libro-pestaña">
+                          <span className="block text-[10.5px] font-bold text-[#8C3F71] mb-0.5">
+                            {letter.categoryLabel}
+                          </span>
+                          <span className="block text-[11px] text-[#7A4253] italic mb-1">
+                            {letter.displayDate}
+                          </span>
+                          <span className="block font-serif text-[13.5px] sm:text-[14.5px] leading-relaxed line-clamp-3 text-[#541731]/90">
+                            {previewLetterText(letter.message, 110)}
+                          </span>
+                        </span>
+
+                        {/* Sobre cerrado */}
+                        <span 
+                          className="libro-frente"
+                          style={{
+                            backgroundImage: `url('${envelopeAsset}')`,
+                          }}
+                        >
+                          <span className="relative z-10 flex flex-col items-center justify-center text-center px-2">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8C3F71] bg-white/80 px-2 py-0.5 rounded-full mb-1">
+                              Carta #{letterNumber}
+                            </span>
+                            <span className="font-playfair font-bold text-[#541731] text-sm sm:text-base drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200 line-clamp-2">
+                              {letter.title}
+                            </span>
+                          </span>
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            {/* Escenario A: Invitación respetuosa al Mural Global para mascotas sin casilla */}
+            {!activeTributeForCollection.muralSlot?.assigned && (
+              <div className="libro-hoja mt-12 p-6 sm:p-8 text-center space-y-3 max-w-2xl mx-auto border border-[#E8D4BB] rounded-2xl bg-white/70">
+                <div className="text-2xl">✨</div>
+                <h4 className="font-playfair text-xl font-bold text-[#541731]">
+                  ¿Deseas encender una estrella permanente para {activeTributeForCollection.petName} en el cielo?
+                </h4>
+                <p className="text-xs sm:text-sm text-[#7A4253] leading-relaxed max-w-lg mx-auto">
+                  En el <strong>Mural Global de Ángeles en el Cielo</strong> puedes dedicarle una casilla eterna con certificado conmemorativo oficial, visible para siempre junto a cientos de ángeles iluminados.
+                </p>
+                <Link 
+                  href="/mural-global"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm text-white shadow-md hover:shadow-lg transition-all cursor-pointer"
+                  style={{
+                    background: 'linear-gradient(135deg, #A44F99 0%, #C35694 50%, #E07A70 100%)',
+                  }}
+                >
+                  <span>Conocer el Mural Global</span>
+                  <span>→</span>
+                </Link>
+              </div>
+            )}
+
+            {/* Botón inferior de retorno al Libro */}
+            <div className="text-center pt-8">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTributeForCollection(null);
+                  setShowNewLetterForm(false);
+                  setTimeout(() => {
+                    document.getElementById('libro-de-los-angeles')?.scrollIntoView({ behavior: 'smooth' });
+                  }, 50);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/90 border border-[#D4B79E] text-xs sm:text-sm font-bold text-[#541731] hover:bg-white transition-all cursor-pointer shadow-sm"
+              >
+                <span>←</span>
+                <span>Volver al Libro de los Ángeles (Todas las mascotas)</span>
+              </button>
+            </div>
+
           </div>
         )}
 
@@ -1869,6 +2549,113 @@ export default function ComunidadClient({ initialMemories }: Props) {
             )}
 
           </div>
+        </div>
+      )}
+
+      {/* MODAL LECTOR DE PAPEL MARFIL PARA CARTA DE COLECCIÓN */}
+      {activeLetterForReader && (
+        <div 
+          role="dialog" 
+          aria-modal="true" 
+          aria-labelledby="dialog-carta-coleccion-titulo"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-[#1F0D24]/70 backdrop-blur-xs animate-fade-in"
+        >
+          <div className="libro-dialog max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-10 rounded-3xl shadow-2xl border border-[#D4B79E] text-[#541731] relative">
+            
+            {/* Botones de navegación superior */}
+            <div className="flex items-center justify-between gap-4 pb-4 border-b border-[#D4B79E]/60 mb-6">
+              <button
+                type="button"
+                onClick={() => setActiveLetterForReader(null)}
+                className="libro-cerrar text-xs sm:text-sm font-semibold text-[#8C3F71] hover:underline cursor-pointer flex items-center gap-1.5"
+              >
+                <span>←</span>
+                <span>Volver a la colección de {activeLetterForReader.tribute.petName}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveLetterForReader(null)}
+                className="min-w-[38px] min-h-[38px] rounded-full bg-[#FAF0E6] hover:bg-[#F2DEC9] text-[#541731] flex items-center justify-center font-bold text-base cursor-pointer transition-colors"
+                aria-label="Cerrar carta"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Cabecera de la carta */}
+            <div className="space-y-1 text-center sm:text-left mb-6">
+              <div className="inline-block px-3 py-1 rounded-full bg-[#FAF0E6] border border-[#D4B79E] text-xs font-bold text-[#8C3F71] mb-2">
+                {activeLetterForReader.letter.categoryLabel}
+              </div>
+              <h3 id="dialog-carta-coleccion-titulo" className="font-playfair text-2xl sm:text-3xl lg:text-4xl font-bold text-[#541731]">
+                Para {activeLetterForReader.tribute.petName}
+              </h3>
+              <p className="text-xs sm:text-sm text-[#7A4253] italic font-sans">
+                {activeLetterForReader.letter.displayDate} · Escrita por {activeLetterForReader.letter.authorName}
+              </p>
+            </div>
+
+            {/* Fotografía de la mascota si tiene */}
+            {activeLetterForReader.tribute.photoUrl && (
+              <figure className="libro-foto max-w-[340px] mx-auto my-5">
+                <img 
+                  src={activeLetterForReader.tribute.photoUrl} 
+                  alt={`Fotografía de ${activeLetterForReader.tribute.petName}`}
+                  loading="lazy"
+                  className="w-full max-h-[320px] object-cover rounded"
+                />
+              </figure>
+            )}
+
+            {/* Contenido completo de la carta */}
+            <div className="font-serif text-[16px] sm:text-[18px] leading-[1.8] text-[#541731] my-6 space-y-4">
+              <p className="whitespace-pre-wrap">{activeLetterForReader.letter.message}</p>
+            </div>
+
+            {/* Acciones de velita y abrazo */}
+            <div className="mt-8 pt-4 border-t border-[#D4B79E]/60 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <button 
+                  type="button"
+                  onClick={() => handleReactionTribute(activeLetterForReader.tribute.id, 'candle')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[#D4B79E] bg-[#FFF0DD] text-[#541731] hover:bg-[#FFE8CC] cursor-pointer"
+                >
+                  <span>🕯️</span>
+                  <span>{activeLetterForReader.tribute.candlesCount}</span>
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => handleReactionTribute(activeLetterForReader.tribute.id, 'hug')}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[#D4B79E] bg-[#FFF0DD] text-[#541731] hover:bg-[#FFE8CC] cursor-pointer"
+                >
+                  <span>🐾</span>
+                  <span>{activeLetterForReader.tribute.hugsCount}</span>
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setActiveLetterForReader(null)}
+                className="text-xs sm:text-sm font-semibold text-[#8C3F71] hover:underline cursor-pointer"
+              >
+                Volver a la colección de {activeLetterForReader.tribute.petName}
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* TOAST DE NOTIFICACIÓN DEL PROTOTIPO */}
+      {toastMessage && (
+        <div 
+          role="status" 
+          aria-live="polite" 
+          className="fixed bottom-6 right-6 z-[99999] bg-[#2D1236] text-[#FFF8F4] px-5 py-3 rounded-2xl shadow-2xl border border-[#D4B79E] text-xs font-semibold flex items-center gap-2 animate-fade-in"
+        >
+          <span>✨</span>
+          <span>{toastMessage}</span>
         </div>
       )}
 
