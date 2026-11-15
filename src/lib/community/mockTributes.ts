@@ -18,6 +18,7 @@ export interface MockTribute {
   slug: string;
   petName: string;
   species: 'perro' | 'gato' | 'otro';
+  speciesLabel: string; // 'Perrita', 'Perro', 'Gatita', 'Gato', etc.
   photoUrl: string | null;
   yearsOrDates: string;
   authorName: string;
@@ -35,12 +36,14 @@ export interface MockTribute {
 }
 
 export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
-  // 1. ESCENARIO 2: Mascota con 3 cartas (Chloe) - Escenario A (sin mural)
+  // 1. ESCENARIO 2: Chloe (Perrita) - 3 cartas - Escenario A (sin mural)
+  // Corrección: Chloe es una perrita (perro), foto original sin incoherencias.
   {
     id: 'tribute-chloe',
     slug: 'chloe-spinella',
     petName: 'Chloe',
-    species: 'gato',
+    species: 'perro',
+    speciesLabel: 'Perrita',
     photoUrl: '/images/comunidad/chloe.jpg',
     yearsOrDates: '2014 - 2026',
     authorName: 'Familia Spinella',
@@ -62,7 +65,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 42,
         hugsCount: 28,
         envelopeColor: 'rosa',
-        message: 'Un año ya sin ti, mi pequeño ángel. Dicen que el tiempo cura las heridas, pero el amor por ti no disminuye ni un solo día. Cada vez que miro al cielo por la noche sé que la estrella más dulce y brillante eres tú, cuidándonos desde arriba. Gracias por seguir viviendo en nuestros corazones.',
+        message: 'Un año ya sin ti, mi pequeña Chloe. Dicen que el tiempo calma el dolor, pero el amor por ti sigue intacto en cada rincón de la casa. Cada vez que miro al cielo sé que la estrella más dulce eres tú cuidándonos desde arriba. Gracias por haber sido nuestra perrita más fiel.',
       },
       {
         id: 'letter-chloe-2',
@@ -76,7 +79,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 38,
         hugsCount: 19,
         envelopeColor: 'lavanda',
-        message: 'Hoy cumplirías 13 años con nosotros, mi pequeña Chloe. He puesto flores frescas donde solías tumbarte a tomar el sol de la mañana. Parece que todavía escucho tus pasitos suaves por el pasillo. Sé que estás en paz, jugando con mariposas eternas.',
+        message: 'Hoy cumplirías 13 años con nosotros, pequeña Chloe. Pusimos flores frescas donde solías tumbarte al sol en el jardín. Parece que todavía escuchamos el sonido de tus patitas por el pasillo. Sé que estás corriendo feliz y en paz.',
       },
       {
         id: 'letter-chloe-1',
@@ -95,12 +98,14 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
     ],
   },
 
-  // 2. ESCENARIO 3: Mascota con 10 cartas (Luna - Familia Spinella)
+  // 2. ESCENARIO 3: Luna Spinella (Gatita) - 10 cartas
+  // Corrección: Su fotografía corresponde a una gatita, especie fijada a 'gato'.
   {
     id: 'tribute-luna-spinella',
     slug: 'luna-spinella',
     petName: 'Luna',
-    species: 'perro',
+    species: 'gato',
+    speciesLabel: 'Gatita',
     photoUrl: '/images/comunidad/luna_real_clean.webp',
     yearsOrDates: '2010 - 2024',
     authorName: 'Familia Spinella',
@@ -113,7 +118,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
       {
         id: 'letter-luna-10',
         tributeId: 'tribute-luna-spinella',
-        title: 'Ayer soñé contigo, mi niña',
+        title: 'Ayer soñé que venías a ronronearme',
         category: 'espontanea',
         categoryLabel: '🌿 Recuerdo espontáneo',
         displayDate: '14 de noviembre, 2026',
@@ -122,7 +127,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 31,
         hugsCount: 18,
         envelopeColor: 'rosa',
-        message: 'Ayer soñé que venías corriendo a recibirme a la puerta, moviendo la colita con esa alegría desbordante, y apoyabas tu cabecita en mis rodillas. Me desperté con una sensación tan dulce y de paz que sé con certeza que viniste a visitarme. Te amo siempre, mi ángel de cuatro patas.',
+        message: 'Ayer soñé que saltabas a la cama y te acurrucabas a mi lado con ese ronroneo dulce que me calmaba el alma. Me desperté con una sensación tan dulce que sé con certeza que viniste a visitarme. Te amo siempre, mi reina felina.',
       },
       {
         id: 'letter-luna-9',
@@ -136,12 +141,12 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 45,
         hugsCount: 22,
         envelopeColor: 'crema',
-        message: 'Dos años ya desde que cruzaste el arcoíris. Tu retrato sigue en el lugar de honor del salón y tu recuerdo ilumina cada rincón de nuestra casa. Siempre serás nuestra noble y fiel compañera.',
+        message: 'Dos años ya desde que cruzaste el arcoíris. Tu rincón favorito junto al ventanal sigue lleno de tu luz. Siempre serás nuestra pequeña princesa de ojos brillantes.',
       },
       {
         id: 'letter-luna-8',
         tributeId: 'tribute-luna-spinella',
-        title: 'Tu playa favorita en verano',
+        title: 'Las tardes de verano en el balcón',
         category: 'espontanea',
         categoryLabel: '🌿 Recuerdo espontáneo',
         displayDate: '15 de julio, 2026',
@@ -150,7 +155,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 24,
         hugsCount: 12,
         envelopeColor: 'lavanda',
-        message: 'Hoy fuimos a la playa de arena fina donde tanto te gustaba correr contra la brisa marina. Mirando las olas dejé una caracola pensando en ti. Sentí tu espíritu libre jugando con el agua.',
+        message: 'Hoy soplaba la misma brisa tibia que tanto te gustaba cuando mirabas a los gorriones desde la barandilla. Dejé una flor en tu sitio pensando en ti.',
       },
       {
         id: 'letter-luna-7',
@@ -164,7 +169,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 29,
         hugsCount: 14,
         envelopeColor: 'rosa',
-        message: 'Segunda primavera que florece en el cielo para ti, Luna. Sé que allá arriba tienes praderas infinitas donde correr sin dolor ni cansancio en tus patitas.',
+        message: 'Segunda primavera que florece en el cielo para ti, mi Luna. Sé que allá arriba duermes en nubes mullidas y cazas mariposas de luz.',
       },
       {
         id: 'letter-luna-6',
@@ -178,7 +183,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 27,
         hugsCount: 15,
         envelopeColor: 'crema',
-        message: 'Cerramos otro año llevándote bien adentro del pecho. Ningún año nuevo empieza sin darte las gracias por todo lo que nos diste y nos enseñaste.',
+        message: 'Cerramos otro año llevándote bien adentro del pecho. Ningún año nuevo empieza sin darte las gracias por catorce años de pura compañía y ternura.',
       },
       {
         id: 'letter-luna-5',
@@ -192,7 +197,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 39,
         hugsCount: 20,
         envelopeColor: 'lavanda',
-        message: 'Un año entero sin escuchar el tintineo de tu collar al despertar por la mañana. Te extrañamos tanto como el primer día, pero recordarte ahora nos llena de paz y gratitud.',
+        message: 'Un año entero sin escuchar tus pasos sigilosos ni sentir tus caricias en mis tobillos al llegar del trabajo. Te extrañamos tanto como el primer día.',
       },
       {
         id: 'letter-luna-4',
@@ -206,12 +211,12 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 33,
         hugsCount: 16,
         envelopeColor: 'rosa',
-        message: 'Hoy cumplirías 15 años. Hicimos tu pastelito de manzana favorito en tu honor y recordamos todas las travesuras de cuando eras un cachorro travieso.',
+        message: 'Hoy cumplirías 15 años, mi viejita sabia. Recordamos todas las travesuras de cachorra y la serenidad con la que nos mirabas en tus últimos años.',
       },
       {
         id: 'letter-luna-3',
         tributeId: 'tribute-luna-spinella',
-        title: 'Amor puro y eterno',
+        title: 'Amor puro y silencioso',
         category: 'espontanea',
         categoryLabel: '🌿 Recuerdo espontáneo',
         displayDate: '14 de febrero, 2025',
@@ -220,7 +225,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 22,
         hugsCount: 11,
         envelopeColor: 'crema',
-        message: 'El amor más desinteresado y puro que conocimos en esta vida vino en forma de cuatro patas y un corazón gigante. Siempre serás nuestro gran amor.',
+        message: 'El amor más leal y discreto que conocí me lo diste tú con tus ojitos entrecerrados y tus patitas amasando mi manta. Siempre serás mi gran amor.',
       },
       {
         id: 'letter-luna-2',
@@ -234,7 +239,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 26,
         hugsCount: 13,
         envelopeColor: 'lavanda',
-        message: 'Nuestra primera Nochebuena sin ti. Pusimos tu adorno dorado en el árbol y dejamos tu mantita junto al fuego. Sentimos tu calor acompañándonos toda la noche.',
+        message: 'Nuestra primera Nochebuena sin ti. Pusimos tu adorno en el árbol y dejamos tu mantita en su sillón. Sentimos tu calor presente con nosotros.',
       },
       {
         id: 'letter-luna-1',
@@ -248,17 +253,19 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 36,
         hugsCount: 14,
         envelopeColor: 'crema',
-        message: 'Gracias por catorce años de puro amor incondicional. Fuiste mi refugio en los días grises y la mayor alegría al llegar a casa. Descansa en paz, mi niña bonita.',
+        message: 'Gracias por catorce años de puro amor incondicional. Fuiste mi refugio en los días grises y la paz más dulce de mi vida. Descansa en paz, mi niña bonita.',
       },
     ],
   },
 
-  // 3. ESCENARIO 5: Homónima - Luna (Familia Navarro) - Demuestra independencia total
+  // 3. ESCENARIO 5: Luna Navarro (Homónima - Perrita Golden Retriever) - 1 carta
+  // Demuestra que dos homenajes con el mismo nombre tienen colecciones y fotos 100% aisladas.
   {
     id: 'tribute-luna-navarro',
     slug: 'luna-navarro',
     petName: 'Luna',
     species: 'perro',
+    speciesLabel: 'Perrita',
     photoUrl: '/images/comunidad/golden_retriever_celestial_clean.webp',
     yearsOrDates: '2015 - 2025',
     authorName: 'Familia Navarro',
@@ -285,12 +292,14 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
     ],
   },
 
-  // 4. ESCENARIO 4: Mascota sin foto (Toby) - Demuestra diseño con monograma floral
+  // 4. ESCENARIO 4: Toby (Perro - Sin foto) - 1 carta
+  // Demuestra el diseño con monograma celestial floral sin foto rota.
   {
     id: 'tribute-toby-gomez',
     slug: 'toby-gomez',
     petName: 'Toby',
     species: 'perro',
+    speciesLabel: 'Perro',
     photoUrl: null, // Sin foto deliberadamente
     yearsOrDates: '2012 - 2024',
     authorName: 'Familia Gómez',
@@ -317,13 +326,15 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
     ],
   },
 
-  // 5. ESCENARIO 6 (Escenario B): Mascota con Casilla en Mural Global (Bruno)
+  // 5. ESCENARIO 6B: Bruno (Perro - Con Casilla en Mural Global) - 2 cartas
+  // Corrección: Imagen cambiada a 'dog_crop_from_desktop.png' (foto limpia de perro sin texto "Max").
   {
     id: 'tribute-bruno-morales',
     slug: 'bruno-morales',
     petName: 'Bruno',
     species: 'perro',
-    photoUrl: '/images/comunidad/pet-max.webp',
+    speciesLabel: 'Perro',
+    photoUrl: '/images/comunidad/dog_crop_from_desktop.png',
     yearsOrDates: '2013 - 2025',
     authorName: 'Familia Morales',
     guardianEmail: 'familia.morales@ejemplo.com',
@@ -368,12 +379,13 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
     ],
   },
 
-  // 6. ESCENARIO 1: Mascota con 1 carta (Nano)
+  // 6. ESCENARIO 1: Nano (Perro) - 1 carta
   {
     id: 'tribute-nano-cerro',
     slug: 'nano-cerro',
     petName: 'Nano',
     species: 'perro',
+    speciesLabel: 'Perro',
     photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/nano_1792605318398.jpg',
     yearsOrDates: '2011 - 2026',
     authorName: 'Familia Cerro',
@@ -400,12 +412,13 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
     ],
   },
 
-  // 7. Otras mascotas de la comunidad (Martín, House, Juliette, Vaiana, Luka)
+  // 7. Martín (Perro)
   {
     id: 'tribute-martin-zarate',
     slug: 'martin-zarate',
     petName: 'Martín',
     species: 'perro',
+    speciesLabel: 'Perro',
     photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/1793136505911_martin.jpg',
     yearsOrDates: '2011 - 2026',
     authorName: 'Marcos Zárate',
@@ -431,11 +444,14 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
       },
     ],
   },
+
+  // 8. House (Perro)
   {
     id: 'tribute-house',
     slug: 'house',
     petName: 'House',
     species: 'perro',
+    speciesLabel: 'Perro',
     photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/house_1791661708523.jpg',
     yearsOrDates: '2007 - 2020',
     authorName: 'Familia House',
@@ -458,66 +474,6 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         hugsCount: 54,
         envelopeColor: 'rosa',
         message: 'Trece años corriendo a mi lado, esperándome tras cada puerta con la misma alegría del primer día. Descansa en paz, mi viejo y noble amigo.',
-      },
-    ],
-  },
-  {
-    id: 'tribute-juliette',
-    slug: 'juliette',
-    petName: 'Juliette',
-    species: 'perro',
-    photoUrl: 'https://hmfdauxrpolpvbzlxenq.supabase.co/storage/v1/object/public/pet-photos/pets/original/juliette_1791706558194.jpg',
-    yearsOrDates: '2013 - 2018',
-    authorName: 'Refugio Nueva Vida',
-    guardianEmail: 'refugio@ejemplo.com',
-    muralSlot: null,
-    candlesCount: 110,
-    supportCount: 33,
-    hugsCount: 50,
-    letters: [
-      {
-        id: 'letter-juliette-1',
-        tributeId: 'tribute-juliette',
-        title: 'Una estrella de amor encontrada',
-        category: 'despedida',
-        categoryLabel: '💌 Primera Despedida',
-        displayDate: '20 de octubre, 2026',
-        publishedAt: '2026-10-20T13:00:00Z',
-        authorName: 'Refugio Nueva Vida',
-        candlesCount: 110,
-        hugsCount: 50,
-        envelopeColor: 'lavanda',
-        message: 'Tu mirada dulce vive en cada estrella que ilumina la noche. Encontraste un hogar en nuestros corazones antes de partir.',
-      },
-    ],
-  },
-  {
-    id: 'tribute-vaiana',
-    slug: 'vaiana',
-    petName: 'Vaiana',
-    species: 'perro',
-    photoUrl: '/images/solidario/vaiana_real_mural.jpg',
-    yearsOrDates: '2026',
-    authorName: 'Almas de 4 patas',
-    guardianEmail: 'almas@ejemplo.com',
-    muralSlot: null,
-    candlesCount: 98,
-    supportCount: 28,
-    hugsCount: 45,
-    letters: [
-      {
-        id: 'letter-vaiana-1',
-        tributeId: 'tribute-vaiana',
-        title: 'Una huella breve pero imborrable',
-        category: 'despedida',
-        categoryLabel: '💌 Primera Despedida',
-        displayDate: '18 de octubre, 2026',
-        publishedAt: '2026-10-18T18:31:35Z',
-        authorName: 'Almas de 4 patas',
-        candlesCount: 98,
-        hugsCount: 45,
-        envelopeColor: 'crema',
-        message: 'Vaiana solo era un bebé recién nacida cuando la dejaron abandonada, pero conoció el amor y la calidez de una mamá de acogida antes de partir. Aunque te fuiste a los pocos días, dejaste una huella imborrable.',
       },
     ],
   },

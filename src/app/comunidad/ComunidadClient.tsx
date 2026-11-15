@@ -108,6 +108,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
   const [activeTributeForCollection, setActiveTributeForCollection] = useState<MockTribute | null>(null);
   const [activeLetterForReader, setActiveLetterForReader] = useState<{ letter: MockTributeLetter; tribute: MockTribute } | null>(null);
   const [reviewerRole, setReviewerRole] = useState<'guardian' | 'visitor'>('guardian');
+  const [isDemoDockCollapsed, setIsDemoDockCollapsed] = useState(false);
   const [showNewLetterForm, setShowNewLetterForm] = useState(false);
   const [newLetterCategory, setNewLetterCategory] = useState<'cumpleanos' | 'aniversario' | 'espontanea' | 'despedida'>('cumpleanos');
   const [newLetterTitle, setNewLetterTitle] = useState('');
@@ -232,6 +233,11 @@ export default function ComunidadClient({ initialMemories }: Props) {
           setTimeout(() => {
             lastActiveTriggerRef.current?.focus();
           }, 50);
+        } else if (activeLetterForReader) {
+          setActiveLetterForReader(null);
+          setTimeout(() => {
+            lastActiveTriggerRef.current?.focus();
+          }, 50);
         } else if (showCelebrationModal) {
           setShowCelebrationModal(false);
         } else if (showWeeklyCandleModal) {
@@ -241,15 +247,19 @@ export default function ComunidadClient({ initialMemories }: Props) {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedMemoryForRead, showCelebrationModal, showWeeklyCandleModal]);
+  }, [selectedMemoryForRead, activeLetterForReader, showCelebrationModal, showWeeklyCandleModal]);
 
   React.useEffect(() => {
     if (selectedMemoryForRead) {
       setTimeout(() => {
         modalCloseButtonRef.current?.focus();
       }, 50);
+    } else if (activeLetterForReader) {
+      setTimeout(() => {
+        document.getElementById('modal-close-letter-btn')?.focus();
+      }, 50);
     }
-  }, [selectedMemoryForRead]);
+  }, [selectedMemoryForRead, activeLetterForReader]);
 
 
 
@@ -957,145 +967,178 @@ export default function ComunidadClient({ initialMemories }: Props) {
     <div className="min-h-screen text-[#2D0F31] bg-[#24143C]">
       
       {/* ========================================================================= */}
-      {/* BARRA SUPERIOR DE EVALUACIÓN: PROTOTIPO «LAS CARTAS DE SU VIDA»          */}
+      {/* 🧪 BARRA TÉCNICA: PANEL DE DEMOSTRACIÓN · NO FORMA PARTE DE LA WEB FINAL */}
       {/* ========================================================================= */}
-      <aside 
-        aria-label="Panel de control del prototipo" 
-        className="bg-[#1C0D26] border-b border-[#E8D4BB]/30 text-white py-2 px-3 sm:px-6 sticky top-0 z-[9999] shadow-xl"
-      >
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2">
-            <span className="bg-gradient-to-r from-[#D9629B] to-[#9B3F77] text-white px-2.5 py-0.5 rounded-full font-bold text-[10.5px] tracking-wider uppercase shadow-xs">
-              Prototipo Interactivo
-            </span>
-            <span className="font-semibold text-white/95 hidden sm:inline">
-              Las Cartas de su Vida · Colección Multicarta
-            </span>
-          </div>
-
-          {/* Atajos de escenarios de prueba */}
-          <div className="flex items-center flex-wrap gap-1.5">
-            <span className="text-white/60 text-[11px] hidden lg:inline mr-0.5">Escenarios:</span>
-            <button
-              id="scenario-btn-chloe"
-              type="button"
-              onClick={() => selectScenario('tribute-chloe')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                activeTributeForCollection?.id === 'tribute-chloe'
-                  ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
-                  : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
-              }`}
-            >
-              🐱 Chloe (3 cartas)
-            </button>
-
-            <button
-              id="scenario-btn-luna-spinella"
-              type="button"
-              onClick={() => selectScenario('tribute-luna-spinella')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                activeTributeForCollection?.id === 'tribute-luna-spinella'
-                  ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
-                  : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
-              }`}
-            >
-              🐶 Luna Spinella (10 cartas)
-            </button>
-
-            <button
-              id="scenario-btn-luna-navarro"
-              type="button"
-              onClick={() => selectScenario('tribute-luna-navarro')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                activeTributeForCollection?.id === 'tribute-luna-navarro'
-                  ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
-                  : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
-              }`}
-            >
-              🐶 Luna Navarro (1 carta · Homónima)
-            </button>
-
-            <button
-              id="scenario-btn-toby"
-              type="button"
-              onClick={() => selectScenario('tribute-toby-gomez')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                activeTributeForCollection?.id === 'tribute-toby-gomez'
-                  ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
-                  : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
-              }`}
-            >
-              🕊️ Toby (Sin foto)
-            </button>
-
-            <button
-              id="scenario-btn-bruno"
-              type="button"
-              onClick={() => selectScenario('tribute-bruno-morales')}
-              className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                activeTributeForCollection?.id === 'tribute-bruno-morales'
-                  ? 'bg-[#FFF0DD] text-[#24143C] border-[#D4B79E] font-bold shadow-sm'
-                  : 'bg-[#FFF0DD]/20 text-[#FFF0DD] border-[#D4B79E]/40 hover:bg-[#FFF0DD]/30'
-              }`}
-            >
-              ⭐ Bruno (Mural)
-            </button>
-
-            {activeTributeForCollection && (
-              <button
-                id="scenario-btn-index"
-                type="button"
-                onClick={() => {
-                  setActiveTributeForCollection(null);
-                  setShowNewLetterForm(false);
-                }}
-                className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#A44F99] text-white border border-white/30 hover:bg-[#B8589E] transition-all cursor-pointer"
-              >
-                📚 Volver al Índice General
-              </button>
-            )}
-          </div>
-
-          {/* Toggle de rol de revisor y reinicio */}
-          <div className="flex items-center gap-2">
-            <div className="inline-flex items-center p-0.5 rounded-full bg-white/10 border border-white/20">
-              <button
-                id="role-btn-guardian"
-                type="button"
-                onClick={() => setReviewerRole('guardian')}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
-                  reviewerRole === 'guardian'
-                    ? 'bg-[#D9629B] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white'
-                }`}
-              >
-                🛡️ Modo Guardián
-              </button>
-              <button
-                id="role-btn-visitor"
-                type="button"
-                onClick={() => setReviewerRole('visitor')}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
-                  reviewerRole === 'visitor'
-                    ? 'bg-[#D9629B] text-white shadow-xs'
-                    : 'text-white/70 hover:text-white'
-                }`}
-              >
-                👀 Modo Visitante
-              </button>
+      {isDemoDockCollapsed ? (
+        <div className="fixed top-3 right-3 sm:right-6 z-[9999]">
+          <button
+            id="btn-show-demo-dock"
+            type="button"
+            onClick={() => setIsDemoDockCollapsed(false)}
+            className="bg-[#1C0D26]/95 hover:bg-[#2D0F31] text-white px-3.5 py-1.5 rounded-full text-xs font-bold border border-[#E8D4BB]/40 shadow-2xl flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+            aria-label="Mostrar panel de demostración técnica"
+          >
+            <span>🧪</span>
+            <span>Panel de Demostración</span>
+            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">Mostrar ▾</span>
+          </button>
+        </div>
+      ) : (
+        <aside 
+          aria-label="Panel de demostración técnica" 
+          className="bg-[#1C0D26] border-b border-[#E8D4BB]/30 text-white py-2.5 px-3 sm:px-6 sticky top-0 z-[9999] shadow-2xl transition-all"
+        >
+          <div className="max-w-7xl mx-auto flex flex-col gap-2.5 text-xs">
+            {/* Fila superior: Identificador y Ocultar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-1.5">
+              <div className="flex items-center gap-2">
+                <span className="bg-gradient-to-r from-[#D9629B] to-[#9B3F77] text-white px-2.5 py-0.5 rounded-full font-bold text-[10px] sm:text-[11px] tracking-wider uppercase shadow-xs">
+                  🧪 PANEL DE DEMOSTRACIÓN · NO FORMA PARTE DE LA WEB FINAL
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10.5px] text-white/60 hidden xl:inline">
+                  * El cambio de rol es una simulación visual para esta prueba (el sistema definitivo usará Magic Links seguros y cookies HttpOnly).
+                </span>
+                <button
+                  id="btn-hide-demo-dock"
+                  type="button"
+                  onClick={() => setIsDemoDockCollapsed(true)}
+                  className="text-[11px] font-bold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-2.5 py-0.5 rounded-full transition-colors cursor-pointer border border-white/20 inline-flex items-center gap-1"
+                  title="Minimizar panel para ver la interfaz limpia sin elementos de prueba"
+                >
+                  <span>✕</span>
+                  <span>Ocultar panel</span>
+                </button>
+              </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleResetPrototypeData}
-              title="Restablecer datos de prueba"
-              className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white text-xs transition-colors cursor-pointer border border-white/20"
-            >
-              🔄
-            </button>
+            {/* Fila inferior: Escenarios de prueba y Selector de rol simulado */}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center flex-wrap gap-1.5">
+                <span className="text-white/60 text-[11px] hidden lg:inline mr-0.5">Escenarios:</span>
+                <button
+                  id="scenario-btn-chloe"
+                  type="button"
+                  onClick={() => selectScenario('tribute-chloe')}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                    activeTributeForCollection?.id === 'tribute-chloe'
+                      ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                      : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+                  }`}
+                >
+                  🐶 Chloe (Perrita · 3 cartas)
+                </button>
+
+                <button
+                  id="scenario-btn-luna-spinella"
+                  type="button"
+                  onClick={() => selectScenario('tribute-luna-spinella')}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                    activeTributeForCollection?.id === 'tribute-luna-spinella'
+                      ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                      : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+                  }`}
+                >
+                  🐱 Luna Spinella (Gatita · 10 cartas)
+                </button>
+
+                <button
+                  id="scenario-btn-luna-navarro"
+                  type="button"
+                  onClick={() => selectScenario('tribute-luna-navarro')}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                    activeTributeForCollection?.id === 'tribute-luna-navarro'
+                      ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                      : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+                  }`}
+                >
+                  🐶 Luna Navarro (Perra · 1 carta · Homónima)
+                </button>
+
+                <button
+                  id="scenario-btn-toby"
+                  type="button"
+                  onClick={() => selectScenario('tribute-toby-gomez')}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                    activeTributeForCollection?.id === 'tribute-toby-gomez'
+                      ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                      : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+                  }`}
+                >
+                  🕊️ Toby (Perro · Sin foto)
+                </button>
+
+                <button
+                  id="scenario-btn-bruno"
+                  type="button"
+                  onClick={() => selectScenario('tribute-bruno-morales')}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                    activeTributeForCollection?.id === 'tribute-bruno-morales'
+                      ? 'bg-[#FFF0DD] text-[#24143C] border-[#D4B79E] font-bold shadow-sm'
+                      : 'bg-[#FFF0DD]/20 text-[#FFF0DD] border-[#D4B79E]/40 hover:bg-[#FFF0DD]/30'
+                  }`}
+                >
+                  ⭐ Bruno (Perro · Con Mural)
+                </button>
+
+                {activeTributeForCollection && (
+                  <button
+                    id="scenario-btn-index"
+                    type="button"
+                    onClick={() => {
+                      setActiveTributeForCollection(null);
+                      setShowNewLetterForm(false);
+                    }}
+                    className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#A44F99] text-white border border-white/30 hover:bg-[#B8589E] transition-all cursor-pointer"
+                  >
+                    📚 Volver al Índice General
+                  </button>
+                )}
+              </div>
+
+              {/* Selector de Rol Simulado & Reinicio */}
+              <div className="flex items-center gap-2">
+                <div className="inline-flex items-center p-0.5 rounded-full bg-white/10 border border-white/20">
+                  <button
+                    id="role-btn-guardian"
+                    type="button"
+                    onClick={() => setReviewerRole('guardian')}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                      reviewerRole === 'guardian'
+                        ? 'bg-[#D9629B] text-white shadow-xs'
+                        : 'text-white/70 hover:text-white'
+                    }`}
+                  >
+                    🛡️ Modo Guardián
+                  </button>
+                  <button
+                    id="role-btn-visitor"
+                    type="button"
+                    onClick={() => setReviewerRole('visitor')}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                      reviewerRole === 'visitor'
+                        ? 'bg-[#D9629B] text-white shadow-xs'
+                        : 'text-white/70 hover:text-white'
+                    }`}
+                  >
+                    👀 Modo Visitante
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleResetPrototypeData}
+                  title="Restablecer datos de prueba"
+                  className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white text-xs transition-colors cursor-pointer border border-white/20"
+                >
+                  🔄
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-      </aside>
+        </aside>
+      )}
 
       {/* Menú Propio Oficial de Cartas al Cielo */}
       <CartasAlCieloHeader />
@@ -1590,18 +1633,19 @@ export default function ComunidadClient({ initialMemories }: Props) {
             </div>
 
             {/* Tarjeta de Identidad y Cabecera de la Colección */}
-            <article className={`libro-hoja libro-destacada ${!activeTributeForCollection.photoUrl ? 'sin-foto' : ''}`}>
+            <article className={`libro-hoja libro-destacada ${!activeTributeForCollection.photoUrl ? 'sin-foto' : ''} md:!grid-cols-[280px_1fr]`}>
               {activeTributeForCollection.photoUrl ? (
-                <figure className="libro-foto">
+                <figure className="libro-foto max-w-[180px] max-h-[180px] md:max-w-[280px] md:max-h-[300px] w-full mx-auto md:mx-0 overflow-hidden rounded-xl shadow-md border-2 border-white/80">
                   <img 
                     src={activeTributeForCollection.photoUrl} 
                     alt={`Fotografía conmemorativa de ${activeTributeForCollection.petName}`} 
                     loading="lazy" 
+                    className="w-full h-full object-cover rounded-lg"
                   />
                 </figure>
               ) : (
-                <div className="p-8 flex flex-col items-center justify-center text-center bg-[#FFF8F0] rounded-2xl border-2 border-dashed border-[#D4B79E]">
-                  <div className="w-20 h-20 rounded-full bg-[#FFFBF8] border-2 border-[#D4B79E] flex items-center justify-center text-3xl shadow-sm mb-3 text-[#A44F99]">
+                <div className="p-6 sm:p-8 flex flex-col items-center justify-center text-center bg-[#FFF8F0] rounded-2xl border-2 border-dashed border-[#D4B79E] max-w-[280px] mx-auto md:mx-0 w-full">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#FFFBF8] border-2 border-[#D4B79E] flex items-center justify-center text-2xl sm:text-3xl shadow-sm mb-3 text-[#A44F99]">
                     🕊️
                   </div>
                   <span className="font-playfair text-xl font-bold text-[#541731]">{activeTributeForCollection.petName}</span>
@@ -1618,7 +1662,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                     Las cartas de su vida · {activeTributeForCollection.petName}
                   </h3>
                   <p className="text-sm font-sans text-[#7A4253] mt-1">
-                    {[activeTributeForCollection.authorName, activeTributeForCollection.yearsOrDates, activeTributeForCollection.species === 'gato' ? 'Gato' : activeTributeForCollection.species === 'perro' ? 'Perro' : 'Compañero'].filter(Boolean).join(' · ')}
+                    {[activeTributeForCollection.authorName, activeTributeForCollection.yearsOrDates, activeTributeForCollection.speciesLabel || (activeTributeForCollection.species === 'gato' ? 'Gatita' : activeTributeForCollection.species === 'perro' ? 'Perrita / Perro' : 'Compañero')].filter(Boolean).join(' · ')}
                   </p>
                 </div>
 
@@ -1655,6 +1699,16 @@ export default function ComunidadClient({ initialMemories }: Props) {
                     <span>🐾</span>
                     <span>{activeTributeForCollection.hugsCount} abrazos de consuelo</span>
                   </span>
+                </div>
+
+                {/* Acceso directo a las cartas en móvil */}
+                <div className="md:hidden pt-1">
+                  <a
+                    href="#cartas-coleccion-lista"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#541731] bg-white border border-[#D4B79E] shadow-xs hover:bg-[#FFF8F4] transition-all"
+                  >
+                    <span>↓ Ver las cartas ({activeTributeForCollection.letters.length})</span>
+                  </a>
                 </div>
 
                 {/* Acciones según Rol (Guardián vs Visitante) */}
@@ -1836,7 +1890,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
             )}
 
             {/* Secuencia Cronológica de Sobres Individuales de esta Mascota */}
-            <div className="space-y-6 pt-4">
+            <div id="cartas-coleccion-lista" className="space-y-6 pt-4 scroll-mt-28">
               <div className="text-center">
                 <h4 className="font-playfair text-[#541731] text-2xl sm:text-3xl font-bold">
                   Todas las cartas dedicadas a {activeTributeForCollection.petName} ({activeTributeForCollection.letters.length})
@@ -1880,19 +1934,26 @@ export default function ComunidadClient({ initialMemories }: Props) {
                           </span>
                         </span>
 
-                        {/* Sobre cerrado */}
+                        {/* Sobre cerrado ilustrado con identidad clara */}
                         <span 
                           className="libro-frente"
                           style={{
                             backgroundImage: `url('${envelopeAsset}')`,
                           }}
                         >
-                          <span className="relative z-10 flex flex-col items-center justify-center text-center px-2">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#8C3F71] bg-white/80 px-2 py-0.5 rounded-full mb-1">
-                              Carta #{letterNumber}
+                          <span className="relative z-10 flex flex-col items-center justify-center text-center px-2.5 max-w-[90%]">
+                            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#8C3F71] bg-white/90 px-2.5 py-0.5 rounded-full mb-1 border border-[#D4B79E]/40 shadow-2xs">
+                              Carta #{letterNumber} · {letter.categoryLabel}
                             </span>
-                            <span className="font-playfair font-bold text-[#541731] text-sm sm:text-base drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200 line-clamp-2">
+                            <span className="text-[11px] font-bold text-[#7A4253] italic">
+                              Para {activeTributeForCollection.petName}
+                            </span>
+                            <span className="font-playfair font-bold text-[#541731] text-sm sm:text-base drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200 line-clamp-2 my-0.5">
                               {letter.title}
+                            </span>
+                            <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#8C3F71] mt-1 group-hover:underline">
+                              <span>Leer carta completa</span>
+                              <span>→</span>
                             </span>
                           </span>
                         </span>
@@ -2583,9 +2644,10 @@ export default function ComunidadClient({ initialMemories }: Props) {
               </button>
 
               <button
+                id="modal-close-letter-btn"
                 type="button"
                 onClick={() => setActiveLetterForReader(null)}
-                className="min-w-[38px] min-h-[38px] rounded-full bg-[#FAF0E6] hover:bg-[#F2DEC9] text-[#541731] flex items-center justify-center font-bold text-base cursor-pointer transition-colors"
+                className="min-w-[38px] min-h-[38px] rounded-full bg-[#FAF0E6] hover:bg-[#F2DEC9] text-[#541731] flex items-center justify-center font-bold text-base cursor-pointer transition-colors border border-[#D4B79E]/60 shadow-xs focus:ring-2 focus:ring-[#8C3F71] focus:outline-none"
                 aria-label="Cerrar carta"
               >
                 ✕
