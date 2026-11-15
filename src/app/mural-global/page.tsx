@@ -299,6 +299,17 @@ export default function MuralGlobalPage() {
         </div>
         
         <div className="flex items-center gap-2 sm:gap-4">
+                    {/* Enlace directo a Cartas al Cielo */}
+          <Link
+            href="/comunidad#formulario-recuerdo"
+            className="text-xs sm:text-sm font-bold text-[#8C3F71] hover:text-[#6D2F56] transition-all flex items-center gap-1.5 bg-[#FFF0F6] hover:bg-[#FFE4F0] px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-[#F0BED6] shadow-xs"
+            title="Escribir una carta al cielo"
+          >
+            <span>✉️</span>
+            <span className="hidden sm:inline">Escribir una carta</span>
+            <span className="sm:hidden">Carta</span>
+          </Link>
+
           {/* Botón Info en móvil */}
           <button
             onClick={() => setShowMobileInfo(true)}

@@ -54,6 +54,30 @@ export default function ComunidadClient({ initialMemories }: Props) {
   const lastActiveTriggerRef = React.useRef<HTMLElement | null>(null);
   const modalCloseButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
+  // Integración desde el Mural: Si viene con ?pet=Nombre, prellenar y permitir edición
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const petParam = params.get('pet');
+      if (petParam) {
+        setPetName(decodeURIComponent(petParam));
+        if (window.location.hash === '#formulario-recuerdo') {
+          setTimeout(() => {
+            document.getElementById('formulario-recuerdo')?.scrollIntoView({ behavior: 'smooth' });
+          }, 150);
+        }
+      }
+    }
+  }, []);
+
+  // Helper de previsualización para fragmentos de cartas en sobres e índice
+  const previewLetterText = (text: string, maxChars: number = 140) => {
+    if (!text) return '';
+    const chars = Array.from(text.trim());
+    if (chars.length <= maxChars) return chars.join('');
+    return chars.slice(0, maxChars).join('').replace(/\s+\S*$/, '') + '…';
+  };
+
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -798,85 +822,75 @@ export default function ComunidadClient({ initialMemories }: Props) {
     </div>
   );
 
+
+  // Cálculos para El Libro de los Ángeles (Carta Destacada + Más cartas con sobres)
+  const firstFeaturedLetter = filteredMemories[0] || null;
+  const otherLetters = filteredMemories.slice(1);
+  const envelopesPerPage = 9; // 3 columnas x 3 filas
+  const totalLibroPages = Math.ceil(otherLetters.length / envelopesPerPage) || 1;
+  const safeLibroPage = Math.min(Math.max(currentPage, 1), totalLibroPages);
+  const startEnvelopeIndex = (safeLibroPage - 1) * envelopesPerPage;
+  const paginatedOtherLetters = otherLetters.slice(startEnvelopeIndex, startEnvelopeIndex + envelopesPerPage);
   return (
-    <div className="min-h-screen text-[#2D0F31] bg-[#FBF6F8]">
+    <div className="min-h-screen text-[#2D0F31] bg-[#24143C]">
       
       {/* Menú Propio Oficial de Cartas al Cielo */}
       <CartasAlCieloHeader />
 
       {/* ========================================================================= */}
-      {/* HERO SECTION CON FONDO COMPLETO PANORÁMICO Y DIFUMINADO SUAVE             */}
+      {/* 2. PORTADA · UNA CARTA BAJO LAS ESTRELLAS (HERO NOCTURNO OFICIAL)          */}
       {/* ========================================================================= */}
-      <section 
-        className="hero-chihuahua-bg relative bg-cover bg-no-repeat bg-top pb-10 sm:pb-24 lg:pb-32 transition-all duration-500 overflow-hidden pt-[105px] sm:pt-[125px] md:pt-[135px]"
-      >
-        {/* Manto difuminado inferior (funde de forma invisible con la galería) */}
+      <section className="relative bg-[#24143C] text-white overflow-hidden pt-[95px] sm:pt-[115px] md:pt-[130px] pb-10 sm:pb-16 lg:pb-20">
+        
+        {/* Luces sutiles celestiales de fondo */}
         <div 
-          className="absolute bottom-0 left-0 right-0 h-28 sm:h-44 lg:h-56 pointer-events-none z-10"
+          className="absolute inset-0 pointer-events-none opacity-40" 
           style={{
-            background: 'linear-gradient(180deg, rgba(251, 246, 248, 0) 0%, rgba(251, 246, 248, 0.5) 40%, rgba(251, 246, 248, 0.92) 80%, #FBF6F8 100%)',
+            backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(140, 63, 113, 0.45) 0%, transparent 60%), radial-gradient(circle at 80% 40%, rgba(232, 212, 187, 0.25) 0%, transparent 50%)',
           }}
         />
 
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* COLUMNA IZQUIERDA: Titular con trazo de corazón + 3 valores */}
-            <div className="lg:col-span-6 space-y-5">
+            {/* =================================================================== */}
+            {/* COLUMNA TEXTO / BOTONES:                                            */}
+            {/* En móvil: order-1 (aparece ANTES de la ilustración, según req. 2.3) */}
+            {/* En escritorio: col-span-6 a la izquierda                            */}
+            {/* =================================================================== */}
+            <div className="lg:col-span-6 space-y-6 text-center lg:text-left order-1">
               
-              {/* Titular Hero Oficial: Cartas al Cielo con la fuente y tamaño del hero y el degradado del tag */}
               <div>
                 <h1 
-                  className="hero-title inline-block"
+                  className="font-playfair text-4xl sm:text-5xl lg:text-[56px] font-bold text-white leading-[1.12] mb-3 tracking-tight"
                   style={{
                     fontFamily: 'var(--font-title), var(--font-playfair), Georgia, serif',
-                    background: 'linear-gradient(90deg, #8C3F71 0%, #B8589E 45%, #DF6197 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    color: 'transparent',
-                    lineHeight: 1.15,
-                    paddingBottom: '0.12em',
-                    letterSpacing: '-0.03em',
-                    margin: 0,
                   }}
                 >
                   Cartas al Cielo
                 </h1>
 
-                {/* Subtítulo: Aquí sus nombres nunca se olvidan ♡ (Idéntico a Preview) */}
-                <h2 
-                  className="font-playfair text-[32px] sm:text-[40px] md:text-[46px] font-bold text-[#2D0F31] leading-[1.15] mb-4 mt-2"
-                  style={{
-                    textShadow: '0 1px 3px rgba(255, 255, 255, 0.8), 0 2px 10px rgba(255, 255, 255, 0.6)',
-                  }}
+                <p 
+                  className="font-serif italic text-xl sm:text-2xl lg:text-[26px] text-[#E8D4BB] font-normal leading-snug max-w-[540px] mx-auto lg:mx-0"
                 >
-                  Aquí sus nombres <br className="hidden sm:inline" />
-                  nunca se olvidan <span className="inline-flex items-center text-[#DF6197] text-[26px] ml-1.5 align-middle not-italic font-normal">♡</span>
-                </h2>
+                  Bajo las estrellas, aún tenemos tanto que decirte.
+                </p>
               </div>
 
-              <p 
-                className="font-sans text-[15px] leading-[1.65] text-[#54465B] mb-6 max-w-[480px] font-medium"
-                style={{
-                  textShadow: '0 1px 2px rgba(255, 255, 255, 0.7)',
-                }}
-              >
-                Un espacio para recordar, compartir y sentirnos acompañados. Cuéntanos cómo se llamaba tu pequeño y deja unas palabras. Aquí siempre habrá alguien dispuesto a escucharlo.
+              <p className="font-sans text-[15px] sm:text-base text-[#D4C8DE] leading-relaxed max-w-[500px] mx-auto lg:mx-0 font-normal">
+                Un rincón gratuito y amoroso donde el cariño trasciende la distancia. Escribe unas palabras
+                para tu angelito, encuentra consuelo en otras familias y mantén viva su huella en el Libro eterno.
               </p>
 
-              {/* CTA PRINCIPALES: Escribir una carta / Leer las cartas */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1 pb-2">
+              {/* Botones principales de acción: Escribir una carta / Leer las cartas */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
                 <a
                   href="#formulario-recuerdo"
                   onClick={(e) => {
                     e.preventDefault();
                     document.getElementById('formulario-recuerdo')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="min-h-[48px] px-7 py-3 rounded-full font-bold text-white text-sm shadow-[0_8px_22px_rgba(175,80,155,0.38)] hover:shadow-[0_12px_28px_rgba(175,80,155,0.48)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer text-center select-none"
-                  style={{
-                    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(90deg, #A44F99 0%, #B8589E 35%, #CE5E9B 75%, #D7659F 100%)',
-                  }}
+                  className="w-full sm:w-auto min-h-[48px] px-8 py-3.5 rounded-full font-bold text-[#541731] text-sm shadow-[0_8px_24px_rgba(232,212,187,0.30)] hover:shadow-[0_12px_28px_rgba(232,212,187,0.45)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2.5 cursor-pointer text-center select-none bg-[#FFF4E7] hover:bg-white"
                 >
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ transform: 'rotate(-38deg)', marginTop: '-1px' }}>
                     <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
@@ -885,12 +899,12 @@ export default function ComunidadClient({ initialMemories }: Props) {
                 </a>
 
                 <a
-                  href="#galeria-recuerdos"
+                  href="#libro-de-los-angeles"
                   onClick={(e) => {
                     e.preventDefault();
-                    document.getElementById('galeria-recuerdos')?.scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('libro-de-los-angeles')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="min-h-[48px] px-6 py-3 rounded-full font-bold text-[#8C3F71] bg-white/95 hover:bg-white border border-[#E9D1E1] hover:border-[#B85F9F] shadow-[0_4px_14px_rgba(140,63,113,0.06)] hover:shadow-[0_6px_18px_rgba(140,63,113,0.12)] hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 cursor-pointer text-center select-none text-sm"
+                  className="w-full sm:w-auto min-h-[48px] px-7 py-3.5 rounded-full font-bold text-[#E8D4BB] hover:text-white bg-white/10 hover:bg-white/15 border border-[#E8D4BB]/40 hover:border-[#E8D4BB] transition-all flex items-center justify-center gap-2 cursor-pointer text-center select-none text-sm backdrop-blur-xs"
                 >
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
@@ -900,285 +914,52 @@ export default function ComunidadClient({ initialMemories }: Props) {
                 </a>
               </div>
 
-              {/* 3 Valores de Comunidad con iconos de Imagen 2 (Request 6) */}
-              <div className="grid grid-cols-3 gap-3 pt-3 max-w-lg">
-                <div className="p-3.5 pt-3 rounded-[18px] bg-white/80 backdrop-blur-md border border-white/95 shadow-[0_4px_14px_rgba(140,63,113,0.06)] text-center space-y-1.5 hover:-translate-y-1 transition-transform group">
-                  <div className="w-11 h-11 mx-auto rounded-full bg-white/85 border border-[rgba(255,235,245,0.9)] shadow-[0_4px_10px_rgba(140,63,113,0.07)] flex items-center justify-center group-hover:scale-105 group-hover:bg-white transition-all">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8C3F71" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                    </svg>
-                  </div>
-                  <div className="text-[11.5px] font-bold text-[#2D0F31] leading-tight">
-                    Comparte<br />su nombre
-                  </div>
-                </div>
-
-                <div className="p-3.5 pt-3 rounded-[18px] bg-white/80 backdrop-blur-md border border-white/95 shadow-[0_4px_14px_rgba(140,63,113,0.06)] text-center space-y-1.5 hover:-translate-y-1 transition-transform group">
-                  <div className="w-11 h-11 mx-auto rounded-full bg-white/85 border border-[rgba(255,235,245,0.9)] shadow-[0_4px_10px_rgba(140,63,113,0.07)] flex items-center justify-center group-hover:scale-105 group-hover:bg-white transition-all">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8C3F71" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                    </svg>
-                  </div>
-                  <div className="text-[11.5px] font-bold text-[#2D0F31] leading-tight">
-                    Cuenta su historia<br />o escribe una carta
-                  </div>
-                </div>
-
-                <div className="p-3.5 pt-3 rounded-[18px] bg-white/80 backdrop-blur-md border border-white/95 shadow-[0_4px_14px_rgba(140,63,113,0.06)] text-center space-y-1.5 hover:-translate-y-1 transition-transform group">
-                  <div className="w-11 h-11 mx-auto rounded-full bg-white/85 border border-[rgba(255,235,245,0.9)] shadow-[0_4px_10px_rgba(140,63,113,0.07)] flex items-center justify-center group-hover:scale-105 group-hover:bg-white transition-all">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8C3F71" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                      <circle cx="9" cy="7" r="4"/>
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                    </svg>
-                  </div>
-                  <div className="text-[11.5px] font-bold text-[#2D0F31] leading-tight">
-                    Siente el apoyo<br />de otras familias
-                  </div>
-                </div>
-              </div>
-
             </div>
 
-            {/* COLUMNA DERECHA: Tarjeta Flotante con Marca de Agua y Campos (Réplica Exacta Canva) */}
-            <div id="formulario-recuerdo" className="lg:col-span-6 pt-7 relative scroll-mt-28">
-              <div className="relative rounded-[28px] bg-[#FFF9F6] p-5 sm:p-8 shadow-[0_24px_60px_rgba(120,50,95,0.11),0_6px_18px_rgba(0,0,0,0.03)] border border-[rgba(255,240,235,0.9)] max-w-lg ml-auto overflow-visible text-[#2D0F31] mb-0">
+            {/* =================================================================== */}
+            {/* ILUSTRACIÓN / PORTAL NOCTURNO:                                       */}
+            {/* En móvil: order-2 (después de textos y botones)                     */}
+            {/* En escritorio: col-span-6 a la derecha                              */}
+            {/* Muestra: portal nocturno, arco floral, perrito de espaldas,         */}
+            {/* y el sobre marfil iluminado en el escalón como acceso visible       */}
+            {/* =================================================================== */}
+            <div className="lg:col-span-6 relative order-2 flex justify-center">
+              <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_55px_rgba(0,0,0,0.55)] border border-[#492B60] max-w-[560px] w-full">
                 
-                {/* Marca de agua dorada en la esquina superior derecha */}
-                <svg className="absolute -top-3 -right-2 w-28 h-28 pointer-events-none select-none rotate-[18deg]" viewBox="0 0 100 100" fill="none">
-                  <g opacity="0.45" fill="#F4C996">
-                    <path d="M50 82 C38 82 30 72 32 60 C33 53 40 48 50 48 C60 48 67 53 68 60 C70 72 62 82 50 82 Z"/>
-                    <ellipse cx="28" cy="46" rx="9" ry="12" transform="rotate(-20 28 46)"/>
-                    <ellipse cx="43" cy="34" rx="8.5" ry="13" transform="rotate(-6 43 34)"/>
-                    <ellipse cx="57" cy="34" rx="8.5" ry="13" transform="rotate(6 57 34)"/>
-                    <ellipse cx="72" cy="46" rx="9" ry="12" transform="rotate(20 72 46)"/>
-                    <circle cx="88" cy="30" r="2.5" opacity="0.7"/>
-                    <circle cx="18" cy="28" r="2" opacity="0.6"/>
-                    <circle cx="78" cy="18" r="1.8" opacity="0.5"/>
-                    <circle cx="85" cy="65" r="1.8" opacity="0.5"/>
-                    <circle cx="15" cy="60" r="1.5" opacity="0.4"/>
-                  </g>
-                </svg>
-
-                {/* Medallón superior con ICONPLANETERNO oficial */}
-                <div 
-                  className="absolute -top-7 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-[#FFF9F6] border-[3.5px] border-[#F6D6E5] shadow-[0_8px_20px_rgba(168,90,159,0.35)] flex items-center justify-center z-20 p-1.5"
-                >
-                  <Image 
-                    src="/images/icons/plans/icon-plan-eterno.svg" 
-                    alt="Plan Eterno" 
-                    width={44} 
-                    height={44} 
-                    className="object-contain drop-shadow-[0_2px_5px_rgba(168,90,159,0.3)]" 
+                {/* Encuadre oficial: móvil (<768px) y escritorio (>=769px) */}
+                <picture className="block w-full h-auto">
+                  <source 
+                    media="(max-width: 768px)" 
+                    srcSet="/images/cartas-al-cielo/hero/hero-movil-768.webp 768w, /images/cartas-al-cielo/hero/hero-movil-480.webp 480w" 
+                    sizes="(max-width: 768px) 100vw, 560px"
                   />
-                </div>
+                  <source 
+                    media="(min-width: 769px)" 
+                    srcSet="/images/cartas-al-cielo/hero/hero-escritorio-1440.webp 1440w, /images/cartas-al-cielo/hero/hero-escritorio-1024.webp 1024w, /images/cartas-al-cielo/hero/hero-escritorio-1752.webp 1752w" 
+                    sizes="(min-width: 1024px) 560px, 100vw"
+                  />
+                  <img 
+                    src="/images/cartas-al-cielo/hero/hero-escritorio-1440.webp" 
+                    alt="Portal nocturno hacia las estrellas con arco floral, perrito de espaldas y un sobre marfil iluminado en el escalón" 
+                    className="w-full h-auto object-cover block"
+                    loading="eager"
+                  />
+                </picture>
 
-                <div className="text-center pt-2 mb-4 relative z-10">
-                  <h2 className="font-playfair text-[25px] font-bold text-[#2D0F31] mb-1 tracking-tight">
-                    Hoy quiero recordar a...
-                  </h2>
-                  <p className="text-xs text-[#6C5B70] leading-relaxed">
-                    Escribe el nombre de tu ángel y unas palabras para él. Es un espacio comunitario gratuito.
-                  </p>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
-                  
-                  {/* Campo 1: Nombre de la mascota (Etiqueta visible persistente) */}
-                  <div>
-                    <label htmlFor="formPetName" className="block text-xs font-bold text-[#6D4964] mb-1.5">
-                      Nombre de tu ángel <span className="text-[#C25796]" title="Campo obligatorio">*</span>
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#C69062">
-                          <ellipse cx="12" cy="16.5" rx="5" ry="4"/>
-                          <circle cx="6" cy="10" r="2.2"/>
-                          <circle cx="10" cy="6.8" r="2.2"/>
-                          <circle cx="14" cy="6.8" r="2.2"/>
-                          <circle cx="18" cy="10" r="2.2"/>
-                        </svg>
-                      </span>
-                      <input
-                        id="formPetName"
-                        type="text"
-                        required
-                        aria-required="true"
-                        value={petName}
-                        onChange={e => setPetName(e.target.value)}
-                        placeholder="Ej. Toby, Luna, Chloe, Max..."
-                        className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#D9CBD6] focus:border-[#B85F9F] focus:ring-[3.5px] focus:ring-[rgba(184,95,159,0.15)] focus:bg-white outline-none text-[13.5px] text-[#2D0F31] placeholder-[#94788D] placeholder:italic transition-all bg-[#FAF1EC]"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Campo 2: Carta o recuerdo (Etiqueta visible persistente) */}
-                  <div>
-                    <label htmlFor="formMessage" className="block text-xs font-bold text-[#6D4964] mb-1.5">
-                      Tu carta o recuerdo <span className="text-[#C25796]" title="Campo obligatorio">*</span>
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-3 pointer-events-none flex items-center justify-center">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#9E457C">
-                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                        </svg>
-                      </span>
-                      <textarea
-                        id="formMessage"
-                        required
-                        aria-required="true"
-                        rows={3}
-                        value={message}
-                        onChange={e => setMessage(e.target.value)}
-                        placeholder="Escribe lo que sientes en tu corazón..."
-                        className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#D9CBD6] focus:border-[#B85F9F] focus:ring-[3.5px] focus:ring-[rgba(184,95,159,0.15)] focus:bg-white outline-none text-[13.5px] text-[#2D0F31] placeholder-[#94788D] placeholder:italic transition-all resize-none bg-[#FAF1EC] h-24 leading-relaxed"
-                      />
-                    </div>
-                    {/* Ayuda emocional discreta */}
-                    <p className="text-[11.5px] text-[#7A6275] italic mt-1 leading-snug">
-                      Puedes contar cómo era, recordar un día juntos o escribirle directamente.
-                    </p>
-                  </div>
-
-                  {/* Sección colapsable: Añadir detalles (opcional) */}
-                  <div className="border border-[#F0DDE8] rounded-2xl bg-[#FFFBFD] p-3 space-y-3">
-                    <button
-                      type="button"
-                      onClick={() => setShowOptionalDetails(!showOptionalDetails)}
-                      className="w-full flex items-center justify-between text-xs font-bold text-[#8C3F71] hover:text-[#B8589E] transition-colors focus:outline-none"
-                    >
-                      <span className="flex items-center gap-1.5">
-                        <span>✨</span>
-                        <span>Añadir detalles (fotografía y redes sociales)</span>
-                      </span>
-                      <span className="text-[11px] font-semibold text-[#A07090]">
-                        {showOptionalDetails ? 'Ocultar ▲' : 'Desplegar ▼'}
-                      </span>
-                    </button>
-
-                    {showOptionalDetails && (
-                      <div className="space-y-3 pt-2 border-t border-[#F0DDE8]">
-                        
-                        {/* Añadir foto */}
-                        <div>
-                          <label className="block text-[11px] font-bold text-[#6D4964] mb-1">
-                            Fotografía de tu ángel (opcional)
-                          </label>
-                          {photoPreview ? (
-                            <div className="flex items-center gap-2 p-1.5 rounded-2xl border border-[#D6A8BF] bg-[#FFF8FA] h-[44px]">
-                              <div className="w-8 h-8 rounded-lg overflow-hidden relative shadow-sm border border-white flex-shrink-0">
-                                <Image src={photoPreview} alt="Preview" fill className="object-cover" />
-                              </div>
-                              <span className="text-[11px] font-bold text-[#843969] truncate flex-1">Foto seleccionada</span>
-                              <button
-                                type="button"
-                                onClick={removePhoto}
-                                className="text-xs text-red-500 font-bold px-2 hover:underline"
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          ) : (
-                            <label className="flex items-center justify-center gap-2.5 w-full h-[44px] px-3 rounded-2xl border-[1.5px] border-dashed border-[#D6A8BF] hover:border-[#B85F9F] bg-[#FFFBF8] hover:bg-[#FFF4F8] transition-all cursor-pointer group select-none">
-                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9E457C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
-                                <circle cx="8.5" cy="8.5" r="1.5" fill="#9E457C"/>
-                                <polyline points="21 15 16 10 5 21"/>
-                              </svg>
-                              <span className="text-[12.5px] font-bold text-[#843969]">Subir una fotografía</span>
-                              <span className="text-[11px] font-medium text-[#A68A9D] italic">(opcional)</span>
-                              <input
-                                type="file"
-                                accept="image/jpeg,image/png,image/webp"
-                                onChange={handlePhotoChange}
-                                className="hidden"
-                              />
-                            </label>
-                          )}
-                        </div>
-
-                        {/* Fila opcional de Instagram y TikTok con labels persistentes */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                          <div>
-                            <label htmlFor="formInstagram" className="block text-[11px] font-bold text-[#6D4964] mb-1">
-                              Instagram (opcional)
-                            </label>
-                            <input
-                              id="formInstagram"
-                              type="text"
-                              value={instagram}
-                              onChange={e => setInstagram(e.target.value)}
-                              placeholder="@usuario"
-                              className="w-full px-3 py-1.5 rounded-xl border border-[#D9CBD6] focus:border-[#B85F9F] outline-none text-xs text-[#2D0F31] placeholder-[#94788D] bg-[#FAF1EC]"
-                            />
-                          </div>
-
-                          <div>
-                            <label htmlFor="formTiktok" className="block text-[11px] font-bold text-[#6D4964] mb-1">
-                              TikTok (opcional)
-                            </label>
-                            <input
-                              id="formTiktok"
-                              type="text"
-                              value={tiktok}
-                              onChange={e => setTiktok(e.target.value)}
-                              placeholder="@usuario"
-                              className="w-full px-3 py-1.5 rounded-xl border border-[#D9CBD6] focus:border-[#B85F9F] outline-none text-xs text-[#2D0F31] placeholder-[#94788D] bg-[#FAF1EC]"
-                            />
-                          </div>
-                        </div>
-
-                        </div>
-                    )}
-                  </div>
-
-                  {/* Aviso informativo de publicación y privacidad */}
-                  <div className="p-3.5 rounded-2xl bg-[#FFF7FA] border border-[#F0D5E5] text-left space-y-2 shadow-[0_2px_8px_rgba(164,80,155,0.04)]">
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#8C3F71]">
-                      <span>🕊️</span>
-                      <span>Publicación en Cartas al Cielo</span>
-                    </div>
-                    <p className="text-[11.5px] text-[#6B4E63] leading-relaxed">
-                      El nombre, fotografía y dedicatoria se publican en el Libro de los Ángeles para que otras familias puedan acompañarte. Tu correo electrónico se utiliza exclusivamente para la gestión de tu recuerdo y nunca se muestra públicamente.
-                    </p>
-                    <div className="flex items-center gap-1.5 text-[11px] text-[#8C5D7E] pt-1.5 border-t border-[#F0D5E5]/70">
-                      <span>🔒</span>
-                      <span>Tratamiento confidencial conforme a nuestra <a href="/privacidad" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#8C3F71] hover:text-[#B8589E]">política de privacidad</a>.</span>
-                    </div>
-                  </div>
-
-                  {submitError && (
-                    <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700" role="alert">
-                      {submitError}
-                    </div>
-                  )}
-
-                  {/* Botón «Publicar mi carta» */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full py-3.5 px-7 rounded-full font-bold text-white text-sm transition-all duration-300 shadow-[0_10px_24px_rgba(175,80,155,0.38)] hover:shadow-[0_14px_28px_rgba(175,80,155,0.48)] hover:-translate-y-0.5 flex items-center justify-center gap-2.5 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
-                    style={{
-                      background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(90deg, #A44F99 0%, #B8589E 35%, #CE5E9B 75%, #D7659F 100%)',
-                    }}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Publicando tu carta...</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" style={{ transform: 'rotate(-38deg)', marginTop: '-1px' }}>
-                          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-                        </svg>
-                        <span>Publicar mi carta</span>
-                      </>
-                    )}
-                  </button>
-
-                </form>
+                {/* 3.1 El sobre como hilo conductor: cerrado e iluminado en el escalón */}
+                <a
+                  href="#formulario-recuerdo"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('formulario-recuerdo')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="group absolute bottom-[5%] right-[6%] sm:bottom-[7%] sm:right-[8%] px-3 py-1.5 rounded-full bg-[#FFF4E7]/90 hover:bg-white text-[#541731] text-[11px] sm:text-xs font-semibold shadow-[0_4px_16px_rgba(255,244,231,0.65)] hover:shadow-[0_6px_22px_rgba(255,244,231,0.95)] hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-xs border border-[#E8D4BB]"
+                  aria-label="Escribir una carta desde el sobre iluminado"
+                  title="Escribir una carta"
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#D97706] animate-ping" />
+                  <span>✉️ Escribir una carta</span>
+                </a>
 
               </div>
             </div>
@@ -1189,18 +970,437 @@ export default function ComunidadClient({ initialMemories }: Props) {
       </section>
 
       {/* ========================================================================= */}
-      {/* FRANJA PORTAL DE LUZ (OPCIÓN 1: CONEXIÓN ELEGANTE A CIELO LLENO DE LUCES) */}
+      {/* 4.1 TRANSICIÓN DE ATMÓSFERA: DE ÍNDIGO NOCTURNO A ROSA CÁLIDO DEL JARDÍN */}
       {/* ========================================================================= */}
-      <section id="vela-semanal" className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 scroll-mt-24">
+      <div className="libro-transicion-cielo" aria-hidden="true" />
+
+      {/* ========================================================================= */}
+      {/* 4. EL LIBRO DE LOS ÁNGELES · JARDÍN DE ROSAS AL AMANECER                   */}
+      {/* ========================================================================= */}
+      <section className="libro" id="libro-de-los-angeles" aria-labelledby="libro-titulo">
+        
+        {/* Fondo oficial del jardín de rosas al amanecer */}
+        <picture className="libro-jardin">
+          <source media="(max-width: 700px)" srcSet="/images/cartas-al-cielo/libro/fondos/jardin-movil-768.webp" />
+          <img src="/images/cartas-al-cielo/libro/fondos/jardin-escritorio-1440.webp" alt="" loading="lazy" />
+        </picture>
+
+        {/* 3.3 Entrada al Jardín: El sobre reaparece abierto con corazón alado cobrizo */}
+        <header>
+          <img 
+            className="libro-insignia" 
+            src="/images/cartas-al-cielo/libro/assets/sobre-abierto.webp" 
+            alt="Sobre abierto de El Libro de los Ángeles con sello cobrizo alado" 
+          />
+          <h2 id="libro-titulo">El Libro de los Ángeles</h2>
+        </header>
+
+        {/* Filtros semánticos por especie */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 relative z-10 max-w-[900px] mx-auto">
+          <div 
+            role="tablist" 
+            aria-label="Filtrar cartas por tipo de mascota" 
+            className="flex flex-wrap items-center justify-center gap-1.5 p-1 rounded-full bg-[#FAF0E6]/85 border border-[#D4B79E]/60 backdrop-blur-xs"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeFilter === 'todos'}
+              onClick={() => { setActiveFilter('todos'); setCurrentPage(1); }}
+              className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                activeFilter === 'todos'
+                  ? 'bg-[#541731] text-white shadow-xs'
+                  : 'text-[#541731] hover:bg-white/60'
+              }`}
+            >
+              <span>Todos</span>
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeFilter === 'perro'}
+              onClick={() => { setActiveFilter('perro'); setCurrentPage(1); }}
+              className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                activeFilter === 'perro'
+                  ? 'bg-[#541731] text-white shadow-xs'
+                  : 'text-[#541731] hover:bg-white/60'
+              }`}
+            >
+              <span>🐶 Perros</span>
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeFilter === 'gato'}
+              onClick={() => { setActiveFilter('gato'); setCurrentPage(1); }}
+              className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                activeFilter === 'gato'
+                  ? 'bg-[#541731] text-white shadow-xs'
+                  : 'text-[#541731] hover:bg-white/60'
+              }`}
+            >
+              <span>🐱 Gatos</span>
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeFilter === 'otro'}
+              onClick={() => { setActiveFilter('otro'); setCurrentPage(1); }}
+              className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                activeFilter === 'otro'
+                  ? 'bg-[#541731] text-white shadow-xs'
+                  : 'text-[#541731] hover:bg-white/60'
+              }`}
+            >
+              <span>🐾 Otras mascotas</span>
+            </button>
+          </div>
+
+          <div className="text-xs font-semibold text-[#834E54] select-none">
+            {filteredMemories.length} {filteredMemories.length === 1 ? 'carta en el Libro' : 'cartas en el Libro'}
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* 4.2 APERTURA DEL LIBRO CON UNA CARTA REAL (CARTA DESTACADA)               */}
+        {/* ========================================================================= */}
+        {firstFeaturedLetter ? (
+          <article className={`libro-hoja libro-destacada ${!firstFeaturedLetter.photoUrl ? 'sin-foto' : ''}`}>
+            {firstFeaturedLetter.photoUrl && (
+              <figure className="libro-foto">
+                <img 
+                  src={firstFeaturedLetter.photoUrl} 
+                  alt={`Fotografía de ${firstFeaturedLetter.petName}`} 
+                  loading="lazy" 
+                />
+              </figure>
+            )}
+            <div className="space-y-3">
+              <h3 className="font-playfair text-[#541731] text-2xl sm:text-3xl font-bold">
+                Para {firstFeaturedLetter.petName}
+              </h3>
+              <p className="text-[#642944] leading-relaxed text-base sm:text-lg">
+                {previewLetterText(firstFeaturedLetter.message, 210)}
+              </p>
+              <button 
+                type="button" 
+                className="libro-leer inline-flex items-center gap-2 text-[#541731] font-bold cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={(e) => {
+                  lastActiveTriggerRef.current = e.currentTarget;
+                  setSelectedMemoryForRead(firstFeaturedLetter);
+                }}
+              >
+                <span>Leer la carta para {firstFeaturedLetter.petName}</span>
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </article>
+        ) : (
+          <div className="libro-hoja text-center py-12 text-[#834E54]">
+            Aún no hay cartas en el Libro para este filtro. ¡Sé el primero en escribir una!
+          </div>
+        )}
+
+        {/* ========================================================================= */}
+        {/* 4.3 SECCIÓN "MÁS CARTAS" CON SOBRES DE ALTA RESOLUCIÓN                    */}
+        {/* ========================================================================= */}
+        {paginatedOtherLetters.length > 0 && (
+          <>
+            <h3 className="libro-mas font-playfair text-[#541731] text-2xl sm:text-3xl font-bold">
+              Más cartas
+            </h3>
+            <ul className="libro-indice">
+              {paginatedOtherLetters.map((letter) => (
+                <li key={letter.id}>
+                  <button
+                    type="button"
+                    className="libro-sobre"
+                    aria-label={`Abrir la carta para ${letter.petName}`}
+                    onClick={(e) => {
+                      lastActiveTriggerRef.current = e.currentTarget;
+                      setSelectedMemoryForRead(letter);
+                    }}
+                  >
+                    <span className="libro-pestaña">
+                      {previewLetterText(letter.message, 135)}
+                    </span>
+                    <span className="libro-frente">
+                      Para {letter.petName}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {/* Paginación del Libro */}
+            {totalLibroPages > 1 && (
+              <div className="flex items-center justify-center gap-3 mt-10 relative z-10">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={safeLibroPage <= 1}
+                  className="px-4 py-2 rounded-full border border-[#D4B79E] text-xs font-semibold text-[#541731] bg-white/80 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  ← Página anterior
+                </button>
+                <span className="text-xs font-bold text-[#834E54] px-2 select-none">
+                  Página {safeLibroPage} de {totalLibroPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(p => Math.min(totalLibroPages, p + 1))}
+                  disabled={safeLibroPage >= totalLibroPages}
+                  className="px-4 py-2 rounded-full border border-[#D4B79E] text-xs font-semibold text-[#541731] bg-white/80 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  Página siguiente →
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5. FORMULARIO: ESCRIBIR UNA CARTA AL CIELO                                */}
+      {/* Integrado con la atmósfera cálida de marfil, accesible desde Hero y Mural */}
+      {/* ========================================================================= */}
+      <section 
+        id="formulario-recuerdo" 
+        className="bg-[#F7E9DC] py-12 sm:py-16 px-4 sm:px-6 lg:px-8 border-t border-[#E8D4BB] relative z-10 scroll-mt-20"
+      >
+        <div className="max-w-xl mx-auto">
+          
+          <div className="libro-hoja relative overflow-visible text-[#2D0F31]">
+            
+            {/* Medallón superior con sobre alado */}
+            <div 
+              className="absolute -top-7 left-1/2 -translate-x-1/2 w-14 h-14 rounded-full bg-[#FFF4E7] border-[3px] border-[#D4B79E] shadow-[0_8px_20px_rgba(84,45,38,0.22)] flex items-center justify-center z-20 p-2"
+            >
+              <span className="text-2xl select-none" role="img" aria-label="Carta">✉️</span>
+            </div>
+
+            <div className="text-center pt-3 mb-6 relative z-10">
+              <h2 className="font-playfair text-2xl sm:text-3xl font-bold text-[#541731] mb-1.5 tracking-tight">
+                Escribe tu carta al cielo
+              </h2>
+              <p className="text-xs sm:text-sm text-[#834E54] leading-relaxed max-w-md mx-auto">
+                Dedica unas palabras de amor a tu angelito para que formen parte de El Libro de los Ángeles.
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
+              
+              {/* Campo 1: Nombre de la mascota */}
+              <div>
+                <label htmlFor="formPetName" className="block text-xs font-bold text-[#541731] mb-1.5">
+                  Nombre de tu ángel <span className="text-[#A44F99]" title="Campo obligatorio">*</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#C69062">
+                      <ellipse cx="12" cy="16.5" rx="5" ry="4"/>
+                      <circle cx="6" cy="10" r="2.2"/>
+                      <circle cx="10" cy="6.8" r="2.2"/>
+                      <circle cx="14" cy="6.8" r="2.2"/>
+                      <circle cx="18" cy="10" r="2.2"/>
+                    </svg>
+                  </span>
+                  <input
+                    id="formPetName"
+                    type="text"
+                    required
+                    aria-required="true"
+                    value={petName}
+                    onChange={e => setPetName(e.target.value)}
+                    placeholder="Ej. Toby, Luna, Chloe, Max..."
+                    className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#D4B79E] focus:border-[#722B55] focus:ring-[3px] focus:ring-[rgba(114,43,85,0.15)] focus:bg-white outline-none text-[13.5px] text-[#541731] placeholder-[#A07090] placeholder:italic transition-all bg-[#FFFBF8]"
+                  />
+                </div>
+              </div>
+
+              {/* Campo 2: Carta o recuerdo */}
+              <div>
+                <label htmlFor="formMessage" className="block text-xs font-bold text-[#541731] mb-1.5">
+                  Tu carta o recuerdo <span className="text-[#A44F99]" title="Campo obligatorio">*</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-3 pointer-events-none flex items-center justify-center">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#9E457C">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                  </span>
+                  <textarea
+                    id="formMessage"
+                    required
+                    aria-required="true"
+                    rows={4}
+                    value={message}
+                    onChange={e => setMessage(e.target.value)}
+                    placeholder="Escribe lo que sientes en tu corazón..."
+                    className="w-full pl-11 pr-4 py-2.5 rounded-2xl border border-[#D4B79E] focus:border-[#722B55] focus:ring-[3px] focus:ring-[rgba(114,43,85,0.15)] focus:bg-white outline-none text-[13.5px] text-[#541731] placeholder-[#A07090] placeholder:italic transition-all resize-none bg-[#FFFBF8] h-28 leading-relaxed"
+                  />
+                </div>
+                <p className="text-[11.5px] text-[#834E54] italic mt-1 leading-snug">
+                  Puedes contar cómo era, recordar un momento juntos o hablarle directamente con tus palabras.
+                </p>
+              </div>
+
+              {/* Sección colapsable: Fotografía y detalles opcionales */}
+              <div className="border border-[#D4B79E]/70 rounded-2xl bg-[#FFFBF8] p-3 space-y-3">
+                <button
+                  type="button"
+                  onClick={() => setShowOptionalDetails(!showOptionalDetails)}
+                  className="w-full flex items-center justify-between text-xs font-bold text-[#541731] hover:text-[#722B55] transition-colors focus:outline-none cursor-pointer"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <span>✨</span>
+                    <span>Añadir detalles (fotografía y redes)</span>
+                  </span>
+                  <span className="text-[11px] font-semibold text-[#834E54]">
+                    {showOptionalDetails ? 'Ocultar ▲' : 'Desplegar ▼'}
+                  </span>
+                </button>
+
+                {showOptionalDetails && (
+                  <div className="space-y-3 pt-2 border-t border-[#D4B79E]/50">
+                    
+                    {/* Añadir foto */}
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#541731] mb-1">
+                        Fotografía de tu ángel (opcional)
+                      </label>
+                      {photoPreview ? (
+                        <div className="flex items-center gap-2 p-1.5 rounded-2xl border border-[#D4B79E] bg-white h-[44px]">
+                          <div className="w-8 h-8 rounded-lg overflow-hidden relative shadow-xs border border-white shrink-0">
+                            <Image src={photoPreview} alt="Preview" fill className="object-cover" />
+                          </div>
+                          <span className="text-[11px] font-bold text-[#541731] truncate flex-1">Foto seleccionada</span>
+                          <button
+                            type="button"
+                            onClick={removePhoto}
+                            className="text-xs text-red-500 font-bold px-2 hover:underline cursor-pointer"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="flex items-center justify-center gap-2.5 w-full h-[44px] px-3 rounded-2xl border-[1.5px] border-dashed border-[#D4B79E] hover:border-[#722B55] bg-white hover:bg-[#FFF4E7] transition-all cursor-pointer group select-none">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#722B55" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="4" ry="4"/>
+                            <circle cx="8.5" cy="8.5" r="1.5" fill="#722B55"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                          </svg>
+                          <span className="text-[12.5px] font-bold text-[#541731]">Subir una fotografía</span>
+                          <span className="text-[11px] font-medium text-[#834E54] italic">(opcional)</span>
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            onChange={handlePhotoChange}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+                    </div>
+
+                    {/* Redes sociales */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <div>
+                        <label htmlFor="formInstagram" className="block text-[11px] font-bold text-[#541731] mb-1">
+                          Instagram (opcional)
+                        </label>
+                        <input
+                          id="formInstagram"
+                          type="text"
+                          value={instagram}
+                          onChange={e => setInstagram(e.target.value)}
+                          placeholder="@usuario"
+                          className="w-full px-3 py-1.5 rounded-xl border border-[#D4B79E] focus:border-[#722B55] outline-none text-xs text-[#541731] placeholder-[#A07090] bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="formTiktok" className="block text-[11px] font-bold text-[#541731] mb-1">
+                          TikTok (opcional)
+                        </label>
+                        <input
+                          id="formTiktok"
+                          type="text"
+                          value={tiktok}
+                          onChange={e => setTiktok(e.target.value)}
+                          placeholder="@usuario"
+                          className="w-full px-3 py-1.5 rounded-xl border border-[#D4B79E] focus:border-[#722B55] outline-none text-xs text-[#541731] placeholder-[#A07090] bg-white"
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+                )}
+              </div>
+
+              {/* Aviso de privacidad legal */}
+              <div className="p-3.5 rounded-2xl bg-[#FFF8FA] border border-[#E8D4BB] text-left space-y-2 shadow-xs">
+                <div className="flex items-center gap-2 text-xs font-bold text-[#541731]">
+                  <span>🕊️</span>
+                  <span>Publicación comunitaria en Cartas al Cielo</span>
+                </div>
+                <p className="text-[11.5px] text-[#6B4E63] leading-relaxed">
+                  El nombre, fotografía y dedicatoria se publican en el Libro de los Ángeles para que otras familias puedan acompañarte. Tu correo electrónico nunca se muestra públicamente.
+                </p>
+                <div className="flex items-center gap-1.5 text-[11px] text-[#8C5D7E] pt-1.5 border-t border-[#E8D4BB]/60">
+                  <span>🔒</span>
+                  <span>Tratamiento confidencial conforme a nuestra <a href="/privacidad" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#541731] hover:text-[#722B55]">política de privacidad</a>.</span>
+                </div>
+              </div>
+
+              {submitError && (
+                <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700" role="alert">
+                  {submitError}
+                </div>
+              )}
+
+              {/* Botón «Publicar mi carta» */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3.5 px-7 rounded-full font-bold text-white text-sm transition-all duration-300 shadow-[0_10px_24px_rgba(84,45,38,0.25)] hover:shadow-[0_14px_28px_rgba(84,45,38,0.35)] hover:-translate-y-0.5 flex items-center justify-center gap-2.5 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.12) 100%), linear-gradient(90deg, #722B55 0%, #8C3F71 50%, #A44F99 100%)',
+                }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Publicando tu carta...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFFFFF" style={{ transform: 'rotate(-38deg)', marginTop: '-1px' }}>
+                      <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                    <span>Publicar mi carta</span>
+                  </>
+                )}
+              </button>
+
+            </form>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* FRANJA PORTAL DE LUZ (CONEXIÓN ELEGANTE A CIELO LLENO DE LUCES)           */}
+      {/* ========================================================================= */}
+      <section id="vela-semanal" className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 scroll-mt-24">
         <div 
-          className="rounded-[24px] px-5 sm:px-8 py-4 sm:py-4.5 border border-[#F3DBEA] shadow-[0_8px_24px_rgba(140,60,110,0.06)] flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden"
-          style={{
-            background: 'linear-gradient(135deg, #FFFDFB 0%, #FFF5F9 50%, #FBF1EB 100%)',
-          }}
+          className="rounded-[24px] px-5 sm:px-8 py-5 border border-[#F3DBEA] shadow-[0_8px_24px_rgba(140,60,110,0.06)] flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden bg-white/95"
         >
-          {/* Lado izquierdo: Llama conmemorativa y mensaje poético */}
           <div className="flex items-center gap-4 text-center md:text-left">
-            <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white shadow-sm shrink-0 bg-[#FFF5F8] flex items-center justify-center text-2xl relative">
+            <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white shadow-xs shrink-0 bg-[#FFF5F8] flex items-center justify-center text-2xl relative">
               🕯️
               <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#F59E0B] animate-ping" />
             </div>
@@ -1223,7 +1423,6 @@ export default function ComunidadClient({ initialMemories }: Props) {
             </div>
           </div>
 
-          {/* Lado derecho: Botón elegante hacia Cielo lleno de luces */}
           <div className="shrink-0 flex items-center gap-2 w-full md:w-auto justify-center">
             <Link
               href="/cielo-lleno-de-luces"
@@ -1235,261 +1434,15 @@ export default function ComunidadClient({ initialMemories }: Props) {
               <span>Entrar en el Cielo de Luces</span>
             </Link>
           </div>
-
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* GALERÍA / FEED «RECUERDOS RECIENTES» (IDÉNTICO AL MOCKUP)                 */}
-      {/* ========================================================================= */}
-      <section id="galeria-recuerdos" className="max-w-[1240px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 overflow-hidden">
-        
-        {/* Título Oficial: El Libro de Los Ángeles en el Cielo */}
-        <div id="libro-angeles-cielo" className="pt-2 pb-2 scroll-mt-24">
-          <h2
-            className="inline-block break-words max-w-full"
-            style={{
-              fontFamily: 'var(--font-title), var(--font-playfair), Georgia, serif',
-              fontSize: 'clamp(1.75rem, 4.2vw, 3.2rem)',
-              fontWeight: 700,
-              lineHeight: 1.25,
-              paddingBottom: '0.18em',
-              letterSpacing: '-0.025em',
-              background: 'linear-gradient(90deg, #8C3F71 0%, #B8589E 45%, #DF6197 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              color: 'transparent',
-              margin: 0,
-            }}
-          >
-            El Libro de Los Ángeles en el Cielo
-          </h2>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#EDE2EB]">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl text-[#D98218]">★</span>
-            <h3 className="font-playfair text-xl sm:text-2xl font-bold text-[#2D0F31]">
-              Recuerdos recientes
-            </h3>
-            <div className="w-16 h-px bg-[#EDE2EB] hidden sm:block" />
-            <span className="text-xs text-[#B65D86] font-semibold hidden md:inline">
-              Cada nombre deja una huella eterna ♥
-            </span>
-          </div>
-
-          {/* Selectores de animales con role="tablist" y wrapping para 0 overflow */}
-          <div className="flex flex-wrap items-center gap-3 max-w-full">
-            <div 
-              role="tablist" 
-              aria-label="Filtrar cartas por tipo de mascota" 
-              className="flex flex-wrap items-center gap-1.5 p-1 rounded-2xl sm:rounded-full bg-[rgba(246,238,244,0.75)] border border-[#EFE4EC] max-w-full"
-            >
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeFilter === 'todos'}
-                onClick={() => { setActiveFilter('todos'); setCurrentPage(1); }}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] ${
-                  activeFilter === 'todos'
-                    ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
-                    : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
-                }`}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'todos' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
-                <span>Todos</span>
-              </button>
-
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeFilter === 'perro'}
-                onClick={() => { setActiveFilter('perro'); setCurrentPage(1); }}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] ${
-                  activeFilter === 'perro'
-                    ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
-                    : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
-                }`}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'perro' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
-                <span>Perros</span>
-              </button>
-
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeFilter === 'gato'}
-                onClick={() => { setActiveFilter('gato'); setCurrentPage(1); }}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] ${
-                  activeFilter === 'gato'
-                    ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
-                    : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
-                }`}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'gato' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
-                <span>Gatos</span>
-              </button>
-
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeFilter === 'otro'}
-                onClick={() => { setActiveFilter('otro'); setCurrentPage(1); }}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] ${
-                  activeFilter === 'otro'
-                    ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
-                    : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
-                }`}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'otro' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
-                <span>Otras mascotas</span>
-              </button>
-            </div>
-
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#D9CBD6] text-xs font-semibold text-[#5B2E58] select-none min-h-[36px]">
-              <span>Orden: Más recientes</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-gradient-to-r from-white/95 to-[#FDF8FC]/95 border border-[#F0DFEB] rounded-2xl px-4 sm:px-6 py-3 mb-6 shadow-[0_4px_18px_rgba(132,57,105,0.05)]">
-          <div className="flex items-center gap-3">
-            <div className="inline-flex items-center gap-2 bg-[#FFF1F7] border border-[#ECCEDB] px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold text-[#843969]">
-              <span className="font-semibold text-[#8C3F71]">
-                {filteredMemories.length > 0 
-                  ? (totalPages > 1
-                      ? `Página ${safePage} de ${totalPages} · Mostrando ${startIndex + 1}–${Math.min(startIndex + cardsPerPage, filteredMemories.length)} de ${filteredMemories.length} ángeles`
-                      : `Mostrando ${filteredMemories.length} cartas al cielo en memoria de nuestros ángeles`)
-                  : 'Sin ángeles registrados'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Escenario de Álbum 3D: El Libro de los Ángeles */}
-        <div 
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          className="relative rounded-3xl p-4 sm:p-7 md:p-8 border border-[#EBD5E2] bg-[radial-gradient(circle_at_50%_50%,#FFFCFB_0%,#FAF2F6_100%)] shadow-[0_20px_50px_rgba(90,30,68,0.09),inset_0_0_60px_rgba(230,200,220,0.18)] overflow-hidden [perspective:2000px] [transform-style:preserve-3d]"
-        >
-          {/* Hoja inferior (Underneath page) fija en el fondo que se revela conforme se dobla la superior */}
-          {isPageTurning && (
-            <div className="absolute inset-4 sm:inset-7 md:inset-8 z-0 pointer-events-none grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
-              {nextPageMemories.map(m => renderMemoryCard(m))}
-            </div>
-          )}
-
-          {/* Sombra ambiental suave sobre la página de fondo durante el hojeado */}
-          {isPageTurning && (
-            <div 
-              className={`absolute inset-0 pointer-events-none z-[3] rounded-3xl ${
-                turnDirection === 'forward' ? 'anim-shadow-forward' : 'anim-shadow-backward'
-              }`}
-            />
-          )}
-
-          {/* Hoja superior activa: Una sola hoja completa que se arquea, pliega y dobla */}
-          <div 
-            className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 relative z-10 [transform-style:preserve-3d] [backface-visibility:hidden] will-change-transform ${
-              isPageTurning 
-                ? (turnDirection === 'forward' ? 'anim-page-turn-forward' : 'anim-page-turn-backward')
-                : ''
-            }`}
-          >
-            {pageMemories.length === 0 ? (
-              <div className="col-span-full text-center py-16 text-[#843969] font-medium text-base">
-                No se encontraron recuerdos para esta categoría. ¡Sé el primero en encender una luz para tu ángel!
-              </div>
-            ) : (
-              pageMemories.map(m => renderMemoryCard(m))
-            )}
-          </div>
-
-          {/* Brillo satinado cilíndrico que recorre la hoja al combarse */}
-          {isPageTurning && (
-            <div 
-              className={`absolute inset-0 pointer-events-none z-[12] rounded-3xl book-curvature-sheen ${
-                turnDirection === 'forward' ? 'anim-sheen-forward' : 'anim-sheen-backward'
-              }`}
-            />
-          )}
-
-          {/* Pestaña decorativa de esquina (Corner curl) para hojear hacia adelante */}
-          {safePage < totalPages && (
-            <button
-              type="button"
-              onClick={() => handlePageChange(safePage + 1)}
-              className="group absolute bottom-0 right-0 w-11 h-11 hover:w-14 hover:h-14 transition-all duration-300 rounded-tl-xl shadow-[-3px_-3px_8px_rgba(132,57,105,0.12)] hover:shadow-[-5px_-5px_14px_rgba(132,57,105,0.25)] flex items-end justify-end p-1.5 cursor-pointer z-25"
-              style={{
-                background: 'linear-gradient(135deg, transparent 50%, #F5E5EF 50%, #EBD5E2 100%)',
-              }}
-              title="Hojear hacia adelante"
-            >
-              <span className="text-xs group-hover:scale-125 transition-transform">✨</span>
-            </button>
-          )}
-        </div>
-
-        {/* Barra de Navegación de Páginas: Hojear el Libro de los Ángeles */}
-        {totalPages > 1 && (
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mt-8">
-            <button
-              type="button"
-              onClick={() => handlePageChange(safePage - 1)}
-              disabled={safePage <= 1 || isPageTurning}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-[#7A3563] bg-white border border-[#E6D0DE] hover:bg-[#FFF4F9] hover:border-[#B85F9F] hover:text-[#4A1938] hover:-translate-y-0.5 active:translate-y-0 shadow-[0_4px_14px_rgba(120,48,93,0.06)] hover:shadow-[0_6px_18px_rgba(120,48,93,0.12)] disabled:opacity-35 disabled:cursor-not-allowed disabled:pointer-events-none transition-all"
-              title="Ver página anterior"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-              <span>‹ Hojear página anterior</span>
-            </button>
-
-            {/* Pastillas numeradas de páginas */}
-            <div className="inline-flex items-center gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
-                <button
-                  key={pageNumber}
-                  type="button"
-                  onClick={() => handlePageChange(pageNumber)}
-                  disabled={isPageTurning}
-                  className={`min-w-10 h-10 px-3 rounded-full text-sm font-semibold transition-all flex items-center justify-center ${
-                    pageNumber === safePage
-                      ? 'bg-gradient-to-r from-[#B85F9F] to-[#843969] text-white shadow-[0_4px_14px_rgba(132,57,105,0.32)] scale-105 ring-2 ring-[#F5D89F]'
-                      : 'bg-white text-[#6E3058] border border-[#E6D0DE] hover:bg-[#FFF2F7] hover:border-[#B85F9F] hover:scale-105'
-                  }`}
-                  title={`Ir a la página ${pageNumber}`}
-                >
-                  {pageNumber}
-                </button>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => handlePageChange(safePage + 1)}
-              disabled={safePage >= totalPages || isPageTurning}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold text-[#7A3563] bg-white border border-[#E6D0DE] hover:bg-[#FFF4F9] hover:border-[#B85F9F] hover:text-[#4A1938] hover:-translate-y-0.5 active:translate-y-0 shadow-[0_4px_14px_rgba(120,48,93,0.06)] hover:shadow-[0_6px_18px_rgba(120,48,93,0.12)] disabled:opacity-35 disabled:cursor-not-allowed disabled:pointer-events-none transition-all"
-              title="Ver siguiente página"
-            >
-              <span>Hojear página siguiente ›</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
-          </div>
-        )}
-
-      </section>
-
-      {/* ========================================================================= */}
-      {/* BLOQUES INFERIORES: VELA Y PUENTE AL MURAL CON CTAs ALINEADOS Y VELA BLANCA */}
+      {/* BLOQUES INFERIORES: VELA Y PUENTE AL MURAL                                */}
       {/* ========================================================================= */}
       <section className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-16 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
         
-        {/* Vela Semanal con Fondo de Nubes y CTA con Vela Blanca */}
+        {/* Vela Semanal */}
         <div 
           className="rounded-3xl p-6 border border-[#FCE7F3] shadow-[0_16px_40px_rgba(140,60,110,0.08)] flex flex-col justify-between relative overflow-hidden h-full"
           style={{
@@ -1499,11 +1452,10 @@ export default function ComunidadClient({ initialMemories }: Props) {
           }}
         >
           <div className="flex items-start gap-4 relative z-10 flex-1">
-            <div className="w-[84px] h-[84px] min-h-[84px] rounded-2xl overflow-hidden relative shadow-md border-2 border-white flex-shrink-0">
+            <div className="w-[84px] h-[84px] min-h-[84px] rounded-2xl overflow-hidden relative shadow-md border-2 border-white shrink-0">
               <Image src="/images/comunidad/candle-banner.webp" alt="Vela encendida" fill className="object-cover" />
             </div>
             <div className="flex-1">
-              {/* Título con fuente idéntica a la tarjeta derecha (Request 1) */}
               <h3 className="font-playfair text-[#2D0F31] text-lg font-bold flex items-center gap-2 mb-1.5">
                 <span className="text-base">🕯️</span>
                 <span>Un cielo lleno de luces</span>
@@ -1526,7 +1478,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
           </div>
         </div>
 
-        {/* Puente al Mural con Fondo de Nubes y CTA Alineado */}
+        {/* Puente al Mural */}
         <div 
           className="rounded-3xl p-6 border border-[#F3E8FF] shadow-[0_16px_40px_rgba(140,60,110,0.08)] flex flex-col justify-between relative overflow-hidden h-full"
           style={{
@@ -1537,7 +1489,6 @@ export default function ComunidadClient({ initialMemories }: Props) {
         >
           <div className="flex items-start justify-between gap-4 relative z-10 flex-1">
             <div className="flex-1">
-              {/* Título con fuente idéntica a la tarjeta izquierda e Iconplanestrella (Request 1 & 3 - triplicado) */}
               <h3 className="font-playfair text-[#2D0F31] text-lg font-bold flex items-center gap-2 mb-1.5">
                 <Image 
                   src="/images/icons/plans/icon-plan-estrella.svg" 
@@ -1553,7 +1504,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
               </p>
             </div>
 
-            <div className="w-[84px] h-[84px] min-h-[84px] rounded-2xl overflow-hidden relative shadow-md border-2 border-white flex-shrink-0 rotate-3">
+            <div className="w-[84px] h-[84px] min-h-[84px] rounded-2xl overflow-hidden relative shadow-md border-2 border-white shrink-0 rotate-3">
               <Image src="/images/comunidad/bridge-frame.webp" alt="Marco dorado" fill className="object-cover" />
             </div>
           </div>
@@ -1573,389 +1524,116 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
       </section>
 
-      {/* Estilos de animación 3D de curvatura real del Libro de los Ángeles (sin cortes ni trozos grises) */}
-      <style>{`
-        @keyframes bookPageTurnForward {
-          0% {
-            transform-origin: left center;
-            transform: perspective(2600px) rotateY(0deg) rotateZ(0deg) skewY(0deg) scaleX(1) translateZ(0);
-            opacity: 1;
-            filter: drop-shadow(0 4px 14px rgba(140, 60, 110, 0.08));
-          }
-          28% {
-            transform-origin: left center;
-            transform: perspective(2600px) rotateY(-36deg) rotateZ(3.5deg) skewY(-4.5deg) scaleX(0.88) translateZ(75px);
-            opacity: 1;
-            filter: drop-shadow(-16px 12px 28px rgba(120, 40, 95, 0.16));
-          }
-          55% {
-            transform-origin: left center;
-            transform: perspective(2600px) rotateY(-82deg) rotateZ(5deg) skewY(-6.5deg) scaleX(0.72) translateZ(115px);
-            opacity: 0.98;
-            filter: drop-shadow(-28px 16px 36px rgba(120, 40, 95, 0.22));
-          }
-          82% {
-            transform-origin: left center;
-            transform: perspective(2600px) rotateY(-118deg) rotateZ(3deg) skewY(-3.5deg) scaleX(0.86) translateZ(55px);
-            opacity: 0.25;
-            filter: drop-shadow(-12px 8px 18px rgba(120, 40, 95, 0.12));
-          }
-          100% {
-            transform-origin: left center;
-            transform: perspective(2600px) rotateY(-145deg) rotateZ(0deg) skewY(0deg) scaleX(1) translateZ(0);
-            opacity: 0;
-            filter: none;
-          }
-        }
-
-        @keyframes bookPageTurnBackward {
-          0% {
-            transform-origin: right center;
-            transform: perspective(2600px) rotateY(0deg) rotateZ(0deg) skewY(0deg) scaleX(1) translateZ(0);
-            opacity: 1;
-            filter: drop-shadow(0 4px 14px rgba(140, 60, 110, 0.08));
-          }
-          28% {
-            transform-origin: right center;
-            transform: perspective(2600px) rotateY(36deg) rotateZ(-3.5deg) skewY(4.5deg) scaleX(0.88) translateZ(75px);
-            opacity: 1;
-            filter: drop-shadow(16px 12px 28px rgba(120, 40, 95, 0.16));
-          }
-          55% {
-            transform-origin: right center;
-            transform: perspective(2600px) rotateY(82deg) rotateZ(-5deg) skewY(6.5deg) scaleX(0.72) translateZ(115px);
-            opacity: 0.98;
-            filter: drop-shadow(28px 16px 36px rgba(120, 40, 95, 0.22));
-          }
-          82% {
-            transform-origin: right center;
-            transform: perspective(2600px) rotateY(118deg) rotateZ(-3deg) skewY(3.5deg) scaleX(0.86) translateZ(55px);
-            opacity: 0.25;
-            filter: drop-shadow(12px 8px 18px rgba(120, 40, 95, 0.12));
-          }
-          100% {
-            transform-origin: right center;
-            transform: perspective(2600px) rotateY(145deg) rotateZ(0deg) skewY(0deg) scaleX(1) translateZ(0);
-            opacity: 0;
-            filter: none;
-          }
-        }
-
-        .book-curvature-sheen {
-          background: linear-gradient(
-            105deg,
-            rgba(255, 255, 255, 0) 0%,
-            rgba(255, 255, 255, 0.35) 30%,
-            rgba(255, 255, 255, 0.95) 48%,
-            rgba(255, 248, 235, 0.92) 52%,
-            rgba(240, 215, 230, 0.2) 65%,
-            rgba(255, 255, 255, 0) 100%
-          );
-        }
-
-        @keyframes curvatureSheenWaveForward {
-          0% {
-            opacity: 0;
-            transform: translateX(35%);
-          }
-          28% {
-            opacity: 0.85;
-            transform: translateX(10%);
-          }
-          58% {
-            opacity: 0.95;
-            transform: translateX(-35%);
-          }
-          100% {
-            opacity: 0;
-            transform: translateX(-85%);
-          }
-        }
-
-        @keyframes curvatureSheenWaveBackward {
-          0% {
-            opacity: 0;
-            transform: translateX(-35%);
-          }
-          28% {
-            opacity: 0.85;
-            transform: translateX(-10%);
-          }
-          58% {
-            opacity: 0.95;
-            transform: translateX(35%);
-          }
-          100% {
-            opacity: 0;
-            transform: translateX(85%);
-          }
-        }
-
-        @keyframes underShadowForward {
-          0% {
-            opacity: 0;
-            background: linear-gradient(to left, rgba(140, 60, 110, 0.12) 0%, transparent 60%);
-          }
-          45% {
-            opacity: 0.75;
-            background: linear-gradient(to left, rgba(140, 60, 110, 0.18) 0%, rgba(140, 60, 110, 0.05) 45%, transparent 75%);
-          }
-          100% {
-            opacity: 0;
-            background: linear-gradient(to left, rgba(140, 60, 110, 0.12) 0%, transparent 60%);
-          }
-        }
-
-        @keyframes underShadowBackward {
-          0% {
-            opacity: 0;
-            background: linear-gradient(to right, rgba(140, 60, 110, 0.12) 0%, transparent 60%);
-          }
-          45% {
-            opacity: 0.75;
-            background: linear-gradient(to right, rgba(140, 60, 110, 0.18) 0%, rgba(140, 60, 110, 0.05) 45%, transparent 75%);
-          }
-          100% {
-            opacity: 0;
-            background: linear-gradient(to right, rgba(140, 60, 110, 0.12) 0%, transparent 60%);
-          }
-        }
-
-        .hero-chihuahua-bg {
-          background-image: url('/images/comunidad/fondo-hero-chihuahua-movil.webp');
-        }
-        @media (min-width: 640px) {
-          .hero-chihuahua-bg {
-            background-image: url('/images/comunidad/fondo-hero-chihuahua-pc.webp');
-          }
-        }
-
-        .anim-page-turn-forward {
-          animation: bookPageTurnForward 0.90s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        .anim-sheen-forward {
-          animation: curvatureSheenWaveForward 0.90s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        .anim-shadow-forward {
-          animation: underShadowForward 0.90s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        .anim-page-turn-backward {
-          animation: bookPageTurnBackward 0.90s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        .anim-sheen-backward {
-          animation: curvatureSheenWaveBackward 0.90s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        .anim-shadow-backward {
-          animation: underShadowBackward 0.90s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-      `}</style>
-
-      {/* MODAL 1: LEER CARTA COMPLETA (Accesible, íntimo, papel marfil) */}
+      {/* ========================================================================= */}
+      {/* 4.4 LECTOR DE CARTAS (DIALOG ACCESIBLE CON VISTA PANTALLA COMPLETA EN MÓVIL) */}
+      {/* ========================================================================= */}
       {selectedMemoryForRead && (
-        <div 
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="dialog-pet-name"
-          aria-describedby="dialog-letter-content"
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-5 bg-[#180A1C]/75 backdrop-blur-md overflow-y-auto animate-fade-in"
-          onClick={() => {
-            setSelectedMemoryForRead(null);
-            setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
-          }}
-        >
+        <>
+          {/* Fondo desenfocado */}
           <div 
-            className="relative max-w-lg w-full bg-[#FAF7F2] rounded-[28px] overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.35)] border border-[#EFE2D6] my-auto text-[#2D0F31]"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Botón Cerrar Accesible con área mínima 44x44px */}
-            <button
-              ref={modalCloseButtonRef}
-              onClick={() => {
-                setSelectedMemoryForRead(null);
-                setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
-              }}
-              className="absolute top-4 right-4 z-30 min-w-[44px] min-h-[44px] rounded-full bg-white/95 hover:bg-white text-[#775C73] hover:text-[#2D0F31] shadow-md border border-[#F0E3EB] flex items-center justify-center transition-all cursor-pointer font-bold text-base focus:outline-none focus:ring-2 focus:ring-[#8C3F71]"
-              aria-label="Cerrar carta completa"
-            >
-              ✕
-            </button>
+            className="libro-dialog-backdrop"
+            onClick={() => {
+              setSelectedMemoryForRead(null);
+              setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
+            }}
+          />
 
-            {/* Cabecera con Foto */}
-            <div className="relative w-full h-56 sm:h-64 bg-[#F5EFE8] overflow-hidden">
-              <Image
-                src={selectedMemoryForRead.photoUrl}
-                alt={`Fotografía de ${selectedMemoryForRead.petName}`}
-                fill
-                unoptimized
-                className="object-cover"
-              />
-              <div 
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 40%, rgba(250,247,242,0.98) 100%)',
+          <dialog 
+            open
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dialog-carta-titulo"
+            className="libro-dialog"
+          >
+            {/* Barra superior con botón volver al libro accesible */}
+            <div className="flex items-center justify-between pb-3 border-b border-[#D4B79E]/60 mb-5">
+              <button
+                ref={modalCloseButtonRef}
+                type="button"
+                className="libro-cerrar text-[#541731] font-bold text-sm flex items-center gap-2 cursor-pointer"
+                onClick={() => {
+                  setSelectedMemoryForRead(null);
+                  setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
                 }}
-              />
+              >
+                <span>←</span>
+                <span>Volver al Libro</span>
+              </button>
+
+              <span className="text-xs font-semibold text-[#834E54]">
+                {selectedMemoryForRead.yearsOrDates || 'En memoria eterna'}
+              </span>
             </div>
 
-            {/* Contenido de la Carta en papel marfil suave */}
-            <div className="p-6 sm:p-7 pt-2 space-y-4">
-              
-              {/* Título y Datos del Ángel */}
-              <div className="flex flex-col items-center text-center px-1">
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <span className="text-[#D98218] text-lg sm:text-xl select-none" aria-hidden="true">★</span>
-                  <h2 id="dialog-pet-name" className="font-playfair font-bold text-[#2D0F31] text-2xl sm:text-3xl tracking-tight">
-                    {selectedMemoryForRead.petName}
-                  </h2>
-                </div>
+            {/* Cabecera de la carta */}
+            <h3 id="dialog-carta-titulo" className="font-playfair text-2xl sm:text-3xl lg:text-4xl font-bold text-[#541731] mb-4">
+              Para {selectedMemoryForRead.petName}
+            </h3>
 
-                {/* Metadatos del Ángel y la Familia (Adaptación elegante 320-430px sin huérfanos) */}
-                <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs text-center max-w-[360px] sm:max-w-none mx-auto leading-relaxed">
-                  <span className="inline-flex items-center gap-1 font-semibold text-[#8C3F71] whitespace-nowrap">
-                    <span>🐾</span>
-                    <span>En memoria eterna</span>
-                  </span>
+            {/* Fotografía con esquinas de papel */}
+            {selectedMemoryForRead.photoUrl && (
+              <figure className="libro-foto">
+                <img 
+                  src={selectedMemoryForRead.photoUrl} 
+                  alt={`Fotografía de ${selectedMemoryForRead.petName}`} 
+                  loading="lazy"
+                />
+              </figure>
+            )}
 
-                  {selectedMemoryForRead.yearsOrDates && (
-                    <span className="inline-flex items-center gap-1.5 font-medium text-[#6B4E63] whitespace-nowrap before:content-['•'] before:text-[#C5A3BA] before:font-bold">
-                      <span>{selectedMemoryForRead.yearsOrDates}</span>
-                    </span>
-                  )}
+            {/* Contenido con párrafos originales preservados */}
+            <div className="space-y-4 text-base sm:text-lg leading-relaxed text-[#541731] my-4">
+              <p className="whitespace-pre-wrap">{selectedMemoryForRead.message}</p>
+            </div>
 
-                  {selectedMemoryForRead.authorName && (
-                    <span className="inline-flex items-center gap-1.5 font-medium text-[#775C73] whitespace-nowrap before:content-['•'] before:text-[#C5A3BA] before:font-bold">
-                      <span>{selectedMemoryForRead.authorName}</span>
-                    </span>
-                  )}
-                </div>
-              </div>
+            {selectedMemoryForRead.authorName && (
+              <p className="text-sm italic text-[#834E54] pt-3 border-t border-[#D4B79E]/40">
+                Con amor, {selectedMemoryForRead.authorName}
+              </p>
+            )}
 
-              {/* Carta Íntegra en caja de papel delicado */}
-              <div 
-                id="dialog-letter-content"
-                className="p-5 sm:p-6 rounded-2xl bg-[#FFFDFB] border border-[#EBDCCF] text-left shadow-[inset_0_1px_3px_rgba(180,120,80,0.05)] relative"
-              >
-                <p className="font-serif italic text-[15px] sm:text-[16.5px] text-[#3E1C38] leading-relaxed whitespace-pre-wrap">
-                  «{selectedMemoryForRead.message}»
-                </p>
-              </div>
-
-              {/* Redes Sociales del Autor si existen */}
-              {(selectedMemoryForRead.instagram || selectedMemoryForRead.tiktok) && (
-                <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-                  {selectedMemoryForRead.instagram && (
-                    <a
-                      href={`https://instagram.com/${selectedMemoryForRead.instagram.replace(/^@/, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#FAF0F6] border border-[#EAC2DB] text-[#9E3D6F] hover:bg-[#F5DFEE] hover:border-[#DF6197] transition-all"
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                      </svg>
-                      <span>@${selectedMemoryForRead.instagram.replace(/^@/, '')}</span>
-                    </a>
-                  )}
-                  {selectedMemoryForRead.tiktok && (
-                    <a
-                      href={`https://tiktok.com/@${selectedMemoryForRead.tiktok.replace(/^@/, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#F5F2F6] border border-[#DDD4DE] text-[#472242] hover:bg-[#ECE4ED] hover:border-[#2D0F31] transition-all"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.68a6.34 6.34 0 0 0 10.86 4.47 6.27 6.27 0 0 0 1.88-4.48V8.78a8.28 8.28 0 0 0 4.85 1.56V6.89a4.84 4.84 0 0 1-1-.2z"/>
-                      </svg>
-                      <span>@${selectedMemoryForRead.tiktok.replace(/^@/, '')}</span>
-                    </a>
-                  )}
-                </div>
-              )}
-
-              {/* Barra de Reacciones dentro del Modal con área accesible */}
-              <div className="pt-2 pb-1 border-t border-[#EBDCCF] flex items-center justify-around gap-2">
-                <button
+            {/* Botones de amor, huellita y compartir */}
+            <div className="mt-6 pt-4 border-t border-[#D4B79E]/60 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <button 
                   type="button"
                   onClick={() => handleReaction(selectedMemoryForRead.id, 'heart')}
-                  aria-label={`Enviar amor a ${selectedMemoryForRead.petName} (${selectedMemoryForRead.candlesCount} recibidos)`}
-                  className="min-h-[44px] flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFF0F6] hover:bg-[#FFE3F0] text-[#9E3D6F] font-semibold text-xs transition-all active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#DF6197]"
+                  aria-label={`Enviar amor a ${selectedMemoryForRead.petName}`}
+                  className="min-h-[44px] min-w-[44px] flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFF0F6] hover:bg-[#FFE5F0] text-[#8C3F71] font-semibold text-sm transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#DF6197]"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#DF6197">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                  </svg>
-                  <span>Enviar amor ({selectedMemoryForRead.candlesCount})</span>
+                  <span>💖</span>
+                  <span>{selectedMemoryForRead.candlesCount}</span>
                 </button>
 
-                <button
+                <button 
                   type="button"
                   onClick={() => handleReaction(selectedMemoryForRead.id, 'paw')}
-                  aria-label={`Dejar huella de cariño para ${selectedMemoryForRead.petName} (${selectedMemoryForRead.supportCount} recibidas)`}
-                  className="min-h-[44px] flex items-center gap-2 px-4 py-2 rounded-full bg-[#FDF6ED] hover:bg-[#F9ECCF] text-[#A66F3E] font-semibold text-xs transition-all active:scale-95 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C99155]"
+                  aria-label={`Dejar huellita para ${selectedMemoryForRead.petName}`}
+                  className="min-h-[44px] min-w-[44px] flex items-center gap-2 px-4 py-2 rounded-full bg-[#FDF6ED] hover:bg-[#FAEAD7] text-[#A06020] font-semibold text-sm transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C99155]"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#C99155">
-                    <ellipse cx="12" cy="16.5" rx="5.3" ry="4.2"/>
-                    <circle cx="5.8" cy="10.2" r="2.3"/>
-                    <circle cx="9.8" cy="6.8" r="2.3"/>
-                    <circle cx="14.2" cy="6.8" r="2.3"/>
-                    <circle cx="18.2" cy="10.2" r="2.3"/>
-                  </svg>
-                  <span>Dejar huella ({selectedMemoryForRead.supportCount})</span>
+                  <span>🐾</span>
+                  <span>{selectedMemoryForRead.supportCount}</span>
                 </button>
               </div>
 
-              {reactionFeedback[selectedMemoryForRead.id] && (
-                <div className="py-1 px-3 rounded-xl bg-[#FFF8FA] border border-[#D89DBF] text-[11px] font-bold text-[#8C3F71] text-center animate-fade-in" role="status" aria-live="polite">
-                  {reactionFeedback[selectedMemoryForRead.id]}
-                </div>
-              )}
-
-              {/* Botones de Postal Conmemorativa y Compartir */}
-              <div className="space-y-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => handleDownloadPostcard(selectedMemoryForRead)}
-                  disabled={isGeneratingPostal}
-                  className="w-full min-h-[44px] py-2.5 px-4 rounded-2xl font-bold text-white text-xs sm:text-sm flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(164,80,155,0.32)] hover:shadow-[0_12px_24px_rgba(164,80,155,0.42)] hover:-translate-y-0.5 transition-all cursor-pointer"
-                  style={{
-                    background: 'linear-gradient(135deg, #A4509B 0%, #C85998 50%, #9B3D75 100%)',
-                  }}
-                >
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="7 10 12 15 17 10"/>
-                    <line x1="12" y1="15" x2="12" y2="3"/>
-                  </svg>
-                  <span>{isGeneratingPostal ? 'Generando postal conmemorativa...' : 'Descargar postal conmemorativa digital'}</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleShareMemory(selectedMemoryForRead)}
-                  className="w-full min-h-[44px] py-2.5 px-4 rounded-2xl font-semibold text-[#6C5367] bg-white hover:bg-[#FAF4F9] border border-[#E8D2E2] text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="18" cy="5" r="3"></circle>
-                    <circle cx="6" cy="12" r="3"></circle>
-                    <circle cx="18" cy="19" r="3"></circle>
-                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                  </svg>
-                  <span>Compartir en WhatsApp o Redes</span>
-                </button>
-              </div>
-
-              {postalFeedback && (
-                <div className="py-1 px-3 rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] text-[11px] font-bold text-[#166534] text-center animate-fade-in" role="status" aria-live="polite">
-                  {postalFeedback}
-                </div>
-              )}
-
+              <button
+                type="button"
+                onClick={() => handleShareMemory(selectedMemoryForRead)}
+                className="min-h-[44px] px-5 py-2 rounded-full border border-[#D4B79E] text-xs sm:text-sm font-semibold text-[#541731] hover:bg-white/80 transition-all cursor-pointer flex items-center gap-2"
+              >
+                <span>🔗</span>
+                <span>Compartir carta</span>
+              </button>
             </div>
-          </div>
-        </div>
+
+            {postalFeedback && (
+              <div className="mt-3 text-center text-xs font-bold text-[#8C3F71]">
+                {postalFeedback}
+              </div>
+            )}
+
+          </dialog>
+        </>
       )}
 
       {/* MODAL 3: SUMAR MI LUZ EN LA VELA SEMANAL (DOMINGOS DE LUZ) */}

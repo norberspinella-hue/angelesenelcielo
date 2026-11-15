@@ -1474,3 +1474,292 @@ p,
 }
 
 
+
+
+/* ========================================================================= */
+/* EL LIBRO DE LOS ÁNGELES · JARDÍN DE ROSAS AL AMANECER                     */
+/* ========================================================================= */
+.libro-transicion-cielo {
+  height: 55px;
+  background: linear-gradient(180deg, #24143c 0%, #edd0df 50%, #f7e9dc 100%);
+}
+
+.libro {
+  --tinta: #541731;
+  --papel: #fff4e7;
+  color: var(--tinta);
+  background: #f7e9dc;
+  position: relative;
+  isolation: isolate;
+  font: 18px/1.55 Georgia, serif;
+  padding: clamp(24px, 5vw, 72px) max(16px, calc((100% - 1100px) / 2));
+  overflow-wrap: anywhere;
+}
+
+.libro * {
+  box-sizing: border-box;
+}
+
+.libro-jardin {
+  position: absolute;
+  inset: 0 0 auto;
+  height: min(1050px, 100%);
+  z-index: 0;
+  mask-image: linear-gradient(#000 78%, transparent);
+  -webkit-mask-image: linear-gradient(#000 78%, transparent);
+  pointer-events: none;
+}
+
+.libro-jardin img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.libro header {
+  text-align: center;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 10;
+}
+
+.libro-insignia {
+  width: clamp(115px, 15vw, 178px);
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.libro h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  margin: 0.12em 0 0;
+  font-weight: 700;
+  color: var(--tinta);
+}
+
+.libro header:after {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 1px;
+  background: #a87541;
+  margin: 20px auto 0;
+}
+
+.libro h3 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  line-height: 1.15;
+  margin: 0.2em 0 0.55em;
+  font-weight: 700;
+  color: var(--tinta);
+}
+
+.libro-hoja,
+.libro-dialog {
+  background: var(--papel) url('/images/cartas-al-cielo/libro/assets/papel.svg');
+  border: 1px solid #d4b79e;
+  border-radius: 12px;
+  padding: clamp(18px, 4vw, 44px);
+  box-shadow: 0 12px 35px rgba(84, 45, 38, 0.16);
+  position: relative;
+  z-index: 10;
+}
+
+.libro-destacada {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 4vw, 48px);
+  align-items: center;
+}
+
+.libro-destacada.sin-foto {
+  grid-template-columns: 1fr;
+}
+
+.libro-foto {
+  margin: 0;
+  position: relative;
+  padding: 8px;
+  background: #fffcf3;
+  box-shadow: 0 3px 12px rgba(84, 45, 38, 0.16);
+  border-radius: 4px;
+}
+
+.libro-foto img {
+  display: block;
+  width: 100%;
+  max-height: 470px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.libro-foto:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/images/cartas-al-cielo/libro/assets/esquinas.svg') center/100% 100%;
+  pointer-events: none;
+}
+
+.libro button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.libro button:focus-visible {
+  outline: 3px solid #722b55;
+  outline-offset: 4px;
+}
+
+.libro-leer,
+.libro-cerrar {
+  min-height: 44px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  border: 0;
+  background: none;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.libro-mas {
+  text-align: center;
+  margin-top: 44px !important;
+  position: relative;
+  z-index: 10;
+}
+
+.libro-indice {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  list-style: none;
+  padding: 0;
+  align-items: start;
+  position: relative;
+  z-index: 10;
+}
+
+.libro-sobre {
+  --sobre: #ead5bd;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 8px 0 0;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.libro-sobre:hover {
+  transform: translateY(-4px);
+  filter: drop-shadow(0 8px 16px rgba(84, 45, 38, 0.18));
+}
+
+.libro-pestaña {
+  position: relative;
+  display: block;
+  margin: 0 9% -6px;
+  padding: 16px 13px 22px;
+  background: var(--papel);
+  box-shadow: 0 2px 7px rgba(84, 45, 38, 0.11);
+  border-radius: 7px 7px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--tinta);
+  opacity: 0.95;
+}
+
+.libro-frente {
+  position: relative;
+  min-height: 0;
+  aspect-ratio: 950 / 422;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 10% 7%;
+  font-size: clamp(16px, 2vw, 24px);
+  font-weight: 600;
+  background: var(--arte) center/100% 100% no-repeat;
+  box-shadow: 0 8px 13px rgba(84, 45, 38, 0.18);
+  --arte: url('/images/cartas-al-cielo/libro/assets/sobre-crema.webp');
+  color: #541731;
+}
+
+.libro-indice li:nth-child(3n + 2) .libro-frente {
+  --arte: url('/images/cartas-al-cielo/libro/assets/sobre-lavanda.webp');
+}
+
+.libro-indice li:nth-child(3n) .libro-frente {
+  --arte: url('/images/cartas-al-cielo/libro/assets/sobre-rosa.webp');
+}
+
+.libro-dialog {
+  color: inherit;
+  width: min(680px, calc(100% - 24px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  z-index: 1000;
+}
+
+.libro-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(35, 19, 52, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
+
+.libro-dialog p {
+  white-space: pre-wrap;
+}
+
+.libro-dialog figure {
+  max-width: 380px;
+  margin: 12px auto 24px;
+}
+
+@media (max-width: 700px) {
+  .libro-destacada,
+  .libro-indice {
+    grid-template-columns: 1fr;
+  }
+  .libro-indice {
+    max-width: 430px;
+    margin-inline: auto;
+  }
+  .libro-dialog {
+    width: 100%;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+  }
+  .libro-insignia {
+    width: 100px;
+  }
+  .libro-jardin {
+    height: min(900px, 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .libro-sobre,
+  .libro-dialog,
+  .libro-foto {
+    transition: none !important;
+    animation: none !important;
+  }
+}
