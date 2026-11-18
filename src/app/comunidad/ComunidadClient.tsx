@@ -121,11 +121,146 @@ export default function ComunidadClient({ initialMemories }: Props) {
   const selectScenario = (tributeId: string) => {
     const target = tributes.find(t => t.id === tributeId);
     if (target) {
-      setActiveTributeForCollection(target);
+      handleOpenCollection(target);
       setShowNewLetterForm(false);
       setTimeout(() => {
         document.getElementById('libro-de-los-angeles')?.scrollIntoView({ behavior: 'smooth' });
       }, 50);
+    }
+  };
+
+  // Cargar datos de homenajes y estado de sesión del guardián desde los endpoints reales
+  React.useEffect(() => {
+    async function loadRealData() {
+      try {
+        // 1. Comprobar sesión de guardián activa
+        const sessionRes = await fetch('/api/community/guardian/session');
+        if (sessionRes.ok) {
+          const sessionData = await sessionRes.json();
+          if (sessionData.isAuthenticated) {
+            setReviewerRole('guardian');
+          }
+        }
+
+        // 2. Obtener homenajes reales
+        const tributesRes = await fetch('/api/community/tributes');
+        if (tributesRes.ok) {
+          const tributesData = await tributesRes.json();
+          if (tributesData.success && Array.isArray(tributesData.tributes) && tributesData.tributes.length > 0) {
+            const mappedTributes: MockTribute[] = tributesData.tributes.map((t: any) => {
+              const existing = INITIAL_MOCK_TRIBUTES.find(m => m.slug === t.slug || m.petName.toLowerCase() === t.petName.toLowerCase());
+              return {
+                id: t.id,
+                slug: t.slug,
+                petName: t.petName,
+                species: t.species,
+                speciesLabel: t.species === 'gato' ? 'Gatita' : t.species === 'perro' ? 'Perrita' : 'Ángel',
+                photoUrl: t.photoUrl || (existing ? existing.photoUrl : null),
+                yearsOrDates: t.yearsOrDates || (existing ? existing.yearsOrDates : ''),
+                authorName: t.authorDisplayName || (existing ? existing.authorName : 'Familia'),
+                guardianEmail: existing ? existing.guardianEmail : 'familia@ejemplo.com',
+                muralSlot: existing ? existing.muralSlot : null,
+                candlesCount: t.candlesCount || 0,
+                supportCount: 0,
+                hugsCount: t.hugsCount || 0,
+                letters: existing ? existing.letters : [],
+              };
+            });
+
+            setTributes(prev => {
+              const combined = [...mappedTributes];
+              for (const m of INITIAL_MOCK_TRIBUTES) {
+                if (!combined.some(c => c.slug === m.slug || c.id === m.id)) {
+                  combined.push(m);
+                }
+              }
+              return combined;
+            });
+          }
+        }
+      } catch (err) {
+        console.warn('Cargando con datos locales de staging:', err);
+      }
+    }
+
+    loadRealData();
+  }, []);
+
+  // Abrir colección individual y cargar cartas reales desde el backend si existen
+  const handleOpenCollection = async (tribute: MockTribute) => {
+    setActiveTributeForCollection(tribute);
+    setShowNewLetterForm(false);
+
+    if (tribute.slug) {
+      try {
+        const res = await fetch(`/api/community/tributes/${tribute.slug}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.letters && data.letters.length > 0) {
+            const categoryLabels: Record<string, string> = {
+              cumpleanos: '🎂 Cumpleaños en el cielo',
+              aniversario: '🕊️ Aniversario de partida',
+              espontanea: '🌿 Recuerdo espontáneo',
+              despedida: '💌 Carta de despedida',
+            };
+
+            const backendLetters: MockTributeLetter[] = data.letters.map((l: any, idx: number) => ({
+              id: l.id,
+              tributeId: tribute.id,
+              title: l.title,
+              category: l.category,
+              categoryLabel: categoryLabels[l.category] || '💌 Carta de homenaje',
+              message: l.content,
+              authorName: l.authorName,
+              displayDate: l.displayDate,
+              publishedAt: l.createdAt,
+              candlesCount: 1,
+              hugsCount: 0,
+              envelopeColor: (l.envelopeColor as any) || (idx % 3 === 0 ? 'crema' : idx % 3 === 1 ? 'lavanda' : 'rosa'),
+            }));
+
+            // Ordenar con las más recientes arriba
+            const sortedLetters = [...backendLetters].reverse();
+
+            setActiveTributeForCollection(prev => prev ? {
+              ...prev,
+              letters: sortedLetters,
+            } : null);
+
+            if (data.isGuardian !== undefined) {
+              setReviewerRole(data.isGuardian ? 'guardian' : 'visitor');
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Usando cartas locales para colección:', err);
+      }
+    }
+  };
+
+  // Cambio de rol con llamada HTTP real para activar o revocar la cookie HttpOnly
+  const handleSwitchRole = async (newRole: 'guardian' | 'visitor') => {
+    if (newRole === 'visitor') {
+      try {
+        await fetch('/api/community/guardian/revoke', { method: 'POST' });
+      } catch {}
+      setReviewerRole('visitor');
+      setToastMessage('👀 Modo Visitante activado (solo lectura, sin permiso de escritura).');
+      setTimeout(() => setToastMessage(null), 4000);
+    } else {
+      try {
+        await fetch('/api/community/guardian/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token: 'chloe_staging_guardian_token_secret_seed_2026',
+            tributeSlug: 'chloe-spinella'
+          })
+        });
+      } catch {}
+      setReviewerRole('guardian');
+      setToastMessage('🛡️ Modo Guardián activado para la familia de Chloe (permiso de escritura habilitado).');
+      setTimeout(() => setToastMessage(null), 4000);
     }
   };
 
@@ -155,7 +290,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
   };
 
   // Agregar nueva carta a la colección en Modo Guardián
-  const handleAddNewLetterToCollection = (e: React.FormEvent) => {
+  const handleAddNewLetterToCollection = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeTributeForCollection || !newLetterMessage.trim()) return;
 
@@ -166,19 +301,91 @@ export default function ComunidadClient({ initialMemories }: Props) {
       despedida: '💌 Carta de despedida',
     };
 
+    const nextColor: 'crema' | 'lavanda' | 'rosa' = activeTributeForCollection.letters.length % 3 === 0 ? 'crema' : activeTributeForCollection.letters.length % 3 === 1 ? 'lavanda' : 'rosa';
+    const finalTitle = newLetterTitle.trim() || categoryLabels[newLetterCategory];
+    const finalAuthor = newLetterAuthor.trim() || activeTributeForCollection.authorName;
+    const finalDate = newLetterDate.trim() || new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    // Si tiene slug de base de datos, enviar al endpoint
+    if (activeTributeForCollection.slug) {
+      try {
+        const res = await fetch(`/api/community/tributes/${activeTributeForCollection.slug}/letters`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: finalTitle,
+            category: newLetterCategory,
+            content: newLetterMessage.trim(),
+            authorName: finalAuthor,
+            envelopeColor: nextColor,
+            displayDate: finalDate,
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Error al guardar la carta');
+        }
+
+        const returned = data.letter;
+        const newLetter: MockTributeLetter = {
+          id: returned.id || `letter-${Date.now()}`,
+          tributeId: activeTributeForCollection.id,
+          title: returned.title || finalTitle,
+          category: (returned.category as any) || newLetterCategory,
+          categoryLabel: categoryLabels[newLetterCategory],
+          message: returned.content || newLetterMessage.trim(),
+          authorName: returned.author_name || finalAuthor,
+          displayDate: returned.display_date || finalDate,
+          publishedAt: returned.created_at || new Date().toISOString(),
+          candlesCount: 1,
+          hugsCount: 0,
+          envelopeColor: (returned.envelope_color as any) || nextColor,
+        };
+
+        const updatedTributes = tributes.map(t => {
+          if (t.id === activeTributeForCollection.id) {
+            return {
+              ...t,
+              letters: [newLetter, ...t.letters],
+            };
+          }
+          return t;
+        });
+
+        setTributes(updatedTributes);
+        setActiveTributeForCollection(prev => prev ? {
+          ...prev,
+          letters: [newLetter, ...prev.letters],
+        } : null);
+
+        setNewLetterMessage('');
+        setNewLetterTitle('');
+        setShowNewLetterForm(false);
+        setToastMessage(`¡Nueva carta guardada con amor en base de datos para ${activeTributeForCollection.petName}! (Total ahora: ${activeTributeForCollection.letters.length + 1} cartas)`);
+        setTimeout(() => setToastMessage(null), 5000);
+        return;
+      } catch (err: any) {
+        setToastMessage(`⚠️ ${err.message || 'No se pudo guardar la carta'}`);
+        setTimeout(() => setToastMessage(null), 5000);
+        return;
+      }
+    }
+
+    // Modo local / fallback
     const newLetter: MockTributeLetter = {
       id: `letter-${Date.now()}`,
       tributeId: activeTributeForCollection.id,
-      title: newLetterTitle.trim() || categoryLabels[newLetterCategory],
+      title: finalTitle,
       category: newLetterCategory,
       categoryLabel: categoryLabels[newLetterCategory],
       message: newLetterMessage.trim(),
-      authorName: newLetterAuthor.trim() || activeTributeForCollection.authorName,
-      displayDate: newLetterDate.trim() || '15 de noviembre, 2026',
+      authorName: finalAuthor,
+      displayDate: finalDate,
       publishedAt: new Date().toISOString(),
       candlesCount: 1,
       hugsCount: 0,
-      envelopeColor: activeTributeForCollection.letters.length % 3 === 0 ? 'crema' : activeTributeForCollection.letters.length % 3 === 1 ? 'lavanda' : 'rosa',
+      envelopeColor: nextColor,
     };
 
     const updatedTributes = tributes.map(t => {
@@ -1103,7 +1310,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                   <button
                     id="role-btn-guardian"
                     type="button"
-                    onClick={() => setReviewerRole('guardian')}
+                    onClick={() => handleSwitchRole('guardian')}
                     className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       reviewerRole === 'guardian'
                         ? 'bg-[#D9629B] text-white shadow-xs'
@@ -1115,7 +1322,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                   <button
                     id="role-btn-visitor"
                     type="button"
-                    onClick={() => setReviewerRole('visitor')}
+                    onClick={() => handleSwitchRole('visitor')}
                     className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
                       reviewerRole === 'visitor'
                         ? 'bg-[#D9629B] text-white shadow-xs'
@@ -1496,7 +1703,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                     className="libro-leer inline-flex items-center gap-2 text-[#541731] font-bold cursor-pointer hover:opacity-80 transition-opacity"
                     onClick={(e) => {
                       lastActiveTriggerRef.current = e.currentTarget;
-                      setActiveTributeForCollection(firstFeaturedTribute);
+                      handleOpenCollection(firstFeaturedTribute);
                     }}
                   >
                     <span>Abrir las cartas para {firstFeaturedTribute.petName} ({firstFeaturedTribute.letters.length} {firstFeaturedTribute.letters.length === 1 ? 'carta llena de amor' : 'cartas llenas de amor'})</span>
@@ -1538,7 +1745,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
                           aria-label={`Abrir la colección de cartas para ${tribute.petName}`}
                           onClick={(e) => {
                             lastActiveTriggerRef.current = e.currentTarget;
-                            setActiveTributeForCollection(tribute);
+                            handleOpenCollection(tribute);
                           }}
                         >
                           {/* Hoja marfil que sobresale ligeramente */}

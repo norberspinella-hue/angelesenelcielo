@@ -262,6 +262,104 @@ export async function ensureTributesSchema() {
   }
 }
 
+// Sembrar datos iniciales de staging si la tabla está vacía
+export async function seedStagingTributes(): Promise<boolean> {
+  const pool = getDbPool();
+  if (!pool) return false;
+
+  const countRes = await pool.query('SELECT count(*) FROM community_tributes;');
+  if (parseInt(countRes.rows[0].count) > 0) {
+    return true; // Ya existen datos
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // 1. Chloe
+    const insChloe = await client.query(`
+      INSERT INTO community_tributes (slug, pet_name, species, author_display_name, years_or_dates, photo_url, candles_count, hugs_count)
+      VALUES ('chloe-spinella', 'Chloe', 'perro', 'Familia Spinella', '2014 - 2026', '/images/comunidad/chloe.jpg', 156, 72)
+      RETURNING id;
+    `);
+    const chloeId = insChloe.rows[0].id;
+
+    // Cartas de Chloe
+    await client.query(`
+      INSERT INTO tribute_letters (tribute_id, letter_seq_num, title, category, content, author_name, display_date, envelope_color)
+      VALUES 
+      ($1, 1, 'Hasta siempre pequeñita', 'despedida', 'Te fuiste como llegaste de manera inesperada, pero nos llenaste de vida y de amor. Nos enseñaste a querer de nuevo, nos curaste heridas que no sabíamos que se podían curar. Te agradecemos todo lo que nos diste pequeñita. Te echaremos de menos siempre.', 'Familia Spinella', '15 Octubre, 2024', 'crema'),
+      ($1, 2, 'Tu primer cumpleaños en las estrellas', 'cumpleanos', 'Hoy habrías cumplido años. Miramos al cielo sabiendo que corres feliz persiguiendo mariposas.', 'Familia Spinella', '12 Mayo, 2025', 'lavanda'),
+      ($1, 3, 'Un año de luz en el cielo', 'aniversario', 'Ha pasado un año entero desde tu partida. En casa todo sigue guardando tu olor y tu ternura.', 'Familia Spinella', '15 Octubre, 2025', 'rosa');
+    `, [chloeId]);
+
+    // Guardián de Chloe
+    const chloeBIndex = computeBlindIndex('familia.spinella@ejemplo.com');
+    const insCG = await client.query(`
+      INSERT INTO tribute_guardians (tribute_id, email_blind_index)
+      VALUES ($1, $2) RETURNING id;
+    `, [chloeId, chloeBIndex]);
+    const chloeGId = insCG.rows[0].id;
+
+    // Sesión activa para Chloe
+    const chloeToken = 'chloe_staging_guardian_token_secret_seed_2026';
+    const chloeTokenHash = hashToken(chloeToken);
+    await client.query(`
+      INSERT INTO guardian_sessions (guardian_id, token_hash, expires_at)
+      VALUES ($1, $2, NOW() + INTERVAL '30 days')
+      ON CONFLICT (token_hash) DO NOTHING;
+    `, [chloeGId, chloeTokenHash]);
+
+    // 2. Luna Spinella (gato)
+    const insLunaS = await client.query(`
+      INSERT INTO community_tributes (slug, pet_name, species, author_display_name, years_or_dates, photo_url, candles_count, hugs_count)
+      VALUES ('luna-spinella', 'Luna Spinella', 'gato', 'Familia Spinella', '2015 - 2024', '/images/comunidad/luna_real_clean.webp', 210, 95)
+      RETURNING id;
+    `);
+    const lunaSId = insLunaS.rows[0].id;
+    await client.query(`
+      INSERT INTO tribute_letters (tribute_id, letter_seq_num, title, category, content, author_name, display_date, envelope_color)
+      VALUES 
+      ($1, 1, 'Hasta siempre Luna mía', 'despedida', 'Diez años de maullidos dulces. Siempre en el corazón.', 'Familia Spinella', '10 Mar 2024', 'crema');
+    `, [lunaSId]);
+
+    // 3. Luna Navarro (homónima, perro)
+    const insLunaN = await client.query(`
+      INSERT INTO community_tributes (slug, pet_name, species, author_display_name, years_or_dates, photo_url, candles_count, hugs_count)
+      VALUES ('luna-navarro', 'Luna', 'perro', 'Familia Navarro', '2012 - 2025', '/images/comunidad/pet-luna.webp', 88, 34)
+      RETURNING id;
+    `);
+    const lunaNId = insLunaN.rows[0].id;
+    await client.query(`
+      INSERT INTO tribute_letters (tribute_id, letter_seq_num, title, category, content, author_name, display_date, envelope_color)
+      VALUES 
+      ($1, 1, 'Para mi perrita fiel Luna', 'despedida', 'Nuestra guardiana durante 13 años. Gracias por cuidarnos.', 'Familia Navarro', '10 Oct 2025', 'crema');
+    `, [lunaNId]);
+
+    // 4. Toby (sin foto)
+    const insToby = await client.query(`
+      INSERT INTO community_tributes (slug, pet_name, species, author_display_name, years_or_dates, photo_url, candles_count, hugs_count)
+      VALUES ('toby-rodriguez', 'Toby', 'perro', 'Familia Rodríguez', '2010 - 2023', NULL, 120, 45)
+      RETURNING id;
+    `);
+    const tobyId = insToby.rows[0].id;
+    await client.query(`
+      INSERT INTO tribute_letters (tribute_id, letter_seq_num, title, category, content, author_name, display_date, envelope_color)
+      VALUES 
+      ($1, 1, 'Para Toby en el prado eterno', 'despedida', 'El perro más noble y bueno. Aunque no tengamos foto aquí, tu imagen vive en el alma.', 'Familia Rodríguez', '5 Sep 2023', 'crema');
+    `, [tobyId]);
+
+    await client.query('COMMIT');
+    return true;
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error al sembrar datos de staging:', err);
+    return false;
+  } finally {
+    client.release();
+  }
+}
+
 // Consultar homenajes públicos
 export async function getPublicTributes(options: { species?: string; limit?: number } = {}): Promise<TributeDto[]> {
   const pool = getDbPool();

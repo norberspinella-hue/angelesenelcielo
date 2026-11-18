@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPublicTributes, createTributeWithFirstLetter, ensureTributesSchema } from '@/lib/community/tributesDb';
+import { getPublicTributes, createTributeWithFirstLetter, ensureTributesSchema, seedStagingTributes } from '@/lib/community/tributesDb';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    await ensureTributesSchema();
+    await seedStagingTributes();
+
     const { searchParams } = new URL(req.url);
     const species = searchParams.get('species') || 'todos';
     const limit = parseInt(searchParams.get('limit') || '50', 10);
