@@ -74,6 +74,14 @@ async function runTests() {
           IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'service_role') THEN CREATE ROLE service_role NOLOGIN; END IF;
         END $$;
 
+        -- Limpiar tablas si existen para garantizar ejecución idempotente y limpia
+        DROP TABLE IF EXISTS rollback_companion_letters CASCADE;
+        DROP TABLE IF EXISTS guardian_sessions CASCADE;
+        DROP TABLE IF EXISTS tribute_guardians CASCADE;
+        DROP TABLE IF EXISTS tribute_letters CASCADE;
+        DROP TABLE IF EXISTS community_tributes CASCADE;
+        DROP TABLE IF EXISTS memorials CASCADE;
+
         -- 1. TABLA HISTÓRICA REAL SIMULADA ('memorials')
         CREATE TABLE IF NOT EXISTS memorials (
             id TEXT PRIMARY KEY,
