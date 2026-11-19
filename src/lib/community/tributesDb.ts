@@ -191,18 +191,31 @@ export async function ensureTributesSchema() {
 
               IF v_existing_id IS NOT NULL THEN
                   SELECT * INTO v_res_record FROM tribute_letters WHERE tribute_letters.id = v_existing_id;
-                  RETURN QUERY SELECT 
-                      v_res_record.id,
-                      v_res_record.tribute_id,
-                      v_res_record.letter_seq_num,
-                      v_res_record.title,
-                      v_res_record.category,
-                      v_res_record.content,
-                      v_res_record.author_name,
-                      v_res_record.display_date,
-                      v_res_record.envelope_color,
-                      TRUE;
-                  RETURN;
+
+                  -- Comprobar si los campos relevantes son idénticos
+                  IF v_res_record.title = p_title 
+                     AND v_res_record.category = p_category 
+                     AND v_res_record.content = p_content 
+                     AND v_res_record.author_name = p_author_name 
+                     AND v_res_record.envelope_color = p_envelope_color THEN
+                      -- Reintento idéntico legítimo: devolver sin duplicar
+                      RETURN QUERY SELECT 
+                          v_res_record.id,
+                          v_res_record.tribute_id,
+                          v_res_record.letter_seq_num,
+                          v_res_record.title,
+                          v_res_record.category,
+                          v_res_record.content,
+                          v_res_record.author_name,
+                          v_res_record.display_date,
+                          v_res_record.envelope_color,
+                          TRUE;
+                      RETURN;
+                  ELSE
+                      -- Mismo idempotency_key pero con contenido diferente: conflicto 409
+                      RAISE EXCEPTION 'IDEMPOTENCY_CONFLICT: La clave de idempotencia ya fue utilizada con un contenido diferente para esta mascota'
+                          USING ERRCODE = 'P0004';
+                  END IF;
               END IF;
           END IF;
 
@@ -617,24 +630,33 @@ export async function publishAuthorizedLetter(data: {
 
   const dateFormatted = data.displayDate || new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
 
-  // 2. Invocar función atómica
-  const res = await pool.query(`
-    SELECT * FROM publish_tribute_letter($1, $2, $3, $4, $5, $6, $7, $8);
-  `, [
-    session.tributeId,
-    data.title,
-    data.category,
-    data.content,
-    data.authorName,
-    dateFormatted,
-    data.envelopeColor,
-    data.idempotencyKey || null
-  ]);
+  // 2. Invocar función atómica con control de idempotencia
+  try {
+    const res = await pool.query(`
+      SELECT * FROM publish_tribute_letter($1, $2, $3, $4, $5, $6, $7, $8);
+    `, [
+      session.tributeId,
+      data.title,
+      data.category,
+      data.content,
+      data.authorName,
+      dateFormatted,
+      data.envelopeColor,
+      data.idempotencyKey || null
+    ]);
 
-  return {
-    letter: res.rows[0],
-    isDuplicate: res.rows[0].is_duplicate
-  };
+    return {
+      letter: res.rows[0],
+      isDuplicate: res.rows[0].is_duplicate
+    };
+  } catch (err: any) {
+    if (err.message && err.message.includes('IDEMPOTENCY_CONFLICT')) {
+      const conflictError: any = new Error('La clave de idempotencia ya fue utilizada con un contenido diferente.');
+      conflictError.status = 409;
+      throw conflictError;
+    }
+    throw err;
+  }
 }
 
 // Revocar sesión de guardián

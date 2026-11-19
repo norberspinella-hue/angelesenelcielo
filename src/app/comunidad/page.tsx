@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { Footer } from '@/components/landing/Footer';
 import ComunidadClient, { CommunityMemory } from './ComunidadClient';
 import { createAdminClient } from '@/lib/supabase/server';
+import { isMulticartaFeatureEnabled } from '@/lib/community/featureFlags';
 
 export const metadata: Metadata = {
   title: 'Cartas al Cielo · El Libro de los Ángeles | Todas las mascotas van al cielo',
@@ -243,14 +244,22 @@ async function getCommunityMemories(): Promise<CommunityMemory[]> {
   }
 }
 
-export default async function ComunidadPage() {
+export default async function ComunidadPage({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const isMulticartaActive = isMulticartaFeatureEnabled({ searchParams });
   const initialMemories = await getCommunityMemories();
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FFF8F4]">
       {/* Main Cartas al Cielo Component (includes CartasAlCieloHeader) */}
       <div className="flex-1">
-        <ComunidadClient initialMemories={initialMemories} />
+        <ComunidadClient 
+          initialMemories={initialMemories} 
+          isMulticartaActive={isMulticartaActive}
+        />
       </div>
 
       {/* Official Footer */}

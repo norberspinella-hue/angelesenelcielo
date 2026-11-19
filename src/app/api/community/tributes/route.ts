@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPublicTributes, createTributeWithFirstLetter, ensureTributesSchema, seedStagingTributes } from '@/lib/community/tributesDb';
+import { isMulticartaFeatureEnabled } from '@/lib/community/featureFlags';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    if (!isMulticartaFeatureEnabled(req)) {
+      return NextResponse.json({ success: false, error: 'Funcionalidad no habilitada en este entorno.' }, { status: 404 });
+    }
+
     await ensureTributesSchema();
     await seedStagingTributes();
 
@@ -22,6 +27,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    if (!isMulticartaFeatureEnabled(req)) {
+      return NextResponse.json({ success: false, error: 'Funcionalidad no habilitada en este entorno.' }, { status: 404 });
+    }
+
     await ensureTributesSchema();
 
     const body = await req.json();

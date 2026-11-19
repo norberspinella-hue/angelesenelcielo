@@ -25,9 +25,21 @@ export interface CommunityMemory {
 
 interface Props {
   initialMemories: CommunityMemory[];
+  isMulticartaActive?: boolean;
 }
 
-export default function ComunidadClient({ initialMemories }: Props) {
+export default function ComunidadClient({ initialMemories, isMulticartaActive = false }: Props) {
+  const [activeMulticarta, setActiveMulticarta] = useState(isMulticartaActive);
+
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('multicarta') === 'true' || p.get('v') === 'multicarta') {
+        setActiveMulticarta(true);
+      }
+    }
+  }, []);
+
   const [memories, setMemories] = useState<CommunityMemory[]>(initialMemories);
   const [activeFilter, setActiveFilter] = useState<'todos' | 'perro' | 'gato' | 'otro'>('todos');
   const [sortBy, setSortBy] = useState<'recientes' | 'velas'>('recientes');
@@ -131,6 +143,8 @@ export default function ComunidadClient({ initialMemories }: Props) {
 
   // Cargar datos de homenajes y estado de sesión del guardián desde los endpoints reales
   React.useEffect(() => {
+    if (!activeMulticarta) return;
+
     async function loadRealData() {
       try {
         // 1. Comprobar sesión de guardián activa
@@ -184,7 +198,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
     }
 
     loadRealData();
-  }, []);
+  }, [activeMulticarta]);
 
   // Abrir colección individual y cargar cartas reales desde el backend si existen
   const handleOpenCollection = async (tribute: MockTribute) => {
@@ -366,49 +380,15 @@ export default function ComunidadClient({ initialMemories }: Props) {
         setTimeout(() => setToastMessage(null), 5000);
         return;
       } catch (err: any) {
-        setToastMessage(`⚠️ ${err.message || 'No se pudo guardar la carta'}`);
+        setToastMessage(`⛔ ${err.message || 'No autorizado para publicar en esta colección.'}`);
         setTimeout(() => setToastMessage(null), 5000);
         return;
       }
+    } else {
+      setToastMessage('⛔ Este homenaje no dispone de identificador válido en el servidor.');
+      setTimeout(() => setToastMessage(null), 5000);
+      return;
     }
-
-    // Modo local / fallback
-    const newLetter: MockTributeLetter = {
-      id: `letter-${Date.now()}`,
-      tributeId: activeTributeForCollection.id,
-      title: finalTitle,
-      category: newLetterCategory,
-      categoryLabel: categoryLabels[newLetterCategory],
-      message: newLetterMessage.trim(),
-      authorName: finalAuthor,
-      displayDate: finalDate,
-      publishedAt: new Date().toISOString(),
-      candlesCount: 1,
-      hugsCount: 0,
-      envelopeColor: nextColor,
-    };
-
-    const updatedTributes = tributes.map(t => {
-      if (t.id === activeTributeForCollection.id) {
-        return {
-          ...t,
-          letters: [newLetter, ...t.letters],
-        };
-      }
-      return t;
-    });
-
-    setTributes(updatedTributes);
-    setActiveTributeForCollection(prev => prev ? {
-      ...prev,
-      letters: [newLetter, ...prev.letters],
-    } : null);
-
-    setNewLetterMessage('');
-    setNewLetterTitle('');
-    setShowNewLetterForm(false);
-    setToastMessage(`¡Nueva carta guardada con amor para ${activeTributeForCollection.petName}! (Total ahora: ${activeTributeForCollection.letters.length + 1} cartas)`);
-    setTimeout(() => setToastMessage(null), 5000);
   };
 
   // Restablecer datos simulados
@@ -592,6 +572,68 @@ export default function ComunidadClient({ initialMemories }: Props) {
       setCurrentPage(1);
       setPublishedMemory(newMemory);
       setShowCelebrationModal(true);
+
+      // Si está activo el modo multicarta, registrar también en PostgreSQL como homenaje con 1ª carta
+      if (activeMulticarta) {
+        try {
+          const tributeRes = await fetch('/api/community/tributes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              petName: petName.trim(),
+              species: 'perro',
+              authorName: `Familia de ${petName.trim()}`,
+              email: anniversaryEmail || 'familia.prueba@ejemplo.com',
+              yearsOrDates: '2026',
+              photoUrl: finalPhotoUrl,
+              firstLetterTitle: `Para ${petName.trim()}`,
+              firstLetterCategory: 'despedida',
+              firstLetterContent: message.trim(),
+              firstLetterEnvelopeColor: 'crema',
+              displayDate: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
+            }),
+          });
+
+          if (tributeRes.ok) {
+            const tributeData = await tributeRes.json();
+            const createdTribute: MockTribute = {
+              id: tributeData.tribute.id,
+              slug: tributeData.tribute.slug,
+              petName: tributeData.tribute.petName,
+              species: 'perro',
+              speciesLabel: 'Perrita',
+              photoUrl: finalPhotoUrl,
+              yearsOrDates: '2026',
+              authorName: `Familia de ${petName.trim()}`,
+              guardianEmail: anniversaryEmail || 'familia.prueba@ejemplo.com',
+              muralSlot: null,
+              candlesCount: 1,
+              supportCount: 0,
+              hugsCount: 0,
+              letters: [{
+                id: tributeData.letter.id,
+                tributeId: tributeData.tribute.id,
+                title: tributeData.letter.title,
+                category: tributeData.letter.category,
+                categoryLabel: '💌 Carta de despedida',
+                message: tributeData.letter.content,
+                authorName: tributeData.letter.author_name,
+                displayDate: tributeData.letter.display_date,
+                publishedAt: tributeData.letter.created_at,
+                candlesCount: 1,
+                hugsCount: 0,
+                envelopeColor: tributeData.letter.envelope_color || 'crema',
+              }]
+            };
+
+            setTributes(prev => [createdTribute, ...prev]);
+            setReviewerRole('guardian');
+            setActiveTributeForCollection(createdTribute);
+          }
+        } catch (tributeErr) {
+          console.warn('No se pudo registrar en /api/community/tributes:', tributeErr);
+        }
+      }
 
       setPetName('');
       setMessage('');
@@ -1174,177 +1216,180 @@ export default function ComunidadClient({ initialMemories }: Props) {
     <div className="min-h-screen text-[#2D0F31] bg-[#24143C]">
       
       {/* ========================================================================= */}
-      {/* 🧪 BARRA TÉCNICA: PANEL DE DEMOSTRACIÓN · NO FORMA PARTE DE LA WEB FINAL */}
+      {/* 🧪 BARRA TÉCNICA: PANEL DE DEMOSTRACIÓN · EXCLUSIVO EN DESARROLLO LOCAL   */}
+      {/* NUNCA SE MUESTRA EN PRODUCCIÓN NI CONCEDE PERMISOS SIN AUTORIZACIÓN DB   */}
       {/* ========================================================================= */}
-      {isDemoDockCollapsed ? (
-        <div className="fixed top-3 right-3 sm:right-6 z-[9999]">
-          <button
-            id="btn-show-demo-dock"
-            type="button"
-            onClick={() => setIsDemoDockCollapsed(false)}
-            className="bg-[#1C0D26]/95 hover:bg-[#2D0F31] text-white px-3.5 py-1.5 rounded-full text-xs font-bold border border-[#E8D4BB]/40 shadow-2xl flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
-            aria-label="Mostrar panel de demostración técnica"
+      {process.env.NODE_ENV === 'development' && activeMulticarta && (
+        isDemoDockCollapsed ? (
+          <div className="fixed top-3 right-3 sm:right-6 z-[9999]">
+            <button
+              id="btn-show-demo-dock"
+              type="button"
+              onClick={() => setIsDemoDockCollapsed(false)}
+              className="bg-[#1C0D26]/95 hover:bg-[#2D0F31] text-white px-3.5 py-1.5 rounded-full text-xs font-bold border border-[#E8D4BB]/40 shadow-2xl flex items-center gap-2 cursor-pointer transition-all hover:scale-105"
+              aria-label="Mostrar panel de demostración técnica"
+            >
+              <span>🧪</span>
+              <span>Panel de Demostración</span>
+              <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">Mostrar ▾</span>
+            </button>
+          </div>
+        ) : (
+          <aside 
+            aria-label="Panel de demostración técnica" 
+            className="bg-[#1C0D26] border-b border-[#E8D4BB]/30 text-white py-2.5 px-3 sm:px-6 sticky top-0 z-[9999] shadow-2xl transition-all"
           >
-            <span>🧪</span>
-            <span>Panel de Demostración</span>
-            <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">Mostrar ▾</span>
-          </button>
-        </div>
-      ) : (
-        <aside 
-          aria-label="Panel de demostración técnica" 
-          className="bg-[#1C0D26] border-b border-[#E8D4BB]/30 text-white py-2.5 px-3 sm:px-6 sticky top-0 z-[9999] shadow-2xl transition-all"
-        >
-          <div className="max-w-7xl mx-auto flex flex-col gap-2.5 text-xs">
-            {/* Fila superior: Identificador y Ocultar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-1.5">
-              <div className="flex items-center gap-2">
-                <span className="bg-gradient-to-r from-[#D9629B] to-[#9B3F77] text-white px-2.5 py-0.5 rounded-full font-bold text-[10px] sm:text-[11px] tracking-wider uppercase shadow-xs">
-                  🧪 PANEL DE DEMOSTRACIÓN · NO FORMA PARTE DE LA WEB FINAL
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10.5px] text-white/60 hidden xl:inline">
-                  * El cambio de rol es una simulación visual para esta prueba (el sistema definitivo usará Magic Links seguros y cookies HttpOnly).
-                </span>
-                <button
-                  id="btn-hide-demo-dock"
-                  type="button"
-                  onClick={() => setIsDemoDockCollapsed(true)}
-                  className="text-[11px] font-bold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-2.5 py-0.5 rounded-full transition-colors cursor-pointer border border-white/20 inline-flex items-center gap-1"
-                  title="Minimizar panel para ver la interfaz limpia sin elementos de prueba"
-                >
-                  <span>✕</span>
-                  <span>Ocultar panel</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Fila inferior: Escenarios de prueba y Selector de rol simulado */}
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center flex-wrap gap-1.5">
-                <span className="text-white/60 text-[11px] hidden lg:inline mr-0.5">Escenarios:</span>
-                <button
-                  id="scenario-btn-chloe"
-                  type="button"
-                  onClick={() => selectScenario('tribute-chloe')}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                    activeTributeForCollection?.id === 'tribute-chloe'
-                      ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
-                      : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
-                  }`}
-                >
-                  🐶 Chloe (Perrita · 3 cartas)
-                </button>
-
-                <button
-                  id="scenario-btn-luna-spinella"
-                  type="button"
-                  onClick={() => selectScenario('tribute-luna-spinella')}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                    activeTributeForCollection?.id === 'tribute-luna-spinella'
-                      ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
-                      : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
-                  }`}
-                >
-                  🐱 Luna Spinella (Gatita · 10 cartas)
-                </button>
-
-                <button
-                  id="scenario-btn-luna-navarro"
-                  type="button"
-                  onClick={() => selectScenario('tribute-luna-navarro')}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                    activeTributeForCollection?.id === 'tribute-luna-navarro'
-                      ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
-                      : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
-                  }`}
-                >
-                  🐶 Luna Navarro (Perra · 1 carta · Homónima)
-                </button>
-
-                <button
-                  id="scenario-btn-toby"
-                  type="button"
-                  onClick={() => selectScenario('tribute-toby-gomez')}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                    activeTributeForCollection?.id === 'tribute-toby-gomez'
-                      ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
-                      : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
-                  }`}
-                >
-                  🕊️ Toby (Perro · Sin foto)
-                </button>
-
-                <button
-                  id="scenario-btn-bruno"
-                  type="button"
-                  onClick={() => selectScenario('tribute-bruno-morales')}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
-                    activeTributeForCollection?.id === 'tribute-bruno-morales'
-                      ? 'bg-[#FFF0DD] text-[#24143C] border-[#D4B79E] font-bold shadow-sm'
-                      : 'bg-[#FFF0DD]/20 text-[#FFF0DD] border-[#D4B79E]/40 hover:bg-[#FFF0DD]/30'
-                  }`}
-                >
-                  ⭐ Bruno (Perro · Con Mural)
-                </button>
-
-                {activeTributeForCollection && (
+            <div className="max-w-7xl mx-auto flex flex-col gap-2.5 text-xs">
+              {/* Fila superior: Identificador y Ocultar */}
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="bg-gradient-to-r from-[#D9629B] to-[#9B3F77] text-white px-2.5 py-0.5 rounded-full font-bold text-[10px] sm:text-[11px] tracking-wider uppercase shadow-xs">
+                    🧪 PANEL DE DEMOSTRACIÓN LOCAL (NO VISIBLE EN PRODUCCIÓN)
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10.5px] text-white/60 hidden xl:inline">
+                    * Los permisos se validan estrictamente en el backend. Un cambio de modo visual no concede autorización de escritura.
+                  </span>
                   <button
-                    id="scenario-btn-index"
+                    id="btn-hide-demo-dock"
                     type="button"
-                    onClick={() => {
-                      setActiveTributeForCollection(null);
-                      setShowNewLetterForm(false);
-                    }}
-                    className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#A44F99] text-white border border-white/30 hover:bg-[#B8589E] transition-all cursor-pointer"
+                    onClick={() => setIsDemoDockCollapsed(true)}
+                    className="text-[11px] font-bold text-white/80 hover:text-white bg-white/10 hover:bg-white/20 px-2.5 py-0.5 rounded-full transition-colors cursor-pointer border border-white/20 inline-flex items-center gap-1"
+                    title="Minimizar panel para ver la interfaz limpia sin elementos de prueba"
                   >
-                    📚 Volver al Índice General
-                  </button>
-                )}
-              </div>
-
-              {/* Selector de Rol Simulado & Reinicio */}
-              <div className="flex items-center gap-2">
-                <div className="inline-flex items-center p-0.5 rounded-full bg-white/10 border border-white/20">
-                  <button
-                    id="role-btn-guardian"
-                    type="button"
-                    onClick={() => handleSwitchRole('guardian')}
-                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
-                      reviewerRole === 'guardian'
-                        ? 'bg-[#D9629B] text-white shadow-xs'
-                        : 'text-white/70 hover:text-white'
-                    }`}
-                  >
-                    🛡️ Modo Guardián
-                  </button>
-                  <button
-                    id="role-btn-visitor"
-                    type="button"
-                    onClick={() => handleSwitchRole('visitor')}
-                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
-                      reviewerRole === 'visitor'
-                        ? 'bg-[#D9629B] text-white shadow-xs'
-                        : 'text-white/70 hover:text-white'
-                    }`}
-                  >
-                    👀 Modo Visitante
+                    <span>✕</span>
+                    <span>Ocultar panel</span>
                   </button>
                 </div>
+              </div>
 
-                <button
-                  type="button"
-                  onClick={handleResetPrototypeData}
-                  title="Restablecer datos de prueba"
-                  className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white text-xs transition-colors cursor-pointer border border-white/20"
-                >
-                  🔄
-                </button>
+              {/* Fila inferior: Escenarios de prueba y Selector de rol simulado */}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center flex-wrap gap-1.5">
+                  <span className="text-white/60 text-[11px] hidden lg:inline mr-0.5">Escenarios:</span>
+                  <button
+                    id="scenario-btn-chloe"
+                    type="button"
+                    onClick={() => selectScenario('tribute-chloe')}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                      activeTributeForCollection?.id === 'tribute-chloe'
+                        ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                        : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+                    }`}
+                  >
+                    🐶 Chloe (Perrita · 3 cartas)
+                  </button>
+
+                  <button
+                    id="scenario-btn-luna-spinella"
+                    type="button"
+                    onClick={() => selectScenario('tribute-luna-spinella')}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                      activeTributeForCollection?.id === 'tribute-luna-spinella'
+                        ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                        : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+                    }`}
+                  >
+                    🐱 Luna Spinella (Gatita · 10 cartas)
+                  </button>
+
+                  <button
+                    id="scenario-btn-luna-navarro"
+                    type="button"
+                    onClick={() => selectScenario('tribute-luna-navarro')}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                      activeTributeForCollection?.id === 'tribute-luna-navarro'
+                        ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                        : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+                    }`}
+                  >
+                    🐶 Luna Navarro (Perra · 1 carta · Homónima)
+                  </button>
+
+                  <button
+                    id="scenario-btn-toby"
+                    type="button"
+                    onClick={() => selectScenario('tribute-toby-gomez')}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                      activeTributeForCollection?.id === 'tribute-toby-gomez'
+                        ? 'bg-[#E1CEDF] text-[#24143C] border-white font-bold shadow-sm'
+                        : 'bg-white/10 text-white/90 border-white/20 hover:bg-white/20'
+                    }`}
+                  >
+                    🕊️ Toby (Perro · Sin foto)
+                  </button>
+
+                  <button
+                    id="scenario-btn-bruno"
+                    type="button"
+                    onClick={() => selectScenario('tribute-bruno-morales')}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-semibold border transition-all cursor-pointer ${
+                      activeTributeForCollection?.id === 'tribute-bruno-morales'
+                        ? 'bg-[#FFF0DD] text-[#24143C] border-[#D4B79E] font-bold shadow-sm'
+                        : 'bg-[#FFF0DD]/20 text-[#FFF0DD] border-[#D4B79E]/40 hover:bg-[#FFF0DD]/30'
+                    }`}
+                  >
+                    ⭐ Bruno (Perro · Con Mural)
+                  </button>
+
+                  {activeTributeForCollection && (
+                    <button
+                      id="scenario-btn-index"
+                      type="button"
+                      onClick={() => {
+                        setActiveTributeForCollection(null);
+                        setShowNewLetterForm(false);
+                      }}
+                      className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-[#A44F99] text-white border border-white/30 hover:bg-[#B8589E] transition-all cursor-pointer"
+                    >
+                      📚 Volver al Índice General
+                    </button>
+                  )}
+                </div>
+
+                {/* Selector de Rol Simulado & Reinicio */}
+                <div className="flex items-center gap-2">
+                  <div className="inline-flex items-center p-0.5 rounded-full bg-white/10 border border-white/20">
+                    <button
+                      id="role-btn-guardian"
+                      type="button"
+                      onClick={() => handleSwitchRole('guardian')}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                        reviewerRole === 'guardian'
+                          ? 'bg-[#D9629B] text-white shadow-xs'
+                          : 'text-white/70 hover:text-white'
+                      }`}
+                    >
+                      🛡️ Modo Guardián
+                    </button>
+                    <button
+                      id="role-btn-visitor"
+                      type="button"
+                      onClick={() => handleSwitchRole('visitor')}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                        reviewerRole === 'visitor'
+                          ? 'bg-[#D9629B] text-white shadow-xs'
+                          : 'text-white/70 hover:text-white'
+                      }`}
+                    >
+                      👀 Modo Visitante
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleResetPrototypeData}
+                    title="Restablecer datos de prueba"
+                    className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white text-xs transition-colors cursor-pointer border border-white/20"
+                  >
+                    🔄
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </aside>
+          </aside>
+        )
       )}
 
       {/* Menú Propio Oficial de Cartas al Cielo */}
@@ -1567,9 +1612,126 @@ export default function ComunidadClient({ initialMemories }: Props) {
         </picture>
 
         {/* ========================================================================= */}
-        {/* VISTA CONDICIONAL: NIVEL 1 (ÍNDICE GENERAL) VS NIVEL 2 (COLECCIÓN)        */}
+        {/* VISTA CONDICIONAL: HISTÓRICA / PRODUCCIÓN VS EXPERIMENTAL MULTICARTA       */}
         {/* ========================================================================= */}
-        {!activeTributeForCollection ? (
+        {!activeMulticarta ? (
+          <div className="libro-contenido max-w-6xl mx-auto px-4 sm:px-6 relative z-10 pb-16">
+            <header className="text-center pt-8 pb-4">
+              <img 
+                className="libro-insignia mx-auto mb-3" 
+                src="/images/cartas-al-cielo/libro/assets/sobre-abierto.webp" 
+                alt="Sobre abierto de El Libro de los Ángeles" 
+              />
+              <h2 id="libro-titulo" className="font-playfair text-3xl sm:text-4xl text-[#541731] font-bold">El Libro de los Ángeles</h2>
+              <p className="text-xs sm:text-sm text-[#7A4253] text-center max-w-lg mx-auto mt-2 italic font-serif">
+                Un rincón sagrado donde cada ángel tiene su luz encendida.
+              </p>
+            </header>
+
+            {/* SELECTOR ORIGINAL DE FILTROS */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 my-6 sm:my-8 max-w-4xl mx-auto px-2 relative z-10">
+              <div 
+                role="tablist" 
+                aria-label="Filtrar cartas por tipo de mascota" 
+                className="flex flex-wrap items-center justify-center gap-1.5 p-1 rounded-2xl sm:rounded-full bg-[rgba(246,238,244,0.75)] border border-[#EFE4EC] shadow-sm max-w-full"
+              >
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeFilter === 'todos'}
+                  onClick={() => { setActiveFilter('todos'); setCurrentPage(1); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                    activeFilter === 'todos'
+                      ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
+                      : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
+                  }`}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'todos' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
+                  <span>Todos</span>
+                </button>
+
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeFilter === 'perro'}
+                  onClick={() => { setActiveFilter('perro'); setCurrentPage(1); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                    activeFilter === 'perro'
+                      ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
+                      : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
+                  }`}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'perro' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
+                  <span>Perros</span>
+                </button>
+
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeFilter === 'gato'}
+                  onClick={() => { setActiveFilter('gato'); setCurrentPage(1); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                    activeFilter === 'gato'
+                      ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
+                      : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
+                  }`}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'gato' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
+                  <span>Gatos</span>
+                </button>
+
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeFilter === 'otro'}
+                  onClick={() => { setActiveFilter('otro'); setCurrentPage(1); }}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all min-h-[36px] cursor-pointer ${
+                    activeFilter === 'otro'
+                      ? 'bg-gradient-to-r from-[#A4509B] to-[#C85998] text-white font-bold shadow-[0_3px_10px_rgba(164,80,155,0.3)]'
+                      : 'bg-white text-[#5B2E58] hover:bg-[#FFF7FB] border border-[#DCCDDD]/40'
+                  }`}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill={activeFilter === 'otro' ? '#FFFFFF' : '#843969'}><ellipse cx="12" cy="16.5" rx="5" ry="4"/><circle cx="6" cy="10" r="2.2"/><circle cx="10" cy="6.8" r="2.2"/><circle cx="14" cy="6.8" r="2.2"/><circle cx="18" cy="10" r="2.2"/></svg>
+                  <span>Otros</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Grid de recuerdos históricos */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-8">
+              {pageMemories.map(m => renderMemoryCard(m))}
+            </div>
+
+            {/* Paginación */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-3 pt-8 relative z-10">
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(safePage - 1)}
+                  disabled={safePage <= 1}
+                  className="px-4 py-2 rounded-full border border-[#D4B79E] text-xs font-semibold text-[#541731] bg-white/80 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                >
+                  ← Anterior
+                </button>
+                <span className="text-xs font-bold text-[#834E54] px-2 select-none">
+                  Página {safePage} de {totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handlePageChange(safePage + 1)}
+                  disabled={safePage >= totalPages}
+                  className="px-4 py-2 rounded-full border border-[#D4B79E] text-xs font-semibold text-[#541731] bg-white/80 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          /* ========================================================================= */
+          /* VISTA MULTICARTA: NIVEL 1 (ÍNDICE GENERAL) VS NIVEL 2 (COLECCIÓN)        */
+          /* ========================================================================= */
+          !activeTributeForCollection ? (
           <>
             {/* 4.1 CABECERA DEL LIBRO DE LOS ÁNGELES */}
             <header>
@@ -2233,7 +2395,7 @@ export default function ComunidadClient({ initialMemories }: Props) {
             </div>
 
           </div>
-        )}
+        ))}
 
       </section>
 

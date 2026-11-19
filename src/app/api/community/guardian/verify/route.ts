@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateGuardianSession } from '@/lib/community/tributesDb';
+import { isMulticartaFeatureEnabled } from '@/lib/community/featureFlags';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
+    if (!isMulticartaFeatureEnabled(req)) {
+      return NextResponse.json({ success: false, error: 'Funcionalidad no habilitada' }, { status: 404 });
+    }
+
     const { token, tributeSlug } = await req.json();
     if (!token) {
       return NextResponse.json({ success: false, error: 'Token requerido' }, { status: 400 });
