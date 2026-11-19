@@ -1924,53 +1924,63 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                       <li key={tribute.id} className="w-full">
                         <button
                           type="button"
-                          className="libro-sobre group focus:outline-none"
+                          className="libro-sobre group focus:outline-none w-full"
                           aria-label={`Abrir la colección de cartas para ${tribute.petName}`}
                           onClick={(e) => {
                             lastActiveTriggerRef.current = e.currentTarget;
                             handleOpenCollection(tribute);
                           }}
                         >
-                          {/* Hoja marfil que sobresale ligeramente */}
+                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto (sin Para [nombre]) */}
                           <span className="libro-pestaña">
                             {hasLetters ? (
                               <>
-                                <span className="block text-xs font-bold text-[#8C3F71] mb-0.5">
-                                  {latestLetter?.categoryLabel ? `${latestLetter.categoryLabel} · ` : ''}{latestLetter?.displayDate || 'Carta de homenaje'}
+                                <span className="flex items-center justify-between gap-1 mb-1">
+                                  <span className="text-xs font-bold text-[#8C3F71] tracking-wide inline-flex items-center gap-1 truncate max-w-[65%]">
+                                    <span>{latestLetter?.categoryLabel || 'Carta conmemorativa'}</span>
+                                  </span>
+                                  <span className="text-[11px] text-[#7A4253] font-serif italic shrink-0">
+                                    {latestLetter?.displayDate}
+                                  </span>
                                 </span>
-                                <span className="block font-serif text-[13.5px] sm:text-[14.5px] leading-relaxed line-clamp-3 text-[#541731]/90">
-                                  {previewLetterText(latestLetter?.message || '', 105)}
+                                {latestLetter?.title ? (
+                                  <span className="block font-playfair font-semibold text-xs sm:text-sm text-[#541731] line-clamp-1 mb-0.5">
+                                    «{latestLetter.title}»
+                                  </span>
+                                ) : null}
+                                <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#541731]/80">
+                                  {previewLetterText(latestLetter?.message || '', 90)}
                                 </span>
                               </>
                             ) : (
                               <>
-                                <span className="block text-xs font-bold text-[#8C3F71] mb-0.5">
-                                  Colección abierta
+                                <span className="block text-xs font-bold text-[#8C3F71] mb-1">
+                                  Colección conmemorativa
                                 </span>
-                                <span className="block font-serif text-[13px] sm:text-[14px] leading-relaxed line-clamp-3 text-[#7A4253] italic">
-                                  Aún no tiene cartas publicadas. Abre su sobre para dedicarle la primera palabra de amor.
+                                <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#7A4253] italic">
+                                  Aún no tiene cartas escritas. Abre su sobre para dedicarle la primera.
                                 </span>
                               </>
                             )}
                           </span>
 
-                          {/* Sobre cerrado con Para [Nombre] y badge de colección claro */}
+                          {/* Frontal del sobre: Protagonista «Para [Nombre]» centrado en zona limpia + Botón «Abrir esta carta» */}
                           <span 
                             className="libro-frente"
                             style={{
                               backgroundImage: `url('${envelopeAsset}')`,
                             }}
                           >
-                            <span className="relative z-10 flex flex-col items-center justify-center text-center px-2 max-w-[92%]">
-                              <span className="font-playfair font-bold text-[#541731] text-base sm:text-lg lg:text-xl drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200">
+                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[86%] gap-1.5 sm:gap-2">
+                              {/* Para [Nombre] como protagonista, centrado y limpio, sin sombras ni pliegues */}
+                              <span className="font-playfair font-bold text-[#541731] text-[15px] sm:text-[17px] lg:text-[20px] leading-tight text-center max-w-full line-clamp-2">
                                 Para {tribute.petName}
                               </span>
-                              <span className="mt-1 inline-flex items-center gap-1 text-[11px] sm:text-xs font-sans font-semibold text-[#7A4253] bg-white/90 px-3 py-0.5 rounded-full border border-[#D4B79E]/60 shadow-xs">
-                                {hasLetters ? (
-                                  <span>✉️ {tribute.letters.length === 1 ? '1 carta llena de amor' : `${tribute.letters.length} cartas llenas de amor`}</span>
-                                ) : (
-                                  <span>🕊️ Sin cartas aún</span>
-                                )}
+
+                              {/* Botón de apertura en la parte inferior */}
+                              <span className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[32px] sm:min-h-[34px]">
+                                <span>Abrir esta carta</span>
+                                <span aria-hidden="true">→</span>
                               </span>
                             </span>
                           </span>
@@ -2363,52 +2373,48 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                       <li key={letter.id} className="w-full">
                         <button
                           type="button"
-                          className="libro-sobre group focus:outline-none"
+                          className="libro-sobre group focus:outline-none w-full"
                           aria-label={`Abrir carta: ${letter.title} para ${activeTributeForCollection.petName}`}
                           onClick={(e) => {
                             lastActiveTriggerRef.current = e.currentTarget;
                             setActiveLetterForReader({ letter, tribute: activeTributeForCollection });
                           }}
                         >
-                          {/* Hoja marfil que sobresale con motivo, fecha y título (mensaje íntegro oculto hasta abrirlo) */}
+                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto y número discreto */}
                           <span className="libro-pestaña">
-                            <span className="flex items-center justify-between gap-1 mb-1">
-                              <span className="text-xs font-bold text-[#8C3F71] tracking-wide">
-                                {letter.categoryLabel}
+                            <span className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
+                              <span className="text-xs font-bold text-[#8C3F71] tracking-wide inline-flex items-center gap-1">
+                                <span className="text-[#8C3F71]/60 font-semibold">#{letterNumber}</span>
+                                <span>·</span>
+                                <span>{letter.categoryLabel}</span>
                               </span>
                               <span className="text-[11px] text-[#7A4253] font-serif italic">
                                 {letter.displayDate}
                               </span>
                             </span>
-                            <span className="block font-playfair font-semibold text-sm sm:text-base text-[#541731] line-clamp-1">
-                              «{letter.title}»
-                            </span>
-                            <span className="block font-serif text-xs italic text-[#7A4253]/80 mt-1">
-                              ✦ Carta conmemorativa sellada con amor ✦
-                            </span>
+                            {letter.title && (
+                              <span className="block font-playfair font-semibold text-sm sm:text-base text-[#541731] line-clamp-1">
+                                «{letter.title}»
+                              </span>
+                            )}
                           </span>
 
-                          {/* Sobre cerrado ilustrado con alto protagonismo visual */}
+                          {/* Frontal del sobre: Protagonista «Para [Nombre]» centrado en zona limpia + Botón «Abrir esta carta» */}
                           <span 
                             className="libro-frente"
                             style={{
                               backgroundImage: `url('${envelopeAsset}')`,
                             }}
                           >
-                            <span className="relative z-10 flex flex-col items-center justify-center text-center px-2.5 max-w-[92%]">
-                              {/* Para [Nombre] */}
-                              <span className="font-playfair font-bold text-[#541731] text-lg sm:text-xl lg:text-2xl drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200">
+                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[86%] gap-1.5 sm:gap-2">
+                              {/* Para [Nombre] como protagonista claro, centrado y sin sombras */}
+                              <span className="font-playfair font-bold text-[#541731] text-[15px] sm:text-[18px] lg:text-[21px] leading-tight text-center max-w-full line-clamp-2">
                                 Para {activeTributeForCollection.petName}
                               </span>
 
-                              {/* Motivo y fecha */}
-                              <span className="text-[11px] sm:text-xs font-sans text-[#7A4253] font-semibold mt-0.5">
-                                {letter.categoryLabel} · {letter.displayDate}
-                              </span>
-
-                              {/* CTA Abrir esta carta */}
-                              <span className="mt-2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#541731] text-[#FFF6EE] text-xs font-bold shadow-md transition-all group-hover:bg-[#722B55] group-hover:shadow-lg">
-                                <span>✉️ Abrir esta carta</span>
+                              {/* Botón de apertura en la parte inferior */}
+                              <span className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[32px] sm:min-h-[34px]">
+                                <span>Abrir esta carta</span>
                                 <span aria-hidden="true">→</span>
                               </span>
                             </span>

@@ -1669,12 +1669,12 @@ p,
   position: relative;
   display: block;
   margin: 0 9% -6px;
-  padding: 16px 13px 22px;
+  padding: 14px 14px 20px;
   background: var(--papel);
   box-shadow: 0 2px 7px rgba(84, 45, 38, 0.11);
   border-radius: 7px 7px 0 0;
-  font-size: 15px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.4;
   color: var(--tinta);
   opacity: 0.95;
 }
@@ -1686,9 +1686,7 @@ p,
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 0 10% 7%;
-  font-size: clamp(16px, 2vw, 24px);
-  font-weight: 600;
+  padding: 0 8% 6.5%;
   background: var(--arte) center/100% 100% no-repeat;
   box-shadow: 0 8px 13px rgba(84, 45, 38, 0.18);
   --arte: url('/images/cartas-al-cielo/libro/assets/sobre-crema.webp');

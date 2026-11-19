@@ -334,6 +334,73 @@ Mira hacia abajo hoy y siente todo nuestro amor. Sé que estás corriendo libre 
     letters: [], // Cero cartas deliberadamente
   },
 
+  // 6. ESCENARIO NOMBRE COMPUESTO: Mary Margaret (Gatita) - 1 carta
+  {
+    id: 'tribute-mary-margaret',
+    slug: 'mary-margaret',
+    petName: 'Mary Margaret',
+    species: 'gato',
+    speciesLabel: 'Gatita',
+    photoUrl: '/images/comunidad/gato-alado.webp',
+    yearsOrDates: '2011 - 2025',
+    authorName: 'Familia Henderson',
+    guardianEmail: 'familia.henderson@ejemplo.com',
+    muralSlot: null,
+    candlesCount: 68,
+    supportCount: 22,
+    hugsCount: 35,
+    letters: [
+      {
+        id: 'letter-mary-1',
+        tributeId: 'tribute-mary-margaret',
+        title: 'Siempre en el rincón más tibio del salón',
+        category: 'aniversario',
+        categoryLabel: '🕊️ Primer Aniversario',
+        displayDate: '14 de noviembre, 2026',
+        publishedAt: '2026-11-14T10:00:00Z',
+        authorName: 'Familia Henderson',
+        candlesCount: 68,
+        hugsCount: 35,
+        envelopeColor: 'lavanda',
+        message: 'Tu elegancia silenciosa y tus paseos tranquilos por la biblioteca llenaban la casa de paz. Gracias por catorce años de ternura infinita, nuestra dulce Mary Margaret.',
+      },
+    ],
+  },
+
+  // 7. ESCENARIO NOMBRE DE 25 CARACTERES: Princesa Valentina Isabel (Perra) - 1 carta
+  // "Princesa Valentina Isabel".length === 25 caracteres exactos
+  {
+    id: 'tribute-princesa-valentina',
+    slug: 'princesa-valentina-isabel',
+    petName: 'Princesa Valentina Isabel',
+    species: 'perro',
+    speciesLabel: 'Perrita',
+    photoUrl: '/images/comunidad/chloe.jpg',
+    yearsOrDates: '2010 - 2026',
+    authorName: 'Familia Montero',
+    guardianEmail: 'familia.montero@ejemplo.com',
+    muralSlot: null,
+    candlesCount: 92,
+    supportCount: 38,
+    hugsCount: 54,
+    letters: [
+      {
+        id: 'letter-princesa-1',
+        tributeId: 'tribute-princesa-valentina',
+        title: 'Nuestra noble reina del hogar',
+        category: 'despedida',
+        categoryLabel: '💌 Carta de despedida',
+        displayDate: '28 de octubre, 2026',
+        publishedAt: '2026-10-28T16:30:00Z',
+        authorName: 'Familia Montero',
+        candlesCount: 92,
+        hugsCount: 54,
+        envelopeColor: 'rosa',
+        message: 'Llegaste a nuestras vidas con el porte de una verdadera reina y el corazón más generoso que jamás conocimos. Tu nombre largo reflejaba la grandeza del amor que nos diste cada día.',
+      },
+    ],
+  },
+
   // 6. ESCENARIO 6B: Bruno (Perro - Con Casilla en Mural Global) - 2 cartas
   // Corrección: Imagen cambiada a 'dog_crop_from_desktop.png' (foto limpia de perro sin texto "Max").
   {
