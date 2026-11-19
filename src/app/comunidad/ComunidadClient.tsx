@@ -1826,49 +1826,69 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                   <figure className="libro-foto">
                     <img 
                       src={firstFeaturedTribute.photoUrl} 
-                      alt={`Fotografía de ${firstFeaturedTribute.petName}`} 
+                      alt={`Fotografía conmemorativa de ${firstFeaturedTribute.petName}`} 
                       loading="lazy" 
                     />
                   </figure>
                 ) : (
-                  <div className="p-8 flex flex-col items-center justify-center text-center bg-[#FFF8F0] rounded-2xl border-2 border-dashed border-[#D4B79E]">
-                    <div className="w-16 h-16 rounded-full bg-[#FFFBF8] border-2 border-[#D4B79E] flex items-center justify-center text-3xl shadow-sm mb-2 text-[#A44F99]">
-                      🕊️
+                  /* Medallón celestial digno y proporcionado cuando la mascota carece de fotografía */
+                  <div className="flex flex-col items-center justify-center p-4 sm:p-6 text-center">
+                    <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full p-1.5 shadow-[0_6px_24px_rgba(84,45,38,0.14)] bg-gradient-to-br from-[#FFF5EC] via-[#FCEFF6] to-[#EBD5E4] border-2 border-[#D4B79E]">
+                      <div className="w-full h-full rounded-full border border-[#D4B79E]/60 flex flex-col items-center justify-center bg-radial from-white via-[#FFF8F2] to-[#FCEEF5] p-2 text-center">
+                        <span className="text-2xl sm:text-3xl mb-0.5" aria-hidden="true">
+                          {firstFeaturedTribute.species === 'gato' ? '🐱' : firstFeaturedTribute.species === 'perro' ? '🐶' : '🕊️'}
+                        </span>
+                        <span className="font-playfair font-bold text-[#541731] text-sm sm:text-base leading-tight">
+                          {firstFeaturedTribute.petName}
+                        </span>
+                        <span className="text-[10px] sm:text-[11px] font-serif italic text-[#8C3F71] mt-0.5">
+                          Ángel eterno
+                        </span>
+                      </div>
+                      <span className="absolute -top-1 -right-1 text-sm select-none" aria-hidden="true">✨</span>
                     </div>
-                    <span className="font-playfair text-xl font-bold text-[#541731]">{firstFeaturedTribute.petName}</span>
-                    <span className="text-xs text-[#7A4253] italic">En memoria eterna</span>
                   </div>
                 )}
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E1CEDF] text-[#541731] font-bold text-[11px] border border-[#B89CB6]">
-                      ✉️ Colección ({firstFeaturedTribute.letters.length} {firstFeaturedTribute.letters.length === 1 ? 'carta' : 'cartas'})
+                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#E1CEDF] text-[#541731] font-bold text-xs border border-[#B89CB6]">
+                      ✉️ {firstFeaturedTribute.letters.length === 0 ? 'Sin cartas aún' : firstFeaturedTribute.letters.length === 1 ? '1 carta llena de amor' : `${firstFeaturedTribute.letters.length} cartas llenas de amor`}
                     </span>
                     {firstFeaturedTribute.yearsOrDates && (
-                      <span className="text-xs text-[#7A4253] italic font-serif">
+                      <span className="text-xs sm:text-sm text-[#7A4253] italic font-serif">
                         {firstFeaturedTribute.yearsOrDates} · {firstFeaturedTribute.authorName}
                       </span>
                     )}
                   </div>
 
-                  <h3 className="font-playfair text-[#541731] text-2xl sm:text-3xl font-bold">
+                  <h3 className="font-playfair text-[#541731] text-2xl sm:text-3xl lg:text-4xl font-bold">
                     Para {firstFeaturedTribute.petName}
                   </h3>
                   
-                  <p className="text-[#642944] leading-relaxed text-base sm:text-lg font-serif">
-                    {previewLetterText(firstFeaturedTribute.letters[0]?.message || '', 210)}
-                  </p>
+                  {firstFeaturedTribute.letters.length > 0 ? (
+                    <p className="text-[#642944] leading-relaxed text-base sm:text-lg font-serif">
+                      {previewLetterText(firstFeaturedTribute.letters[0]?.message || '', 210)}
+                    </p>
+                  ) : (
+                    <p className="text-[#7A4253] leading-relaxed text-sm sm:text-base font-serif italic">
+                      Esta colección conmemorativa está abierta con amor. Aún no se han escrito cartas para este angelito; su familia o amigos pueden dedicarle la primera.
+                    </p>
+                  )}
                   
                   <button 
                     type="button" 
-                    className="libro-leer inline-flex items-center gap-2 text-[#541731] font-bold cursor-pointer hover:opacity-80 transition-opacity"
+                    className="libro-leer inline-flex items-center gap-2 text-[#541731] font-bold cursor-pointer hover:opacity-80 transition-opacity text-sm sm:text-base"
                     onClick={(e) => {
                       lastActiveTriggerRef.current = e.currentTarget;
                       handleOpenCollection(firstFeaturedTribute);
                     }}
                   >
-                    <span>Abrir las cartas para {firstFeaturedTribute.petName} ({firstFeaturedTribute.letters.length} {firstFeaturedTribute.letters.length === 1 ? 'carta llena de amor' : 'cartas llenas de amor'})</span>
+                    <span>
+                      {firstFeaturedTribute.letters.length === 0 
+                        ? `Abrir colección de ${firstFeaturedTribute.petName}` 
+                        : `Abrir las cartas para ${firstFeaturedTribute.petName} (${firstFeaturedTribute.letters.length} ${firstFeaturedTribute.letters.length === 1 ? 'carta llena de amor' : 'cartas llenas de amor'})`}
+                    </span>
                     <span aria-hidden="true">→</span>
                   </button>
                 </div>
@@ -1898,6 +1918,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                       '/images/cartas-al-cielo/libro/assets/sobre-rosa.webp';
 
                     const latestLetter = tribute.letters[0];
+                    const hasLetters = tribute.letters.length > 0;
 
                     return (
                       <li key={tribute.id} className="w-full">
@@ -1912,27 +1933,44 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                         >
                           {/* Hoja marfil que sobresale ligeramente */}
                           <span className="libro-pestaña">
-                            <span className="block text-[11px] font-bold text-[#8C3F71] mb-0.5">
-                              {latestLetter?.displayDate || 'Carta de homenaje'}
-                            </span>
-                            <span className="block font-serif text-[14px] sm:text-[15px] leading-relaxed line-clamp-3 text-[#541731]/90">
-                              {previewLetterText(latestLetter?.message || '', 110)}
-                            </span>
+                            {hasLetters ? (
+                              <>
+                                <span className="block text-xs font-bold text-[#8C3F71] mb-0.5">
+                                  {latestLetter?.categoryLabel ? `${latestLetter.categoryLabel} · ` : ''}{latestLetter?.displayDate || 'Carta de homenaje'}
+                                </span>
+                                <span className="block font-serif text-[13.5px] sm:text-[14.5px] leading-relaxed line-clamp-3 text-[#541731]/90">
+                                  {previewLetterText(latestLetter?.message || '', 105)}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="block text-xs font-bold text-[#8C3F71] mb-0.5">
+                                  Colección abierta
+                                </span>
+                                <span className="block font-serif text-[13px] sm:text-[14px] leading-relaxed line-clamp-3 text-[#7A4253] italic">
+                                  Aún no tiene cartas publicadas. Abre su sobre para dedicarle la primera palabra de amor.
+                                </span>
+                              </>
+                            )}
                           </span>
 
-                          {/* Sobre cerrado con Para [Nombre] y badge de colección */}
+                          {/* Sobre cerrado con Para [Nombre] y badge de colección claro */}
                           <span 
                             className="libro-frente"
                             style={{
                               backgroundImage: `url('${envelopeAsset}')`,
                             }}
                           >
-                            <span className="relative z-10 flex flex-col items-center justify-center text-center px-2">
+                            <span className="relative z-10 flex flex-col items-center justify-center text-center px-2 max-w-[92%]">
                               <span className="font-playfair font-bold text-[#541731] text-base sm:text-lg lg:text-xl drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200">
                                 Para {tribute.petName}
                               </span>
-                              <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-sans font-semibold text-[#7A4253] bg-white/85 px-2.5 py-0.5 rounded-full border border-[#D4B79E]/60 shadow-xs">
-                                ✉️ {tribute.letters.length > 1 ? `Colección (${tribute.letters.length} cartas)` : `1 carta`}
+                              <span className="mt-1 inline-flex items-center gap-1 text-[11px] sm:text-xs font-sans font-semibold text-[#7A4253] bg-white/90 px-3 py-0.5 rounded-full border border-[#D4B79E]/60 shadow-xs">
+                                {hasLetters ? (
+                                  <span>✉️ {tribute.letters.length === 1 ? '1 carta llena de amor' : `${tribute.letters.length} cartas llenas de amor`}</span>
+                                ) : (
+                                  <span>🕊️ Sin cartas aún</span>
+                                )}
                               </span>
                             </span>
                           </span>
@@ -2003,6 +2041,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
 
             {/* Tarjeta de Identidad y Cabecera de la Colección */}
             <article className={`libro-hoja libro-destacada ${!activeTributeForCollection.photoUrl ? 'sin-foto' : ''} md:!grid-cols-[280px_1fr]`}>
+              {/* 4. Fotografía o medallón celestial */}
               {activeTributeForCollection.photoUrl ? (
                 <figure className="libro-foto max-w-[180px] max-h-[180px] md:max-w-[280px] md:max-h-[300px] w-full mx-auto md:mx-0 overflow-hidden rounded-xl shadow-md border-2 border-white/80">
                   <img 
@@ -2013,38 +2052,61 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                   />
                 </figure>
               ) : (
-                <div className="p-6 sm:p-8 flex flex-col items-center justify-center text-center bg-[#FFF8F0] rounded-2xl border-2 border-dashed border-[#D4B79E] max-w-[280px] mx-auto md:mx-0 w-full">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#FFFBF8] border-2 border-[#D4B79E] flex items-center justify-center text-2xl sm:text-3xl shadow-sm mb-3 text-[#A44F99]">
-                    🕊️
+                /* Medallón celestial digno y proporcionado cuando la mascota carece de fotografía */
+                <div className="flex flex-col items-center justify-center p-4 sm:p-6 text-center max-w-[260px] mx-auto md:mx-0 w-full">
+                  <div className="relative w-32 h-32 sm:w-40 sm:h-40 rounded-full p-2 shadow-[0_8px_30px_rgba(84,45,38,0.16)] bg-gradient-to-br from-[#FFF5EC] via-[#FCEFF6] to-[#EBD5E4] border-2 border-[#D4B79E]">
+                    <div className="w-full h-full rounded-full border border-[#D4B79E]/60 flex flex-col items-center justify-center bg-radial from-white via-[#FFF8F2] to-[#FCEEF5] p-3 text-center">
+                      <span className="text-3xl sm:text-4xl mb-1" aria-hidden="true">
+                        {activeTributeForCollection.species === 'gato' ? '🐱' : activeTributeForCollection.species === 'perro' ? '🐶' : '🕊️'}
+                      </span>
+                      <span className="font-playfair font-bold text-[#541731] text-base sm:text-lg leading-tight">
+                        {activeTributeForCollection.petName}
+                      </span>
+                      <span className="text-[11px] font-serif italic text-[#8C3F71] mt-1">
+                        Ángel en el cielo
+                      </span>
+                    </div>
+                    <span className="absolute -top-1 -right-1 text-base select-none" aria-hidden="true">✨</span>
                   </div>
-                  <span className="font-playfair text-xl font-bold text-[#541731]">{activeTributeForCollection.petName}</span>
-                  <span className="text-xs text-[#7A4253] italic mt-1">Homenaje conmemorativo sin fotografía</span>
                 </div>
               )}
 
               <div className="space-y-4">
                 <div>
-                  {/* Título de la colección */}
+                  {/* 1. Título de la colección */}
                   <span className="block font-serif text-xs sm:text-sm font-bold tracking-wider text-[#8C3F71] uppercase mb-1">
                     Las cartas para mi angelito
                   </span>
 
-                  {/* Nombre destacado debajo */}
+                  {/* 2. Nombre destacado debajo */}
                   <h3 className="font-playfair text-[#541731] text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
                     {activeTributeForCollection.petName}
                   </h3>
 
-                  {/* Subtítulo dinámico */}
-                  <p className="font-playfair italic text-base sm:text-lg text-[#8C3F71] mt-1 font-medium">
-                    {activeTributeForCollection.letters.length === 1 
-                      ? '1 carta llena de amor' 
-                      : `${activeTributeForCollection.letters.length} cartas llenas de amor`}
+                  {/* 3. Subtítulo dinámico */}
+                  <p className="font-playfair italic text-base sm:text-xl text-[#8C3F71] mt-1 font-medium">
+                    {activeTributeForCollection.letters.length === 0
+                      ? 'Esperando su primera carta de amor'
+                      : activeTributeForCollection.letters.length === 1 
+                        ? '1 carta llena de amor' 
+                        : `${activeTributeForCollection.letters.length} cartas llenas de amor`}
                   </p>
 
-                  {/* Metadatos conmemorativos */}
-                  <p className="text-xs sm:text-sm font-sans text-[#7A4253] mt-1.5">
-                    {[activeTributeForCollection.authorName, activeTributeForCollection.yearsOrDates, activeTributeForCollection.speciesLabel || (activeTributeForCollection.species === 'gato' ? 'Gatita' : activeTributeForCollection.species === 'perro' ? 'Perrita / Perro' : 'Compañero')].filter(Boolean).join(' · ')}
+                  {/* 5. Familia y fechas */}
+                  <p className="text-xs sm:text-sm font-sans text-[#7A4253] mt-2">
+                    {[
+                      `Dedicado por ${activeTributeForCollection.authorName}`,
+                      activeTributeForCollection.yearsOrDates,
+                      activeTributeForCollection.speciesLabel || (activeTributeForCollection.species === 'gato' ? 'Gatita' : activeTributeForCollection.species === 'perro' ? 'Perrita / Perro' : 'Compañero')
+                    ].filter(Boolean).join(' · ')}
                   </p>
+
+                  {/* Contadores secundarios con protagonismo visual reducido */}
+                  <div className="flex items-center gap-3 text-[11.5px] font-sans text-[#7A4253]/70 pt-1.5 flex-wrap">
+                    <span>🕯️ {activeTributeForCollection.candlesCount} velas encendidas</span>
+                    <span>·</span>
+                    <span>🐾 {activeTributeForCollection.hugsCount} abrazos de consuelo</span>
+                  </div>
                 </div>
 
                 {/* Escenario B: Distintivo de Vinculación al Mural Global */}
@@ -2067,38 +2129,25 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                   </div>
                 )}
 
-                <div className="flex items-center gap-4 text-xs font-semibold text-[#642944] flex-wrap">
-                  <span className="inline-flex items-center gap-1.5">
-                    <span>✉️</span>
-                    <span>{activeTributeForCollection.letters.length} {activeTributeForCollection.letters.length === 1 ? 'carta publicada' : 'cartas publicadas'}</span>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <span>🕯️</span>
-                    <span>{activeTributeForCollection.candlesCount} velas encendidas</span>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <span>🐾</span>
-                    <span>{activeTributeForCollection.hugsCount} abrazos de consuelo</span>
-                  </span>
-                </div>
-
                 {/* Acceso directo a las cartas en móvil */}
-                <div className="md:hidden pt-2">
-                  <a
-                    href="#cartas-coleccion-lista"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      const target = document.getElementById('cartas-coleccion-lista');
-                      if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }
-                    }}
-                    className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-[#541731] bg-[#FFF9F2] hover:bg-[#FFF2E5] border border-[#D4B79E] shadow-xs active:scale-[0.98] transition-all cursor-pointer"
-                  >
-                    <span>↓</span>
-                    <span>Ver las cartas ({activeTributeForCollection.letters.length})</span>
-                  </a>
-                </div>
+                {activeTributeForCollection.letters.length > 0 && (
+                  <div className="md:hidden pt-2">
+                    <a
+                      href="#cartas-coleccion-lista"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const target = document.getElementById('cartas-coleccion-lista');
+                        if (target) {
+                          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                      }}
+                      className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-[#541731] bg-[#FFF9F2] hover:bg-[#FFF2E5] border border-[#D4B79E] shadow-xs active:scale-[0.98] transition-all cursor-pointer"
+                    >
+                      <span>↓</span>
+                      <span>Ver las cartas ({activeTributeForCollection.letters.length})</span>
+                    </a>
+                  </div>
+                )}
 
                 {/* Acciones según Rol (Guardián vs Visitante) */}
                 <div className="pt-2 border-t border-[#D4B79E]/60">
@@ -2290,67 +2339,86 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                 <div className="w-20 h-0.5 bg-[#a87541]/40 mx-auto mt-2" />
               </div>
 
-              <ul className="libro-indice">
-                {activeTributeForCollection.letters.map((letter, idx) => {
-                  const envelopeAsset = 
-                    letter.envelopeColor === 'crema' ? '/images/cartas-al-cielo/libro/assets/sobre-crema.webp' :
-                    letter.envelopeColor === 'lavanda' ? '/images/cartas-al-cielo/libro/assets/sobre-lavanda.webp' :
-                    '/images/cartas-al-cielo/libro/assets/sobre-rosa.webp';
+              {activeTributeForCollection.letters.length === 0 ? (
+                <div className="libro-hoja text-center py-10 px-6 max-w-xl mx-auto space-y-3 bg-[#FFFBF8] border border-[#D4B79E] rounded-2xl">
+                  <span className="text-3xl">💌</span>
+                  <h5 className="font-playfair text-xl font-bold text-[#541731]">
+                    Aún no hay cartas escritas para {activeTributeForCollection.petName}
+                  </h5>
+                  <p className="text-xs sm:text-sm text-[#7A4253] leading-relaxed max-w-md mx-auto">
+                    Esta colección ha sido creada con amor para honrar su recuerdo. Si eres su familia guardiana, puedes dedicarle la primera carta usando el botón superior.
+                  </p>
+                </div>
+              ) : (
+                <ul className="libro-indice">
+                  {activeTributeForCollection.letters.map((letter, idx) => {
+                    const envelopeAsset = 
+                      letter.envelopeColor === 'crema' ? '/images/cartas-al-cielo/libro/assets/sobre-crema.webp' :
+                      letter.envelopeColor === 'lavanda' ? '/images/cartas-al-cielo/libro/assets/sobre-lavanda.webp' :
+                      '/images/cartas-al-cielo/libro/assets/sobre-rosa.webp';
 
-                  const letterNumber = activeTributeForCollection.letters.length - idx;
+                    const letterNumber = activeTributeForCollection.letters.length - idx;
 
-                  return (
-                    <li key={letter.id} className="w-full">
-                      <button
-                        type="button"
-                        className="libro-sobre group focus:outline-none"
-                        aria-label={`Abrir carta: ${letter.title} para ${activeTributeForCollection.petName}`}
-                        onClick={(e) => {
-                          lastActiveTriggerRef.current = e.currentTarget;
-                          setActiveLetterForReader({ letter, tribute: activeTributeForCollection });
-                        }}
-                      >
-                        {/* Hoja marfil que sobresale con categoría, fecha y extracto */}
-                        <span className="libro-pestaña">
-                          <span className="block text-[10.5px] font-bold text-[#8C3F71] mb-0.5">
-                            {letter.categoryLabel}
-                          </span>
-                          <span className="block text-[11px] text-[#7A4253] italic mb-1">
-                            {letter.displayDate}
-                          </span>
-                          <span className="block font-serif text-[13.5px] sm:text-[14.5px] leading-relaxed line-clamp-3 text-[#541731]/90">
-                            {previewLetterText(letter.message, 110)}
-                          </span>
-                        </span>
-
-                        {/* Sobre cerrado ilustrado con identidad clara */}
-                        <span 
-                          className="libro-frente"
-                          style={{
-                            backgroundImage: `url('${envelopeAsset}')`,
+                    return (
+                      <li key={letter.id} className="w-full">
+                        <button
+                          type="button"
+                          className="libro-sobre group focus:outline-none"
+                          aria-label={`Abrir carta: ${letter.title} para ${activeTributeForCollection.petName}`}
+                          onClick={(e) => {
+                            lastActiveTriggerRef.current = e.currentTarget;
+                            setActiveLetterForReader({ letter, tribute: activeTributeForCollection });
                           }}
                         >
-                          <span className="relative z-10 flex flex-col items-center justify-center text-center px-2.5 max-w-[90%]">
-                            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#8C3F71] bg-white/90 px-2.5 py-0.5 rounded-full mb-1 border border-[#D4B79E]/40 shadow-2xs">
-                              Carta #{letterNumber} · {letter.categoryLabel}
+                          {/* Hoja marfil que sobresale con motivo, fecha y título (mensaje íntegro oculto hasta abrirlo) */}
+                          <span className="libro-pestaña">
+                            <span className="flex items-center justify-between gap-1 mb-1">
+                              <span className="text-xs font-bold text-[#8C3F71] tracking-wide">
+                                {letter.categoryLabel}
+                              </span>
+                              <span className="text-[11px] text-[#7A4253] font-serif italic">
+                                {letter.displayDate}
+                              </span>
                             </span>
-                            <span className="text-[11px] font-bold text-[#7A4253] italic">
-                              Para {activeTributeForCollection.petName}
+                            <span className="block font-playfair font-semibold text-sm sm:text-base text-[#541731] line-clamp-1">
+                              «{letter.title}»
                             </span>
-                            <span className="font-playfair font-bold text-[#541731] text-sm sm:text-base drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200 line-clamp-2 my-0.5">
-                              {letter.title}
-                            </span>
-                            <span className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#8C3F71] mt-1 group-hover:underline">
-                              <span>Leer carta completa</span>
-                              <span>→</span>
+                            <span className="block font-serif text-xs italic text-[#7A4253]/80 mt-1">
+                              ✦ Carta conmemorativa sellada con amor ✦
                             </span>
                           </span>
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
+
+                          {/* Sobre cerrado ilustrado con alto protagonismo visual */}
+                          <span 
+                            className="libro-frente"
+                            style={{
+                              backgroundImage: `url('${envelopeAsset}')`,
+                            }}
+                          >
+                            <span className="relative z-10 flex flex-col items-center justify-center text-center px-2.5 max-w-[92%]">
+                              {/* Para [Nombre] */}
+                              <span className="font-playfair font-bold text-[#541731] text-lg sm:text-xl lg:text-2xl drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)] group-hover:scale-105 transition-transform duration-200">
+                                Para {activeTributeForCollection.petName}
+                              </span>
+
+                              {/* Motivo y fecha */}
+                              <span className="text-[11px] sm:text-xs font-sans text-[#7A4253] font-semibold mt-0.5">
+                                {letter.categoryLabel} · {letter.displayDate}
+                              </span>
+
+                              {/* CTA Abrir esta carta */}
+                              <span className="mt-2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#541731] text-[#FFF6EE] text-xs font-bold shadow-md transition-all group-hover:bg-[#722B55] group-hover:shadow-lg">
+                                <span>✉️ Abrir esta carta</span>
+                                <span aria-hidden="true">→</span>
+                              </span>
+                            </span>
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
 
             {/* Escenario A: Invitación respetuosa al Mural Global para mascotas sin casilla */}
@@ -3013,20 +3081,37 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
 
       {/* MODAL LECTOR DE PAPEL MARFIL PARA CARTA DE COLECCIÓN */}
       {activeLetterForReader && (
-        <div 
-          role="dialog" 
-          aria-modal="true" 
-          aria-labelledby="dialog-carta-coleccion-titulo"
-          className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-4 bg-[#1F0D24]/70 backdrop-blur-xs animate-fade-in"
-        >
-          <div className="libro-dialog max-w-2xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-10 rounded-3xl shadow-2xl border border-[#D4B79E] text-[#541731] relative">
-            
+        <>
+          {/* Fondo oscuro translúcido con desenfoque suave */}
+          <div 
+            className="libro-dialog-backdrop"
+            onClick={() => {
+              setActiveLetterForReader(null);
+              setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
+            }}
+          />
+
+          <dialog 
+            open
+            role="dialog" 
+            aria-modal="true" 
+            aria-labelledby="dialog-carta-coleccion-titulo"
+            className="libro-dialog"
+            style={{
+              backgroundColor: '#fff4e7',
+              backgroundImage: "url('/images/cartas-al-cielo/libro/assets/papel.svg')",
+              color: '#541731',
+            }}
+          >
             {/* Botones de navegación superior */}
-            <div className="flex items-center justify-between gap-4 pb-4 border-b border-[#D4B79E]/60 mb-6">
+            <div className="flex items-center justify-between gap-4 pb-3 border-b border-[#D4B79E]/60 mb-5">
               <button
                 type="button"
-                onClick={() => setActiveLetterForReader(null)}
-                className="libro-cerrar text-xs sm:text-sm font-semibold text-[#8C3F71] hover:underline cursor-pointer flex items-center gap-1.5"
+                onClick={() => {
+                  setActiveLetterForReader(null);
+                  setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
+                }}
+                className="libro-cerrar text-xs sm:text-sm font-semibold text-[#8C3F71] hover:text-[#541731] transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 <span>←</span>
                 <span>Volver a la colección de {activeLetterForReader.tribute.petName}</span>
@@ -3035,51 +3120,92 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
               <button
                 id="modal-close-letter-btn"
                 type="button"
-                onClick={() => setActiveLetterForReader(null)}
+                onClick={() => {
+                  setActiveLetterForReader(null);
+                  setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
+                }}
                 className="min-w-[38px] min-h-[38px] rounded-full bg-[#FAF0E6] hover:bg-[#F2DEC9] text-[#541731] flex items-center justify-center font-bold text-base cursor-pointer transition-colors border border-[#D4B79E]/60 shadow-xs focus:ring-2 focus:ring-[#8C3F71] focus:outline-none"
-                aria-label="Cerrar carta"
+                aria-label={`Cerrar carta para ${activeLetterForReader.tribute.petName} y volver a la colección`}
               >
                 ✕
               </button>
             </div>
 
-            {/* Cabecera de la carta */}
-            <div className="space-y-1 text-center sm:text-left mb-6">
-              <div className="inline-block px-3 py-1 rounded-full bg-[#FAF0E6] border border-[#D4B79E] text-xs font-bold text-[#8C3F71] mb-2">
+            {/* Cabecera de la carta con motivo y nombre destacado */}
+            <div className="space-y-1.5 text-center sm:text-left mb-4">
+              <div className="inline-block px-3 py-1 rounded-full bg-[#FAF0E6] border border-[#D4B79E] text-xs font-bold text-[#8C3F71] shadow-2xs">
                 {activeLetterForReader.letter.categoryLabel}
               </div>
+
               <h3 id="dialog-carta-coleccion-titulo" className="font-playfair text-2xl sm:text-3xl lg:text-4xl font-bold text-[#541731]">
                 Para {activeLetterForReader.tribute.petName}
               </h3>
-              <p className="text-xs sm:text-sm text-[#7A4253] italic font-sans">
+
+              {activeLetterForReader.letter.title && (
+                <p className="font-playfair text-base sm:text-lg italic text-[#7A4253]">
+                  «{activeLetterForReader.letter.title}»
+                </p>
+              )}
+
+              <p className="text-xs sm:text-sm text-[#7A4253] font-sans">
                 {activeLetterForReader.letter.displayDate} · Escrita por {activeLetterForReader.letter.authorName}
               </p>
+
+              {/* Ornamento celestial discreto */}
+              <div className="flex items-center justify-center sm:justify-start gap-2 text-[#D4B79E] text-xs pt-2 pb-1" aria-hidden="true">
+                <span>✦</span>
+                <span className="w-12 h-px bg-[#D4B79E]/60" />
+                <span>🕊️</span>
+                <span className="w-12 h-px bg-[#D4B79E]/60" />
+                <span>✦</span>
+              </div>
             </div>
 
-            {/* Fotografía de la mascota si tiene */}
+            {/* Fotografía de la mascota únicamente si existe (sin marco vacío) */}
             {activeLetterForReader.tribute.photoUrl && (
-              <figure className="libro-foto max-w-[340px] mx-auto my-5">
+              <figure className="libro-foto max-w-[280px] sm:max-w-[320px] mx-auto my-4">
                 <img 
                   src={activeLetterForReader.tribute.photoUrl} 
                   alt={`Fotografía de ${activeLetterForReader.tribute.petName}`}
                   loading="lazy"
-                  className="w-full max-h-[320px] object-cover rounded"
+                  className="w-full max-h-[300px] object-cover rounded-lg shadow-sm border border-[#D4B79E]/60"
                 />
               </figure>
             )}
 
-            {/* Contenido completo de la carta */}
-            <div className="font-serif text-[16px] sm:text-[18px] leading-[1.8] text-[#541731] my-6 space-y-4">
-              <p className="whitespace-pre-wrap">{activeLetterForReader.letter.message}</p>
+            {/* Contenido completo de la carta con párrafos originales preservados */}
+            <div className="font-serif text-[16px] sm:text-[18px] leading-[1.85] text-[#541731] my-5 space-y-4">
+              {activeLetterForReader.letter.message
+                .split(/\n\s*\n/)
+                .filter((p) => p.trim().length > 0)
+                .map((paragraph, idx) => (
+                  <p key={idx} className="whitespace-pre-wrap">
+                    {paragraph.trim()}
+                  </p>
+                ))}
             </div>
 
-            {/* Acciones de velita y abrazo */}
+            {/* Firma familiar conmemorativa */}
+            <div className="mt-6 pt-4 border-t border-[#D4B79E]/40 text-right">
+              <p className="font-serif italic text-sm sm:text-base text-[#7A4253]">
+                Con todo nuestro amor en la Tierra y en el Cielo,
+              </p>
+              <p className="font-playfair font-bold text-base sm:text-lg text-[#541731] mt-0.5">
+                {activeLetterForReader.letter.authorName}
+              </p>
+              <p className="text-xs text-[#8C3F71]/80 mt-0.5 font-sans">
+                {activeLetterForReader.letter.displayDate}
+              </p>
+            </div>
+
+            {/* Acciones de velita, abrazo y botón volver */}
             <div className="mt-8 pt-4 border-t border-[#D4B79E]/60 flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <button 
                   type="button"
                   onClick={() => handleReactionTribute(activeLetterForReader.tribute.id, 'candle')}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[#D4B79E] bg-[#FFF0DD] text-[#541731] hover:bg-[#FFE8CC] cursor-pointer"
+                  aria-label={`Encender vela por ${activeLetterForReader.tribute.petName}`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[#D4B79E] bg-[#FFF0DD] text-[#541731] hover:bg-[#FFE8CC] cursor-pointer transition-colors"
                 >
                   <span>🕯️</span>
                   <span>{activeLetterForReader.tribute.candlesCount}</span>
@@ -3087,7 +3213,8 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                 <button 
                   type="button"
                   onClick={() => handleReactionTribute(activeLetterForReader.tribute.id, 'hug')}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[#D4B79E] bg-[#FFF0DD] text-[#541731] hover:bg-[#FFE8CC] cursor-pointer"
+                  aria-label={`Mandar abrazo al cielo para ${activeLetterForReader.tribute.petName}`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border border-[#D4B79E] bg-[#FFF0DD] text-[#541731] hover:bg-[#FFE8CC] cursor-pointer transition-colors"
                 >
                   <span>🐾</span>
                   <span>{activeLetterForReader.tribute.hugsCount}</span>
@@ -3096,15 +3223,17 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
 
               <button
                 type="button"
-                onClick={() => setActiveLetterForReader(null)}
-                className="text-xs sm:text-sm font-semibold text-[#8C3F71] hover:underline cursor-pointer"
+                onClick={() => {
+                  setActiveLetterForReader(null);
+                  setTimeout(() => lastActiveTriggerRef.current?.focus(), 50);
+                }}
+                className="text-xs sm:text-sm font-semibold text-[#8C3F71] hover:text-[#541731] hover:underline cursor-pointer transition-colors"
               >
                 Volver a la colección de {activeLetterForReader.tribute.petName}
               </button>
             </div>
-
-          </div>
-        </div>
+          </dialog>
+        </>
       )}
 
       {/* TOAST DE NOTIFICACIÓN DEL PROTOTIPO */}

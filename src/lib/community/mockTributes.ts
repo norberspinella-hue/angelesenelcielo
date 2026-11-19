@@ -36,8 +36,7 @@ export interface MockTribute {
 }
 
 export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
-  // 1. ESCENARIO 2: Chloe (Perrita) - 3 cartas - Escenario A (sin mural)
-  // Corrección: Chloe es una perrita (perro), foto original sin incoherencias.
+  // 1. ESCENARIO 2: Chloe (Perrita) - 2 cartas (1 larga de varios párrafos y 1 corta)
   {
     id: 'tribute-chloe',
     slug: 'chloe-spinella',
@@ -54,20 +53,6 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
     hugsCount: 72,
     letters: [
       {
-        id: 'letter-chloe-3',
-        tributeId: 'tribute-chloe',
-        title: 'Un año de luz en el cielo',
-        category: 'aniversario',
-        categoryLabel: '🕊️ Primer Aniversario',
-        displayDate: '23 de octubre, 2027',
-        publishedAt: '2027-10-23T10:00:00Z',
-        authorName: 'Familia Spinella',
-        candlesCount: 42,
-        hugsCount: 28,
-        envelopeColor: 'rosa',
-        message: 'Un año ya sin ti, mi pequeña Chloe. Dicen que el tiempo calma el dolor, pero el amor por ti sigue intacto en cada rincón de la casa. Cada vez que miro al cielo sé que la estrella más dulce eres tú cuidándonos desde arriba. Gracias por haber sido nuestra perrita más fiel.',
-      },
-      {
         id: 'letter-chloe-2',
         tributeId: 'tribute-chloe',
         title: 'Tu primer cumpleaños en el cielo',
@@ -76,10 +61,14 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         displayDate: '15 de mayo, 2027',
         publishedAt: '2027-05-15T09:30:00Z',
         authorName: 'Familia Spinella',
-        candlesCount: 38,
-        hugsCount: 19,
+        candlesCount: 84,
+        hugsCount: 42,
         envelopeColor: 'lavanda',
-        message: 'Hoy cumplirías 13 años con nosotros, pequeña Chloe. Pusimos flores frescas donde solías tumbarte al sol en el jardín. Parece que todavía escuchamos el sonido de tus patitas por el pasillo. Sé que estás corriendo feliz y en paz.',
+        message: `Hoy cumplirías 13 años con nosotros, mi pequeña Chloe. Esta mañana pusimos flores frescas en el rincón del jardín donde tanto te gustaba tumbarte al sol a media tarde. La casa se siente silenciosa sin ti, pero cada rincón guarda la ternura infinita con la que nos acompañaste durante tantos años.
+
+Todavía nos parece escuchar el tintineo de tus patitas por el pasillo de madera cuando llegábamos de trabajar. Nos enseñaste a querer sin condiciones, con esa mirada dulce que todo lo comprendía y ese entusiasmo con el que recibías cada caricia.
+
+Mira hacia abajo hoy y siente todo nuestro amor. Sé que estás corriendo libre por praderas de luz eterna, sin dolores ni cansancio. Te amamos con toda el alma, hoy y siempre.`,
       },
       {
         id: 'letter-chloe-1',
@@ -93,7 +82,7 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
         candlesCount: 76,
         hugsCount: 25,
         envelopeColor: 'crema',
-        message: 'Te fuiste como llegaste de manera inesperada, pero nos llenaste de vida y de amor. Nos enseñaste a querer de nuevo, nos curaste heridas que no sabíamos que se podían curar. Te agradecemos todo lo que nos diste pequeñita. Te echaremos de menos siempre.',
+        message: 'Te fuiste como llegaste de manera inesperada, pero nos llenaste de vida y de amor. Nos enseñaste a querer de nuevo y nos curaste heridas que no sabíamos que se podían curar. Te agradecemos todo lo que nos diste, pequeñita. Te echaremos de menos siempre.',
       },
     ],
   },
@@ -326,7 +315,26 @@ export const INITIAL_MOCK_TRIBUTES: MockTribute[] = [
     ],
   },
 
-  // 5. ESCENARIO 6B: Bruno (Perro - Con Casilla en Mural Global) - 2 cartas
+  // 5. ESCENARIO SIN CARTAS: Milo (Gatito - Sin cartas publicadas aún) - 0 cartas
+  // Demuestra el tratamiento respetuoso de colecciones vacías sin cartas disponibles.
+  {
+    id: 'tribute-milo-alvarez',
+    slug: 'milo-alvarez',
+    petName: 'Milo',
+    species: 'gato',
+    speciesLabel: 'Gatito',
+    photoUrl: null, // Sin fotografía (usa medallón celestial)
+    yearsOrDates: '2019 - 2026',
+    authorName: 'Familia Álvarez',
+    guardianEmail: 'familia.alvarez@ejemplo.com',
+    muralSlot: null,
+    candlesCount: 14,
+    supportCount: 5,
+    hugsCount: 9,
+    letters: [], // Cero cartas deliberadamente
+  },
+
+  // 6. ESCENARIO 6B: Bruno (Perro - Con Casilla en Mural Global) - 2 cartas
   // Corrección: Imagen cambiada a 'dog_crop_from_desktop.png' (foto limpia de perro sin texto "Max").
   {
     id: 'tribute-bruno-morales',

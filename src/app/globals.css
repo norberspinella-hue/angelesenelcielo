@@ -1709,10 +1709,11 @@ p,
   background-image: url('/images/cartas-al-cielo/libro/assets/papel.svg') !important;
   border: 1px solid #d4b79e !important;
   border-radius: 14px;
-  padding: clamp(20px, 4vw, 44px);
+  padding: clamp(20px, 4vw, 40px);
   box-shadow: 0 20px 60px rgba(45, 15, 30, 0.45) !important;
   width: min(720px, calc(100% - 24px));
-  max-height: calc(100dvh - 36px);
+  height: fit-content !important;
+  max-height: min(88vh, calc(100dvh - 44px));
   overflow-y: auto;
   position: fixed;
   inset: 0;
