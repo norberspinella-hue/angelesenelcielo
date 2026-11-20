@@ -1676,7 +1676,7 @@ p,
   font-size: 14px;
   line-height: 1.4;
   color: var(--tinta);
-  opacity: 0.95;
+  opacity: 1;
 }
 
 .libro-frente {
@@ -1699,6 +1699,33 @@ p,
 
 .libro-indice li:nth-child(3n) .libro-frente {
   --arte: url('/images/cartas-al-cielo/libro/assets/sobre-rosa.webp');
+}
+
+.libro-nombre-placa {
+  display: inline-block;
+  background-color: rgba(255, 249, 242, 0.90);
+  color: #541731;
+  padding: 2px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(84, 23, 49, 0.10);
+  box-shadow: 0 1px 3px rgba(84, 23, 49, 0.06);
+}
+
+.libro-cta-primaria {
+  background-color: #541731;
+  color: #FFF6EE !important;
+}
+
+.libro-sobre:hover .libro-cta-primaria,
+.libro-cta-primaria:hover {
+  background-color: #722B55;
+  color: #FFF6EE !important;
+}
+
+.libro-cta-espera {
+  background-color: #FFF9F2;
+  color: #541731 !important;
+  border: 1px solid rgba(84, 23, 49, 0.25);
 }
 
 .libro-dialog {

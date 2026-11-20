@@ -1931,15 +1931,15 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                             handleOpenCollection(tribute);
                           }}
                         >
-                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto y fragmento del mensaje */}
+                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto y fragmento con contraste WCAG AA/AAA */}
                           <span className="libro-pestaña">
                             {hasLetters ? (
                               <>
                                 <span className="flex items-center justify-between gap-1 mb-1">
-                                  <span className="text-xs font-bold text-[#8C3F71] tracking-wide inline-flex items-center gap-1 truncate max-w-[65%]">
+                                  <span className="text-xs font-bold text-[#5E1A37] tracking-wide inline-flex items-center gap-1 truncate max-w-[65%]">
                                     <span>{latestLetter?.categoryLabel || 'Carta conmemorativa'}</span>
                                   </span>
-                                  <span className="text-[11px] text-[#7A4253] font-serif italic shrink-0">
+                                  <span className="text-[11px] text-[#4E2331] font-serif italic shrink-0">
                                     {latestLetter?.displayDate}
                                   </span>
                                 </span>
@@ -1948,23 +1948,23 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                                     «{latestLetter.title}»
                                   </span>
                                 ) : null}
-                                <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#541731]/80">
+                                <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#3B1826]">
                                   {previewLetterText(latestLetter?.message || '', 85)}
                                 </span>
                               </>
                             ) : (
                               <>
-                                <span className="block text-xs font-bold text-[#8C3F71] mb-1">
+                                <span className="block text-xs font-bold text-[#5E1A37] mb-1">
                                   Esperando su primera carta
                                 </span>
-                                <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#7A4253] italic">
+                                <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#4E2331] italic">
                                   Esta colección aún no tiene cartas publicadas por su familia.
                                 </span>
                               </>
                             )}
                           </span>
 
-                          {/* Frontal del sobre: Protagonista «Para [Nombre]» centrado en zona limpia + Botón según estado y nivel */}
+                          {/* Frontal del sobre: Protagonista «Para [Nombre]» con placa marfil localizada de alto contraste */}
                           <span 
                             className="libro-frente"
                             style={{
@@ -1972,24 +1972,24 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                             }}
                           >
                             <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[88%] gap-1 sm:gap-1.5">
-                              {/* Para [Nombre] como protagonista, centrado y limpio, sin sombras ni pliegues */}
-                              <span className="font-playfair font-bold text-[#541731] text-[13.5px] sm:text-[15.5px] lg:text-[17.5px] leading-tight text-center max-w-full line-clamp-2 break-words [overflow-wrap:anywhere] hyphens-auto">
+                              {/* Para [Nombre] en burdeos profundo #541731 sobre placa marfil localizada sin sombras borrosas */}
+                              <span className="libro-nombre-placa font-playfair font-bold text-[#541731] text-[13.5px] sm:text-[15.5px] lg:text-[17.5px] leading-tight text-center max-w-full line-clamp-2 break-words [overflow-wrap:anywhere] hyphens-auto">
                                 Para {tribute.petName}
                               </span>
 
                               {/* Botón de acción: Nivel 1 (Índice General) */}
                               {hasLetters ? (
-                                <span className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[44px]">
+                                <span className="libro-cta-primaria inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-[11px] sm:text-xs font-bold shadow-xs transition-colors min-h-[44px] min-w-[44px]">
                                   <span>Descubrir sus cartas</span>
                                   <span aria-hidden="true">→</span>
                                 </span>
                               ) : reviewerRole === 'guardian' ? (
-                                <span className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[44px]">
+                                <span className="libro-cta-primaria inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-[11px] sm:text-xs font-bold shadow-xs transition-colors min-h-[44px] min-w-[44px]">
                                   <span>Escribir su primera carta</span>
                                   <span aria-hidden="true">✍️</span>
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#EFE4EC] text-[#541731] text-[11px] sm:text-xs font-semibold border border-[#D4B79E]/60 shadow-xs min-h-[44px]">
+                                <span className="libro-cta-espera inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-[11px] sm:text-xs font-semibold shadow-xs min-h-[44px] min-w-[44px]">
                                   <span>Esperando su primera carta</span>
                                 </span>
                               )}
@@ -2394,15 +2394,15 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                             setActiveLetterForReader({ letter, tribute: activeTributeForCollection });
                           }}
                         >
-                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto y fragmento del mensaje */}
+                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto y fragmento con contraste WCAG AA/AAA */}
                           <span className="libro-pestaña">
                             <span className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
-                              <span className="text-xs font-bold text-[#8C3F71] tracking-wide inline-flex items-center gap-1">
-                                <span className="text-[#8C3F71]/60 font-semibold">#{letterNumber}</span>
-                                <span>·</span>
+                              <span className="text-xs font-bold text-[#5E1A37] tracking-wide inline-flex items-center gap-1">
+                                <span className="text-[#541731] font-bold">#{letterNumber}</span>
+                                <span className="text-[#541731]">·</span>
                                 <span>{letter.categoryLabel}</span>
                               </span>
-                              <span className="text-[11px] text-[#7A4253] font-serif italic">
+                              <span className="text-[11px] text-[#4E2331] font-serif italic">
                                 {letter.displayDate}
                               </span>
                             </span>
@@ -2411,12 +2411,12 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                                 «{letter.title}»
                               </span>
                             )}
-                            <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#541731]/80 mt-1">
+                            <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#3B1826] mt-1">
                               {previewLetterText(letter.message || '', 85)}
                             </span>
                           </span>
 
-                          {/* Frontal del sobre: Protagonista «Para [Nombre]» centrado en zona limpia + Botón «Abrir esta carta» */}
+                          {/* Frontal del sobre: Protagonista «Para [Nombre]» con placa marfil localizada de alto contraste */}
                           <span 
                             className="libro-frente"
                             style={{
@@ -2424,13 +2424,13 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                             }}
                           >
                             <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[88%] gap-1 sm:gap-1.5">
-                              {/* Para [Nombre] como protagonista claro, centrado y sin sombras */}
-                              <span className="font-playfair font-bold text-[#541731] text-[13.5px] sm:text-[15.5px] lg:text-[17.5px] leading-tight text-center max-w-full line-clamp-2 break-words [overflow-wrap:anywhere] hyphens-auto">
+                              {/* Para [Nombre] en burdeos profundo #541731 sobre placa marfil localizada */}
+                              <span className="libro-nombre-placa font-playfair font-bold text-[#541731] text-[13.5px] sm:text-[15.5px] lg:text-[17.5px] leading-tight text-center max-w-full line-clamp-2 break-words [overflow-wrap:anywhere] hyphens-auto">
                                 Para {activeTributeForCollection.petName}
                               </span>
 
                               {/* Botón de apertura en la parte inferior */}
-                              <span className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[44px]">
+                              <span className="libro-cta-primaria inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-[11px] sm:text-xs font-bold shadow-xs transition-colors min-h-[44px] min-w-[44px]">
                                 <span>Abrir esta carta</span>
                                 <span aria-hidden="true">→</span>
                               </span>
