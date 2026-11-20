@@ -182,10 +182,10 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
             });
 
             setTributes(prev => {
-              const combined = [...mappedTributes];
-              for (const m of INITIAL_MOCK_TRIBUTES) {
-                if (!combined.some(c => c.slug === m.slug || c.id === m.id)) {
-                  combined.push(m);
+              const combined = [...INITIAL_MOCK_TRIBUTES];
+              for (const t of mappedTributes) {
+                if (!combined.some(c => c.slug === t.slug || c.id === t.id)) {
+                  combined.push(t);
                 }
               }
               return combined;
