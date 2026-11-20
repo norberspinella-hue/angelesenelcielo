@@ -1703,12 +1703,23 @@ p,
 
 .libro-nombre-placa {
   display: inline-block;
-  background-color: rgba(255, 249, 242, 0.90);
+  width: fit-content;
+  max-width: 82%;
+  background-color: rgba(255, 249, 242, 0.92);
   color: #541731;
-  padding: 2px 14px;
-  border-radius: 9999px;
-  border: 1px solid rgba(84, 23, 49, 0.10);
+  padding: 3px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(84, 23, 49, 0.12);
   box-shadow: 0 1px 3px rgba(84, 23, 49, 0.06);
+  text-align: center;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.libro-nombre-placa--larga {
+  max-width: 78%;
+  padding: 4px 12px;
+  border-radius: 12px;
 }
 
 .libro-cta-primaria {

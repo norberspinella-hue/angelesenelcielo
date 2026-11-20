@@ -1971,9 +1971,15 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                               backgroundImage: `url('${envelopeAsset}')`,
                             }}
                           >
-                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[88%] gap-1 sm:gap-1.5">
-                              {/* Para [Nombre] en burdeos profundo #541731 sobre placa marfil localizada sin sombras borrosas */}
-                              <span className="libro-nombre-placa font-playfair font-bold text-[#541731] text-[13.5px] sm:text-[15.5px] lg:text-[17.5px] leading-tight text-center max-w-full line-clamp-2 break-words [overflow-wrap:anywhere] hyphens-auto">
+                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[92%] gap-1.5">
+                              {/* Para [Nombre] en burdeos profundo #541731 sobre placa marfil compacta y proporcional */}
+                              <span
+                                className={`libro-nombre-placa font-playfair font-bold text-[#541731] text-center ${
+                                  tribute.petName.length > 14
+                                    ? 'libro-nombre-placa--larga text-[12.5px] sm:text-[13.5px] lg:text-[15px] leading-[1.18]'
+                                    : 'text-[13.5px] sm:text-[15.5px] lg:text-[17px] leading-[1.2]'
+                                }`}
+                              >
                                 Para {tribute.petName}
                               </span>
 
@@ -2423,9 +2429,15 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                               backgroundImage: `url('${envelopeAsset}')`,
                             }}
                           >
-                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[88%] gap-1 sm:gap-1.5">
-                              {/* Para [Nombre] en burdeos profundo #541731 sobre placa marfil localizada */}
-                              <span className="libro-nombre-placa font-playfair font-bold text-[#541731] text-[13.5px] sm:text-[15.5px] lg:text-[17.5px] leading-tight text-center max-w-full line-clamp-2 break-words [overflow-wrap:anywhere] hyphens-auto">
+                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[92%] gap-1.5">
+                              {/* Para [Nombre] en burdeos profundo #541731 sobre placa marfil compacta y proporcional */}
+                              <span
+                                className={`libro-nombre-placa font-playfair font-bold text-[#541731] text-center ${
+                                  activeTributeForCollection.petName.length > 14
+                                    ? 'libro-nombre-placa--larga text-[12.5px] sm:text-[13.5px] lg:text-[15px] leading-[1.18]'
+                                    : 'text-[13.5px] sm:text-[15.5px] lg:text-[17px] leading-[1.2]'
+                                }`}
+                              >
                                 Para {activeTributeForCollection.petName}
                               </span>
 
