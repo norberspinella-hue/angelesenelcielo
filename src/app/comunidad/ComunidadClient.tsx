@@ -1886,8 +1886,8 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                   >
                     <span>
                       {firstFeaturedTribute.letters.length === 0 
-                        ? `Abrir colección de ${firstFeaturedTribute.petName}` 
-                        : `Abrir las cartas para ${firstFeaturedTribute.petName} (${firstFeaturedTribute.letters.length} ${firstFeaturedTribute.letters.length === 1 ? 'carta llena de amor' : 'cartas llenas de amor'})`}
+                        ? `Esperando su primera carta para ${firstFeaturedTribute.petName}` 
+                        : `Descubrir las cartas para ${firstFeaturedTribute.petName} (${firstFeaturedTribute.letters.length} ${firstFeaturedTribute.letters.length === 1 ? 'carta llena de amor' : 'cartas llenas de amor'})`}
                     </span>
                     <span aria-hidden="true">→</span>
                   </button>
@@ -1931,7 +1931,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                             handleOpenCollection(tribute);
                           }}
                         >
-                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto (sin Para [nombre]) */}
+                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto y fragmento del mensaje */}
                           <span className="libro-pestaña">
                             {hasLetters ? (
                               <>
@@ -1949,39 +1949,50 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                                   </span>
                                 ) : null}
                                 <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#541731]/80">
-                                  {previewLetterText(latestLetter?.message || '', 90)}
+                                  {previewLetterText(latestLetter?.message || '', 85)}
                                 </span>
                               </>
                             ) : (
                               <>
                                 <span className="block text-xs font-bold text-[#8C3F71] mb-1">
-                                  Colección conmemorativa
+                                  Esperando su primera carta
                                 </span>
                                 <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#7A4253] italic">
-                                  Aún no tiene cartas escritas. Abre su sobre para dedicarle la primera.
+                                  Esta colección aún no tiene cartas publicadas por su familia.
                                 </span>
                               </>
                             )}
                           </span>
 
-                          {/* Frontal del sobre: Protagonista «Para [Nombre]» centrado en zona limpia + Botón «Abrir esta carta» */}
+                          {/* Frontal del sobre: Protagonista «Para [Nombre]» centrado en zona limpia + Botón según estado y nivel */}
                           <span 
                             className="libro-frente"
                             style={{
                               backgroundImage: `url('${envelopeAsset}')`,
                             }}
                           >
-                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[86%] gap-1.5 sm:gap-2">
+                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[88%] gap-1 sm:gap-1.5">
                               {/* Para [Nombre] como protagonista, centrado y limpio, sin sombras ni pliegues */}
-                              <span className="font-playfair font-bold text-[#541731] text-[15px] sm:text-[17px] lg:text-[20px] leading-tight text-center max-w-full line-clamp-2">
+                              <span className="font-playfair font-bold text-[#541731] text-[13.5px] sm:text-[15.5px] lg:text-[17.5px] leading-tight text-center max-w-full line-clamp-2 break-words [overflow-wrap:anywhere] hyphens-auto">
                                 Para {tribute.petName}
                               </span>
 
-                              {/* Botón de apertura en la parte inferior */}
-                              <span className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[32px] sm:min-h-[34px]">
-                                <span>Abrir esta carta</span>
-                                <span aria-hidden="true">→</span>
-                              </span>
+                              {/* Botón de acción: Nivel 1 (Índice General) */}
+                              {hasLetters ? (
+                                <span className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[44px]">
+                                  <span>Descubrir sus cartas</span>
+                                  <span aria-hidden="true">→</span>
+                                </span>
+                              ) : reviewerRole === 'guardian' ? (
+                                <span className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[44px]">
+                                  <span>Escribir su primera carta</span>
+                                  <span aria-hidden="true">✍️</span>
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#EFE4EC] text-[#541731] text-[11px] sm:text-xs font-semibold border border-[#D4B79E]/60 shadow-xs min-h-[44px]">
+                                  <span>Esperando su primera carta</span>
+                                </span>
+                              )}
                             </span>
                           </span>
                         </button>
@@ -2096,7 +2107,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                   {/* 3. Subtítulo dinámico */}
                   <p className="font-playfair italic text-base sm:text-xl text-[#8C3F71] mt-1 font-medium">
                     {activeTributeForCollection.letters.length === 0
-                      ? 'Esperando su primera carta de amor'
+                      ? 'Esperando su primera carta'
                       : activeTributeForCollection.letters.length === 1 
                         ? '1 carta llena de amor' 
                         : `${activeTributeForCollection.letters.length} cartas llenas de amor`}
@@ -2170,13 +2181,13 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                         id="btn-write-another-letter"
                         type="button"
                         onClick={() => setShowNewLetterForm(prev => !prev)}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-white shadow-md hover:shadow-lg transition-all cursor-pointer border border-white/20 active:scale-[0.98]"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-xs sm:text-sm text-white shadow-md hover:shadow-lg transition-all cursor-pointer border border-white/20 active:scale-[0.98] min-h-[44px]"
                         style={{
                           background: 'linear-gradient(135deg, #722B55 0%, #8C3F71 50%, #541731 100%)',
                         }}
                       >
                         <span aria-hidden="true">✍️</span>
-                        <span>{showNewLetterForm ? 'Ocultar formulario' : `Escribirle otra carta a ${activeTributeForCollection.petName}`}</span>
+                        <span>{showNewLetterForm ? 'Ocultar formulario' : (activeTributeForCollection.letters.length === 0 ? `Escribir su primera carta a ${activeTributeForCollection.petName}` : `Escribirle otra carta a ${activeTributeForCollection.petName}`)}</span>
                       </button>
                     </div>
                   ) : (
@@ -2188,27 +2199,16 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                         <button
                           type="button"
                           onClick={() => handleReactionTribute(activeTributeForCollection.id, 'candle')}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#541731] bg-[#FFF0DD] hover:bg-[#FFE6CC] border border-[#D4B79E] transition-all cursor-pointer shadow-xs"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold text-[#541731] bg-[#FFF0DD] hover:bg-[#FFE6CC] border border-[#D4B79E] transition-all cursor-pointer shadow-xs min-h-[44px]"
                         >
                           <span>🕯️ Encender una vela en su honor</span>
                         </button>
                         <button
                           type="button"
                           onClick={() => handleReactionTribute(activeTributeForCollection.id, 'hug')}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-[#541731] bg-[#FFF0DD] hover:bg-[#FFE6CC] border border-[#D4B79E] transition-all cursor-pointer shadow-xs"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold text-[#541731] bg-[#FFF0DD] hover:bg-[#FFE6CC] border border-[#D4B79E] transition-all cursor-pointer shadow-xs min-h-[44px]"
                         >
                           <span>🐾 Dejar un abrazo</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setReviewerRole('guardian');
-                            setToastMessage('Has simulado el acceso como familia guardiana con tu Llave del Recuerdo.');
-                            setTimeout(() => setToastMessage(null), 4000);
-                          }}
-                          className="text-xs text-[#8C3F71] hover:underline font-semibold ml-2 cursor-pointer"
-                        >
-                          ¿Eres la familia de {activeTributeForCollection.petName}? Acceder como guardián
                         </button>
                       </div>
                     </div>
@@ -2350,14 +2350,28 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
               </div>
 
               {activeTributeForCollection.letters.length === 0 ? (
-                <div className="libro-hoja text-center py-10 px-6 max-w-xl mx-auto space-y-3 bg-[#FFFBF8] border border-[#D4B79E] rounded-2xl">
+                <div className="libro-hoja text-center py-10 px-6 max-w-xl mx-auto space-y-3 bg-[#FFFBF8] border border-[#D4B79E] rounded-2xl shadow-xs">
                   <span className="text-3xl">💌</span>
                   <h5 className="font-playfair text-xl font-bold text-[#541731]">
-                    Aún no hay cartas escritas para {activeTributeForCollection.petName}
+                    Esperando su primera carta
                   </h5>
                   <p className="text-xs sm:text-sm text-[#7A4253] leading-relaxed max-w-md mx-auto">
-                    Esta colección ha sido creada con amor para honrar su recuerdo. Si eres su familia guardiana, puedes dedicarle la primera carta usando el botón superior.
+                    {reviewerRole === 'guardian'
+                      ? `Aún no has escrito la primera carta para ${activeTributeForCollection.petName}. Puedes redactarla ahora mismo para honrar su memoria.`
+                      : `La familia de ${activeTributeForCollection.petName} aún no ha publicado ninguna carta en esta colección. Puedes encender una vela en su honor para acompañarles en su recuerdo.`}
                   </p>
+                  {reviewerRole === 'guardian' && !showNewLetterForm && (
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => setShowNewLetterForm(true)}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#541731] hover:bg-[#722B55] text-white text-xs font-bold shadow-sm transition-all cursor-pointer min-h-[44px]"
+                      >
+                        <span aria-hidden="true">✍️</span>
+                        <span>Escribir su primera carta</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <ul className="libro-indice">
@@ -2380,7 +2394,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                             setActiveLetterForReader({ letter, tribute: activeTributeForCollection });
                           }}
                         >
-                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto y número discreto */}
+                          {/* Papel marfil que sobresale: Motivo, Fecha, Título corto y fragmento del mensaje */}
                           <span className="libro-pestaña">
                             <span className="flex items-center justify-between gap-2 mb-1.5 flex-wrap">
                               <span className="text-xs font-bold text-[#8C3F71] tracking-wide inline-flex items-center gap-1">
@@ -2393,10 +2407,13 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                               </span>
                             </span>
                             {letter.title && (
-                              <span className="block font-playfair font-semibold text-sm sm:text-base text-[#541731] line-clamp-1">
+                              <span className="block font-playfair font-semibold text-sm sm:text-base text-[#541731] line-clamp-1 mb-0.5">
                                 «{letter.title}»
                               </span>
                             )}
+                            <span className="block font-serif text-[12px] sm:text-[13px] leading-relaxed line-clamp-2 text-[#541731]/80 mt-1">
+                              {previewLetterText(letter.message || '', 85)}
+                            </span>
                           </span>
 
                           {/* Frontal del sobre: Protagonista «Para [Nombre]» centrado en zona limpia + Botón «Abrir esta carta» */}
@@ -2406,14 +2423,14 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                               backgroundImage: `url('${envelopeAsset}')`,
                             }}
                           >
-                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[86%] gap-1.5 sm:gap-2">
+                            <span className="relative z-10 flex flex-col items-center justify-end text-center w-full max-w-[88%] gap-1 sm:gap-1.5">
                               {/* Para [Nombre] como protagonista claro, centrado y sin sombras */}
-                              <span className="font-playfair font-bold text-[#541731] text-[15px] sm:text-[18px] lg:text-[21px] leading-tight text-center max-w-full line-clamp-2">
+                              <span className="font-playfair font-bold text-[#541731] text-[13.5px] sm:text-[15.5px] lg:text-[17.5px] leading-tight text-center max-w-full line-clamp-2 break-words [overflow-wrap:anywhere] hyphens-auto">
                                 Para {activeTributeForCollection.petName}
                               </span>
 
                               {/* Botón de apertura en la parte inferior */}
-                              <span className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[32px] sm:min-h-[34px]">
+                              <span className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-[#541731] text-[#FFF6EE] text-[11px] sm:text-xs font-bold shadow-xs group-hover:bg-[#722B55] transition-colors min-h-[44px]">
                                 <span>Abrir esta carta</span>
                                 <span aria-hidden="true">→</span>
                               </span>

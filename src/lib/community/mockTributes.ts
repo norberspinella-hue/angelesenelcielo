@@ -401,6 +401,40 @@ Mira hacia abajo hoy y siente todo nuestro amor. Sé que estás corriendo libre 
     ],
   },
 
+  // 8. ESCENARIO NOMBRE DE 25 CARACTERES SIN ESPACIOS: PrincesaValentinaIsabel25 - 1 carta
+  // "PrincesaValentinaIsabel25".length === 25 caracteres exactos
+  {
+    id: 'tribute-princesa-sin-espacios',
+    slug: 'princesa-valentina-sin-espacios',
+    petName: 'PrincesaValentinaIsabel25',
+    species: 'perro',
+    speciesLabel: 'Perrita',
+    photoUrl: '/images/comunidad/chloe.jpg',
+    yearsOrDates: '2012 - 2026',
+    authorName: 'Familia Montero',
+    guardianEmail: 'familia.montero@ejemplo.com',
+    muralSlot: null,
+    candlesCount: 45,
+    supportCount: 19,
+    hugsCount: 28,
+    letters: [
+      {
+        id: 'letter-princesa-sin-esp-1',
+        tributeId: 'tribute-princesa-sin-espacios',
+        title: 'Amor eterno sin pausas',
+        category: 'despedida',
+        categoryLabel: '💌 Carta de amor',
+        displayDate: '15 de noviembre, 2026',
+        publishedAt: '2026-11-15T12:00:00Z',
+        authorName: 'Familia Montero',
+        candlesCount: 45,
+        hugsCount: 28,
+        envelopeColor: 'crema',
+        message: 'Tu presencia constante y tu cariño infinito alegraron cada día. Gracias por enseñarnos la grandeza del afecto sin medidas ni palabras.',
+      },
+    ],
+  },
+
   // 6. ESCENARIO 6B: Bruno (Perro - Con Casilla en Mural Global) - 2 cartas
   // Corrección: Imagen cambiada a 'dog_crop_from_desktop.png' (foto limpia de perro sin texto "Max").
   {

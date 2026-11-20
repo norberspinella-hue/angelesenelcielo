@@ -1686,7 +1686,7 @@ p,
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 0 8% 6.5%;
+  padding: 0 8% 4.5%;
   background: var(--arte) center/100% 100% no-repeat;
   box-shadow: 0 8px 13px rgba(84, 45, 38, 0.18);
   --arte: url('/images/cartas-al-cielo/libro/assets/sobre-crema.webp');
