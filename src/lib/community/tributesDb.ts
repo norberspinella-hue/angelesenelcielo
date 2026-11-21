@@ -163,6 +163,8 @@ export async function getPublicTributes(options: { species?: string; limit?: num
       ct.publication_status as "publicationStatus",
       ct.visibility,
       ct.created_at as "createdAt",
+      (ct.legacy_memorial_id IS NOT NULL) as "isLegacy",
+      EXISTS (SELECT 1 FROM public.tribute_guardians tg WHERE tg.tribute_id = ct.id) as "hasGuardian",
       COUNT(tl.id)::int as "lettersCount"
     FROM public.community_tributes ct
     LEFT JOIN public.tribute_letters tl ON ct.id = tl.tribute_id 
@@ -782,11 +784,19 @@ function maskEmailAddress(email: string): string {
   return `${visible}***@${domain}`;
 }
 
+function isReliableHistoricalEmail(email?: string | null): boolean {
+  if (!email) return false;
+  const norm = email.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(norm)) return false;
+  const blockedFragments = ['sin-correo', 'no-email', 'anonimo', 'noreply', 'no-reply', 'unknown@', 'placeholder'];
+  return !blockedFragments.some((frag) => norm.includes(frag));
+}
+
 /**
  * Registra una solicitud de custodia para una colección histórica.
  * NUNCA asigna guardián automáticamente por coincidencia de nombre, foto o dedicatoria.
- * Compara pruebas privadas (correo histórico o deletion_token en memorials) y deja
- * la decisión en manos del administrador.
+ * Cuando existe un correo histórico fiable y coincide, exige verificación criptográfica
+ * de control de bandeja mediante token temporal antes de pasar a aprobación administrativa.
  */
 export async function submitLegacyGuardianClaim(data: {
   slug: string;
@@ -799,7 +809,7 @@ export async function submitLegacyGuardianClaim(data: {
   if (!pool) throw Object.assign(new Error('Base de datos no disponible'), { status: 503 });
 
   const tribRes = await pool.query(`
-    SELECT ct.id, ct.legacy_memorial_id, ct.author_display_name,
+    SELECT ct.id, ct.pet_name, ct.legacy_memorial_id, ct.author_display_name,
            EXISTS (SELECT 1 FROM public.tribute_guardians tg WHERE tg.tribute_id = ct.id) AS has_guardian
     FROM public.community_tributes ct
     WHERE ct.slug = $1 AND ct.deleted_at IS NULL
@@ -817,8 +827,26 @@ export async function submitLegacyGuardianClaim(data: {
     return { ok: false as const, status: 409, error: 'Esta colección ya cuenta con un guardián verificado.' };
   }
 
+  const claimantEmailHash = computeBlindIndex(data.claimantEmail);
+  const dupRes = await pool.query(`
+    SELECT id FROM public.legacy_guardian_claims
+    WHERE tribute_id = $1 AND claimant_email_hash = $2 AND claim_status = 'pending_review'
+    LIMIT 1;
+  `, [trib.id, claimantEmailHash]);
+
+  if (dupRes.rows[0]) {
+    return {
+      ok: false as const,
+      status: 409,
+      error: 'Ya existe una solicitud de custodia pendiente para esta colección con ese correo.',
+    };
+  }
+
   let privateProofMatch = false;
   let verificationMethod: 'legacy_email_match' | 'deletion_token_match' | 'manual_private_proof' = 'manual_private_proof';
+  let rawControlToken: string | null = null;
+  let controlTokenHash: string | null = null;
+  let legacyEmailForChallenge: string | null = null;
 
   const memRes = await pool.query(`
     SELECT email, deletion_token
@@ -829,11 +857,16 @@ export async function submitLegacyGuardianClaim(data: {
 
   const mem = memRes.rows[0];
   if (mem) {
-    const normalizedProofEmail = (data.proofEmail || '').trim().toLowerCase();
+    const reliableEmail = isReliableHistoricalEmail(mem.email);
+    const normalizedProofEmail = (data.proofEmail || data.claimantEmail || '').trim().toLowerCase();
     const normalizedLegacyEmail = (mem.email || '').trim().toLowerCase();
-    if (normalizedProofEmail && normalizedLegacyEmail && normalizedProofEmail === normalizedLegacyEmail) {
+
+    if (reliableEmail && normalizedProofEmail && normalizedProofEmail === normalizedLegacyEmail) {
       privateProofMatch = true;
       verificationMethod = 'legacy_email_match';
+      rawControlToken = crypto.randomBytes(24).toString('hex');
+      controlTokenHash = hashToken(rawControlToken);
+      legacyEmailForChallenge = normalizedLegacyEmail;
     } else if (
       data.proofDeletionToken &&
       mem.deletion_token &&
@@ -844,16 +877,21 @@ export async function submitLegacyGuardianClaim(data: {
     }
   }
 
-  const claimantEmailHash = computeBlindIndex(data.claimantEmail);
   const claimantEmailMasked = maskEmailAddress(data.claimantEmail);
   const safeNote = (data.proofNote || '').trim().slice(0, 300) || null;
+
+  const controlTokenExpiresAt = controlTokenHash ? new Date(Date.now() + 30 * 60 * 1000) : null;
 
   const insertRes = await pool.query(`
     INSERT INTO public.legacy_guardian_claims (
       tribute_id, legacy_memorial_id, claimant_email_hash, claimant_email_masked,
-      verification_method, private_proof_match, private_proof_note, claim_status
+      verification_method, private_proof_match, private_proof_note, claim_status,
+      control_token_hash, control_token_expires_at, email_control_verified
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending_review')
+    VALUES (
+      $1, $2, $3, $4, $5, $6, $7, 'pending_review',
+      $8, $9, FALSE
+    )
     RETURNING id, claim_status, private_proof_match, created_at;
   `, [
     trib.id,
@@ -863,6 +901,8 @@ export async function submitLegacyGuardianClaim(data: {
     verificationMethod,
     privateProofMatch,
     safeNote,
+    controlTokenHash,
+    controlTokenExpiresAt,
   ]);
 
   return {
@@ -871,6 +911,38 @@ export async function submitLegacyGuardianClaim(data: {
     claimId: insertRes.rows[0].id as string,
     claimStatus: insertRes.rows[0].claim_status as string,
     privateProofMatch: Boolean(insertRes.rows[0].private_proof_match),
+    petName: trib.pet_name as string,
+    rawControlToken,
+    legacyEmailForChallenge,
+  };
+}
+
+export async function verifyLegacyClaimEmailControl(rawToken: string) {
+  const pool = getDbPool();
+  if (!pool) throw Object.assign(new Error('Base de datos no disponible'), { status: 503 });
+
+  const tokenHash = hashToken(rawToken.trim());
+  const res = await pool.query(`
+    UPDATE public.legacy_guardian_claims
+    SET email_control_verified = TRUE,
+        email_control_verified_at = timezone('utc'::text, now()),
+        control_token_hash = NULL,
+        control_token_expires_at = NULL
+    WHERE control_token_hash = $1
+      AND control_token_expires_at > timezone('utc'::text, now())
+      AND claim_status = 'pending_review'
+    RETURNING id, tribute_id, claim_status, email_control_verified;
+  `, [tokenHash]);
+
+  if (!res.rows[0]) {
+    return { ok: false as const, status: 400, error: 'El enlace de verificación es inválido o ha caducado.' };
+  }
+
+  return {
+    ok: true as const,
+    status: 200,
+    claimId: res.rows[0].id as string,
+    claimStatus: res.rows[0].claim_status as string,
   };
 }
 
@@ -893,6 +965,9 @@ export async function getAdminLegacyGuardianClaims(filter: string = 'all') {
            c.claimant_email_masked as "claimantEmailMasked",
            c.verification_method as "verificationMethod",
            c.private_proof_match as "privateProofMatch",
+           c.email_control_verified as "emailControlVerified",
+           c.email_control_verified_at as "emailControlVerifiedAt",
+           c.confirmation_sent_at as "confirmationSentAt",
            c.private_proof_note as "privateProofNote",
            c.claim_status as "claimStatus",
            c.decision_reason as "decisionReason",
@@ -974,7 +1049,8 @@ export async function reviewLegacyGuardianClaim(data: {
           decision_reason = $3,
           reviewed_by = $4,
           reviewed_at = timezone('utc'::text, now()),
-          assigned_guardian_id = $5
+          assigned_guardian_id = $5,
+          confirmation_sent_at = CASE WHEN $2 = 'approved' THEN timezone('utc'::text, now()) ELSE NULL END
       WHERE id = $1;
     `, [claim.id, finalStatus, reason, data.reviewedBy, assignedGuardianId]);
 

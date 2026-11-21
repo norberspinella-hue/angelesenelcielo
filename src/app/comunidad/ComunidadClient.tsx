@@ -129,6 +129,52 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
   const [newLetterDate, setNewLetterDate] = useState('15 de noviembre, 2026');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Estado del acceso discreto de reclamación/recuperación de cartas históricas
+  const [showLegacyClaimModal, setShowLegacyClaimModal] = useState(false);
+  const [claimTributeSlug, setClaimTributeSlug] = useState('');
+  const [claimEmail, setClaimEmail] = useState('');
+  const [claimProofEmail, setClaimProofEmail] = useState('');
+  const [claimProofNote, setClaimProofNote] = useState('');
+  const [claimSubmitting, setClaimSubmitting] = useState(false);
+  const [claimFeedback, setClaimFeedback] = useState<{ type: 'pending' | 'error'; text: string } | null>(null);
+
+  const handleSubmitLegacyClaim = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!claimTributeSlug || !claimEmail.trim()) {
+      setClaimFeedback({ type: 'error', text: 'Selecciona un homenaje e indica tu correo.' });
+      return;
+    }
+    setClaimSubmitting(true);
+    setClaimFeedback(null);
+    try {
+      const res = await fetch('/api/community/guardian/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug: claimTributeSlug,
+          claimantEmail: claimEmail.trim(),
+          proofEmail: claimProofEmail.trim() || undefined,
+          proofNote: claimProofNote.trim() || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setClaimFeedback({
+          type: 'pending',
+          text:
+            data.message ||
+            'Tu solicitud está pendiente de revisión. No concedemos acceso automático por datos públicos; te confirmaremos por correo cuando sea aprobada.',
+        });
+      } else {
+        setClaimFeedback({ type: 'error', text: data.error || 'No se pudo registrar la solicitud.' });
+      }
+    } catch {
+      setClaimFeedback({ type: 'error', text: 'Error de conexión al enviar la solicitud.' });
+    } finally {
+      setClaimSubmitting(false);
+    }
+  };
+
   // Atajo para saltar directamente a los escenarios requeridos por la prueba
   const selectScenario = (tributeId: string) => {
     const target = tributes.find(t => t.id === tributeId);
@@ -1543,6 +1589,21 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
               </a>
             </div>
 
+            <div className="pt-1">
+              <button
+                type="button"
+                id="btn-open-legacy-claim-desktop"
+                onClick={() => {
+                  setClaimFeedback(null);
+                  if (!claimTributeSlug && tributes.length > 0) setClaimTributeSlug(tributes[0].slug);
+                  setShowLegacyClaimModal(true);
+                }}
+                className="text-xs sm:text-[13px] text-[#FFE8F2]/85 hover:text-white underline underline-offset-4 decoration-white/40 hover:decoration-white transition-colors cursor-pointer bg-transparent border-0"
+              >
+                ¿Ya escribiste una carta a tu angelito? Recupera su recuerdo.
+              </button>
+            </div>
+
           </div>
         </div>
 
@@ -1606,6 +1667,21 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
               >
                 <span>Leer las cartas</span>
               </a>
+            </div>
+
+            <div className="pt-1">
+              <button
+                type="button"
+                id="btn-open-legacy-claim-mobile"
+                onClick={() => {
+                  setClaimFeedback(null);
+                  if (!claimTributeSlug && tributes.length > 0) setClaimTributeSlug(tributes[0].slug);
+                  setShowLegacyClaimModal(true);
+                }}
+                className="text-xs text-[#FFE8F2]/85 underline underline-offset-4 decoration-white/40 cursor-pointer bg-transparent border-0"
+              >
+                ¿Ya escribiste una carta a tu angelito? Recupera su recuerdo.
+              </button>
             </div>
           </div>
 
@@ -3402,6 +3478,130 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
             >
               Ver su recuerdo en Cartas al Cielo
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DISCRETO DE RECLAMACIÓN DE CUSTODIA HISTÓRICA */}
+      {showLegacyClaimModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="legacy-claim-title"
+        >
+          <div className="w-full max-w-md max-h-[88vh] overflow-y-auto rounded-3xl bg-[#FFF8F0] border border-[#D4B79E] shadow-2xl p-6 space-y-4 text-[#541731]">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-[#8C3F71]">
+                  Custodia de recuerdos anteriores
+                </p>
+                <h3
+                  id="legacy-claim-title"
+                  className="text-xl font-bold mt-0.5"
+                  style={{ fontFamily: 'var(--font-title), var(--font-playfair), Georgia, serif' }}
+                >
+                  Recupera el recuerdo de tu angelito
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowLegacyClaimModal(false)}
+                aria-label="Cerrar ventana"
+                className="min-w-[36px] min-h-[36px] rounded-full bg-[#541731]/10 hover:bg-[#541731]/20 text-[#541731] font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-xs leading-relaxed text-[#4E2331]">
+              Por seguridad de las familias, la custodia nunca se asigna de forma automática por el nombre o la foto pública. Verificaremos el control del correo histórico o realizaremos una revisión supervisada.
+            </p>
+
+            <form onSubmit={handleSubmitLegacyClaim} className="space-y-3">
+              <div>
+                <label className="block text-xs font-bold mb-1" htmlFor="claim-tribute-select">
+                  Selecciona el homenaje
+                </label>
+                <select
+                  id="claim-tribute-select"
+                  value={claimTributeSlug}
+                  onChange={(e) => setClaimTributeSlug(e.target.value)}
+                  className="w-full rounded-xl border border-[#D4B79E] bg-white px-3 py-2 text-sm text-[#541731]"
+                  required
+                >
+                  <option value="">-- Elegir homenaje --</option>
+                  {tributes.map((t) => (
+                    <option key={t.id} value={t.slug}>
+                      {t.petName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold mb-1" htmlFor="claim-email-input">
+                  Tu correo actual de contacto
+                </label>
+                <input
+                  id="claim-email-input"
+                  type="email"
+                  required
+                  value={claimEmail}
+                  onChange={(e) => setClaimEmail(e.target.value)}
+                  placeholder="tu@correo.com"
+                  className="w-full rounded-xl border border-[#D4B79E] bg-white px-3 py-2 text-sm text-[#541731]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold mb-1" htmlFor="claim-proof-email-input">
+                  Correo con el que escribiste el recuerdo original (si lo recuerdas)
+                </label>
+                <input
+                  id="claim-proof-email-input"
+                  type="email"
+                  value={claimProofEmail}
+                  onChange={(e) => setClaimProofEmail(e.target.value)}
+                  placeholder="correo-original@ejemplo.com"
+                  className="w-full rounded-xl border border-[#D4B79E] bg-white px-3 py-2 text-sm text-[#541731]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold mb-1" htmlFor="claim-proof-note-input">
+                  Detalle privado para verificación (fecha aproximada, código o contexto familiar)
+                </label>
+                <textarea
+                  id="claim-proof-note-input"
+                  rows={2}
+                  value={claimProofNote}
+                  onChange={(e) => setClaimProofNote(e.target.value)}
+                  placeholder="Ej: Escribí la carta en mayo de 2024 desde Valencia..."
+                  className="w-full rounded-xl border border-[#D4B79E] bg-white px-3 py-2 text-sm text-[#541731]"
+                />
+              </div>
+
+              {claimFeedback && (
+                <div
+                  className={`rounded-xl p-3 text-xs font-medium border ${
+                    claimFeedback.type === 'pending'
+                      ? 'bg-amber-50 border-amber-200 text-amber-900'
+                      : 'bg-rose-50 border-rose-200 text-rose-900'
+                  }`}
+                >
+                  {claimFeedback.text}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={claimSubmitting}
+                className="w-full min-h-[44px] rounded-full bg-[#541731] hover:bg-[#3f1024] text-[#FFF6EE] font-bold text-sm transition cursor-pointer disabled:opacity-60"
+              >
+                {claimSubmitting ? 'Enviando solicitud...' : 'Solicitar custodia para revisión'}
+              </button>
+            </form>
           </div>
         </div>
       )}

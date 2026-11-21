@@ -80,6 +80,8 @@ export default function AdminModeracionPage() {
   const [multicartaFilter, setMulticartaFilter] = useState<'all' | 'pending' | 'approved' | 'archived' | 'removal_requests'>('all');
   const [multicartaTributes, setMulticartaTributes] = useState<MulticartaTributeItem[]>([]);
   const [multicartaLetters, setMulticartaLetters] = useState<MulticartaLetterItem[]>([]);
+  const [multicartaClaims, setMulticartaClaims] = useState<any[]>([]);
+  const [claimReasons, setClaimReasons] = useState<Record<string, string>>({});
   const [multicartaLoading, setMulticartaLoading] = useState<boolean>(false);
   const [multicartaNotice, setMulticartaNotice] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
@@ -167,6 +169,7 @@ export default function AdminModeracionPage() {
       if (res.ok && data.success) {
         setMulticartaTributes(data.tributes || []);
         setMulticartaLetters(data.letters || []);
+        setMulticartaClaims(data.claims || []);
       } else {
         setMulticartaNotice({ message: data.error || 'Error cargando moderación multicarta', type: 'error' });
       }
@@ -203,6 +206,37 @@ export default function AdminModeracionPage() {
     } catch (err) {
       console.error('Error moderando multicarta:', err);
       setMulticartaNotice({ message: 'Error de conexión aplicando moderación', type: 'error' });
+    }
+  };
+
+  const handleReviewClaim = async (claimId: string, action: 'approve' | 'reject') => {
+    const decisionReason = (claimReasons[claimId] || '').trim() || (
+      action === 'approve'
+        ? 'Titularidad verificada por equipo de moderación'
+        : 'No se pudo acreditar la titularidad privada'
+    );
+    try {
+      const adminKey = localStorage.getItem('admin_moderacion_auth') || 'cielo2026';
+      const res = await fetch('/api/admin/moderacion', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-moderacion-key': adminKey,
+        },
+        body: JSON.stringify({ entityType: 'guardian_claim', id: claimId, action, decisionReason }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMulticartaNotice({
+          message: action === 'approve' ? 'Custodia aprobada y guardián asignado' : 'Reclamación rechazada y registrada',
+          type: 'success',
+        });
+        await fetchMulticartaModeration();
+      } else {
+        setMulticartaNotice({ message: data.error || 'Error resolviendo reclamación', type: 'error' });
+      }
+    } catch {
+      setMulticartaNotice({ message: 'Error de conexión resolviendo reclamación', type: 'error' });
     }
   };
 
@@ -745,6 +779,97 @@ export default function AdminModeracionPage() {
                               </button>
                             )}
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                <section className="space-y-3">
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-[#1E2A78]">
+                    Reclamaciones de custodia histórica ({multicartaClaims.length})
+                  </h2>
+                  {multicartaClaims.length === 0 ? (
+                    <p className="text-sm text-[#706A95] bg-white border border-pink-200 rounded-xl p-4">
+                      No hay solicitudes de custodia para este filtro.
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {multicartaClaims.map((claim) => (
+                        <div
+                          key={claim.id}
+                          className="bg-white border border-pink-200 rounded-2xl p-4 space-y-2.5 shadow-xs"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="font-bold text-[#1E2A78]">
+                                {claim.petName} ({claim.tributeSlug})
+                              </span>
+                              <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                                {claim.claimantEmailMasked}
+                              </span>
+                              <span
+                                className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                                  claim.emailControlVerified
+                                    ? 'bg-emerald-100 text-emerald-800'
+                                    : 'bg-amber-100 text-amber-800'
+                                }`}
+                              >
+                                {claim.emailControlVerified
+                                  ? '📬 Control de correo verificado'
+                                  : '📝 Revisión manual supervisada'}
+                              </span>
+                              <span
+                                className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                                  claim.claimStatus === 'approved'
+                                    ? 'bg-emerald-100 text-emerald-800'
+                                    : claim.claimStatus === 'rejected'
+                                      ? 'bg-rose-100 text-rose-800'
+                                      : 'bg-indigo-100 text-indigo-800'
+                                }`}
+                              >
+                                {claim.claimStatus}
+                              </span>
+                            </div>
+                            <span className="text-xs text-[#706A95]">{claim.verificationMethod}</span>
+                          </div>
+                          {claim.privateProofNote && (
+                            <p className="text-xs text-slate-700 bg-pink-50/40 border border-pink-100 rounded-xl p-2.5">
+                              Nota privada aportada: {claim.privateProofNote}
+                            </p>
+                          )}
+                          {claim.decisionReason && (
+                            <p className="text-xs text-[#706A95]">
+                              Decisión ({claim.reviewedBy}): {claim.decisionReason}
+                            </p>
+                          )}
+                          {claim.claimStatus === 'pending_review' && (
+                            <div className="flex flex-wrap items-center gap-2 pt-1">
+                              <input
+                                type="text"
+                                value={claimReasons[claim.id] || ''}
+                                onChange={(e) =>
+                                  setClaimReasons((prev) => ({ ...prev, [claim.id]: e.target.value }))
+                                }
+                                placeholder="Motivo auditable de decisión..."
+                                className="flex-1 min-w-[200px] bg-white border border-pink-200 rounded-lg px-2.5 py-1 text-xs text-[#1E2A78]"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleReviewClaim(claim.id, 'approve')}
+                                className="px-3 py-1 rounded-lg text-xs font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-800 cursor-pointer"
+                              >
+                                Aprobar custodia
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleReviewClaim(claim.id, 'reject')}
+                                className="px-3 py-1 rounded-lg text-xs font-bold bg-rose-100 hover:bg-rose-200 text-rose-800 cursor-pointer"
+                              >
+                                Rechazar
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
