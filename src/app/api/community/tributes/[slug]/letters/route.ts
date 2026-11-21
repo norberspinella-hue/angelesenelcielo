@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { publishAuthorizedLetter } from '@/lib/community/tributesDb';
 import { isMulticartaFeatureEnabled } from '@/lib/community/featureFlags';
+import { verifyCsrfOrigin } from '@/lib/community/csrfGuard';
+import { enforceRateLimit } from '@/lib/community/rateLimiter';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,12 +12,17 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       return NextResponse.json({ success: false, error: 'Funcionalidad no habilitada en este entorno.' }, { status: 404 });
     }
 
+    const csrfError = verifyCsrfOrigin(req);
+    if (csrfError) return csrfError;
+
     const { slug } = params;
     if (!slug) {
       return NextResponse.json({ success: false, error: 'Slug requerido' }, { status: 400 });
     }
 
-    // 1. Obtener token de sesión de la cookie HttpOnly o encabezado Authorization
+    const rateError = await enforceRateLimit(req, 'publish_letter', slug);
+    if (rateError) return rateError;
+
     const sessionCookie = req.cookies.get('guardian_session')?.value;
     const authHeader = req.headers.get('authorization');
     const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
@@ -28,17 +35,6 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       }, { status: 401 });
     }
 
-    // 2. Comprobar CSRF simple
-    const origin = req.headers.get('origin');
-    const host = req.headers.get('host');
-    if (origin && host) {
-      const originHost = new URL(origin).host;
-      if (originHost !== host && !originHost.includes('localhost') && !originHost.includes('127.0.0.1')) {
-        return NextResponse.json({ success: false, error: 'CSRF denegado: origen no válido' }, { status: 403 });
-      }
-    }
-
-    // 3. Obtener cuerpo y clave de idempotencia
     const body = await req.json();
     const {
       title,
@@ -59,7 +55,6 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       }, { status: 400 });
     }
 
-    // 4. Publicar carta con autorización validada en el servicio
     const result = await publishAuthorizedLetter({
       tributeSlug: slug,
       rawGuardianToken: token,
