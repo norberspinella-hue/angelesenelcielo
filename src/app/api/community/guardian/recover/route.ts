@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       }, { status: 400 });
     }
 
-    const result = await requestGuardianRecovery(email, tributeSlug);
+    const result = await requestGuardianRecovery(email, tributeSlug, req.nextUrl.origin);
     return NextResponse.json(result);
   } catch (err: any) {
     return NextResponse.json({ success: false, error: 'No se pudo procesar la solicitud.' }, { status: err.status || 500 });

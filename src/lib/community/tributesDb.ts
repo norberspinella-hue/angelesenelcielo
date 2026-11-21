@@ -454,7 +454,11 @@ export async function revokeGuardianSession(rawToken: string, revokeAll = false)
  * Solicitud de recuperación mediante Magic Link efímero (15 min, 1 solo uso).
  * Anti-enumeración estricta: respuesta y flujo de tiempo constantes; jamás devuelve tokens en HTTP.
  */
-export async function requestGuardianRecovery(email: string, tributeSlug: string): Promise<{ success: boolean; message: string }> {
+export async function requestGuardianRecovery(
+  email: string,
+  tributeSlug: string,
+  appOrigin?: string
+): Promise<{ success: boolean; message: string }> {
   const pool = getDbPool();
   if (!pool) throw new Error('Base de datos no disponible');
 
@@ -486,6 +490,7 @@ export async function requestGuardianRecovery(email: string, tributeSlug: string
         tributeSlug: guardian.tributeSlug,
         petName: guardian.petName,
         rawToken: rawMagicToken,
+        appOrigin,
       });
     } else {
       // Capturador local exclusivo de pruebas/desarrollo (nunca se envía por HTTP ni se loguea en consola)

@@ -6,6 +6,35 @@ export interface StagingMagicLinkPayload {
   petName: string;
   rawToken: string;
   kind?: 'magic' | 'claim_control';
+  appOrigin?: string;
+}
+
+function isValidStagingBaseUrl(rawUrl: string): string | null {
+  try {
+    const u = new URL(rawUrl.trim());
+    if (u.protocol !== 'https:') return null;
+    const host = u.hostname.toLowerCase();
+    if (host === 'localhost' || host === '127.0.0.1' || host.includes('todaslasmascotasvanalcielo.com')) {
+      return null;
+    }
+    // RFC 1035: cada etiqueta DNS debe tener <= 63 caracteres
+    if (host.split('.').some((label) => label.length === 0 || label.length > 63)) {
+      return null;
+    }
+    const extraAllowlist = (process.env.COMMUNITY_ALLOWED_APP_ORIGINS || '')
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    const isAllowed =
+      host === 'angelesenelcielo-staging.vercel.app' ||
+      /^angelesenelcielo-[a-z0-9]+-todoslasmascotasvanalcielo\.vercel\.app$/.test(host) ||
+      extraAllowlist.includes(u.origin.toLowerCase()) ||
+      extraAllowlist.includes(host);
+
+    return isAllowed ? u.origin : null;
+  } catch {
+    return null;
+  }
 }
 
 export interface StagingEmailResult {
@@ -67,9 +96,11 @@ export async function sendStagingMagicLinkEmail(
     return { sent: false, reason: 'destinatario_no_autorizado_en_staging' };
   }
 
-  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
+  const appUrl =
+    isValidStagingBaseUrl(process.env.NEXT_PUBLIC_APP_URL || '') ||
+    isValidStagingBaseUrl(payload.appOrigin || '');
   if (!appUrl) {
-    return { sent: false, reason: 'falta_next_public_app_url' };
+    return { sent: false, reason: 'url_staging_no_autorizada_o_invalida' };
   }
 
   const paramName = payload.kind === 'claim_control' ? 'claimToken' : 'magicToken';

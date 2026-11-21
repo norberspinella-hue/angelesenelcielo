@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
           petName: result.petName,
           rawToken: result.rawControlToken,
           kind: 'claim_control',
+          appOrigin: req.nextUrl.origin,
         }).catch(() => {});
       } else if (process.env.NODE_ENV !== 'production') {
         captureDevMagicLinkEmail({
