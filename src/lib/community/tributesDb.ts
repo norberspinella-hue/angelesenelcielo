@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { assertStagingIsolation } from './stagingGuard';
 import { captureDevMagicLinkEmail } from './devEmailSink';
+import { sendStagingMagicLinkEmail } from './stagingEmailAdapter';
 
 export interface TributeDto {
   id: string;
@@ -445,7 +446,7 @@ export async function requestGuardianRecovery(email: string, tributeSlug: string
   const bIndex = computeBlindIndex(email);
 
   const res = await pool.query(`
-    SELECT g.id, g.tribute_id, ct.slug as "tributeSlug"
+    SELECT g.id, g.tribute_id, ct.slug as "tributeSlug", ct.pet_name as "petName"
     FROM public.tribute_guardians g
     JOIN public.community_tributes ct ON g.tribute_id = ct.id
     WHERE g.email_blind_index = $1
@@ -464,12 +465,21 @@ export async function requestGuardianRecovery(email: string, tributeSlug: string
       VALUES ($1, $2, NOW() + INTERVAL '15 minutes');
     `, [guardian.id, tHash]);
 
-    // Capturador local exclusivo de pruebas/desarrollo (nunca se envía por HTTP ni se loguea en consola)
-    captureDevMagicLinkEmail({
-      tributeSlug: guardian.tributeSlug,
-      emailBlindHint: bIndex,
-      rawToken: rawMagicToken,
-    });
+    if (process.env.COMMUNITY_ALLOWED_ENV === 'staging' && process.env.COMMUNITY_EMAIL_SEND_ENABLED === 'true') {
+      await sendStagingMagicLinkEmail({
+        requestedEmail: email,
+        tributeSlug: guardian.tributeSlug,
+        petName: guardian.petName,
+        rawToken: rawMagicToken,
+      });
+    } else {
+      // Capturador local exclusivo de pruebas/desarrollo (nunca se envía por HTTP ni se loguea en consola)
+      captureDevMagicLinkEmail({
+        tributeSlug: guardian.tributeSlug,
+        emailBlindHint: bIndex,
+        rawToken: rawMagicToken,
+      });
+    }
   }
 
   return {

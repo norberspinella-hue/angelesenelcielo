@@ -133,3 +133,76 @@ export function assertStagingIsolation(dbConfig: {
 
   return { host, port, database, projectRef };
 }
+
+export function extractProjectRefFromJwt(token?: string): string | null {
+  if (!token) return null;
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+    return typeof payload?.ref === 'string' ? payload.ref.toLowerCase() : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Verificación exhaustiva de todas las variables de entorno de Preview / Staging.
+ * Bloquea el arranque o despliegue si Preview hereda credenciales productivas de Supabase, Stripe o Storage.
+ */
+export function assertPreviewEnvironmentIsolation(env: NodeJS.ProcessEnv = process.env): { ok: true; stagingRef: string | null } {
+  const extraProdRefs = (env.PRODUCTION_SUPABASE_PROJECT_REF || '')
+    .split(',')
+    .map(s => s.trim().toLowerCase())
+    .filter(Boolean);
+  const forbiddenRefs = new Set([...KNOWN_PRODUCTION_PROJECT_REFS, ...extraProdRefs]);
+
+  // 1. Nunca permitir activar la feature flag experimental en Vercel Production
+  if (env.VERCEL_ENV === 'production' && env.COMMUNITY_MULTICARTA_ENABLED === 'true') {
+    throw new StagingIsolationError('Bloqueo crítico: COMMUNITY_MULTICARTA_ENABLED=true no está permitido en Vercel Production.');
+  }
+
+  // 2. Exigir entorno explícito staging
+  if (env.COMMUNITY_ALLOWED_ENV !== 'staging') {
+    throw new StagingIsolationError('Bloqueo Preview: COMMUNITY_ALLOWED_ENV debe ser "staging".');
+  }
+
+  // 3. Bloquear claves Stripe Live
+  const stripeSec = env.STRIPE_SECRET_KEY || '';
+  const stripePub = env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
+  if (stripeSec.startsWith('sk_live_') || stripeSec.startsWith('rk_live_') || stripePub.startsWith('pk_live_')) {
+    throw new StagingIsolationError('Bloqueo Preview: detectadas claves comerciales Stripe Live en entorno Preview.');
+  }
+
+  // 4. Validar URL y JWTs de Supabase (Anon y Service Role) contra proyecto de producción
+  const supaUrl = env.NEXT_PUBLIC_SUPABASE_URL || '';
+  if (!supaUrl) {
+    throw new StagingIsolationError('Bloqueo Preview: falta NEXT_PUBLIC_SUPABASE_URL de Staging.');
+  }
+  const urlRef = extractProjectRefFromHost(new URL(supaUrl).hostname);
+  if (urlRef && forbiddenRefs.has(urlRef)) {
+    throw new StagingIsolationError('Bloqueo Preview: NEXT_PUBLIC_SUPABASE_URL hereda el proyecto de Producción.');
+  }
+
+  const anonRef = extractProjectRefFromJwt(env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  const serviceRef = extractProjectRefFromJwt(env.SUPABASE_SERVICE_ROLE_KEY);
+  if ((anonRef && forbiddenRefs.has(anonRef)) || (serviceRef && forbiddenRefs.has(serviceRef))) {
+    throw new StagingIsolationError('Bloqueo Preview: las claves JWT de Supabase pertenecen al proyecto de Producción.');
+  }
+  if (urlRef && ((anonRef && anonRef !== urlRef) || (serviceRef && serviceRef !== urlRef))) {
+    throw new StagingIsolationError('Bloqueo Preview: las claves Supabase no coinciden con el Project Ref de NEXT_PUBLIC_SUPABASE_URL.');
+  }
+
+  // 5. Validar secreto HMAC obligatorio
+  if (!env.COMMUNITY_HMAC_SECRET || env.COMMUNITY_HMAC_SECRET.trim().length < 32) {
+    throw new StagingIsolationError('Bloqueo Preview: falta COMMUNITY_HMAC_SECRET (mínimo 32 caracteres).');
+  }
+
+  // 6. Validar destino PostgreSQL efectivo
+  if (!env.COMMUNITY_DB_URL) {
+    throw new StagingIsolationError('Bloqueo Preview: falta COMMUNITY_DB_URL de Staging.');
+  }
+  assertStagingIsolation({ connectionString: env.COMMUNITY_DB_URL });
+
+  return { ok: true, stagingRef: urlRef };
+}
