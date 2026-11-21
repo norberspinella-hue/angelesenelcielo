@@ -243,19 +243,22 @@ export function LiveCanvas({
       {/* ESCENA 1: EL JARDÍN DE LAS LUCES · CIELO DE LUCES (ESCENARIO MAESTRO LIVE) */}
       {/* ========================================================================= */}
       {activeScene === 1 && (
-        <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none">
+        <div
+          className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none"
+          style={{ containerType: 'inline-size' }}
+        >
           {/* Vídeo 16:9 en bucle continuo sin distorsión ni saltos */}
           <LiveLoopVideo
             mutedByDefault={forceMutedPreview}
             allowUnmuteControl={!forceMutedPreview}
           />
 
-          {/* 1. CONTADORES SUPERIORES EN 2 FILAS CON 85% DE OPACIDAD (Y: >= 230px, top: 12.4%) */}
+          {/* 1. CONTADORES SUPERIORES EN 1 FILA (Mural Global + Web Global) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1.5 z-30 w-full max-w-[620px] px-2"
+            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center z-30 w-full max-w-[620px] px-2"
             style={{ top: '12.4%' }}
           >
-            {/* FILA 1: En el mural + En la web (Alineados horizontalmente a partir de Y=230px) */}
+            {/* FILA 1: En el mural + En la web */}
             <div className="flex items-center justify-center gap-2 sm:gap-2.5">
               {/* Píldora 1: Mural Global (Estrella de Oro Cálido) - Fondo 85% opacidad */}
               <div className="relative flex items-center gap-2 px-3.5 py-1.5 rounded-full overflow-hidden"
@@ -293,333 +296,40 @@ export function LiveCanvas({
                 </span>
               </div>
             </div>
-
-            {/* FILA 2: En este directo (Centrado horizontalmente debajo) - Fondo 85% opacidad */}
-            <div className="relative flex items-center gap-2 px-4 py-1.5 rounded-full overflow-hidden"
-              style={{
-                background: 'linear-gradient(180deg, rgba(252, 246, 254, 0.48) 0%, rgba(250, 240, 252, 0.36) 30%, rgba(245, 232, 250, 0.26) 70%, rgba(238, 216, 246, 0.32) 100%)',
-                border: '1.4px solid rgba(203, 168, 219, 0.85)',
-                boxShadow: 'inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.80), inset 0 -2px 3px 0 rgba(118, 84, 109, 0.16), 0 4px 12px 0 rgba(118, 84, 109, 0.25), 0 0 14px 0 rgba(203, 168, 219, 0.30)',
-                backdropFilter: 'blur(10px) saturate(125%)',
-                WebkitBackdropFilter: 'blur(10px) saturate(125%)',
-              }}>
-              <svg className="w-[16px] h-[22px] shrink-0 select-none -my-0.5" viewBox="0 0 36 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="18" cy="14" r="18" fill="url(#ctaCandleAuraLiveFinal)" className="animate-cta-aura" />
-                <g className="animate-cta-flame">
-                  <path d="M 18 2 C 24.5 8, 25.2 14, 18 20 C 10.8 14, 11.5 8, 18 2 Z" fill="url(#ctaFlameOuterGradLiveFinal)" />
-                  <path d="M 18 5.5 C 22 10, 22.3 14, 18 18 C 13.7 14, 14 10, 18 5.5 Z" fill="url(#ctaFlameInnerGradLiveFinal)" />
-                  <ellipse cx="18" cy="14.5" rx="2" ry="3.5" fill="#FFFFFF" opacity="0.95" />
-                </g>
-                <path d="M 18 17.5 Q 18.8 19.5, 18 22" stroke="#5A2E12" strokeWidth="1.6" strokeLinecap="round" fill="none" />
-                <ellipse cx="18" cy="22.5" rx="8.3" ry="2" fill="url(#ctaWaxRimGradLiveFinal)" stroke="#C8A265" strokeWidth="0.8" />
-                <path d="M 9.7 22.5 L 10 44 C 10 47, 26 47, 26 44 L 26.3 22.5 Z" fill="url(#ctaCandleBodyGradLiveFinal)" stroke="#B89355" strokeWidth="0.8" />
-                <path d="M 14 23.5 L 14.4 43 C 15.5 43.5, 16.2 43.5, 16.5 43 L 16.2 23.5 Z" fill="#FFFFFF" opacity="0.5" />
-                <path d="M 24.1 23 C 25.9 26, 25.9 30, 24.1 31 C 23 30, 23.4 26, 24.1 23 Z" fill="#FFF8EC" opacity="0.85" stroke="#D5B77B" strokeWidth="0.5" />
-                <ellipse cx="18" cy="44" rx="9" ry="2.2" fill="url(#ctaCandleBaseGradLiveFinal)" stroke="#9A7532" strokeWidth="0.8" />
-              </svg>
-              <span
-                className={`text-[12.5px] sm:text-[14px] font-serif font-bold tracking-wide whitespace-nowrap ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#4A1E37]'}`}
-                style={counterTextVariant === 'white' ? { textShadow: '0 1px 2px rgba(118, 84, 109, 0.45), 0 0 4px rgba(118, 84, 109, 0.25)' } : undefined}
-              >
-                <strong className={`font-black text-[14.5px] sm:text-[16.5px] ${counterTextVariant === 'white' ? 'text-[#FFFDF8]' : 'text-[#331024]'}`}>{sessionCandlesCount}</strong> en este directo
-              </span>
-            </div>
           </div>
 
-          {/* 2. MEMORIAL SECUNDARIO: 20 NOMBRES VISIBLES (5 LÍNEAS × 4 NOMBRES) (AMPLIADOS 25-30%) (Y: ~24.0%) */}
+          {/* 2. MENSAJE CENTRAL DEL DIRECTO (Tipografía blanca elegante y legible sobre la escena) */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 w-full max-w-[96%] pointer-events-none"
-            style={{ top: '21.2%' }}
+            className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center justify-center text-center pointer-events-none px-10 py-6"
+            style={{
+              width: 'min(88%, 1040px)',
+              background:
+                'radial-gradient(ellipse at center, rgba(28, 12, 24, 0.20) 0%, rgba(28, 12, 24, 0.08) 42%, transparent 68%)',
+            }}
           >
-            {/* Subtítulo discreto en blanco marfil con sombra malva suave */}
-            <span
-              className="font-serif italic font-semibold text-[13px] sm:text-[15.5px] text-[#FFFDF8] tracking-wide"
+            <h2
+              className="font-serif font-bold text-[#FFFDF8] tracking-wide leading-tight m-0"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
+                fontSize: 'clamp(14px, 2.75cqi, 54px)',
+                textShadow:
+                  '0 2px 12px rgba(24, 10, 20, 0.88), 0 1px 3px rgba(24, 10, 20, 0.95), 0 0 24px rgba(45, 22, 38, 0.65)',
               }}
             >
-              Pequeñas luces que nunca se apagan
-            </span>
-            <span
-              className="text-[11px] text-[#FFFDF8]/90 my-0.5 leading-none font-bold select-none"
-              style={{ textShadow: '0 1px 2px rgba(118, 84, 109, 0.8)' }}
-            >
-              ♡
-            </span>
-
-            {/* Rejilla de 5 líneas × 4 nombres en blanco marfil #FFFDF8 con sombra malva oscuro #76546D */}
-            <div className="flex flex-col items-center justify-center gap-1 sm:gap-1.5 w-full max-w-[620px]">
-              {nameRows.length > 0 ? (
-                nameRows.map((row, rowIdx) => (
-                  <div key={rowIdx} className="flex items-center justify-center gap-1.5 sm:gap-3 w-full">
-                    {row.map((name, colIdx) => (
-                      <React.Fragment key={colIdx}>
-                        {colIdx > 0 && (
-                          <span className="text-[10px] sm:text-[12px] text-[#FFFDF8]/60 font-bold select-none">·</span>
-                        )}
-                        <span
-                          className="font-serif italic font-bold text-[13.5px] sm:text-[16.5px] text-[#FFFDF8] tracking-wide whitespace-nowrap"
-                          style={{
-                            fontFamily: "'Cormorant Garamond', Georgia, serif",
-                            textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
-                          }}
-                        >
-                          {name}
-                        </span>
-                      </React.Fragment>
-                    ))}
-                  </div>
-                ))
-              ) : (
-                <span
-                  className="font-serif italic text-[12px] sm:text-[13.5px] text-[#FFFDF8]/75 tracking-wide mt-0.5"
-                  style={{
-                    fontFamily: "'Cormorant Garamond', Georgia, serif",
-                    textShadow: '0 1px 2px rgba(118, 84, 109, 0.45)',
-                  }}
-                >
-                  Escribe en el chat para encender una luz por tu angelito
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* 3. VELA PROTAGONISTA: ANIMACIÓN NATURAL INTEGRADA SOBRE LA LLAMA ORIGINAL */}
-          <div
-            className="absolute pointer-events-none z-10 flex items-center justify-center -translate-x-1/2 -translate-y-1/2"
-            style={{ left: '21.5%', top: '35.0%', width: '130px', height: '130px' }}
-          >
-            {/* Aureola ambiental cálida difusa permanente (100% natural, sin aros ni círculos digitales) */}
-            <div
-              className="absolute w-28 h-28 rounded-full pointer-events-none animate-live-aura-breath blur-lg"
-              style={{
-                background: 'radial-gradient(circle, rgba(255, 195, 80, 0.28) 0%, rgba(245, 140, 30, 0.10) 50%, transparent 75%)',
-                mixBlendMode: 'screen',
-              }}
-            />
-
-            {/* Suave respiración lumínica orgánica sobre el núcleo cálido de la fotografía */}
-            <div
-              className="absolute w-5 h-10 pointer-events-none blur-xs"
-              style={{
-                top: '47px',
-                borderRadius: '50% 50% 40% 40% / 60% 60% 30% 30%',
-                background: 'radial-gradient(ellipse at center, rgba(255, 255, 255, 0.70) 0%, rgba(255, 220, 110, 0.35) 45%, transparent 80%)',
-                mixBlendMode: 'screen',
-                animation: 'liveFlameCoreJitter 0.25s ease-in-out infinite alternate',
-              }}
-            />
-
-            {/* Resplandor cálido adicional al pulsar "Encender vela" (sin aros ni indicadores artificiales) */}
-            {isJustLit && (
-              <div
-                className="absolute w-32 h-32 rounded-full pointer-events-none blur-md animate-pulse"
-                style={{
-                  background: 'radial-gradient(circle, rgba(255, 230, 140, 0.6) 0%, rgba(245, 160, 60, 0.3) 45%, transparent 75%)',
-                  mixBlendMode: 'screen',
-                }}
-              />
-            )}
-          </div>
-
-          {/* 3. CTA DE PARTICIPACIÓN EN LA HUELLA TALLADA DEL CORAZÓN (Y: ~53.0%, 2 LÍNEAS + VELA DORADA CENTRADA DEBAJO) */}
-          <div
-            className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center text-center z-30 pointer-events-none w-[75%] max-w-[380px]"
-            style={{ top: '53.0%' }}
-          >
-            {/* Texto en 2 líneas en blanco marfil cálido #FFFDF8 con sombra malva suave #76546D */}
-            <span
-              className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#FFFDF8] tracking-wide leading-none"
+              ¿Cómo se llamaba tu angelito?
+            </h2>
+            <p
+              className="font-serif italic font-semibold text-[#FFFDF8]/95 tracking-wide leading-snug mt-1.5 m-0"
               style={{
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
+                fontSize: 'clamp(11px, 1.75cqi, 34px)',
+                textShadow:
+                  '0 2px 10px rgba(24, 10, 20, 0.88), 0 1px 3px rgba(24, 10, 20, 0.95), 0 0 18px rgba(45, 22, 38, 0.60)',
               }}
             >
-              Enciende una luz
-            </span>
-            <span
-              className="font-serif italic font-bold text-[16px] sm:text-[18.5px] text-[#FFFDF8] tracking-wide leading-tight mt-1"
-              style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                textShadow: '0 1px 3px rgba(118, 84, 109, 0.45), 0 0 6px rgba(118, 84, 109, 0.25)',
-              }}
-            >
-              por tu angelito
-            </span>
-
-            {/* Vela SVG Celestial Premium centrada debajo del texto (con mini llama viva animada) */}
-            <svg className="w-[22px] h-[32px] sm:w-[26px] sm:h-[36px] shrink-0 mt-1" viewBox="0 0 36 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <radialGradient id="ctaCandleAuraLiveFinal" cx="50%" cy="40%" r="50%">
-                  <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.80" />
-                  <stop offset="35%" stopColor="#F59E0B" stopOpacity="0.40" />
-                  <stop offset="70%" stopColor="#EA580C" stopOpacity="0.12" />
-                  <stop offset="100%" stopColor="#EA580C" stopOpacity="0" />
-                </radialGradient>
-                <linearGradient id="ctaFlameOuterGradLiveFinal" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFBEB" />
-                  <stop offset="20%" stopColor="#FDE68A" />
-                  <stop offset="55%" stopColor="#F59E0B" />
-                  <stop offset="100%" stopColor="#D97706" />
-                </linearGradient>
-                <linearGradient id="ctaFlameInnerGradLiveFinal" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#FFFFFF" />
-                  <stop offset="45%" stopColor="#FEF08A" />
-                  <stop offset="100%" stopColor="#F59E0B" />
-                </linearGradient>
-                <linearGradient id="ctaWaxRimGradLiveFinal" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#EED5A5" />
-                  <stop offset="50%" stopColor="#FFFDF7" />
-                  <stop offset="100%" stopColor="#D9B778" />
-                </linearGradient>
-                <linearGradient id="ctaCandleBodyGradLiveFinal" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#EDE0C8" />
-                  <stop offset="22%" stopColor="#FFFDF9" />
-                  <stop offset="60%" stopColor="#F7EEDD" />
-                  <stop offset="85%" stopColor="#E8D5B5" />
-                  <stop offset="100%" stopColor="#D2B47E" />
-                </linearGradient>
-                <linearGradient id="ctaCandleBaseGradLiveFinal" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#B89355" />
-                  <stop offset="50%" stopColor="#FDE68A" />
-                  <stop offset="100%" stopColor="#9A7532" />
-                </linearGradient>
-              </defs>
-              {/* Halo cálido sutil animado */}
-              <circle cx="18" cy="14" r="18" fill="url(#ctaCandleAuraLiveFinal)" className="animate-cta-aura" />
-              
-              {/* Mini llama viva animada (oscilación lateral y ligero cambio de tamaño) */}
-              <g className="animate-cta-flame">
-                <path d="M 18 2 C 24.5 8, 25.2 14, 18 20 C 10.8 14, 11.5 8, 18 2 Z" fill="url(#ctaFlameOuterGradLiveFinal)" />
-                <path d="M 18 5.5 C 22 10, 22.3 14, 18 18 C 13.7 14, 14 10, 18 5.5 Z" fill="url(#ctaFlameInnerGradLiveFinal)" />
-                <ellipse cx="18" cy="14.5" rx="2" ry="3.5" fill="#FFFFFF" opacity="0.95" />
-              </g>
-
-              {/* Mecha fina exactamente debajo de la llama */}
-              <path d="M 18 17.5 Q 18.8 19.5, 18 22" stroke="#5A2E12" strokeWidth="1.6" strokeLinecap="round" fill="none" />
-              <ellipse cx="18" cy="22.5" rx="8.3" ry="2" fill="url(#ctaWaxRimGradLiveFinal)" stroke="#C8A265" strokeWidth="0.8" />
-              <path d="M 9.7 22.5 L 10 44 C 10 47, 26 47, 26 44 L 26.3 22.5 Z" fill="url(#ctaCandleBodyGradLiveFinal)" stroke="#B89355" strokeWidth="0.8" />
-              <path d="M 14 23.5 L 14.4 43 C 15.5 43.5, 16.2 43.5, 16.5 43 L 16.2 23.5 Z" fill="#FFFFFF" opacity="0.5" />
-              <path d="M 24.1 23 C 25.9 26, 25.9 30, 24.1 31 C 23 30, 23.4 26, 24.1 23 Z" fill="#FFF8EC" opacity="0.85" stroke="#D5B77B" strokeWidth="0.5" />
-              <ellipse cx="18" cy="44" rx="9" ry="2.2" fill="url(#ctaCandleBaseGradLiveFinal)" stroke="#9A7532" strokeWidth="0.8" />
-            </svg>
+              Aquí puedes hablar de él, de tu pérdida.
+            </p>
           </div>
-
-          {/* 4. PLACA CONMEMORATIVA DEL PEDESTAL (NOMBRE PROTAGONISTA + DEDICATORIA) CON DISTANCIA ANTI-COLISIÓN */}
-          {currentPet ? (
-            <div
-              className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-start text-center z-30 w-[82%] max-w-[540px] px-3 pointer-events-none"
-              style={{ top: '61.8%' }}
-            >
-              {/* Halo / Círculo rojizo-dorado expansivo al entrar el perrito */}
-              {isJustLit && (
-                <>
-                  <div
-                    className="absolute left-1/2 top-8 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full blur-xl animate-ping"
-                    style={{
-                      width: '280px',
-                      height: '110px',
-                      background: 'radial-gradient(ellipse at center, rgba(244, 63, 94, 0.48) 0%, rgba(225, 29, 72, 0.28) 45%, rgba(251, 191, 36, 0.15) 70%, transparent 90%)',
-                      mixBlendMode: 'screen',
-                      animationDuration: '3.0s',
-                      animationIterationCount: 1,
-                    }}
-                  />
-                  <div
-                    className="absolute left-1/2 top-8 -translate-x-1/2 -translate-y-1/2 pointer-events-none rounded-full blur-lg animate-pulse"
-                    style={{
-                      width: '240px',
-                      height: '80px',
-                      background: 'radial-gradient(ellipse at center, rgba(251, 113, 133, 0.35) 0%, rgba(244, 63, 94, 0.18) 50%, transparent 80%)',
-                      mixBlendMode: 'screen',
-                    }}
-                  />
-                </>
-              )}
-
-              {/* ZONA SUPERIOR: NOMBRE PROTAGONISTA */}
-              <div className="w-full flex items-center justify-center relative z-10">
-                <span
-                  className="leading-none tracking-normal select-none text-center block w-full truncate relative z-10"
-                  style={{
-                    fontFamily: "'Allura', cursive",
-                    color: '#FFFDF8',
-                    fontSize: nameFontSize,
-                    textShadow: '0 2px 6px rgba(118, 84, 109, 0.48), 0 0 16px rgba(118, 84, 109, 0.28)',
-                  }}
-                >
-                  {currentPet}
-                </span>
-              </div>
-
-              {/* ZONA INFERIOR: DEDICATORIA CON SEPARACIÓN GARANTIZADA DE 44-48PX (NUNCA SOLAPA) */}
-              <div
-                className="w-full flex flex-col items-center justify-center text-center relative z-10"
-                style={{ marginTop: 'clamp(32px, 4.0vw, 44px)', lineHeight: 1.20 }}
-              >
-                {dedicationLines.length > 1 ? (
-                  <div className="w-full flex flex-col items-center justify-center leading-tight">
-                    {dedicationLines.map((line, idx) => (
-                      <p
-                        key={idx}
-                        className="font-serif italic font-bold text-[#FFFDF8] tracking-normal"
-                        style={{
-                          fontFamily: "'Cormorant Garamond', Georgia, serif",
-                          fontSize: dedicationFontSize,
-                          textShadow: '0 1.5px 4px rgba(118, 84, 109, 0.45), 0 0 8px rgba(118, 84, 109, 0.25)',
-                          margin: 0,
-                          lineHeight: '1.22',
-                        }}
-                      >
-                        {line}
-                      </p>
-                    ))}
-                  </div>
-                ) : (
-                  <p
-                    className="font-serif italic font-bold text-[#FFFDF8] leading-tight tracking-normal"
-                    style={{
-                      fontFamily: "'Cormorant Garamond', Georgia, serif",
-                      fontSize: dedicationFontSize,
-                      textShadow: '0 1.5px 4px rgba(118, 84, 109, 0.45), 0 0 8px rgba(118, 84, 109, 0.25)',
-                      textWrap: 'balance',
-                      margin: 0,
-                      lineHeight: '1.25',
-                    }}
-                  >
-                    {rawDedication}
-                  </p>
-                )}
-              </div>
-            </div>
-          ) : (
-            /* Estado de reposo / Altar inicial */
-            <div
-              className="absolute left-1/2 -translate-x-1/2 flex flex-col justify-center items-center py-1 text-center z-30 w-[84%] max-w-[540px]"
-              style={{ top: '67.0%', height: '11.0%' }}
-            >
-              <span
-                className="font-serif italic font-extrabold text-[17px] sm:text-[21px] text-[#FFFDF8] tracking-wide"
-                style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  textShadow: '0 1.5px 4px rgba(118, 84, 109, 0.45), 0 0 8px rgba(118, 84, 109, 0.25)',
-                }}
-              >
-                Un altar eterno de luz y amor
-              </span>
-              <span className="text-sm text-[#FFFDF8]/90 my-0.5 leading-none font-black" style={{ textShadow: '0 1px 2px rgba(118, 84, 109, 0.8)' }}>♡</span>
-              <p
-                className="font-serif italic font-bold text-[14px] sm:text-[17px] text-[#FFFDF8] mt-0.5"
-                style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  textShadow: '0 1.5px 4px rgba(118, 84, 109, 0.45), 0 0 8px rgba(118, 84, 109, 0.25)',
-                }}
-              >
-                Escribe el nombre de tu ángel en el chat
-              </p>
-            </div>
-          )}
         </div>
       )}
 
