@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { computeBlindIndex, getDbPool } from './tributesDb';
 
-export type RateLimitAction = 'recover' | 'verify' | 'create_tribute' | 'publish_letter' | 'revoke';
+export type RateLimitAction = 'recover' | 'verify' | 'create_tribute' | 'publish_letter' | 'revoke' | 'react';
 
 const ACTION_LIMITS: Record<RateLimitAction, { maxAttempts: number; windowSeconds: number; lockoutSeconds: number }> = {
   recover: { maxAttempts: 5, windowSeconds: 900, lockoutSeconds: 900 },
@@ -9,6 +9,7 @@ const ACTION_LIMITS: Record<RateLimitAction, { maxAttempts: number; windowSecond
   create_tribute: { maxAttempts: 5, windowSeconds: 900, lockoutSeconds: 900 },
   publish_letter: { maxAttempts: 25, windowSeconds: 900, lockoutSeconds: 900 },
   revoke: { maxAttempts: 10, windowSeconds: 900, lockoutSeconds: 900 },
+  react: { maxAttempts: 60, windowSeconds: 900, lockoutSeconds: 300 },
 };
 
 export function extractClientIp(req: NextRequest): string {

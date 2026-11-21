@@ -278,8 +278,47 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
     }
   };
 
-  // Reacción amorosa / velita para el tributo simulado
-  const handleReactionTribute = (tributeId: string, type: 'candle' | 'hug') => {
+  // Reacción amorosa / velita persistente en backend (con fallback local para escenarios mock)
+  const handleReactionTribute = async (tributeId: string, type: 'candle' | 'hug') => {
+    const target = tributes.find(t => t.id === tributeId) || activeTributeForCollection;
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(tributeId);
+
+    if (isUuid && target?.slug) {
+      try {
+        const res = await fetch(`/api/community/tributes/${encodeURIComponent(target.slug)}/react`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reactionType: type }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.counts) {
+            setTributes(prev => prev.map(t => t.id === tributeId ? {
+              ...t,
+              candlesCount: data.counts.candlesCount,
+              hugsCount: data.counts.hugsCount,
+            } : t));
+            if (activeTributeForCollection && activeTributeForCollection.id === tributeId) {
+              setActiveTributeForCollection(prev => prev ? {
+                ...prev,
+                candlesCount: data.counts.candlesCount,
+                hugsCount: data.counts.hugsCount,
+              } : null);
+            }
+            if (data.alreadyReacted) {
+              setToastMessage(type === 'candle' ? '🕯️ Ya habías encendido una velita de recuerdo.' : '🐾 Ya habías dejado un abrazo de consuelo.');
+            } else {
+              setToastMessage(type === 'candle' ? '🕯️ ¡Has encendido una velita de recuerdo!' : '🐾 ¡Has dejado un abrazo de consuelo!');
+            }
+            setTimeout(() => setToastMessage(null), 3000);
+            return;
+          }
+        }
+      } catch {
+        // continuar con actualización local si no hay conexión
+      }
+    }
+
     setTributes(prev => prev.map(t => {
       if (t.id === tributeId) {
         return {

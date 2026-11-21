@@ -97,17 +97,17 @@ export function assertStagingIsolation(dbConfig: {
   }
 
   // 4. Comprobar coherencia con NEXT_PUBLIC_SUPABASE_URL si está definida en entornos remotos
+  const isLocalStaging = (host === '127.0.0.1' || host === 'localhost') && database.startsWith('cartas_');
   const publicSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
   if (publicSupabaseUrl) {
     try {
       const pubHost = new URL(publicSupabaseUrl).hostname.toLowerCase();
       const pubRef = extractProjectRefFromHost(pubHost);
-      const isLocalDocker = (host === '127.0.0.1' || host === 'localhost') && database === 'cartas_staging';
 
-      if (!isLocalDocker && pubRef && forbiddenRefs.has(pubRef)) {
+      if (!isLocalStaging && pubRef && forbiddenRefs.has(pubRef)) {
         throw new StagingIsolationError('Aislamiento bloqueado: NEXT_PUBLIC_SUPABASE_URL apunta a producción en un destino remoto.');
       }
-      if (!isLocalDocker && projectRef && pubRef && projectRef !== pubRef) {
+      if (!isLocalStaging && projectRef && pubRef && projectRef !== pubRef) {
         throw new StagingIsolationError('Aislamiento bloqueado: discrepancia entre proyecto Supabase público y destino PostgreSQL.');
       }
     } catch (err) {
@@ -116,7 +116,6 @@ export function assertStagingIsolation(dbConfig: {
   }
 
   // 5. Lista blanca estricta de destinos permitidos
-  const isLocalStaging = (host === '127.0.0.1' || host === 'localhost') && database === 'cartas_staging';
   const allowedRemoteHosts = (process.env.COMMUNITY_ALLOWED_DB_HOSTS || '')
     .split(',')
     .map(h => h.trim().toLowerCase())

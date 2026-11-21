@@ -1,18 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { getAdminCommunityModerationData, moderateCommunityEntity } from '@/lib/community/tributesDb';
 
 export const dynamic = 'force-dynamic';
 
-// GET: Listar memoriales con filtros, búsqueda y paginación
+// GET: Listar memoriales (y opcionalmente homenajes/cartas multicarta) con filtros, búsqueda y paginación
 export async function GET(req: NextRequest) {
   try {
-    const supabase = createAdminClient();
     const { searchParams } = new URL(req.url);
-
+    const scope = searchParams.get('scope') || 'memorials';
     const search = searchParams.get('search')?.trim() || '';
-    const filter = searchParams.get('filter') || 'all'; // 'all' | 'public' | 'hidden' | 'shelter' | 'standard'
+    const filter = searchParams.get('filter') || 'all';
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
     const limit = Math.max(1, Math.min(100, parseInt(searchParams.get('limit') || '25', 10)));
+
+    if (scope === 'multicarta') {
+      const data = await getAdminCommunityModerationData({
+        statusFilter: filter,
+        search,
+        limit,
+      });
+      return NextResponse.json({ success: true, scope: 'multicarta', ...data });
+    }
+
+    const supabase = createAdminClient();
     const offset = (page - 1) * limit;
 
     let query = supabase
@@ -86,12 +97,24 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// PATCH: Actualizar visibilidad, estado de moderación o dedicatoria
+// PATCH: Actualizar visibilidad, estado de moderación o dedicatoria (memorials o multicarta)
 export async function PATCH(req: NextRequest) {
   try {
-    const supabase = createAdminClient();
     const body = await req.json();
 
+    if (body?.entityType === 'tribute' || body?.entityType === 'tribute_letter') {
+      const { entityType, id, action } = body;
+      if (!id || !['approve', 'pending', 'reject', 'archive', 'soft_delete', 'restore'].includes(action)) {
+        return NextResponse.json({ error: 'Parámetros de moderación multicarta inválidos' }, { status: 400 });
+      }
+      const updated = await moderateCommunityEntity({ entityType, id, action });
+      if (!updated) {
+        return NextResponse.json({ error: 'Elemento no encontrado' }, { status: 404 });
+      }
+      return NextResponse.json({ success: true, entityType, id, action });
+    }
+
+    const supabase = createAdminClient();
     const { id, visibility, moderation_status, dedication, pet_name, socialHandle } = body;
 
     if (!id) {

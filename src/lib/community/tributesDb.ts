@@ -544,3 +544,153 @@ export async function verifyAndExchangeMagicLink(rawMagicToken: string, tributeS
     client.release();
   }
 }
+
+/**
+ * Registra una reacción comunitaria (vela, abrazo o apoyo) con protección anti-duplicados por ip_hash.
+ * Independiente del sistema Cielo lleno de luces.
+ */
+export async function recordTributeReaction(
+  slug: string,
+  reactionType: 'candle' | 'hug' | 'support',
+  ipHash: string
+): Promise<{
+  recorded: boolean;
+  alreadyReacted: boolean;
+  candlesCount: number;
+  hugsCount: number;
+  supportCount: number;
+} | null> {
+  const pool = getDbPool();
+  if (!pool) throw new Error('Base de datos no disponible');
+
+  const tribRes = await pool.query(`
+    SELECT id FROM public.community_tributes
+    WHERE slug = $1
+      AND publication_status = 'published'
+      AND visibility = 'public'
+      AND is_archived = FALSE
+      AND deleted_at IS NULL;
+  `, [slug]);
+
+  if (tribRes.rows.length === 0) return null;
+
+  const res = await pool.query(`
+    SELECT recorded, already_reacted as "alreadyReacted",
+           candles_count as "candlesCount", hugs_count as "hugsCount", support_count as "supportCount"
+    FROM public.record_community_tribute_reaction($1, $2, $3);
+  `, [tribRes.rows[0].id, reactionType, ipHash]);
+
+  return res.rows[0] || null;
+}
+
+/**
+ * Listado unificado de homenajes y cartas multicarta para el panel /admin/moderacion.
+ */
+export async function getAdminCommunityModerationData(options: {
+  statusFilter?: string;
+  search?: string;
+  limit?: number;
+} = {}) {
+  const pool = getDbPool();
+  if (!pool) return { tributes: [], letters: [] };
+
+  const limit = Math.min(Math.max(options.limit || 50, 1), 100);
+  const search = options.search?.trim() ? `%${options.search.trim()}%` : null;
+
+  const tribParams: any[] = [limit];
+  let tribWhere = 'WHERE 1=1';
+  if (search) {
+    tribParams.push(search);
+    tribWhere += ` AND (ct.pet_name ILIKE $${tribParams.length} OR ct.author_display_name ILIKE $${tribParams.length})`;
+  }
+  if (options.statusFilter === 'pending') {
+    tribWhere += ` AND ct.publication_status = 'pending_review'`;
+  } else if (options.statusFilter === 'archived') {
+    tribWhere += ` AND (ct.is_archived = TRUE OR ct.publication_status = 'archived')`;
+  } else if (options.statusFilter === 'removal_requests') {
+    tribWhere += ` AND ct.deleted_at IS NOT NULL`;
+  }
+
+  const tributesRes = await pool.query(`
+    SELECT ct.id, ct.slug, ct.pet_name as "petName", ct.species, ct.author_display_name as "authorDisplayName",
+           ct.publication_status as "publicationStatus", ct.visibility, ct.is_archived as "isArchived",
+           ct.deleted_at as "deletedAt", ct.legacy_memorial_id as "legacyMemorialId", ct.created_at as "createdAt"
+    FROM public.community_tributes ct
+    ${tribWhere}
+    ORDER BY ct.created_at DESC
+    LIMIT $1;
+  `, tribParams);
+
+  const letterParams: any[] = [limit];
+  let letterWhere = 'WHERE 1=1';
+  if (search) {
+    letterParams.push(search);
+    letterWhere += ` AND (tl.title ILIKE $${letterParams.length} OR tl.author_name ILIKE $${letterParams.length} OR ct.pet_name ILIKE $${letterParams.length})`;
+  }
+  if (options.statusFilter === 'pending') {
+    letterWhere += ` AND tl.moderation_status = 'pending_review' AND tl.deleted_at IS NULL`;
+  } else if (options.statusFilter === 'approved') {
+    letterWhere += ` AND tl.moderation_status = 'approved' AND tl.is_archived = FALSE AND tl.deleted_at IS NULL`;
+  } else if (options.statusFilter === 'archived') {
+    letterWhere += ` AND (tl.is_archived = TRUE OR tl.moderation_status = 'rejected')`;
+  } else if (options.statusFilter === 'removal_requests') {
+    letterWhere += ` AND tl.deleted_at IS NOT NULL`;
+  }
+
+  const lettersRes = await pool.query(`
+    SELECT tl.id, tl.tribute_id as "tributeId", ct.slug as "tributeSlug", ct.pet_name as "petName",
+           tl.letter_seq_num as "letterSeqNum", tl.title, tl.category, tl.author_name as "authorName",
+           tl.moderation_status as "moderationStatus", tl.is_archived as "isArchived",
+           tl.deleted_at as "deletedAt", tl.created_at as "createdAt"
+    FROM public.tribute_letters tl
+    JOIN public.community_tributes ct ON ct.id = tl.tribute_id
+    ${letterWhere}
+    ORDER BY tl.created_at DESC
+    LIMIT $1;
+  `, letterParams);
+
+  return {
+    tributes: tributesRes.rows,
+    letters: lettersRes.rows,
+  };
+}
+
+/**
+ * Acción administrativa sobre un homenaje o una carta individual en /admin/moderacion.
+ */
+export async function moderateCommunityEntity(params: {
+  entityType: 'tribute' | 'tribute_letter';
+  id: string;
+  action: 'approve' | 'pending' | 'reject' | 'archive' | 'soft_delete' | 'restore';
+}): Promise<boolean> {
+  const pool = getDbPool();
+  if (!pool) throw new Error('Base de datos no disponible');
+
+  if (params.entityType === 'tribute') {
+    const queryMap: Record<string, string> = {
+      approve: `UPDATE public.community_tributes SET publication_status = 'published', visibility = 'public', is_archived = FALSE, deleted_at = NULL, updated_at = NOW() WHERE id = $1`,
+      pending: `UPDATE public.community_tributes SET publication_status = 'pending_review', updated_at = NOW() WHERE id = $1`,
+      reject: `UPDATE public.community_tributes SET visibility = 'private', is_archived = TRUE, updated_at = NOW() WHERE id = $1`,
+      archive: `UPDATE public.community_tributes SET publication_status = 'archived', is_archived = TRUE, updated_at = NOW() WHERE id = $1`,
+      soft_delete: `UPDATE public.community_tributes SET deleted_at = NOW(), updated_at = NOW() WHERE id = $1`,
+      restore: `UPDATE public.community_tributes SET publication_status = 'published', visibility = 'public', is_archived = FALSE, deleted_at = NULL, updated_at = NOW() WHERE id = $1`,
+    };
+    const sql = queryMap[params.action];
+    if (!sql) return false;
+    const res = await pool.query(sql, [params.id]);
+    return (res.rowCount || 0) > 0;
+  }
+
+  const letterMap: Record<string, string> = {
+    approve: `UPDATE public.tribute_letters SET moderation_status = 'approved', is_archived = FALSE, deleted_at = NULL WHERE id = $1`,
+    pending: `UPDATE public.tribute_letters SET moderation_status = 'pending_review' WHERE id = $1`,
+    reject: `UPDATE public.tribute_letters SET moderation_status = 'rejected' WHERE id = $1`,
+    archive: `UPDATE public.tribute_letters SET is_archived = TRUE WHERE id = $1`,
+    soft_delete: `UPDATE public.tribute_letters SET deleted_at = NOW() WHERE id = $1`,
+    restore: `UPDATE public.tribute_letters SET moderation_status = 'approved', is_archived = FALSE, deleted_at = NULL WHERE id = $1`,
+  };
+  const sql = letterMap[params.action];
+  if (!sql) return false;
+  const res = await pool.query(sql, [params.id]);
+  return (res.rowCount || 0) > 0;
+}
