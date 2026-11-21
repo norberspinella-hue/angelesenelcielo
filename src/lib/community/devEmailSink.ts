@@ -19,13 +19,15 @@ export function captureDevMagicLinkEmail(params: {
   tributeSlug: string;
   emailBlindHint: string;
   rawToken: string;
+  kind?: 'magic' | 'claim_control';
 }): void {
   if (process.env.NODE_ENV === 'production') {
     return;
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://127.0.0.1:3000';
-  const magicLinkUrl = `${appUrl}/comunidad?magicToken=${encodeURIComponent(params.rawToken)}&tribute=${encodeURIComponent(params.tributeSlug)}`;
+  const paramName = params.kind === 'claim_control' ? 'claimToken' : 'magicToken';
+  const magicLinkUrl = `${appUrl}/comunidad?${paramName}=${encodeURIComponent(params.rawToken)}&tribute=${encodeURIComponent(params.tributeSlug)}`;
 
   const entry: CapturedDevEmail = {
     id: `dev-mail-${Date.now()}`,

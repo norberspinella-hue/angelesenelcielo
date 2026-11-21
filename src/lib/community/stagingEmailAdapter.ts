@@ -5,6 +5,7 @@ export interface StagingMagicLinkPayload {
   tributeSlug: string;
   petName: string;
   rawToken: string;
+  kind?: 'magic' | 'claim_control';
 }
 
 export interface StagingEmailResult {
@@ -71,7 +72,8 @@ export async function sendStagingMagicLinkEmail(
     return { sent: false, reason: 'falta_next_public_app_url' };
   }
 
-  const magicUrl = `${appUrl}/comunidad?magicToken=${encodeURIComponent(payload.rawToken)}&tribute=${encodeURIComponent(payload.tributeSlug)}`;
+  const paramName = payload.kind === 'claim_control' ? 'claimToken' : 'magicToken';
+  const magicUrl = `${appUrl}/comunidad?${paramName}=${encodeURIComponent(payload.rawToken)}&tribute=${encodeURIComponent(payload.tributeSlug)}`;
   const fromEmail = process.env.RESEND_FROM_EMAIL || 'hello@todaslasmascotasvanalcielo.com';
 
   const resend = new Resend(apiKey);

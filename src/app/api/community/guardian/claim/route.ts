@@ -50,12 +50,14 @@ export async function POST(req: NextRequest) {
           tributeSlug: slug.trim(),
           petName: result.petName,
           rawToken: result.rawControlToken,
+          kind: 'claim_control',
         }).catch(() => {});
       } else if (process.env.NODE_ENV !== 'production') {
         captureDevMagicLinkEmail({
           tributeSlug: slug.trim(),
           emailBlindHint: result.claimId,
           rawToken: result.rawControlToken,
+          kind: 'claim_control',
         });
       }
     }

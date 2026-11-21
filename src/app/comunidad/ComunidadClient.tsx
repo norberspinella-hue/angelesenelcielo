@@ -137,6 +137,143 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
   const [claimProofNote, setClaimProofNote] = useState('');
   const [claimSubmitting, setClaimSubmitting] = useState(false);
   const [claimFeedback, setClaimFeedback] = useState<{ type: 'pending' | 'error'; text: string } | null>(null);
+  const [accessModalTab, setAccessModalTab] = useState<'recover' | 'claim'>('recover');
+  const [recoverTributeSlug, setRecoverTributeSlug] = useState('');
+  const [recoverEmail, setRecoverEmail] = useState('');
+  const [recoverSubmitting, setRecoverSubmitting] = useState(false);
+  const [recoverFeedback, setRecoverFeedback] = useState<{ type: 'sent' | 'error'; text: string } | null>(null);
+
+  const handleRequestMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!recoverTributeSlug || !recoverEmail.trim()) {
+      setRecoverFeedback({ type: 'error', text: 'Selecciona un homenaje e indica tu correo.' });
+      return;
+    }
+    setRecoverSubmitting(true);
+    setRecoverFeedback(null);
+    try {
+      const res = await fetch('/api/community/guardian/recover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: recoverEmail.trim(),
+          tributeSlug: recoverTributeSlug,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setRecoverFeedback({
+          type: 'sent',
+          text:
+            data.message ||
+            'Si existe un acceso de guardián verificado para ese correo, te hemos enviado un enlace temporal de un solo uso (caduca en 15 minutos).',
+        });
+      } else {
+        setRecoverFeedback({ type: 'error', text: data.error || 'No se pudo procesar la solicitud.' });
+      }
+    } catch {
+      setRecoverFeedback({ type: 'error', text: 'Error de conexión al solicitar el enlace.' });
+    } finally {
+      setRecoverSubmitting(false);
+    }
+  };
+
+  // Canje automático seguro de magicToken / claimToken al abrir enlace desde correo (sin dejar el token en la URL)
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const magicToken = params.get('magicToken');
+    const claimToken = params.get('claimToken');
+    const tributeSlugParam = params.get('tribute') || undefined;
+
+    if (!magicToken && !claimToken) return;
+
+    // Eliminar el token de la barra de direcciones e historial inmediatamente
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('magicToken');
+    cleanUrl.searchParams.delete('claimToken');
+    cleanUrl.searchParams.delete('tribute');
+    window.history.replaceState({}, '', cleanUrl.pathname + (cleanUrl.search || '') + (cleanUrl.hash || ''));
+
+    if (magicToken) {
+      (async () => {
+        try {
+          const res = await fetch('/api/community/guardian/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: magicToken, tributeSlug: tributeSlugParam }),
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            setReviewerRole('guardian');
+            const targetSlug = data.tributeSlug || tributeSlugParam;
+            if (targetSlug) {
+              const tribRes = await fetch(`/api/community/tributes/${encodeURIComponent(targetSlug)}`);
+              const tribData = await tribRes.json();
+              if (tribRes.ok && tribData.success && tribData.tribute) {
+                const loaded: MockTribute = {
+                  ...tribData.tribute,
+                  letters: tribData.letters || [],
+                };
+                setActiveTributeForCollection(loaded);
+                setShowNewLetterForm(true);
+                setTimeout(() => {
+                  document.getElementById('libro-de-los-angeles')?.scrollIntoView({ behavior: 'smooth' });
+                }, 150);
+              }
+            }
+            setToastMessage(`🛡️ Acceso de guardián verificado${data.petName ? ` para ${data.petName}` : ''}. Ya puedes escribirle otra carta.`);
+          } else {
+            setAccessModalTab('recover');
+            if (tributeSlugParam) setRecoverTributeSlug(tributeSlugParam);
+            setRecoverFeedback({
+              type: 'error',
+              text: data.error || 'Este enlace ha caducado o ya fue utilizado anteriormente. Solicita uno nuevo aquí.',
+            });
+            setShowLegacyClaimModal(true);
+          }
+        } catch {
+          setAccessModalTab('recover');
+          setRecoverFeedback({
+            type: 'error',
+            text: 'No se pudo validar el enlace de acceso. Intenta solicitar uno nuevo.',
+          });
+          setShowLegacyClaimModal(true);
+        }
+      })();
+    } else if (claimToken) {
+      (async () => {
+        try {
+          const res = await fetch('/api/community/guardian/claim/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: claimToken }),
+          });
+          const data = await res.json();
+          setAccessModalTab('claim');
+          if (tributeSlugParam) setClaimTributeSlug(tributeSlugParam);
+          if (res.ok && data.success) {
+            setClaimFeedback({
+              type: 'pending',
+              text:
+                data.message ||
+                'Control de correo histórico confirmado. Tu solicitud queda pendiente de aprobación administrativa.',
+            });
+          } else {
+            setClaimFeedback({
+              type: 'error',
+              text: data.error || 'El enlace de confirmación de correo ha caducado o ya fue utilizado.',
+            });
+          }
+          setShowLegacyClaimModal(true);
+        } catch {
+          setAccessModalTab('claim');
+          setClaimFeedback({ type: 'error', text: 'Error de conexión validando la confirmación.' });
+          setShowLegacyClaimModal(true);
+        }
+      })();
+    }
+  }, []);
 
   const handleSubmitLegacyClaim = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -3482,7 +3619,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
         </div>
       )}
 
-      {/* MODAL DISCRETO DE RECLAMACIÓN DE CUSTODIA HISTÓRICA */}
+      {/* MODAL DISCRETO DE RECUPERACIÓN POR CORREO Y RECLAMACIÓN HISTÓRICA */}
       {showLegacyClaimModal && (
         <div
           className="fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4"
@@ -3494,7 +3631,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-wider text-[#8C3F71]">
-                  Custodia de recuerdos anteriores
+                  Acceso de familia guardiana
                 </p>
                 <h3
                   id="legacy-claim-title"
@@ -3514,11 +3651,97 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
               </button>
             </div>
 
-            <p className="text-xs leading-relaxed text-[#4E2331]">
-              Por seguridad de las familias, la custodia nunca se asigna de forma automática por el nombre o la foto pública. Verificaremos el control del correo histórico o realizaremos una revisión supervisada.
-            </p>
+            <div className="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-[#541731]/8 border border-[#D4B79E]/70">
+              <button
+                type="button"
+                id="tab-access-recover"
+                onClick={() => setAccessModalTab('recover')}
+                className={`py-2 px-3 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  accessModalTab === 'recover'
+                    ? 'bg-[#541731] text-[#FFF6EE] shadow-xs'
+                    : 'text-[#541731] hover:bg-white/60'
+                }`}
+              >
+                Enlace de guardián
+              </button>
+              <button
+                type="button"
+                id="tab-access-claim"
+                onClick={() => setAccessModalTab('claim')}
+                className={`py-2 px-3 rounded-xl text-xs font-bold transition cursor-pointer ${
+                  accessModalTab === 'claim'
+                    ? 'bg-[#541731] text-[#FFF6EE] shadow-xs'
+                    : 'text-[#541731] hover:bg-white/60'
+                }`}
+              >
+                Reclamar recuerdo anterior
+              </button>
+            </div>
 
-            <form onSubmit={handleSubmitLegacyClaim} className="space-y-3">
+            {accessModalTab === 'recover' ? (
+              <form onSubmit={handleRequestMagicLink} className="space-y-3">
+                <p className="text-xs leading-relaxed text-[#4E2331]">
+                  Si ya eres guardián de un homenaje, te enviaremos un enlace temporal de un solo uso (15 min) para abrir su colección desde cualquier navegador y escribirle otra carta.
+                </p>
+                <div>
+                  <label className="block text-xs font-bold mb-1" htmlFor="recover-tribute-select">
+                    Selecciona el homenaje
+                  </label>
+                  <select
+                    id="recover-tribute-select"
+                    value={recoverTributeSlug}
+                    onChange={(e) => setRecoverTributeSlug(e.target.value)}
+                    className="w-full rounded-xl border border-[#D4B79E] bg-white px-3 py-2 text-sm text-[#541731]"
+                    required
+                  >
+                    <option value="">-- Elegir homenaje --</option>
+                    {tributes.map((t) => (
+                      <option key={t.id} value={t.slug}>
+                        {t.petName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold mb-1" htmlFor="recover-email-input">
+                    Tu correo de guardián
+                  </label>
+                  <input
+                    id="recover-email-input"
+                    type="email"
+                    required
+                    value={recoverEmail}
+                    onChange={(e) => setRecoverEmail(e.target.value)}
+                    placeholder="tu@correo.com"
+                    className="w-full rounded-xl border border-[#D4B79E] bg-white px-3 py-2 text-sm text-[#541731]"
+                  />
+                </div>
+                {recoverFeedback && (
+                  <div
+                    className={`rounded-xl p-3 text-xs font-medium border ${
+                      recoverFeedback.type === 'sent'
+                        ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                        : 'bg-rose-50 border-rose-200 text-rose-900'
+                    }`}
+                  >
+                    {recoverFeedback.text}
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={recoverSubmitting}
+                  className="w-full min-h-[44px] rounded-full bg-[#541731] hover:bg-[#3f1024] text-[#FFF6EE] font-bold text-sm transition cursor-pointer disabled:opacity-60"
+                >
+                  {recoverSubmitting ? 'Enviando enlace...' : 'Enviar enlace de acceso'}
+                </button>
+              </form>
+            ) : (
+              <>
+                <p className="text-xs leading-relaxed text-[#4E2331]">
+                  Por seguridad de las familias, la custodia de recuerdos antiguos nunca se asigna automáticamente por el nombre o la foto pública. Verificaremos el control del correo histórico o realizaremos una revisión supervisada.
+                </p>
+
+                <form onSubmit={handleSubmitLegacyClaim} className="space-y-3">
               <div>
                 <label className="block text-xs font-bold mb-1" htmlFor="claim-tribute-select">
                   Selecciona el homenaje
@@ -3602,6 +3825,8 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
                 {claimSubmitting ? 'Enviando solicitud...' : 'Solicitar custodia para revisión'}
               </button>
             </form>
+              </>
+            )}
           </div>
         </div>
       )}
