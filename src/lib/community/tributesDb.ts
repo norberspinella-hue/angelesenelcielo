@@ -83,7 +83,11 @@ export function hashToken(token: string): string {
 
 function getDatabaseConfig() {
   if (process.env.COMMUNITY_DB_URL) {
-    return { connectionString: process.env.COMMUNITY_DB_URL };
+    const rawUrl = process.env.COMMUNITY_DB_URL;
+    const connectionString = process.env.COMMUNITY_DB_CA_CERT
+      ? rawUrl.replace(/[?&]sslmode=[^&]+/gi, '').replace(/\?$/, '')
+      : rawUrl;
+    return { connectionString };
   }
 
   // Solo en entorno local aislado: archivo de contraseña efímera de Docker
