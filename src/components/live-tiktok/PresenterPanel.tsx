@@ -29,6 +29,7 @@ export function PresenterPanel() {
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [showSafeZone, setShowSafeZone] = useState<boolean>(false);
   const [safeZoneOpacity, setSafeZoneOpacity] = useState<number>(0.85);
+  const [previewSoundEnabled, setPreviewSoundEnabled] = useState<boolean>(false);
 
   // PIN login state
   const [inputPin, setInputPin] = useState<string>('');
@@ -737,24 +738,40 @@ export function PresenterPanel() {
               }`}
             >
               <div className="sticky top-20 w-full flex flex-col items-center gap-3">
-                <div className="w-full flex items-center justify-between px-2">
+                <div className="w-full flex items-center justify-between px-2 gap-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-amber-200 flex items-center gap-2">
                     <span>📺</span>{' '}
                     {state.activeScene === 1
                       ? 'Vista Previa del Escenario 16:9'
                       : 'Previsualización 9:16 en Vivo'}
                   </span>
-                  <button
-                    onClick={() => setShowSafeZone((prev) => !prev)}
-                    className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
-                      showSafeZone
-                        ? 'bg-amber-400 text-stone-950 border-amber-300'
-                        : 'bg-white/10 text-pink-200 border-white/15'
-                    }`}
-                    title="Conmutar Guía TikTok en el monitor"
-                  >
-                    {showSafeZone ? '📐 Guía ON' : '📐 Guía OFF'}
-                  </button>
+                  <div className="flex items-center gap-1.5">
+                    {state.activeScene === 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setPreviewSoundEnabled((prev) => !prev)}
+                        className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
+                          previewSoundEnabled
+                            ? 'bg-emerald-400 text-stone-950 border-emerald-300'
+                            : 'bg-white/10 text-pink-200 border-white/15'
+                        }`}
+                        title="Activar o silenciar el audio en esta vista previa del presentador (silenciado por defecto para evitar eco)"
+                      >
+                        {previewSoundEnabled ? '🔊 Audio ON' : '🔇 Silenciado'}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setShowSafeZone((prev) => !prev)}
+                      className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
+                        showSafeZone
+                          ? 'bg-amber-400 text-stone-950 border-amber-300'
+                          : 'bg-white/10 text-pink-200 border-white/15'
+                      }`}
+                      title="Conmutar Guía TikTok en el monitor"
+                    >
+                      {showSafeZone ? '📐 Guía ON' : '📐 Guía OFF'}
+                    </button>
+                  </div>
                 </div>
 
                 {/* MARCO DE PREVISUALIZACIÓN DEL LIENZO */}
@@ -769,6 +786,7 @@ export function PresenterPanel() {
                     state={state}
                     showSafeZone={showSafeZone}
                     safeZoneOpacity={safeZoneOpacity}
+                    forceMutedPreview={!previewSoundEnabled}
                   />
                 </div>
 

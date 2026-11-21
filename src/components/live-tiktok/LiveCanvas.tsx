@@ -15,6 +15,7 @@ interface LiveCanvasProps {
   safeZoneOpacity?: number;
   className?: string;
   counterTextVariant?: 'white' | 'plum';
+  forceMutedPreview?: boolean;
 }
 
 export function LiveCanvas({
@@ -23,6 +24,7 @@ export function LiveCanvas({
   safeZoneOpacity = 0.85,
   className = '',
   counterTextVariant = 'white',
+  forceMutedPreview = false,
 }: LiveCanvasProps) {
   const {
     activeScene,
@@ -243,7 +245,10 @@ export function LiveCanvas({
       {activeScene === 1 && (
         <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none">
           {/* Vídeo 16:9 en bucle continuo sin distorsión ni saltos */}
-          <LiveLoopVideo />
+          <LiveLoopVideo
+            mutedByDefault={forceMutedPreview}
+            allowUnmuteControl={!forceMutedPreview}
+          />
 
           {/* 1. CONTADORES SUPERIORES EN 2 FILAS CON 85% DE OPACIDAD (Y: >= 230px, top: 12.4%) */}
           <div
