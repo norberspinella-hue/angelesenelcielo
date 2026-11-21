@@ -639,7 +639,8 @@ export async function getAdminCommunityModerationData(options: {
 
   const lettersRes = await pool.query(`
     SELECT tl.id, tl.tribute_id as "tributeId", ct.slug as "tributeSlug", ct.pet_name as "petName",
-           tl.letter_seq_num as "letterSeqNum", tl.title, tl.category, tl.author_name as "authorName",
+           ct.legacy_memorial_id as "legacyMemorialId",
+           tl.letter_seq_num as "letterSeqNum", tl.title, tl.category, tl.content, tl.author_name as "authorName",
            tl.moderation_status as "moderationStatus", tl.is_archived as "isArchived",
            tl.deleted_at as "deletedAt", tl.created_at as "createdAt"
     FROM public.tribute_letters tl
@@ -693,4 +694,76 @@ export async function moderateCommunityEntity(params: {
   if (!sql) return false;
   const res = await pool.query(sql, [params.id]);
   return (res.rowCount || 0) > 0;
+}
+
+/**
+ * Replicación idempotente para ventana de doble escritura desde POST /api/community/memories.
+ * No es atómica respecto a la escritura previa en Supabase REST (memorials); si falla,
+ * migrate_legacy_community_memorials() reconcilia sin duplicados.
+ */
+export async function replicateLegacyMemoryToMulticarta(data: {
+  legacyMemorialId: string;
+  slug: string;
+  petName: string;
+  species: string;
+  photoUrl: string | null;
+  yearsOrDates?: string | null;
+  authorName: string;
+  message: string;
+  isPublic: boolean;
+}) {
+  const pool = getDbPool();
+  if (!pool) return { replicated: false, reason: 'no_pool' };
+
+  const mappedSpecies = data.species === 'gato' ? 'gato' : data.species === 'perro' ? 'perro' : 'otro';
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const tribRes = await client.query(`
+      INSERT INTO public.community_tributes (
+        legacy_memorial_id, legacy_profile_slug, slug, pet_name, species, photo_url,
+        years_or_dates, author_display_name, candles_count, visibility, publication_status
+      )
+      VALUES ($1, $2, $2, $3, $4, $5, $6, $7, 1, $8, 'published')
+      ON CONFLICT (legacy_memorial_id) DO NOTHING
+      RETURNING id;
+    `, [
+      data.legacyMemorialId,
+      data.slug,
+      data.petName,
+      mappedSpecies,
+      data.photoUrl,
+      data.yearsOrDates || null,
+      data.authorName,
+      data.isPublic ? 'public' : 'private',
+    ]);
+
+    let tributeId = tribRes.rows[0]?.id;
+    if (!tributeId) {
+      const existing = await client.query(`SELECT id FROM public.community_tributes WHERE legacy_memorial_id = $1;`, [data.legacyMemorialId]);
+      tributeId = existing.rows[0]?.id;
+    }
+
+    if (tributeId) {
+      const displayDate = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+      await client.query(`
+        SELECT * FROM public.publish_tribute_letter($1, $2, 'despedida', $3, $4, $5, 'crema', $6);
+      `, [
+        tributeId,
+        `Para ${data.petName}`,
+        data.message,
+        data.authorName,
+        displayDate,
+        `legacy-memorial-${data.legacyMemorialId}`,
+      ]);
+    }
+
+    await client.query('COMMIT');
+    return { replicated: true, tributeId };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    return { replicated: false, reason: 'replication_error' };
+  } finally {
+    client.release();
+  }
 }

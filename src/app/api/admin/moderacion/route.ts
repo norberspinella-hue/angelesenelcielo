@@ -1,8 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { createAdminClient } from '@/lib/supabase/server';
 import { getAdminCommunityModerationData, moderateCommunityEntity } from '@/lib/community/tributesDb';
+import { verifyCsrfOrigin } from '@/lib/community/csrfGuard';
 
 export const dynamic = 'force-dynamic';
+
+function verifyAdminModeracionAuth(req: NextRequest): boolean {
+  const authHeader = req.headers.get('authorization');
+  const bearer = authHeader?.startsWith('Bearer ') ? authHeader.substring(7).trim() : '';
+  const customHeader = req.headers.get('x-admin-moderacion-key')?.trim() || '';
+  const candidate = bearer || customHeader;
+  if (!candidate) return false;
+
+  const configuredSecrets = [
+    process.env.ADMIN_MODERACION_PIN,
+    process.env.ADMIN_SECRET,
+    process.env.ADMIN_API_KEY,
+    ...(process.env.NODE_ENV !== 'production' ? ['cielo2026', 'angeles2026'] : []),
+  ].filter((s): s is string => Boolean(s && s.trim()));
+
+  for (const secret of configuredSecrets) {
+    const a = Buffer.from(candidate);
+    const b = Buffer.from(secret.trim());
+    if (a.length === b.length && crypto.timingSafeEqual(a, b)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 // GET: Listar memoriales (y opcionalmente homenajes/cartas multicarta) con filtros, búsqueda y paginación
 export async function GET(req: NextRequest) {
@@ -15,6 +41,9 @@ export async function GET(req: NextRequest) {
     const limit = Math.max(1, Math.min(100, parseInt(searchParams.get('limit') || '25', 10)));
 
     if (scope === 'multicarta') {
+      if (!verifyAdminModeracionAuth(req)) {
+        return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
+      }
       const data = await getAdminCommunityModerationData({
         statusFilter: filter,
         search,
@@ -103,6 +132,11 @@ export async function PATCH(req: NextRequest) {
     const body = await req.json();
 
     if (body?.entityType === 'tribute' || body?.entityType === 'tribute_letter') {
+      const csrfError = verifyCsrfOrigin(req);
+      if (csrfError) return csrfError;
+      if (!verifyAdminModeracionAuth(req)) {
+        return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
+      }
       const { entityType, id, action } = body;
       if (!id || !['approve', 'pending', 'reject', 'archive', 'soft_delete', 'restore'].includes(action)) {
         return NextResponse.json({ error: 'Parámetros de moderación multicarta inválidos' }, { status: 400 });

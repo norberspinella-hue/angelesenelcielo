@@ -38,6 +38,37 @@ interface ModerationStats {
   shelterCount: number;
 }
 
+interface MulticartaTributeItem {
+  id: string;
+  slug: string;
+  petName: string;
+  species: string;
+  authorDisplayName: string;
+  publicationStatus: string;
+  visibility: string;
+  isArchived: boolean;
+  deletedAt: string | null;
+  legacyMemorialId: string | null;
+  createdAt: string;
+}
+
+interface MulticartaLetterItem {
+  id: string;
+  tributeId: string;
+  tributeSlug: string;
+  petName: string;
+  legacyMemorialId: string | null;
+  letterSeqNum: number;
+  title: string;
+  category: string;
+  content?: string;
+  authorName: string;
+  moderationStatus: string;
+  isArchived: boolean;
+  deletedAt: string | null;
+  createdAt: string;
+}
+
 export default function AdminModeracionPage() {
   // Autenticación simple por PIN para el admin
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -45,6 +76,13 @@ export default function AdminModeracionPage() {
   const [pinError, setPinError] = useState<string>('');
 
   // Estados de datos
+  const [panelTab, setPanelTab] = useState<'memorials' | 'multicarta'>('memorials');
+  const [multicartaFilter, setMulticartaFilter] = useState<'all' | 'pending' | 'approved' | 'archived' | 'removal_requests'>('all');
+  const [multicartaTributes, setMulticartaTributes] = useState<MulticartaTributeItem[]>([]);
+  const [multicartaLetters, setMulticartaLetters] = useState<MulticartaLetterItem[]>([]);
+  const [multicartaLoading, setMulticartaLoading] = useState<boolean>(false);
+  const [multicartaNotice, setMulticartaNotice] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
   const [memorials, setMemorials] = useState<MemorialItem[]>([]);
   const [stats, setStats] = useState<ModerationStats>({
     totalCount: 0,
@@ -113,11 +151,70 @@ export default function AdminModeracionPage() {
     }
   };
 
+  const fetchMulticartaModeration = async () => {
+    setMulticartaLoading(true);
+    try {
+      const adminKey = localStorage.getItem('admin_moderacion_auth') || 'cielo2026';
+      const params = new URLSearchParams({
+        scope: 'multicarta',
+        filter: multicartaFilter,
+        search: searchTerm.trim(),
+      });
+      const res = await fetch(`/api/admin/moderacion?${params.toString()}`, {
+        headers: { 'x-admin-moderacion-key': adminKey },
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMulticartaTributes(data.tributes || []);
+        setMulticartaLetters(data.letters || []);
+      } else {
+        setMulticartaNotice({ message: data.error || 'Error cargando moderación multicarta', type: 'error' });
+      }
+    } catch (err) {
+      console.error('Error cargando multicarta:', err);
+      setMulticartaNotice({ message: 'Error de conexión cargando multicarta', type: 'error' });
+    } finally {
+      setMulticartaLoading(false);
+    }
+  };
+
+  const handleModerateMulticarta = async (
+    entityType: 'tribute' | 'tribute_letter',
+    id: string,
+    action: 'approve' | 'pending' | 'reject' | 'archive' | 'soft_delete' | 'restore',
+  ) => {
+    try {
+      const adminKey = localStorage.getItem('admin_moderacion_auth') || 'cielo2026';
+      const res = await fetch('/api/admin/moderacion', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-moderacion-key': adminKey,
+        },
+        body: JSON.stringify({ entityType, id, action }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMulticartaNotice({ message: `Acción "${action}" aplicada correctamente`, type: 'success' });
+        await fetchMulticartaModeration();
+      } else {
+        setMulticartaNotice({ message: data.error || 'No se pudo aplicar la acción', type: 'error' });
+      }
+    } catch (err) {
+      console.error('Error moderando multicarta:', err);
+      setMulticartaNotice({ message: 'Error de conexión aplicando moderación', type: 'error' });
+    }
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
-      fetchMemorials();
+      if (panelTab === 'multicarta') {
+        fetchMulticartaModeration();
+      } else {
+        fetchMemorials();
+      }
     }
-  }, [isAuthenticated, page, activeFilter]);
+  }, [isAuthenticated, page, activeFilter, panelTab, multicartaFilter]);
 
   // Búsqueda con debounce
   useEffect(() => {
@@ -344,6 +441,320 @@ export default function AdminModeracionPage() {
           </div>
         </header>
 
+        {/* SELECTOR DE PESTAÑA: MEMORIALES/MURAL vs MULTICARTA */}
+        <div className="flex flex-wrap items-center gap-2 border-b border-pink-200 pb-3">
+          <button
+            type="button"
+            onClick={() => setPanelTab('memorials')}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition cursor-pointer ${
+              panelTab === 'memorials'
+                ? 'bg-[#1E2A78] text-white shadow-sm'
+                : 'bg-white text-[#1E2A78] hover:bg-pink-50 border border-pink-200'
+            }`}
+          >
+            🌌 Memoriales & Mural
+          </button>
+          <button
+            type="button"
+            onClick={() => setPanelTab('multicarta')}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition cursor-pointer ${
+              panelTab === 'multicarta'
+                ? 'bg-[#541731] text-[#FFF6EE] shadow-sm'
+                : 'bg-white text-[#541731] hover:bg-rose-50 border border-pink-200'
+            }`}
+          >
+            💌 Cartas al Cielo (Multicarta)
+          </button>
+        </div>
+
+        {panelTab === 'multicarta' ? (
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-white border border-pink-200 rounded-2xl p-4 shadow-xs">
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    { key: 'all', label: 'Todos' },
+                    { key: 'pending', label: 'Pendientes' },
+                    { key: 'approved', label: 'Aprobados' },
+                    { key: 'archived', label: 'Archivados' },
+                    { key: 'removal_requests', label: 'Solicitudes de retirada' },
+                  ] as const
+                ).map((item) => (
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={() => setMulticartaFilter(item.key)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                      multicartaFilter === item.key
+                        ? 'bg-[#541731] text-[#FFF6EE]'
+                        : 'bg-pink-50/70 text-[#541731] hover:bg-pink-100 border border-pink-200'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') fetchMulticartaModeration();
+                  }}
+                  placeholder="Buscar mascota, slug o autor..."
+                  className="bg-white border border-pink-200 rounded-xl px-3 py-1.5 text-sm text-[#1E2A78] placeholder:text-gray-400 focus:outline-none focus:border-[#541731]"
+                />
+                <button
+                  type="button"
+                  onClick={fetchMulticartaModeration}
+                  className="px-3 py-1.5 rounded-xl bg-[#1E2A78] hover:bg-[#16205c] text-xs font-bold text-white transition cursor-pointer"
+                >
+                  Buscar
+                </button>
+              </div>
+            </div>
+
+            {multicartaNotice && (
+              <div
+                className={`rounded-xl px-4 py-2.5 text-xs font-bold border ${
+                  multicartaNotice.type === 'success'
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                    : 'bg-rose-50 border-rose-200 text-rose-800'
+                }`}
+              >
+                {multicartaNotice.message}
+              </div>
+            )}
+
+            {multicartaLoading ? (
+              <div className="text-center py-12 text-[#706A95] text-sm font-medium">
+                Cargando colecciones y cartas multicarta...
+              </div>
+            ) : (
+              <>
+                <section className="space-y-3">
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-[#1E2A78]">
+                    Colecciones ({multicartaTributes.length})
+                  </h2>
+                  {multicartaTributes.length === 0 ? (
+                    <p className="text-sm text-[#706A95] bg-white border border-pink-200 rounded-xl p-4">
+                      No hay colecciones para este filtro.
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                      {multicartaTributes.map((tribute) => (
+                        <div
+                          key={tribute.id}
+                          className="bg-white border border-pink-200 rounded-2xl p-4 space-y-3 shadow-xs"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-bold text-[#1E2A78]">{tribute.petName}</span>
+                                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-[#1E2A78] border border-indigo-200">
+                                  {tribute.legacyMemorialId ? '🕰️ Histórica' : '✨ Nueva'}
+                                </span>
+                                <span
+                                  className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                                    tribute.publicationStatus === 'published' || tribute.publicationStatus === 'approved'
+                                      ? 'bg-emerald-100 text-emerald-800'
+                                      : tribute.publicationStatus === 'pending_moderation' || tribute.publicationStatus === 'pending'
+                                        ? 'bg-amber-100 text-amber-800'
+                                        : 'bg-rose-100 text-rose-800'
+                                  }`}
+                                >
+                                  {tribute.publicationStatus}
+                                </span>
+                                {tribute.isArchived && (
+                                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                                    Archivada
+                                  </span>
+                                )}
+                                {tribute.deletedAt && (
+                                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-800">
+                                    Retirada
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-[#706A95] mt-1">
+                                slug: <code className="text-[#1E2A78] font-mono">{tribute.slug}</code> ·{' '}
+                                {tribute.species} · por {tribute.authorDisplayName} · {tribute.visibility}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleModerateMulticarta('tribute', tribute.id, 'approve')}
+                              className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-800 cursor-pointer"
+                            >
+                              Aprobar
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleModerateMulticarta('tribute', tribute.id, 'pending')}
+                              className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 cursor-pointer"
+                            >
+                              Pendiente
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleModerateMulticarta('tribute', tribute.id, 'reject')}
+                              className="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-100 hover:bg-rose-200 text-rose-800 cursor-pointer"
+                            >
+                              Rechazar
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleModerateMulticarta('tribute', tribute.id, 'archive')}
+                              className="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 cursor-pointer"
+                            >
+                              Archivar
+                            </button>
+                            {tribute.deletedAt ? (
+                              <button
+                                type="button"
+                                onClick={() => handleModerateMulticarta('tribute', tribute.id, 'restore')}
+                                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 hover:bg-sky-200 text-sky-800 cursor-pointer"
+                              >
+                                Restaurar
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleModerateMulticarta('tribute', tribute.id, 'soft_delete')
+                                }
+                                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-red-100 hover:bg-red-200 text-red-800 cursor-pointer"
+                              >
+                                Retirar
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                <section className="space-y-3">
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-[#1E2A78]">
+                    Cartas individuales ({multicartaLetters.length})
+                  </h2>
+                  {multicartaLetters.length === 0 ? (
+                    <p className="text-sm text-[#706A95] bg-white border border-pink-200 rounded-xl p-4">
+                      No hay cartas para este filtro.
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {multicartaLetters.map((letter) => (
+                        <div
+                          key={letter.id}
+                          className="bg-white border border-pink-200 rounded-2xl p-4 space-y-2.5 shadow-xs"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span className="font-bold text-[#1E2A78]">
+                                {letter.petName} — {letter.authorName}
+                              </span>
+                              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-[#1E2A78] border border-indigo-200">
+                                {letter.legacyMemorialId && letter.letterSeqNum === 1 ? '🕰️ Histórica' : '✨ Nueva'}
+                              </span>
+                              <span
+                                className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                                  letter.moderationStatus === 'approved'
+                                    ? 'bg-emerald-100 text-emerald-800'
+                                    : letter.moderationStatus === 'pending'
+                                      ? 'bg-amber-100 text-amber-800'
+                                      : 'bg-rose-100 text-rose-800'
+                                }`}
+                              >
+                                {letter.moderationStatus}
+                              </span>
+                            </div>
+                            <span className="text-xs text-[#706A95] font-medium">
+                              Carta #{letter.letterSeqNum} · {letter.category}
+                            </span>
+                          </div>
+                          {letter.content && (
+                            <p className="text-xs text-slate-700 line-clamp-3 whitespace-pre-line bg-pink-50/40 border border-pink-100 rounded-xl p-2.5 italic">
+                              {letter.content}
+                            </p>
+                          )}
+                          <div className="flex flex-wrap gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleModerateMulticarta('tribute_letter', letter.id, 'approve')
+                              }
+                              className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-100 hover:bg-emerald-200 text-emerald-800 cursor-pointer"
+                            >
+                              Aprobar
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleModerateMulticarta('tribute_letter', letter.id, 'pending')
+                              }
+                              className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-800 cursor-pointer"
+                            >
+                              Pendiente
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleModerateMulticarta('tribute_letter', letter.id, 'reject')
+                              }
+                              className="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-100 hover:bg-rose-200 text-rose-800 cursor-pointer"
+                            >
+                              Rechazar
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleModerateMulticarta('tribute_letter', letter.id, 'archive')
+                              }
+                              className="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 cursor-pointer"
+                            >
+                              Archivar
+                            </button>
+                            {letter.deletedAt ? (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleModerateMulticarta('tribute_letter', letter.id, 'restore')
+                                }
+                                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 hover:bg-sky-200 text-sky-800 cursor-pointer"
+                              >
+                                Restaurar
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleModerateMulticarta(
+                                    'tribute_letter',
+                                    letter.id,
+                                    'soft_delete',
+                                  )
+                                }
+                                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-red-100 hover:bg-red-200 text-red-800 cursor-pointer"
+                              >
+                                Retirar
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </>
+            )}
+          </div>
+        ) : (
+          <>
         {/* TARJETAS DE ESTADÍSTICAS RÁPIDAS */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
           <div className="bg-white p-4 rounded-2xl border-2 border-pink-100 shadow-xs">
@@ -606,6 +1017,8 @@ export default function AdminModeracionPage() {
               Siguiente →
             </button>
           </div>
+        )}
+          </>
         )}
 
       </div>

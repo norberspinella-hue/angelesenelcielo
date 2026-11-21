@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
+import { replicateLegacyMemoryToMulticarta } from '@/lib/community/tributesDb';
 
 export const dynamic = 'force-dynamic';
 
@@ -160,6 +161,24 @@ export async function POST(req: NextRequest) {
     if (error) {
       console.error('Error inserting community memory:', error);
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Doble escritura controlada únicamente durante la ventana de transición (desactivada por defecto)
+    if (process.env.COMMUNITY_DUAL_WRITE_ENABLED === 'true') {
+      const rep = await replicateLegacyMemoryToMulticarta({
+        legacyMemorialId: data.id,
+        slug: data.profile_slug,
+        petName: cleanPetName,
+        species,
+        photoUrl: data.photo_url,
+        yearsOrDates: yearsOrDates?.trim() || null,
+        authorName: cleanAuthor,
+        message: message.trim(),
+        isPublic: Boolean(isPublic),
+      });
+      if (!rep.replicated) {
+        console.warn('Replicación secundaria pendiente de reconciliación para memorial:', data.id);
+      }
     }
 
     return NextResponse.json({

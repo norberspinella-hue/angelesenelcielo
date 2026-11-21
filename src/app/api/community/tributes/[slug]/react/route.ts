@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { computeBlindIndex, recordTributeReaction } from '@/lib/community/tributesDb';
 import { isMulticartaFeatureEnabled } from '@/lib/community/featureFlags';
 import { verifyCsrfOrigin } from '@/lib/community/csrfGuard';
@@ -20,6 +21,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       return NextResponse.json({ success: false, error: 'Slug requerido.' }, { status: 400 });
     }
 
+    // Límite persistente por IP para frenar bots que descarten cookies
     const rateError = await enforceRateLimit(req, 'react', slug);
     if (rateError) return rateError;
 
@@ -29,14 +31,20 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       return NextResponse.json({ success: false, error: 'Tipo de reacción inválido.' }, { status: 400 });
     }
 
-    const ipHash = computeBlindIndex(`react:${extractClientIp(req)}`);
+    // Identificador pseudonimizado de navegador/dispositivo para permitir varias personas en una misma Wi-Fi/IP
+    const existingVisitorId = req.cookies.get('community_react_id')?.value;
+    const visitorId = existingVisitorId && /^[a-f0-9]{32}$/i.test(existingVisitorId)
+      ? existingVisitorId
+      : crypto.randomBytes(16).toString('hex');
+
+    const ipHash = computeBlindIndex(`react:${extractClientIp(req)}:${visitorId}`);
     const result = await recordTributeReaction(slug, reactionType, ipHash);
 
     if (!result) {
       return NextResponse.json({ success: false, error: 'Homenaje no encontrado.' }, { status: 404 });
     }
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       recorded: result.recorded,
       alreadyReacted: result.alreadyReacted,
@@ -46,6 +54,18 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
         supportCount: result.supportCount,
       }
     });
+
+    if (!existingVisitorId) {
+      response.cookies.set('community_react_id', visitorId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' || req.nextUrl.protocol === 'https:',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 365 * 24 * 60 * 60,
+      });
+    }
+
+    return response;
   } catch (err: any) {
     return NextResponse.json({ success: false, error: 'No se pudo registrar la reacción.' }, { status: err.status || 500 });
   }
