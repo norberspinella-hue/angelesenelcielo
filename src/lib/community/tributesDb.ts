@@ -126,7 +126,9 @@ export function getDbPool(): Pool | null {
       : {
           ssl: {
             rejectUnauthorized: true,
-            ...(process.env.COMMUNITY_DB_CA_CERT ? { ca: process.env.COMMUNITY_DB_CA_CERT } : {}),
+            ...(process.env.COMMUNITY_DB_CA_CERT
+              ? { ca: process.env.COMMUNITY_DB_CA_CERT.replace(/\\n/g, '\n') }
+              : {}),
           },
         }),
   });
