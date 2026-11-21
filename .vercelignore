@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.env*.local
+.env.staging
+.chrome_*
+scratch_*
+mockup_*
+*.zip
+*.dump
+data/backups
