@@ -121,7 +121,14 @@ export function getDbPool(): Pool | null {
 
   poolInstance = new Pool({
     ...config,
-    ...(isLocal ? {} : { ssl: { rejectUnauthorized: true } }),
+    ...(isLocal
+      ? {}
+      : {
+          ssl: {
+            rejectUnauthorized: true,
+            ...(process.env.COMMUNITY_DB_CA_CERT ? { ca: process.env.COMMUNITY_DB_CA_CERT } : {}),
+          },
+        }),
   });
 
   return poolInstance;
@@ -763,6 +770,226 @@ export async function replicateLegacyMemoryToMulticarta(data: {
   } catch (err) {
     await client.query('ROLLBACK');
     return { replicated: false, reason: 'replication_error' };
+  } finally {
+    client.release();
+  }
+}
+
+function maskEmailAddress(email: string): string {
+  const [local, domain] = email.trim().toLowerCase().split('@');
+  if (!local || !domain) return '***';
+  const visible = local.slice(0, Math.min(2, local.length));
+  return `${visible}***@${domain}`;
+}
+
+/**
+ * Registra una solicitud de custodia para una colección histórica.
+ * NUNCA asigna guardián automáticamente por coincidencia de nombre, foto o dedicatoria.
+ * Compara pruebas privadas (correo histórico o deletion_token en memorials) y deja
+ * la decisión en manos del administrador.
+ */
+export async function submitLegacyGuardianClaim(data: {
+  slug: string;
+  claimantEmail: string;
+  proofEmail?: string;
+  proofDeletionToken?: string;
+  proofNote?: string;
+}) {
+  const pool = getDbPool();
+  if (!pool) throw Object.assign(new Error('Base de datos no disponible'), { status: 503 });
+
+  const tribRes = await pool.query(`
+    SELECT ct.id, ct.legacy_memorial_id, ct.author_display_name,
+           EXISTS (SELECT 1 FROM public.tribute_guardians tg WHERE tg.tribute_id = ct.id) AS has_guardian
+    FROM public.community_tributes ct
+    WHERE ct.slug = $1 AND ct.deleted_at IS NULL
+    LIMIT 1;
+  `, [data.slug]);
+
+  const trib = tribRes.rows[0];
+  if (!trib) {
+    return { ok: false as const, status: 404, error: 'Colección no encontrada.' };
+  }
+  if (!trib.legacy_memorial_id) {
+    return { ok: false as const, status: 400, error: 'Esta colección no requiere reclamación histórica.' };
+  }
+  if (trib.has_guardian) {
+    return { ok: false as const, status: 409, error: 'Esta colección ya cuenta con un guardián verificado.' };
+  }
+
+  let privateProofMatch = false;
+  let verificationMethod: 'legacy_email_match' | 'deletion_token_match' | 'manual_private_proof' = 'manual_private_proof';
+
+  const memRes = await pool.query(`
+    SELECT email, deletion_token
+    FROM public.memorials
+    WHERE id = $1
+    LIMIT 1;
+  `, [trib.legacy_memorial_id]);
+
+  const mem = memRes.rows[0];
+  if (mem) {
+    const normalizedProofEmail = (data.proofEmail || '').trim().toLowerCase();
+    const normalizedLegacyEmail = (mem.email || '').trim().toLowerCase();
+    if (normalizedProofEmail && normalizedLegacyEmail && normalizedProofEmail === normalizedLegacyEmail) {
+      privateProofMatch = true;
+      verificationMethod = 'legacy_email_match';
+    } else if (
+      data.proofDeletionToken &&
+      mem.deletion_token &&
+      data.proofDeletionToken.trim().toLowerCase() === String(mem.deletion_token).trim().toLowerCase()
+    ) {
+      privateProofMatch = true;
+      verificationMethod = 'deletion_token_match';
+    }
+  }
+
+  const claimantEmailHash = computeBlindIndex(data.claimantEmail);
+  const claimantEmailMasked = maskEmailAddress(data.claimantEmail);
+  const safeNote = (data.proofNote || '').trim().slice(0, 300) || null;
+
+  const insertRes = await pool.query(`
+    INSERT INTO public.legacy_guardian_claims (
+      tribute_id, legacy_memorial_id, claimant_email_hash, claimant_email_masked,
+      verification_method, private_proof_match, private_proof_note, claim_status
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending_review')
+    RETURNING id, claim_status, private_proof_match, created_at;
+  `, [
+    trib.id,
+    trib.legacy_memorial_id,
+    claimantEmailHash,
+    claimantEmailMasked,
+    verificationMethod,
+    privateProofMatch,
+    safeNote,
+  ]);
+
+  return {
+    ok: true as const,
+    status: 201,
+    claimId: insertRes.rows[0].id as string,
+    claimStatus: insertRes.rows[0].claim_status as string,
+    privateProofMatch: Boolean(insertRes.rows[0].private_proof_match),
+  };
+}
+
+export async function getAdminLegacyGuardianClaims(filter: string = 'all') {
+  const pool = getDbPool();
+  if (!pool) return [];
+
+  const params: any[] = [];
+  let whereClause = '';
+  if (filter === 'pending' || filter === 'pending_review') {
+    whereClause = `WHERE c.claim_status = 'pending_review'`;
+  } else if (filter === 'approved') {
+    whereClause = `WHERE c.claim_status = 'approved'`;
+  } else if (filter === 'rejected') {
+    whereClause = `WHERE c.claim_status = 'rejected'`;
+  }
+
+  const res = await pool.query(`
+    SELECT c.id, c.tribute_id as "tributeId", ct.slug as "tributeSlug", ct.pet_name as "petName",
+           c.claimant_email_masked as "claimantEmailMasked",
+           c.verification_method as "verificationMethod",
+           c.private_proof_match as "privateProofMatch",
+           c.private_proof_note as "privateProofNote",
+           c.claim_status as "claimStatus",
+           c.decision_reason as "decisionReason",
+           c.reviewed_by as "reviewedBy",
+           c.reviewed_at as "reviewedAt",
+           c.created_at as "createdAt"
+    FROM public.legacy_guardian_claims c
+    JOIN public.community_tributes ct ON ct.id = c.tribute_id
+    ${whereClause}
+    ORDER BY c.created_at DESC
+    LIMIT 100;
+  `, params);
+
+  return res.rows;
+}
+
+export async function reviewLegacyGuardianClaim(data: {
+  claimId: string;
+  decision: 'approve' | 'reject';
+  decisionReason: string;
+  reviewedBy: string;
+}) {
+  const pool = getDbPool();
+  if (!pool) throw Object.assign(new Error('Base de datos no disponible'), { status: 503 });
+
+  const reason = data.decisionReason.trim();
+  if (reason.length < 4) {
+    return { ok: false as const, status: 400, error: 'Se requiere un motivo de decisión auditable.' };
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const claimRes = await client.query(`
+      SELECT id, tribute_id, claimant_email_hash, claim_status, private_proof_match
+      FROM public.legacy_guardian_claims
+      WHERE id = $1
+      FOR UPDATE;
+    `, [data.claimId]);
+
+    const claim = claimRes.rows[0];
+    if (!claim) {
+      await client.query('ROLLBACK');
+      return { ok: false as const, status: 404, error: 'Solicitud de custodia no encontrada.' };
+    }
+    if (claim.claim_status !== 'pending_review') {
+      await client.query('ROLLBACK');
+      return { ok: false as const, status: 409, error: 'Esta solicitud ya fue resuelta anteriormente.' };
+    }
+
+    let assignedGuardianId: string | null = null;
+    if (data.decision === 'approve') {
+      const existingGuardian = await client.query(`
+        SELECT id FROM public.tribute_guardians
+        WHERE tribute_id = $1
+        LIMIT 1;
+      `, [claim.tribute_id]);
+
+      if (existingGuardian.rows[0]) {
+        await client.query('ROLLBACK');
+        return { ok: false as const, status: 409, error: 'La colección ya tiene un guardián activo.' };
+      }
+
+      const tribAuthorRes = await client.query(`SELECT author_display_name FROM public.community_tributes WHERE id = $1 LIMIT 1;`, [claim.tribute_id]);
+      const guardianName = tribAuthorRes.rows[0]?.author_display_name || 'Familia guardiana';
+
+      const guardRes = await client.query(`
+        INSERT INTO public.tribute_guardians (tribute_id, email_blind_index, guardian_name, verified_at)
+        VALUES ($1, $2, $3, timezone('utc'::text, now()))
+        RETURNING id;
+      `, [claim.tribute_id, claim.claimant_email_hash, guardianName]);
+      assignedGuardianId = guardRes.rows[0].id;
+    }
+
+    const finalStatus = data.decision === 'approve' ? 'approved' : 'rejected';
+    await client.query(`
+      UPDATE public.legacy_guardian_claims
+      SET claim_status = $2,
+          decision_reason = $3,
+          reviewed_by = $4,
+          reviewed_at = timezone('utc'::text, now()),
+          assigned_guardian_id = $5
+      WHERE id = $1;
+    `, [claim.id, finalStatus, reason, data.reviewedBy, assignedGuardianId]);
+
+    await client.query(`
+      INSERT INTO public.legacy_guardian_claim_decisions (
+        claim_id, tribute_id, decision, decision_reason, reviewed_by
+      )
+      VALUES ($1, $2, $3, $4, $5);
+    `, [claim.id, claim.tribute_id, finalStatus, reason, data.reviewedBy]);
+
+    await client.query('COMMIT');
+    return { ok: true as const, status: 200, claimStatus: finalStatus, assignedGuardianId };
+  } catch (err) {
+    await client.query('ROLLBACK');
+    throw err;
   } finally {
     client.release();
   }

@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { createAdminClient } from '@/lib/supabase/server';
-import { getAdminCommunityModerationData, moderateCommunityEntity } from '@/lib/community/tributesDb';
+import {
+  getAdminCommunityModerationData,
+  getAdminLegacyGuardianClaims,
+  moderateCommunityEntity,
+  reviewLegacyGuardianClaim,
+} from '@/lib/community/tributesDb';
 import { verifyCsrfOrigin } from '@/lib/community/csrfGuard';
 
 export const dynamic = 'force-dynamic';
@@ -44,12 +49,15 @@ export async function GET(req: NextRequest) {
       if (!verifyAdminModeracionAuth(req)) {
         return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
       }
-      const data = await getAdminCommunityModerationData({
-        statusFilter: filter,
-        search,
-        limit,
-      });
-      return NextResponse.json({ success: true, scope: 'multicarta', ...data });
+      const [data, claims] = await Promise.all([
+        getAdminCommunityModerationData({
+          statusFilter: filter,
+          search,
+          limit,
+        }),
+        getAdminLegacyGuardianClaims(filter),
+      ]);
+      return NextResponse.json({ success: true, scope: 'multicarta', ...data, claims });
     }
 
     const supabase = createAdminClient();
@@ -146,6 +154,28 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ error: 'Elemento no encontrado' }, { status: 404 });
       }
       return NextResponse.json({ success: true, entityType, id, action });
+    }
+
+    if (body?.entityType === 'guardian_claim') {
+      const csrfError = verifyCsrfOrigin(req);
+      if (csrfError) return csrfError;
+      if (!verifyAdminModeracionAuth(req)) {
+        return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
+      }
+      const { id, action, decisionReason } = body;
+      if (!id || !['approve', 'reject'].includes(action)) {
+        return NextResponse.json({ error: 'Acción de custodia inválida' }, { status: 400 });
+      }
+      const reviewRes = await reviewLegacyGuardianClaim({
+        claimId: id,
+        decision: action,
+        decisionReason: typeof decisionReason === 'string' ? decisionReason : '',
+        reviewedBy: 'admin_moderacion',
+      });
+      if (!reviewRes.ok) {
+        return NextResponse.json({ error: reviewRes.error }, { status: reviewRes.status });
+      }
+      return NextResponse.json({ success: true, entityType: 'guardian_claim', id, ...reviewRes });
     }
 
     const supabase = createAdminClient();
