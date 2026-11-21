@@ -213,6 +213,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
               if (tribRes.ok && tribData.success && tribData.tribute) {
                 const loaded: MockTribute = {
                   ...tribData.tribute,
+                  authorName: tribData.tribute.authorName || tribData.tribute.authorDisplayName || 'su familia',
                   letters: tribData.letters || [],
                 };
                 setActiveTributeForCollection(loaded);
