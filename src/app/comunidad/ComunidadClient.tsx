@@ -119,7 +119,8 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
   const [tributes, setTributes] = useState<MockTribute[]>(INITIAL_MOCK_TRIBUTES);
   const [activeTributeForCollection, setActiveTributeForCollection] = useState<MockTribute | null>(null);
   const [activeLetterForReader, setActiveLetterForReader] = useState<{ letter: MockTributeLetter; tribute: MockTribute } | null>(null);
-  const [reviewerRole, setReviewerRole] = useState<'guardian' | 'visitor'>('guardian');
+  const [reviewerRole, setReviewerRole] = useState<'guardian' | 'visitor'>('visitor');
+  const [guardianSessionInfo, setGuardianSessionInfo] = useState<{ tributeSlug: string; petName: string } | null>(null);
   const [isDemoDockCollapsed, setIsDemoDockCollapsed] = useState(false);
   const [showNewLetterForm, setShowNewLetterForm] = useState(false);
   const [newLetterCategory, setNewLetterCategory] = useState<'cumpleanos' | 'aniversario' | 'espontanea' | 'despedida'>('cumpleanos');
@@ -331,17 +332,26 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
 
     async function loadRealData() {
       try {
-        // 1. Comprobar sesión de guardián activa
-        const sessionRes = await fetch('/api/community/guardian/session');
+        // 1. Comprobar sesión de guardián activa mediante cookie HttpOnly
+        let activeGuardianSlug: string | null = null;
+        const sessionRes = await fetch('/api/community/guardian/session', { cache: 'no-store' });
         if (sessionRes.ok) {
           const sessionData = await sessionRes.json();
-          if (sessionData.isAuthenticated) {
+          if (sessionData.isAuthenticated && sessionData.tributeSlug) {
+            activeGuardianSlug = sessionData.tributeSlug;
+            setGuardianSessionInfo({
+              tributeSlug: sessionData.tributeSlug,
+              petName: sessionData.petName || 'tu angelito',
+            });
             setReviewerRole('guardian');
+          } else {
+            setGuardianSessionInfo(null);
+            setReviewerRole('visitor');
           }
         }
 
         // 2. Obtener homenajes reales
-        const tributesRes = await fetch('/api/community/tributes');
+        const tributesRes = await fetch('/api/community/tributes', { cache: 'no-store' });
         if (tributesRes.ok) {
           const tributesData = await tributesRes.json();
           if (tributesData.success && Array.isArray(tributesData.tributes) && tributesData.tributes.length > 0) {
@@ -374,6 +384,14 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
               }
               return combined;
             });
+
+            // 3. Restaurar automáticamente la colección autenticada tras recarga si no viene de un canje nuevo
+            if (activeGuardianSlug && !window.location.search.includes('magicToken=')) {
+              const matched = mappedTributes.find(m => m.slug === activeGuardianSlug);
+              if (matched) {
+                await handleOpenCollection(matched);
+              }
+            }
           }
         }
       } catch (err) {
@@ -394,6 +412,9 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
         const res = await fetch(`/api/community/tributes/${tribute.slug}`);
         if (res.ok) {
           const data = await res.json();
+          if (data.isGuardian !== undefined) {
+            setReviewerRole(data.isGuardian ? 'guardian' : 'visitor');
+          }
           if (data.success && data.letters && data.letters.length > 0) {
             const categoryLabels: Record<string, string> = {
               cumpleanos: '🎂 Cumpleaños en el cielo',
