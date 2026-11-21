@@ -7,6 +7,7 @@ import {
   SHELTER_ANGELS,
 } from './types';
 import { TikTokSafeZoneGuide } from './TikTokSafeZoneGuide';
+import { LiveLoopVideo } from './LiveLoopVideo';
 
 interface LiveCanvasProps {
   state: LiveStreamState;
@@ -95,17 +96,13 @@ export function LiveCanvas({
 
   return (
     <div
-      className={`relative w-full h-full aspect-[9/16] ${
+      className={`relative w-full h-full ${
         activeScene === 1
-          ? 'bg-cover bg-center bg-no-repeat'
-          : 'bg-[#0C061A] bg-gradient-to-b from-[#180A26] via-[#120721] to-[#0A0314]'
+          ? 'aspect-video bg-[#0C061A]'
+          : 'aspect-[9/16] bg-[#0C061A] bg-gradient-to-b from-[#180A26] via-[#120721] to-[#0A0314]'
       } text-white flex flex-col justify-between overflow-hidden font-sans select-none ${className}`}
       style={{
         boxSizing: 'border-box',
-        backgroundImage:
-          activeScene === 1
-            ? "url('/images/luces/jardin-luces-fondo-maestro.webp')"
-            : undefined,
       }}
     >
       {/* KEYFRAMES & ESTILOS DE LLAMA Y RESPLANDOR */}
@@ -245,6 +242,9 @@ export function LiveCanvas({
       {/* ========================================================================= */}
       {activeScene === 1 && (
         <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none">
+          {/* Vídeo 16:9 en bucle continuo sin distorsión ni saltos */}
+          <LiveLoopVideo />
+
           {/* 1. CONTADORES SUPERIORES EN 2 FILAS CON 85% DE OPACIDAD (Y: >= 230px, top: 12.4%) */}
           <div
             className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center justify-center gap-1.5 z-30 w-full max-w-[620px] px-2"

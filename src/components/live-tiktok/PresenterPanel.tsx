@@ -186,7 +186,7 @@ export function PresenterPanel() {
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 sm:px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#EC4899] to-[#BE185D] hover:from-[#f45fa9] hover:to-[#ce246e] text-white text-xs font-black shadow-md flex items-center gap-1.5 transition-all"
-            title="Abrir la Salida Limpia 1080x1920 para capturar en OBS"
+            title="Abrir la Salida Limpia 1920x1080 (16:9) para capturar en TikTok LIVE Studio / OBS"
           >
             <span>📺</span>
             <span className="hidden sm:inline">Abrir Salida LIVE</span>
@@ -728,7 +728,7 @@ export function PresenterPanel() {
             </section>
 
             {/* ====================================================== */}
-            {/* RIGHT COLUMN: LIVE 9:16 PREVIEW MONITOR                */}
+            {/* RIGHT COLUMN: LIVE 16:9 / 9:16 PREVIEW MONITOR         */}
             {/* ====================================================== */}
             <aside
               aria-label="Previsualización de la emisión en directo"
@@ -739,7 +739,10 @@ export function PresenterPanel() {
               <div className="sticky top-20 w-full flex flex-col items-center gap-3">
                 <div className="w-full flex items-center justify-between px-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-amber-200 flex items-center gap-2">
-                    <span>📺</span> Previsualización 9:16 en Vivo
+                    <span>📺</span>{' '}
+                    {state.activeScene === 1
+                      ? 'Vista Previa del Escenario 16:9'
+                      : 'Previsualización 9:16 en Vivo'}
                   </span>
                   <button
                     onClick={() => setShowSafeZone((prev) => !prev)}
@@ -755,7 +758,13 @@ export function PresenterPanel() {
                 </div>
 
                 {/* MARCO DE PREVISUALIZACIÓN DEL LIENZO */}
-                <div className="relative w-full max-w-[360px] aspect-[9/16] rounded-3xl overflow-hidden border-2 border-[#F3D5E4]/30 shadow-2xl bg-black">
+                <div
+                  className={`relative w-full rounded-3xl overflow-hidden border-2 border-[#F3D5E4]/30 shadow-2xl bg-black ${
+                    state.activeScene === 1
+                      ? 'max-w-[540px] aspect-video'
+                      : 'max-w-[360px] aspect-[9/16]'
+                  }`}
+                >
                   <LiveCanvas
                     state={state}
                     showSafeZone={showSafeZone}
@@ -763,8 +772,16 @@ export function PresenterPanel() {
                   />
                 </div>
 
-                <div className="w-full max-w-[360px] flex items-center justify-between text-[11px] text-pink-200/70 px-1">
-                  <span>Resolución OBS: 1080 × 1920</span>
+                <div
+                  className={`w-full flex items-center justify-between text-[11px] text-pink-200/70 px-1 ${
+                    state.activeScene === 1 ? 'max-w-[540px]' : 'max-w-[360px]'
+                  }`}
+                >
+                  <span>
+                    {state.activeScene === 1
+                      ? 'Resolución 16:9: 1920 × 1080 (Bucle continuo)'
+                      : 'Resolución OBS: 1080 × 1920'}
+                  </span>
                   <Link
                     href="/live-tiktok/output"
                     target="_blank"
