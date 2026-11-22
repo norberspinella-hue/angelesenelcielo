@@ -1482,8 +1482,8 @@ p,
 /* EL LIBRO DE LOS ÁNGELES · JARDÍN DE ROSAS AL AMANECER                     */
 /* ========================================================================= */
 .libro-transicion-cielo {
-  height: 55px;
-  background: linear-gradient(180deg, #24143c 0%, #edd0df 50%, #f7e9dc 100%);
+  height: 0;
+  background: transparent;
 }
 
 .libro {
@@ -1507,8 +1507,8 @@ p,
   inset: 0 0 auto;
   height: min(1050px, 100%);
   z-index: 0;
-  mask-image: linear-gradient(#000 78%, transparent);
-  -webkit-mask-image: linear-gradient(#000 78%, transparent);
+  mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.78) 6%, #000 16%, #000 78%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.78) 6%, #000 16%, #000 78%, transparent 100%);
   pointer-events: none;
 }
 

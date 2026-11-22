@@ -1867,6 +1867,16 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
           </div>
         </div>
 
+        {/* Degradado inferior suave para fundir el Hero nocturno con El Libro de los Ángeles sin cortes */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-32 sm:h-40 md:h-48 z-20"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(36, 20, 60, 0) 0%, rgba(128, 76, 146, 0.30) 40%, rgba(235, 198, 220, 0.82) 76%, #F7E9DC 100%)',
+          }}
+        />
+
       </section>
 
       {/* ========================================================================= */}
@@ -3005,136 +3015,137 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
       </section>
 
       {/* ========================================================================= */}
-      {/* FRANJA PORTAL DE LUZ (CONEXIÓN ELEGANTE A CIELO LLENO DE LUCES)           */}
+      {/* CONTINUIDAD CLARA HASTA EL FOOTER: RITUAL SEMANAL Y BLOQUES INFERIORES    */}
       {/* ========================================================================= */}
-      <section id="vela-semanal" className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 scroll-mt-24">
-        <div 
-          className="rounded-[24px] px-5 sm:px-8 py-5 border border-[#F3DBEA] shadow-[0_8px_24px_rgba(140,60,110,0.06)] flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden bg-white/95"
-        >
-          <div className="flex items-center gap-4 text-center md:text-left">
-            <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white shadow-xs shrink-0 bg-[#FFF5F8] flex items-center justify-center text-2xl relative">
-              🕯️
-              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#F59E0B] animate-ping" />
-            </div>
-
-            <div>
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-0.5">
-                <span className="text-[10.5px] font-bold text-[#A06020] uppercase tracking-wider">
-                  Ritual Comunitario Semanal
-                </span>
-                <span className="px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#92400E] text-[10.5px] font-bold" title="Comunidad de Cartas al Cielo">
-                  {weeklyCandlesCount} luces en comunidad
-                </span>
+      <div className="bg-gradient-to-b from-[#F7E9DC] via-[#FAF0E8] to-[#FFF8F4]">
+        {/* FRANJA PORTAL DE LUZ (CONEXIÓN ELEGANTE A CIELO LLENO DE LUCES) */}
+        <section id="vela-semanal" className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 scroll-mt-24">
+          <div 
+            className="rounded-[24px] px-5 sm:px-8 py-5 border border-[#F3DBEA] shadow-[0_8px_24px_rgba(140,60,110,0.06)] flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden bg-white/95"
+          >
+            <div className="flex items-center gap-4 text-center md:text-left">
+              <div className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-white shadow-xs shrink-0 bg-[#FFF5F8] flex items-center justify-center text-2xl relative">
+                🕯️
+                <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#F59E0B] animate-ping" />
               </div>
-              <h3 className="font-playfair text-base sm:text-lg font-bold text-[#2D0F31] leading-tight">
-                Un manto de luz para que ningún angelito quede en soledad
-              </h3>
-              <p className="text-xs text-[#7A6275] mt-0.5 leading-snug">
-                Cada domingo recordamos con amor a todos los compañeros que partieron y nos cuidan desde arriba.
-              </p>
+
+              <div>
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-0.5">
+                  <span className="text-[10.5px] font-bold text-[#A06020] uppercase tracking-wider">
+                    Ritual Comunitario Semanal
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#92400E] text-[10.5px] font-bold" title="Comunidad de Cartas al Cielo">
+                    {weeklyCandlesCount} luces en comunidad
+                  </span>
+                </div>
+                <h3 className="font-playfair text-base sm:text-lg font-bold text-[#2D0F31] leading-tight">
+                  Un manto de luz para que ningún angelito quede en soledad
+                </h3>
+                <p className="text-xs text-[#7A6275] mt-0.5 leading-snug">
+                  Cada domingo recordamos con amor a todos los compañeros que partieron y nos cuidan desde arriba.
+                </p>
+              </div>
+            </div>
+
+            <div className="shrink-0 flex items-center gap-2 w-full md:w-auto justify-center">
+              <Link
+                href="/cielo-lleno-de-luces"
+                className="min-h-[44px] w-full md:w-auto px-6 py-2.5 rounded-full font-bold text-white text-xs sm:text-sm shadow-[0_8px_20px_rgba(200,90,140,0.32)] hover:shadow-[0_12px_26px_rgba(200,90,140,0.42)] hover:-translate-y-0.5 transition-all flex items-center justify-center text-center cursor-pointer"
+                style={{
+                  background: 'linear-gradient(135deg, #D9629B 0%, #C35694 50%, #9B3F77 100%)',
+                }}
+              >
+                <span>Entrar en el Cielo de Luces</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* BLOQUES INFERIORES: VELA Y PUENTE AL MURAL */}
+        <section className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-16 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+          
+          {/* Vela Semanal */}
+          <div 
+            className="rounded-3xl p-6 border border-[#FCE7F3] shadow-[0_16px_40px_rgba(140,60,110,0.08)] flex flex-col justify-between relative overflow-hidden h-full"
+            style={{
+              backgroundImage: "linear-gradient(135deg, rgba(255, 245, 248, 0.88) 0%, rgba(248, 236, 248, 0.88) 50%, rgba(254, 242, 238, 0.88) 100%), url('/images/solidario/bg-corazones-pc.webp')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <div className="flex items-start gap-4 relative z-10 flex-1">
+              <div className="w-[84px] h-[84px] min-h-[84px] rounded-2xl overflow-hidden relative shadow-md border-2 border-white shrink-0">
+                <Image src="/images/comunidad/candle-banner.webp" alt="Vela encendida" fill className="object-cover" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-playfair text-[#2D0F31] text-lg font-bold flex items-center gap-2 mb-1.5">
+                  <span className="text-base">🕯️</span>
+                  <span>Un cielo lleno de luces</span>
+                </h3>
+                <p className="text-[12.5px] text-[#54465B] leading-relaxed">
+                  Cada semana encendemos una vela por todos nuestros ángeles. Únete al próximo encuentro y deja su nombre.
+                </p>
+              </div>
+            </div>
+            <div className="pt-4 mt-auto flex justify-start relative z-10">
+              <Link
+                href="/cielo-lleno-de-luces"
+                className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-bold text-white shadow-[0_8px_22px_rgba(160,70,135,0.35)] hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(160,70,135,0.45)] transition-all text-center cursor-pointer"
+                style={{
+                  background: 'linear-gradient(180deg, #D4629B 0%, #C25796 45%, #9E458C 100%)',
+                }}
+              >
+                <span>Entrar en el Cielo de Luces</span>
+              </Link>
             </div>
           </div>
 
-          <div className="shrink-0 flex items-center gap-2 w-full md:w-auto justify-center">
-            <Link
-              href="/cielo-lleno-de-luces"
-              className="min-h-[44px] w-full md:w-auto px-6 py-2.5 rounded-full font-bold text-white text-xs sm:text-sm shadow-[0_8px_20px_rgba(200,90,140,0.32)] hover:shadow-[0_12px_26px_rgba(200,90,140,0.42)] hover:-translate-y-0.5 transition-all flex items-center justify-center text-center cursor-pointer"
-              style={{
-                background: 'linear-gradient(135deg, #D9629B 0%, #C35694 50%, #9B3F77 100%)',
-              }}
-            >
-              <span>Entrar en el Cielo de Luces</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+          {/* Puente al Mural */}
+          <div 
+            className="rounded-3xl p-6 border border-[#F3E8FF] shadow-[0_16px_40px_rgba(140,60,110,0.08)] flex flex-col justify-between relative overflow-hidden h-full"
+            style={{
+              backgroundImage: "linear-gradient(135deg, rgba(255, 245, 248, 0.88) 0%, rgba(248, 236, 248, 0.88) 50%, rgba(254, 242, 238, 0.88) 100%), url('/images/solidario/bg-corazones-pc.webp')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <div className="flex items-start justify-between gap-4 relative z-10 flex-1">
+              <div className="flex-1">
+                <h3 className="font-playfair text-[#2D0F31] text-lg font-bold flex items-center gap-2 mb-1.5">
+                  <Image 
+                    src="/images/icons/plans/icon-plan-estrella.svg" 
+                    alt="Estrella" 
+                    width={54} 
+                    height={54} 
+                    className="object-contain drop-shadow-[0_2px_6px_rgba(217,130,24,0.35)] shrink-0" 
+                  />
+                  <span>¿Quieres que su recuerdo brille para siempre?</span>
+                </h3>
+                <p className="text-[12.5px] text-[#54465B] leading-relaxed">
+                  Convierte su historia en un homenaje permanente en el Mural de un Millón de Ángeles.
+                </p>
+              </div>
 
-      {/* ========================================================================= */}
-      {/* BLOQUES INFERIORES: VELA Y PUENTE AL MURAL                                */}
-      {/* ========================================================================= */}
-      <section className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8 pb-16 grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-        
-        {/* Vela Semanal */}
-        <div 
-          className="rounded-3xl p-6 border border-[#FCE7F3] shadow-[0_16px_40px_rgba(140,60,110,0.08)] flex flex-col justify-between relative overflow-hidden h-full"
-          style={{
-            backgroundImage: "linear-gradient(135deg, rgba(255, 245, 248, 0.88) 0%, rgba(248, 236, 248, 0.88) 50%, rgba(254, 242, 238, 0.88) 100%), url('/images/solidario/bg-corazones-pc.webp')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className="flex items-start gap-4 relative z-10 flex-1">
-            <div className="w-[84px] h-[84px] min-h-[84px] rounded-2xl overflow-hidden relative shadow-md border-2 border-white shrink-0">
-              <Image src="/images/comunidad/candle-banner.webp" alt="Vela encendida" fill className="object-cover" />
+              <div className="w-[84px] h-[84px] min-h-[84px] rounded-2xl overflow-hidden relative shadow-md border-2 border-white shrink-0 rotate-3">
+                <Image src="/images/comunidad/bridge-frame.webp" alt="Marco dorado" fill className="object-cover" />
+              </div>
             </div>
-            <div className="flex-1">
-              <h3 className="font-playfair text-[#2D0F31] text-lg font-bold flex items-center gap-2 mb-1.5">
-                <span className="text-base">🕯️</span>
-                <span>Un cielo lleno de luces</span>
-              </h3>
-              <p className="text-[12.5px] text-[#54465B] leading-relaxed">
-                Cada semana encendemos una vela por todos nuestros ángeles. Únete al próximo encuentro y deja su nombre.
-              </p>
-            </div>
-          </div>
-          <div className="pt-4 mt-auto flex justify-start relative z-10">
-            <Link
-              href="/cielo-lleno-de-luces"
-              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-bold text-white shadow-[0_8px_22px_rgba(160,70,135,0.35)] hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(160,70,135,0.45)] transition-all text-center cursor-pointer"
-              style={{
-                background: 'linear-gradient(180deg, #D4629B 0%, #C25796 45%, #9E458C 100%)',
-              }}
-            >
-              <span>Entrar en el Cielo de Luces</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Puente al Mural */}
-        <div 
-          className="rounded-3xl p-6 border border-[#F3E8FF] shadow-[0_16px_40px_rgba(140,60,110,0.08)] flex flex-col justify-between relative overflow-hidden h-full"
-          style={{
-            backgroundImage: "linear-gradient(135deg, rgba(255, 245, 248, 0.88) 0%, rgba(248, 236, 248, 0.88) 50%, rgba(254, 242, 238, 0.88) 100%), url('/images/solidario/bg-corazones-pc.webp')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <div className="flex items-start justify-between gap-4 relative z-10 flex-1">
-            <div className="flex-1">
-              <h3 className="font-playfair text-[#2D0F31] text-lg font-bold flex items-center gap-2 mb-1.5">
-                <Image 
-                  src="/images/icons/plans/icon-plan-estrella.svg" 
-                  alt="Estrella" 
-                  width={54} 
-                  height={54} 
-                  className="object-contain drop-shadow-[0_2px_6px_rgba(217,130,24,0.35)] shrink-0" 
-                />
-                <span>¿Quieres que su recuerdo brille para siempre?</span>
-              </h3>
-              <p className="text-[12.5px] text-[#54465B] leading-relaxed">
-                Convierte su historia en un homenaje permanente en el Mural de un Millón de Ángeles.
-              </p>
-            </div>
-
-            <div className="w-[84px] h-[84px] min-h-[84px] rounded-2xl overflow-hidden relative shadow-md border-2 border-white shrink-0 rotate-3">
-              <Image src="/images/comunidad/bridge-frame.webp" alt="Marco dorado" fill className="object-cover" />
+            <div className="pt-4 mt-auto flex justify-start relative z-10">
+              <Link
+                href="/#planes"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-white shadow-[0_8px_22px_rgba(160,70,135,0.35)] hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(160,70,135,0.45)] transition-all"
+                style={{
+                  background: 'linear-gradient(180deg, #D4629B 0%, #C25796 45%, #9E458C 100%)',
+                }}
+              >
+                <span className="text-white text-sm">★</span>
+                <span>Conocer los planes</span>
+              </Link>
             </div>
           </div>
-          <div className="pt-4 mt-auto flex justify-start relative z-10">
-            <Link
-              href="/#planes"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-xs font-bold text-white shadow-[0_8px_22px_rgba(160,70,135,0.35)] hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(160,70,135,0.45)] transition-all"
-              style={{
-                background: 'linear-gradient(180deg, #D4629B 0%, #C25796 45%, #9E458C 100%)',
-              }}
-            >
-              <span className="text-white text-sm">★</span>
-              <span>Conocer los planes</span>
-            </Link>
-          </div>
-        </div>
 
-      </section>
+        </section>
+      </div>
 
       {/* ========================================================================= */}
       {/* 4. MODAL LECTOR DE CARTA COMPLETA (HOJA MARFIL LUMINOSA Y OPACA)           */}
