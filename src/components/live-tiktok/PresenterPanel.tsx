@@ -812,26 +812,28 @@ export function PresenterPanel() {
               <div className="sticky top-20 w-full flex flex-col items-center gap-3">
                 <div className="w-full flex items-center justify-between px-2 gap-2">
                   <span className="text-xs font-bold uppercase tracking-wider text-amber-200 flex items-center gap-2">
-                    <span>📺</span>{' '}
-                    {state.activeScene === 1
+                  <span>📺</span>{' '}
+                  {desktopWorkspace === 'cielo' || cieloOutputMode === 'cielo'
+                    ? 'Vista Previa Cielo 9:16 (TikTok LIVE)'
+                    : state.activeScene === 1
                       ? 'Vista Previa del Escenario 16:9'
                       : 'Previsualización 9:16 en Vivo'}
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    {state.activeScene === 1 && (
-                      <button
-                        type="button"
-                        onClick={() => setPreviewSoundEnabled((prev) => !prev)}
-                        className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
-                          previewSoundEnabled
-                            ? 'bg-emerald-400 text-stone-950 border-emerald-300'
-                            : 'bg-white/10 text-pink-200 border-white/15'
-                        }`}
-                        title="Activar o silenciar el audio en esta vista previa del presentador (silenciado por defecto para evitar eco)"
-                      >
-                        {previewSoundEnabled ? '🔊 Audio ON' : '🔇 Silenciado'}
-                      </button>
-                    )}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  {(desktopWorkspace === 'cielo' || cieloOutputMode === 'cielo' || state.activeScene === 1) && (
+                    <button
+                      type="button"
+                      onClick={() => setPreviewSoundEnabled((prev) => !prev)}
+                      className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
+                        previewSoundEnabled
+                          ? 'bg-emerald-400 text-stone-950 border-emerald-300'
+                          : 'bg-white/10 text-pink-200 border-white/15'
+                      }`}
+                      title="Activar o silenciar el audio en esta vista previa del presentador (silenciado por defecto para evitar eco)"
+                    >
+                      {previewSoundEnabled ? '🔊 Audio ON' : '🔇 Silenciado'}
+                    </button>
+                  )}
                     <button
                       onClick={() => setShowSafeZone((prev) => !prev)}
                       className={`text-[11px] font-bold px-2 py-0.5 rounded-lg border transition-colors cursor-pointer ${
@@ -849,9 +851,11 @@ export function PresenterPanel() {
                 {/* MARCO DE PREVISUALIZACIÓN DEL LIENZO */}
                 <div
                   className={`relative w-full rounded-3xl overflow-hidden border-2 border-[#F3D5E4]/30 shadow-2xl bg-black ${
-                    desktopWorkspace === 'cielo' || cieloOutputMode === 'cielo' || state.activeScene === 1
-                      ? 'max-w-[540px] aspect-video'
-                      : 'max-w-[360px] aspect-[9/16]'
+                    desktopWorkspace === 'cielo' || cieloOutputMode === 'cielo'
+                      ? 'max-w-[330px] aspect-[9/16]'
+                      : state.activeScene === 1
+                        ? 'max-w-[540px] aspect-video'
+                        : 'max-w-[360px] aspect-[9/16]'
                   }`}
                 >
                   {desktopWorkspace === 'cielo' || cieloOutputMode === 'cielo' ? (
@@ -867,19 +871,25 @@ export function PresenterPanel() {
                 </div>
 
                 <div
-                  className={`w-full flex items-center justify-between text-[11px] text-pink-200/70 px-1 ${
-                    state.activeScene === 1 ? 'max-w-[540px]' : 'max-w-[360px]'
+                  className={`w-full flex items-center justify-between gap-2 text-[11px] text-pink-200/70 px-1 ${
+                    desktopWorkspace === 'cielo' || cieloOutputMode === 'cielo'
+                      ? 'max-w-[330px]'
+                      : state.activeScene === 1
+                        ? 'max-w-[540px]'
+                        : 'max-w-[360px]'
                   }`}
                 >
                   <span>
-                    {state.activeScene === 1
-                      ? 'Resolución 16:9: 1920 × 1080 (Bucle continuo)'
-                      : 'Resolución OBS: 1080 × 1920'}
+                    {desktopWorkspace === 'cielo' || cieloOutputMode === 'cielo'
+                      ? '1080 × 1920 (9:16 · Cielo)'
+                      : state.activeScene === 1
+                        ? 'Resolución 16:9: 1920 × 1080 (Bucle continuo)'
+                        : 'Resolución OBS: 1080 × 1920'}
                   </span>
                   <Link
                     href="/live-tiktok/output"
                     target="_blank"
-                    className="text-amber-300 hover:underline font-bold flex items-center gap-1"
+                    className="shrink-0 text-amber-300 hover:underline font-bold flex items-center gap-1"
                   >
                     <span>Probar Salida Completa</span>
                     <span>↗</span>

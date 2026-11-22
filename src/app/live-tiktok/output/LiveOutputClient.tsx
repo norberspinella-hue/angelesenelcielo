@@ -11,6 +11,13 @@ export default function LiveOutputClient() {
   const { state } = useLiveStreamSync({ isController: false });
   const [escenaOutput, setEscenaOutput] = useState<LiveEscenaOutput>('video');
   const [mountCielo, setMountCielo] = useState<boolean>(false);
+  const [forceLandscapeCielo, setForceLandscapeCielo] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const q = new URLSearchParams(window.location.search);
+    setForceLandscapeCielo(q.get('formato') === '16x9');
+  }, []);
 
   // Escucha exclusivamente escena_output desde live_ajustes_publicos (con fallback seguro a 'video')
   useEffect(() => {
@@ -50,7 +57,7 @@ export default function LiveOutputClient() {
   }, []);
 
   const isCieloActive = escenaOutput === 'cielo';
-  const isHorizontal = isCieloActive || state.activeScene === 1;
+  const isHorizontal = isCieloActive ? forceLandscapeCielo : state.activeScene === 1;
 
   return (
     <div

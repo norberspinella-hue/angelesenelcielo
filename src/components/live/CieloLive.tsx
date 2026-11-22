@@ -69,6 +69,8 @@ export interface CieloLiveProps {
   transparentBg?: boolean;
   /** Overrides URL ?sonido=0 */
   soundEnabled?: boolean;
+  /** Muestra el aviso táctil cuando el navegador bloquea el audio (desactivado por defecto en emisión) */
+  showAudioHint?: boolean;
   className?: string;
 }
 
@@ -103,6 +105,7 @@ const DEFAULT_AJUSTES: LiveAjustesPublicos = {
 export function CieloLive({
   transparentBg,
   soundEnabled,
+  showAudioHint = false,
   className = '',
 }: CieloLiveProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -121,6 +124,7 @@ export function CieloLive({
   const configFlagsRef = useRef({
     fondo: true,
     sonido: true,
+    audioHint: false,
   });
 
   useEffect(() => {
@@ -128,8 +132,10 @@ export function CieloLive({
     configFlagsRef.current = {
       fondo: transparentBg !== undefined ? !transparentBg : q?.get('fondo') !== '0',
       sonido: soundEnabled !== undefined ? soundEnabled : q?.get('sonido') !== '0',
+      audioHint: showAudioHint || q?.get('avisoAudio') === '1',
     };
-  }, [transparentBg, soundEnabled]);
+    if (!configFlagsRef.current.audioHint) setShowAudioPrompt(false);
+  }, [transparentBg, soundEnabled, showAudioHint]);
 
   // 1. Sincronización de reloj + datos iniciales + Supabase Realtime (solo clave anon)
   useEffect(() => {
@@ -307,10 +313,10 @@ export function CieloLive({
       ctx.globalAlpha = 1;
     }
 
-    function estrella(x: number, y: number, c: [number, number, number], r: number, a: number) {
+    function estrella(x: number, y: number, c: [number, number, number], r: number, a: number, rot = 0) {
       if (a <= 0.01 || !ctx) return;
       const rk = r * K;
-      halo(x, y, rk * 7, c, 0.55 * a);
+      halo(x, y, rk * 7.5, c, 0.6 * a);
       ctx.fillStyle = rgba(c, a);
       ctx.beginPath();
       ctx.arc(x, y, rk, 0, Math.PI * 2);
@@ -319,15 +325,19 @@ export function CieloLive({
       ctx.beginPath();
       ctx.arc(x, y, rk * 0.55, 0, Math.PI * 2);
       ctx.fill();
-      const L = rk * 3.6;
-      ctx.strokeStyle = rgba(c, 0.6 * a);
-      ctx.lineWidth = Math.max(1, K);
+      const L = rk * 4.4;
+      ctx.save();
+      ctx.translate(x, y);
+      if (rot) ctx.rotate(rot);
+      ctx.strokeStyle = rgba(c, 0.72 * a);
+      ctx.lineWidth = Math.max(1.2, 1.35 * K);
       ctx.beginPath();
-      ctx.moveTo(x - L, y);
-      ctx.lineTo(x + L, y);
-      ctx.moveTo(x, y - L);
-      ctx.lineTo(x, y + L);
+      ctx.moveTo(-L, 0);
+      ctx.lineTo(L, 0);
+      ctx.moveTo(0, -L);
+      ctx.lineTo(0, L);
       ctx.stroke();
+      ctx.restore();
     }
 
     function estela(pts: [number, number][], c: [number, number, number], a0: number, a1: number, w = 3) {
@@ -372,15 +382,27 @@ export function CieloLive({
       ctx.textAlign = 'center';
       ctx.textBaseline = 'alphabetic';
       if (sombra) {
-        ctx.shadowColor = 'rgba(0,0,0,0.6)';
-        ctx.shadowBlur = 8 * K;
+        ctx.shadowColor = 'rgba(0,0,0,0.82)';
+        ctx.shadowBlur = 12 * K;
       }
       ctx.fillStyle = color.replace('A', String(clamp(a)));
       ctx.fillText(s, x, y);
       ctx.shadowBlur = 0;
     }
 
-    const SERIF = (k: number) => `italic 500 ${Math.round(k * K)}px ${loraFamily}`;
+    function roundBox(x: number, y: number, w: number, h: number, r: number) {
+      if (!ctx) return;
+      const rr = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + rr, y);
+      ctx.arcTo(x + w, y, x + w, y + h, rr);
+      ctx.arcTo(x + w, y + h, x, y + h, rr);
+      ctx.arcTo(x, y + h, x, y, rr);
+      ctx.arcTo(x, y, x + w, y, rr);
+      ctx.closePath();
+    }
+
+    const SERIF = (k: number) => `italic 600 ${Math.round(k * K)}px ${loraFamily}`;
     const SANS = (k: number, w = 500) => `${w} ${Math.round(k * K)}px ${interFamily}`;
 
     function getAudio(): AudioContext | null {
@@ -395,7 +417,9 @@ export function CieloLive({
       }
       if (ac.state === 'suspended') {
         ac.resume().catch(() => {});
-        setShowAudioPrompt(true);
+        if (configFlagsRef.current.audioHint) {
+          setShowAudioPrompt(true);
+        }
       }
       return ac.state === 'running' ? ac : null;
     }
@@ -481,17 +505,17 @@ export function CieloLive({
 
     function crearPolvo() {
       const r = seededRnd(7);
-      const n = Math.max(80, Math.round(260 * ((W * H) / (1080 * 1920))));
+      const n = Math.max(110, Math.round(300 * ((W * H) / (1080 * 1920))));
       polvo = Array.from({ length: n }, () => {
-        const b = Math.pow(r(), 1.5) * 0.75 + 0.2;
+        const b = Math.pow(r(), 1.35) * 0.78 + 0.25;
         return {
           x: r() * W,
           y: r() * H,
           b,
-          v: (14 + 60 * Math.pow(b, 0.7) + r() * 14) * K,
-          f: 0.4 + r() * 1.2,
+          v: (20 + 68 * Math.pow(b, 0.7) + r() * 18) * K,
+          f: 0.5 + r() * 1.4,
           p: r() * 6.28,
-          big: r() < 0.18,
+          big: r() < 0.24,
         };
       });
     }
@@ -499,10 +523,11 @@ export function CieloLive({
     function slots(maxPerritos: number): [number, number][] {
       const n = Math.max(1, maxPerritos);
       if (slotsCache.n === n && slotsCache.w === W && slotsCache.h === H) return slotsCache.pts;
-      const x0 = W * 0.07;
-      const x1 = W * 0.93;
-      const y0 = H * 0.07;
-      const y1 = W > H ? H * 0.44 : H * 0.43;
+      const landscape = W > H;
+      const x0 = W * (landscape ? 0.07 : 0.10);
+      const x1 = W * (landscape ? 0.93 : 0.90);
+      const y0 = H * (landscape ? 0.08 : 0.145);
+      const y1 = H * (landscape ? 0.44 : 0.355);
       const aw = x1 - x0;
       const ah = y1 - y0;
       const cols = Math.max(1, Math.ceil(Math.sqrt((n * aw) / ah)));
@@ -573,19 +598,82 @@ export function CieloLive({
         ctx.drawImage(fondoCanvas, 0, 0, W, H);
       }
 
-      // Polvo de estrellas en movimiento descendente
+      const isLandscape = W > H;
+      ctx.globalCompositeOperation = 'lighter';
+
+      // Auroras y nebulosas suaves en movimiento continuo (visibles incluso tras la zona del chat)
+      if (configFlagsRef.current.fondo) {
+        const aurora = (
+          bx: number,
+          by: number,
+          dx: number,
+          dy: number,
+          spd: number,
+          ph: number,
+          rx: number,
+          ry: number,
+          col: [number, number, number],
+          alpha: number
+        ) => {
+          const ax = bx + Math.sin(t * spd + ph) * dx;
+          const ay = by + Math.cos(t * spd * 0.78 + ph) * dy;
+          const breath = 0.85 + 0.15 * Math.sin(t * spd * 1.4 + ph);
+          ctx.save();
+          ctx.translate(ax, ay);
+          ctx.scale(1, ry / Math.max(1, rx));
+          ctx.globalAlpha = clamp(alpha * breath);
+          ctx.drawImage(glow(col), -rx, -rx, rx * 2, rx * 2);
+          ctx.globalAlpha = 1;
+          ctx.restore();
+        };
+        aurora(W * 0.28, H * 0.24, 65 * K, 38 * K, 0.24, 0.2, W * 0.56, H * 0.26, [82, 62, 195], 0.22);
+        aurora(W * 0.74, H * 0.40, 75 * K, 42 * K, 0.19, 1.8, W * 0.52, H * 0.24, [38, 126, 215], 0.20);
+        aurora(W * 0.50, H * (isLandscape ? 0.58 : 0.52), 55 * K, 30 * K, 0.28, 3.4, W * 0.58, H * 0.22, [175, 118, 72], 0.13);
+        if (!isLandscape) {
+          aurora(W * 0.36, H * 0.78, 80 * K, 45 * K, 0.22, 4.9, W * 0.62, H * 0.25, [72, 56, 175], 0.22);
+          aurora(W * 0.70, H * 0.88, 60 * K, 35 * K, 0.26, 2.5, W * 0.50, H * 0.20, [32, 110, 178], 0.18);
+        }
+      }
+
+      // Polvo de estrellas con deriva suave horizontal y descendente
+      ctx.globalCompositeOperation = 'source-over';
       for (const s of polvo) {
         s.y += s.v * dt;
-        if (s.y > H + 4) s.y = -4;
-        const tw = s.b * (0.65 + 0.35 * Math.sin(t * s.f * 2 + s.p));
-        ctx.fillStyle = `rgba(215,225,255,${tw})`;
-        const z = (s.big ? 2 : 1.2) * K;
-        ctx.fillRect(s.x, s.y, z, z);
-        ctx.fillStyle = `rgba(215,225,255,${tw * 0.35})`;
-        ctx.fillRect(s.x, s.y - 3 * z, z, 3 * z);
+        if (s.y > H + 6) s.y = -6;
+        const sx = (s.x + Math.sin(t * 0.55 + s.p) * 18 * K + W) % W;
+        const tw = s.b * (0.68 + 0.32 * Math.sin(t * s.f * 2.2 + s.p));
+        ctx.fillStyle = `rgba(222,232,255,${tw})`;
+        const z = (s.big ? 3.2 : 1.7) * K;
+        ctx.fillRect(sx, s.y, z, z);
+        ctx.fillStyle = `rgba(215,228,255,${tw * 0.42})`;
+        ctx.fillRect(sx, s.y - 4 * z, z, 4 * z);
       }
 
       ctx.globalCompositeOperation = 'lighter';
+
+      // Estrellas fugaces periódicas cada ~5,5 s en la zona visible
+      const meteorPeriod = 5.5;
+      const meteorIdx = Math.floor(t / meteorPeriod);
+      const meteorLocal = t % meteorPeriod;
+      if (meteorLocal < 1.35) {
+        const mr = seededRnd(4100 + meteorIdx);
+        const dir = mr() < 0.5 ? 1 : -1;
+        const xStart = dir > 0 ? W * (0.08 + mr() * 0.25) : W * (0.67 + mr() * 0.25);
+        const xEnd = xStart + dir * W * (0.34 + mr() * 0.22);
+        const yStart = H * ((isLandscape ? 0.08 : 0.14) + mr() * 0.14);
+        const yEnd = yStart + H * (0.07 + mr() * 0.08);
+        const mu = easeOut(meteorLocal / 1.35);
+        const fade = Math.sin(Math.PI * clamp(meteorLocal / 1.35));
+        const mCtrl: [number, number] = [(xStart + xEnd) / 2, (yStart + yEnd) / 2 - 28 * K];
+        const mPts: [number, number][] = [];
+        const tailStart = Math.max(0, mu - 0.32);
+        for (let i = 0; i <= 18; i++) {
+          mPts.push(bez([xStart, yStart], mCtrl, [xEnd, yEnd], tailStart + ((mu - tailStart) * i) / 18));
+        }
+        estela(mPts, [210, 232, 255], 0, 0.85 * fade, 2.8);
+        const mHead = mPts[mPts.length - 1];
+        estrella(mHead[0], mHead[1], [255, 244, 210], 5.5, fade, 0.25);
+      }
 
       const ajustes = ajustesRef.current;
       const skySlots = slots(ajustes.max_perritos || 40);
@@ -593,14 +681,16 @@ export function CieloLive({
         const s = typeof p.slot === 'number' && p.slot >= 0 ? p.slot : 0;
         return skySlots[s % skySlots.length];
       };
-      const isLandscape = W > H;
       const centroPos: [number, number] = [
-        W / 2 + 10 * K * Math.sin(t * 0.31),
-        H * (isLandscape ? 0.58 : 0.6) + 9 * K * Math.sin(t * 0.5),
+        W / 2 + (isLandscape ? 24 : 34) * K * Math.sin(t * 0.42),
+        H * (isLandscape ? 0.58 : 0.415) + (isLandscape ? 14 : 18) * K * Math.sin(t * 0.63),
       ];
       const escenarioPos = (p: LivePerrito): [number, number] => {
         const lado = hashStr(p.id) & 1 ? 1 : -1;
-        return [W / 2 + lado * Math.min(W * 0.27, 330 * K), H * (isLandscape ? 0.58 : 0.6) - 70 * K];
+        return [
+          W / 2 + lado * Math.min(W * 0.27, 300 * K),
+          H * (isLandscape ? 0.58 : 0.435) - (isLandscape ? 70 : 55) * K,
+        ];
       };
 
       const ahoraServer = Date.now() + serverOffsetMsRef.current;
@@ -630,6 +720,8 @@ export function CieloLive({
       }
 
       // Estrellas ya asentadas en el cielo
+      const settledPets: LivePerrito[] = [];
+      let hasActiveAscent = false;
       for (const p of aprobados) {
         const subeMs = p.sube_at ? new Date(p.sube_at).getTime() : 0;
         if (!subeMs) continue;
@@ -637,34 +729,64 @@ export function CieloLive({
         const f = durMs / 15900;
         const animTotalSec = 15.2 * f;
         const elapsedSinceSube = (ahoraServer - subeMs) / 1000;
-
-        if (elapsedSinceSube >= animTotalSec) {
-          const [bx, by] = posCielo(p);
-          const ph = faseDe(p);
-          const c = colorDe(p);
-          const x = bx + 3 * K * Math.sin(t * 0.4 + ph);
-          const y = by + 4 * K * Math.sin(t * 0.55 + ph);
-          const tl = elapsedSinceSube - animTotalSec;
-          const burst = Math.sin(Math.PI * clamp((tl + 0.3) / 1.8));
-          if (burst > 0.01) halo(x, y, (40 + 60 * burst) * K, c, 0.35 * burst);
-          estrella(x, y, c, 6 + 4 * burst, 0.8 + 0.2 * Math.sin(t * 2 + ph) + 0.4 * burst);
-          etiquetas.push([corto(p.nombre, 14), x, y - 20 * K, c, clamp(tl / 1.5)]);
+        if (elapsedSinceSube >= 0 && elapsedSinceSube < animTotalSec) {
+          hasActiveAscent = true;
         }
+        if (elapsedSinceSube >= animTotalSec) {
+          settledPets.push(p);
+        }
+      }
+
+      // En momentos de calma (sin subida activa), rotar cada 14 s un homenaje ya asentado
+      const idleHighlightPet =
+        !hasActiveAscent && settledPets.length > 0
+          ? settledPets[Math.floor(ahoraServer / 14000) % settledPets.length]
+          : null;
+      const idlePhase = (ahoraServer % 14000) / 14000;
+      const idleAlpha = idleHighlightPet ? clamp(idlePhase * 7) * clamp((1 - idlePhase) * 7) * 0.94 : 0;
+
+      for (const p of settledPets) {
+        const subeMs = p.sube_at ? new Date(p.sube_at).getTime() : 0;
+        const durMs = p.duracion_ms || 15900;
+        const animTotalSec = 15.2 * (durMs / 15900);
+        const elapsedSinceSube = (ahoraServer - subeMs) / 1000;
+        const [bx, by] = posCielo(p);
+        const ph = faseDe(p);
+        const c = colorDe(p);
+        const x = bx + 5 * K * Math.sin(t * 0.5 + ph);
+        const y = by + 6 * K * Math.sin(t * 0.65 + ph);
+        const tl = elapsedSinceSube - animTotalSec;
+        const burst = Math.sin(Math.PI * clamp((tl + 0.3) / 1.8));
+        const isIdleSpotlight = idleHighlightPet?.id === p.id && idleAlpha > 0.05;
+        if (burst > 0.01) halo(x, y, (44 + 65 * burst) * K, c, 0.38 * burst);
+        if (isIdleSpotlight) {
+          halo(x, y, (68 + 18 * Math.sin(t * 2.4)) * K, hex2rgb(ORO), 0.32 * idleAlpha);
+        }
+        const baseStarR = isLandscape ? 6 : 8.5;
+        estrella(
+          x,
+          y,
+          c,
+          baseStarR + 4 * burst + (isIdleSpotlight ? 2.5 * idleAlpha : 0),
+          0.84 + 0.16 * Math.sin(t * 2.2 + ph) + 0.35 * burst
+        );
+        etiquetas.push([corto(p.nombre, 14), x, y - (isLandscape ? 20 : 28) * K, c, clamp(tl / 1.5)]);
       }
 
       // Fundido de 1.5 s para estrellas quitadas
       quitandoRef.current = quitandoRef.current.filter((q) => t - q.t0 < 1.5);
       for (const q of quitandoRef.current) {
         const [x, y] = posCielo(q.p);
-        estrella(x, y, colorDe(q.p), 6, 1 - (t - q.t0) / 1.5);
+        estrella(x, y, colorDe(q.p), isLandscape ? 6 : 8, 1 - (t - q.t0) / 1.5);
       }
 
-      // Estrella central dorada
+      // Estrella central dorada ("Ángeles en el Cielo") más viva y luminosa
       const [cx, cy] = centroPos;
-      const pulso = 1 + 0.12 * Math.sin(t * 1.7);
-      cola(cx, cy, hex2rgb(ORO), t, 1, 1, 230);
-      halo(cx, cy, 70 * K, hex2rgb(ORO), 0.35);
-      estrella(cx, cy, hex2rgb(ORO), 11 * pulso, 1);
+      const pulso = 1 + 0.16 * Math.sin(t * 1.9);
+      cola(cx, cy, hex2rgb(ORO), t * 1.25, 1, 1, isLandscape ? 235 : 255);
+      halo(cx, cy, (isLandscape ? 78 : 98) * K, hex2rgb(ORO), 0.42);
+      estrella(cx, cy, hex2rgb(ORO), (isLandscape ? 12 : 14.5) * pulso, 1, Math.sin(t * 0.25) * 0.08);
+      estrella(cx, cy, [255, 232, 170], (isLandscape ? 7.5 : 9.5) * pulso, 0.72, Math.PI / 4 + t * 0.18);
 
       // Perrito actualmente en escena según reloj de servidor (sube_at <= ahora < sube_at + 15.2*f)
       for (const p of aprobados) {
@@ -772,46 +894,97 @@ export function CieloLive({
         break; // De uno en uno en escena
       }
 
+      // Si no hay subida activa, mostrar el homenaje rotatorio en calma
+      if (!rotulo && idleHighlightPet && idleAlpha > 0.01) {
+        const idleSub = [
+          idleHighlightPet.tiempo ? `${idleHighlightPet.tiempo} de amor` : 'Brilla en el cielo',
+          idleHighlightPet.tiktok_usuario ? `de @${idleHighlightPet.tiktok_usuario}` : '',
+        ]
+          .filter(Boolean)
+          .join('  ·  ');
+        rotulo = {
+          a: idleAlpha,
+          n: idleHighlightPet.nombre,
+          s: idleSub,
+          dorado: true,
+        };
+      }
+
       ctx.globalCompositeOperation = 'source-over';
 
-      // Etiquetas de nombres (exclusivamente fillText en canvas)
+      // Etiquetas de nombres (exclusivamente fillText en canvas, ampliadas para móvil 9:16)
       for (const [s, x, y, c, a, grande] of etiquetas) {
-        const col = `rgba(${Math.round(c[0] * 0.5 + 127)},${Math.round(c[1] * 0.5 + 127)},${Math.round(c[2] * 0.5 + 127)},A)`;
-        texto(s, x, y, grande ? SANS(30) : SANS(21), grande ? 'rgba(240,242,252,A)' : col, a * (grande ? 1 : 0.9));
+        const col = `rgba(${Math.round(c[0] * 0.45 + 140)},${Math.round(c[1] * 0.45 + 140)},${Math.round(c[2] * 0.45 + 140)},A)`;
+        const fnt = isLandscape
+          ? (grande ? SANS(32, 600) : SANS(22, 600))
+          : (grande ? SANS(42, 700) : SANS(33, 600));
+        texto(s, x, y, fnt, grande ? 'rgba(246,248,255,A)' : col, a * (grande ? 1 : 0.96));
       }
       if (ajustes.centro) {
-        texto(ajustes.centro, cx, cy - 46 * K, SANS(34, 600), 'rgba(255,232,180,A)', 1);
+        texto(
+          ajustes.centro,
+          cx,
+          cy - (isLandscape ? 50 : 62) * K,
+          SANS(isLandscape ? 36 : 46, 700),
+          'rgba(255,234,184,A)',
+          1
+        );
       }
 
-      // Rótulo principal grande
-      const yR = H * (isLandscape ? 0.74 : 0.785);
+      // Rótulo principal grande (en 9:16 se sitúa encima de la línea del chat de TikTok)
+      const yR = H * (isLandscape ? 0.74 : 0.505);
       if (rotulo) {
-        texto(rotulo.n, W / 2, yR, SERIF(66), 'rgba(255,255,255,A)', rotulo.a);
+        texto(rotulo.n, W / 2, yR, SERIF(isLandscape ? 66 : 78), 'rgba(255,255,255,A)', rotulo.a);
         texto(
           rotulo.s,
           W / 2,
-          yR + 62 * K,
-          SERIF(40),
-          rotulo.dorado ? 'rgba(255,226,170,A)' : 'rgba(190,205,240,A)',
+          yR + (isLandscape ? 62 : 58) * K,
+          SERIF(isLandscape ? 40 : 44),
+          rotulo.dorado ? 'rgba(255,226,170,A)' : 'rgba(205,220,250,A)',
           rotulo.a * (rotulo.cambio ?? 1)
         );
       }
 
-      // Instrucción y contador inferior
+      // Instrucción y contador (en 9:16 centrados encima del límite ~63% del chat de TikTok)
       if (ajustes.instruccion) {
-        const yI = H * (isLandscape ? 0.905 : 0.925);
-        texto('Síguenos, escribe su nombre y su edad para subirlo al cielo', W / 2, yI, SANS(isLandscape ? 28 : 25), 'rgba(225,230,250,A)', 0.82);
         const ocupados = aprobados.length;
         const max = ajustes.max_perritos || 40;
         const lleno = ocupados >= max;
-        texto(
-          lleno ? `El cielo está completo · ${ocupados} estrellas` : `${ocupados} / ${max} estrellas`,
-          W / 2,
-          yI + 42 * K,
-          SANS(22),
-          lleno ? 'rgba(255,214,140,A)' : 'rgba(170,180,215,A)',
-          0.75
-        );
+        if (isLandscape) {
+          const yI = H * 0.905;
+          texto('Síguenos, escribe su nombre y su edad para subirlo al cielo', W / 2, yI, SANS(28, 600), 'rgba(232,238,255,A)', 0.9);
+          texto(
+            lleno ? `El cielo está completo · ${ocupados} estrellas` : `${ocupados} / ${max} estrellas`,
+            W / 2,
+            yI + 42 * K,
+            SANS(22, 600),
+            lleno ? 'rgba(255,214,140,A)' : 'rgba(185,196,230,A)',
+            0.84
+          );
+        } else {
+          const yI = H * 0.582;
+          const boxW = W - 84 * K;
+          const boxH = 104 * K;
+          ctx.save();
+          roundBox((W - boxW) / 2, yI - 38 * K, boxW, boxH, 22 * K);
+          ctx.fillStyle = 'rgba(12, 18, 52, 0.54)';
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255, 228, 170, 0.28)';
+          ctx.lineWidth = Math.max(1.5, 2 * K);
+          ctx.stroke();
+          ctx.restore();
+
+          texto('Síguenos, escribe su nombre y su edad', W / 2, yI - 2 * K, SANS(33, 700), 'rgba(244,247,255,A)', 0.96);
+          texto('para subirlo al cielo', W / 2, yI + 38 * K, SANS(33, 700), 'rgba(244,247,255,A)', 0.96);
+          texto(
+            lleno ? `El cielo está completo · ${ocupados} estrellas` : `${ocupados} / ${max} estrellas`,
+            W / 2,
+            yI + 94 * K,
+            SANS(27, 600),
+            lleno ? 'rgba(255,214,140,A)' : 'rgba(203,214,250,A)',
+            0.9
+          );
+        }
       }
     }
 
