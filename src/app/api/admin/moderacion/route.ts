@@ -38,6 +38,10 @@ function verifyAdminModeracionAuth(req: NextRequest): boolean {
 // GET: Listar memoriales (y opcionalmente homenajes/cartas multicarta) con filtros, búsqueda y paginación
 export async function GET(req: NextRequest) {
   try {
+    if (!verifyAdminModeracionAuth(req)) {
+      return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const scope = searchParams.get('scope') || 'memorials';
     const search = searchParams.get('search')?.trim() || '';
@@ -137,6 +141,12 @@ export async function GET(req: NextRequest) {
 // PATCH: Actualizar visibilidad, estado de moderación o dedicatoria (memorials o multicarta)
 export async function PATCH(req: NextRequest) {
   try {
+    const csrfErrorGlobal = verifyCsrfOrigin(req);
+    if (csrfErrorGlobal) return csrfErrorGlobal;
+    if (!verifyAdminModeracionAuth(req)) {
+      return NextResponse.json({ success: false, error: 'No autorizado.' }, { status: 401 });
+    }
+
     const body = await req.json();
 
     if (body?.entityType === 'tribute' || body?.entityType === 'tribute_letter') {

@@ -105,23 +105,50 @@ export default function AdminModeracionPage() {
   const [editSocialHandle, setEditSocialHandle] = useState<string>('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // Verificar PIN guardado
+  const getAdminKey = () => {
+    if (typeof window === 'undefined') return '';
+    return sessionStorage.getItem('admin_moderacion_auth') || '';
+  };
+
+  // Verificar PIN guardado en sesión tras recarga validando contra servidor
   useEffect(() => {
-    const savedPin = localStorage.getItem('admin_moderacion_auth');
-    if (savedPin === 'cielo2026') {
-      setIsAuthenticated(true);
+    try {
+      localStorage.removeItem('admin_moderacion_auth');
+    } catch {}
+    const savedPin = sessionStorage.getItem('admin_moderacion_auth');
+    if (savedPin) {
+      fetch('/api/admin/moderacion?scope=multicarta&limit=1', {
+        headers: { 'x-admin-moderacion-key': savedPin },
+      })
+        .then((r) => {
+          if (r.ok) setIsAuthenticated(true);
+          else sessionStorage.removeItem('admin_moderacion_auth');
+        })
+        .catch(() => {});
     }
   }, []);
 
-  // Manejar Login
-  const handlePinSubmit = (e: React.FormEvent) => {
+  // Manejar Login validado estrictamente en el servidor (cero PINs embebidos en el cliente)
+  const handlePinSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (pinInput.trim() === 'cielo2026' || pinInput.trim() === 'angeles2026') {
-      localStorage.setItem('admin_moderacion_auth', 'cielo2026');
-      setIsAuthenticated(true);
-      setPinError('');
-    } else {
-      setPinError('PIN incorrecto. Contacta al administrador.');
+    const candidate = pinInput.trim();
+    if (!candidate) {
+      setPinError('Introduce el PIN de acceso.');
+      return;
+    }
+    try {
+      const res = await fetch('/api/admin/moderacion?scope=multicarta&limit=1', {
+        headers: { 'x-admin-moderacion-key': candidate },
+      });
+      if (res.ok) {
+        sessionStorage.setItem('admin_moderacion_auth', candidate);
+        setIsAuthenticated(true);
+        setPinError('');
+      } else {
+        setPinError('PIN incorrecto. Contacta al administrador.');
+      }
+    } catch {
+      setPinError('Error de conexión al validar el acceso.');
     }
   };
 
@@ -136,7 +163,14 @@ export default function AdminModeracionPage() {
         search: searchTerm,
       });
 
-      const res = await fetch(`/api/admin/moderacion?${params.toString()}`);
+      const res = await fetch(`/api/admin/moderacion?${params.toString()}`, {
+        headers: { 'x-admin-moderacion-key': getAdminKey() },
+      });
+      if (res.status === 401) {
+        sessionStorage.removeItem('admin_moderacion_auth');
+        setIsAuthenticated(false);
+        return;
+      }
       const data = await res.json();
 
       if (data.success) {
@@ -156,7 +190,7 @@ export default function AdminModeracionPage() {
   const fetchMulticartaModeration = async () => {
     setMulticartaLoading(true);
     try {
-      const adminKey = localStorage.getItem('admin_moderacion_auth') || 'cielo2026';
+      const adminKey = getAdminKey();
       const params = new URLSearchParams({
         scope: 'multicarta',
         filter: multicartaFilter,
@@ -165,6 +199,11 @@ export default function AdminModeracionPage() {
       const res = await fetch(`/api/admin/moderacion?${params.toString()}`, {
         headers: { 'x-admin-moderacion-key': adminKey },
       });
+      if (res.status === 401) {
+        sessionStorage.removeItem('admin_moderacion_auth');
+        setIsAuthenticated(false);
+        return;
+      }
       const data = await res.json();
       if (res.ok && data.success) {
         setMulticartaTributes(data.tributes || []);
@@ -187,7 +226,7 @@ export default function AdminModeracionPage() {
     action: 'approve' | 'pending' | 'reject' | 'archive' | 'soft_delete' | 'restore',
   ) => {
     try {
-      const adminKey = localStorage.getItem('admin_moderacion_auth') || 'cielo2026';
+      const adminKey = getAdminKey();
       const res = await fetch('/api/admin/moderacion', {
         method: 'PATCH',
         headers: {
@@ -216,7 +255,7 @@ export default function AdminModeracionPage() {
         : 'No se pudo acreditar la titularidad privada'
     );
     try {
-      const adminKey = localStorage.getItem('admin_moderacion_auth') || 'cielo2026';
+      const adminKey = getAdminKey();
       const res = await fetch('/api/admin/moderacion', {
         method: 'PATCH',
         headers: {
@@ -270,7 +309,7 @@ export default function AdminModeracionPage() {
 
       const res = await fetch('/api/admin/moderacion', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-admin-moderacion-key': getAdminKey() },
         body: JSON.stringify({
           id: item.id,
           visibility: targetVisibility,
@@ -312,7 +351,7 @@ export default function AdminModeracionPage() {
       const cleanHandle = editSocialHandle.replace(/^@/, '').trim();
       const res = await fetch('/api/admin/moderacion', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-admin-moderacion-key': getAdminKey() },
         body: JSON.stringify({
           id: editingItem.id,
           pet_name: editPetName.trim(),
@@ -369,7 +408,7 @@ export default function AdminModeracionPage() {
               type="password"
               value={pinInput}
               onChange={(e) => setPinInput(e.target.value)}
-              placeholder="PIN de acceso (ej. cielo2026)"
+              placeholder="Introduce el PIN de administrador"
               className="w-full px-4 py-3 rounded-2xl border-2 border-pink-200 focus:border-[#EC4899] outline-hidden text-center text-lg font-bold tracking-widest text-[#1E2A78]"
               autoFocus
             />
@@ -464,6 +503,7 @@ export default function AdminModeracionPage() {
             </Link>
             <button
               onClick={() => {
+                sessionStorage.removeItem('admin_moderacion_auth');
                 localStorage.removeItem('admin_moderacion_auth');
                 setIsAuthenticated(false);
               }}

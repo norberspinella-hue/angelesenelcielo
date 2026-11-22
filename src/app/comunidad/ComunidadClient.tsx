@@ -457,8 +457,9 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
     }
   };
 
-  // Cambio de rol con llamada HTTP real para activar o revocar la cookie HttpOnly
+  // Cambio de rol con llamada HTTP real (exclusivo de desarrollo local)
   const handleSwitchRole = async (newRole: 'guardian' | 'visitor') => {
+    if (process.env.NODE_ENV !== 'development') return;
     if (newRole === 'visitor') {
       try {
         await fetch('/api/community/guardian/revoke', { method: 'POST' });
@@ -467,18 +468,21 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
       setToastMessage('👀 Modo Visitante activado (solo lectura, sin permiso de escritura).');
       setTimeout(() => setToastMessage(null), 4000);
     } else {
-      try {
-        await fetch('/api/community/guardian/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            token: 'chloe_staging_guardian_token_secret_seed_2026',
-            tributeSlug: 'chloe-spinella'
-          })
-        });
-      } catch {}
+      const devSeedToken = process.env.NEXT_PUBLIC_DEV_GUARDIAN_TOKEN || '';
+      if (devSeedToken) {
+        try {
+          await fetch('/api/community/guardian/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              token: devSeedToken,
+              tributeSlug: 'chloe-spinella'
+            })
+          });
+        } catch {}
+      }
       setReviewerRole('guardian');
-      setToastMessage('🛡️ Modo Guardián activado para la familia de Chloe (permiso de escritura habilitado).');
+      setToastMessage('🛡️ Modo Guardián activado en demostración local.');
       setTimeout(() => setToastMessage(null), 4000);
     }
   };

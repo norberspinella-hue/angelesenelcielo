@@ -88,7 +88,13 @@ export function WhatsAppButton() {
     <aside
       aria-label="Atención por WhatsApp"
       style={dynamicStyle}
-      className={`fixed z-40 ${(isCieloLucesBannerOpen || isComunidadBannerOpen) ? 'hidden sm:flex' : 'flex'} items-center gap-2 pointer-events-none transition-all duration-300 ease-out ${positionClasses}`}
+      className={`fixed z-40 ${
+        isComunidadBannerOpen
+          ? 'hidden min-[1360px]:flex'
+          : isCieloLucesBannerOpen
+          ? 'hidden sm:flex'
+          : 'flex'
+      } items-center gap-2 pointer-events-none transition-all duration-300 ease-out ${positionClasses}`}
     >
       <a
         href={whatsappUrl}
