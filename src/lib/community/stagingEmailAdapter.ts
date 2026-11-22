@@ -137,3 +137,111 @@ export async function sendStagingMagicLinkEmail(
 
   return { sent: true, reason: 'ok' };
 }
+
+function isValidProductionBaseUrl(rawUrl: string): string | null {
+  try {
+    const u = new URL(rawUrl.trim());
+    if (u.protocol !== 'https:') return null;
+    const host = u.hostname.toLowerCase();
+    if (host === 'localhost' || host === '127.0.0.1' || host.endsWith('.vercel.app')) {
+      return null;
+    }
+    const extraAllowlist = (process.env.COMMUNITY_ALLOWED_APP_ORIGINS || '')
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    const isAllowed =
+      host === 'todaslasmascotasvanalcielo.com' ||
+      host === 'www.todaslasmascotasvanalcielo.com' ||
+      extraAllowlist.includes(u.origin.toLowerCase()) ||
+      extraAllowlist.includes(host);
+
+    return isAllowed ? u.origin : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function sendProductionMagicLinkEmail(
+  payload: StagingMagicLinkPayload
+): Promise<StagingEmailResult> {
+  if (
+    process.env.COMMUNITY_ALLOWED_ENV !== 'production' ||
+    process.env.VERCEL_ENV !== 'production' ||
+    process.env.COMMUNITY_PRODUCTION_AUTHORIZED !== 'true'
+  ) {
+    return { sent: false, reason: 'produccion_no_autorizada' };
+  }
+
+  if (process.env.COMMUNITY_EMAIL_SEND_ENABLED !== 'true') {
+    return { sent: false, reason: 'envio_desactivado' };
+  }
+
+  const apiKey = (process.env.RESEND_API_KEY || '').trim();
+  if (!apiKey) {
+    return { sent: false, reason: 'falta_resend_api_key' };
+  }
+
+  const recipient = payload.requestedEmail.trim().toLowerCase();
+  if (!recipient || !recipient.includes('@') || recipient.endsWith('.invalid')) {
+    return { sent: false, reason: 'destinatario_invalido' };
+  }
+
+  const appUrl =
+    isValidProductionBaseUrl(process.env.NEXT_PUBLIC_APP_URL || '') ||
+    isValidProductionBaseUrl(payload.appOrigin || '');
+  if (!appUrl) {
+    return { sent: false, reason: 'url_produccion_no_autorizada_o_invalida' };
+  }
+
+  const isClaim = payload.kind === 'claim_control';
+  const paramName = isClaim ? 'claimToken' : 'magicToken';
+  const magicUrl = `${appUrl}/comunidad?${paramName}=${encodeURIComponent(payload.rawToken)}&tribute=${encodeURIComponent(payload.tributeSlug)}`;
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'hello@todaslasmascotasvanalcielo.com';
+  const subject = isClaim
+    ? `Confirma tu solicitud de custodia para las cartas de ${payload.petName}`
+    : `Enlace temporal para acceder a las cartas de ${payload.petName}`;
+
+  const resend = new Resend(apiKey);
+  const { error } = await resend.emails.send({
+    from: `Ángeles en el Cielo <${fromEmail}>`,
+    to: [recipient],
+    subject,
+    html: `
+      <div style="font-family: Georgia, serif; color: #541731; background: #FFF8F0; padding: 24px; border-radius: 12px; border: 1px solid #D4B79E; max-width: 540px; margin: 0 auto;">
+        <h2 style="margin: 0 0 12px; font-size: 22px;">${isClaim ? `Confirmación de solicitud para ${payload.petName}` : `Acceso seguro a las cartas de ${payload.petName}`}</h2>
+        <p style="font-size: 15px; line-height: 1.6; color: #4E2331;">
+          ${isClaim
+            ? 'Has solicitado verificar la titularidad histórica para custodiar esta colección. Pulsa el botón inferior para confirmar tu dirección de correo. Este enlace caduca en <strong>30 minutos</strong> y es de un solo uso.'
+            : 'Has solicitado un enlace de un solo uso para acceder como familia guardiana y escribir nuevas cartas. Este enlace caduca en <strong>15 minutos</strong> y se invalida automáticamente tras utilizarse.'}
+        </p>
+        <p style="margin: 24px 0;">
+          <a href="${magicUrl}" style="display: inline-block; background: #541731; color: #FFF6EE; text-decoration: none; padding: 12px 24px; border-radius: 9999px; font-family: sans-serif; font-weight: bold; font-size: 14px;">
+            ${isClaim ? 'Confirmar custodia →' : 'Abrir colección de cartas →'}
+          </a>
+        </p>
+        <p style="font-size: 12px; color: #7A4253;">
+          Si no solicitaste este acceso, puedes ignorar este mensaje con total tranquilidad.
+        </p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    return { sent: false, reason: 'error_resend' };
+  }
+
+  return { sent: true, reason: 'ok' };
+}
+
+export async function sendCommunityMagicLinkEmail(
+  payload: StagingMagicLinkPayload
+): Promise<StagingEmailResult> {
+  if (process.env.COMMUNITY_ALLOWED_ENV === 'staging') {
+    return sendStagingMagicLinkEmail(payload);
+  }
+  if (process.env.COMMUNITY_ALLOWED_ENV === 'production') {
+    return sendProductionMagicLinkEmail(payload);
+  }
+  return { sent: false, reason: 'entorno_no_autorizado' };
+}

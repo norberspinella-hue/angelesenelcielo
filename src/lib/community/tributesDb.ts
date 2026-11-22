@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { assertStagingIsolation } from './stagingGuard';
 import { captureDevMagicLinkEmail } from './devEmailSink';
-import { sendStagingMagicLinkEmail } from './stagingEmailAdapter';
+import { sendCommunityMagicLinkEmail } from './stagingEmailAdapter';
 
 export interface TributeDto {
   id: string;
@@ -484,15 +484,18 @@ export async function requestGuardianRecovery(
       VALUES ($1, $2, NOW() + INTERVAL '15 minutes');
     `, [guardian.id, tHash]);
 
-    if (process.env.COMMUNITY_ALLOWED_ENV === 'staging' && process.env.COMMUNITY_EMAIL_SEND_ENABLED === 'true') {
-      await sendStagingMagicLinkEmail({
+    if (
+      (process.env.COMMUNITY_ALLOWED_ENV === 'staging' || process.env.COMMUNITY_ALLOWED_ENV === 'production') &&
+      process.env.COMMUNITY_EMAIL_SEND_ENABLED === 'true'
+    ) {
+      await sendCommunityMagicLinkEmail({
         requestedEmail: email,
         tributeSlug: guardian.tributeSlug,
         petName: guardian.petName,
         rawToken: rawMagicToken,
         appOrigin,
       });
-    } else {
+    } else if (process.env.NODE_ENV !== 'production') {
       // Capturador local exclusivo de pruebas/desarrollo (nunca se envía por HTTP ni se loguea en consola)
       captureDevMagicLinkEmail({
         tributeSlug: guardian.tributeSlug,

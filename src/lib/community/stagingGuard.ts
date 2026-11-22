@@ -40,6 +40,14 @@ function extractProjectRefFromHost(host: string, user?: string): string | null {
   return null;
 }
 
+export function isExplicitProductionCutoverAuthorized(env: NodeJS.ProcessEnv = process.env): boolean {
+  return (
+    env.VERCEL_ENV === 'production' &&
+    env.COMMUNITY_ALLOWED_ENV === 'production' &&
+    env.COMMUNITY_PRODUCTION_AUTHORIZED === 'true'
+  );
+}
+
 export function assertStagingIsolation(dbConfig: {
   connectionString?: string;
   host?: string;
@@ -47,6 +55,8 @@ export function assertStagingIsolation(dbConfig: {
   database?: string;
   user?: string;
 }): DbTargetInfo {
+  const isAuthorizedProd = isExplicitProductionCutoverAuthorized();
+
   // 1. Verificar que no haya claves comerciales Stripe Live cargadas junto al entorno de pruebas multicarta
   const stripeKey = process.env.STRIPE_SECRET_KEY || '';
   if (process.env.NODE_ENV !== 'production' && (stripeKey.startsWith('sk_live_') || stripeKey.startsWith('rk_live_'))) {
@@ -77,8 +87,30 @@ export function assertStagingIsolation(dbConfig: {
   }
 
   const projectRef = extractProjectRefFromHost(host, user);
+  const allowedRemoteHosts = (process.env.COMMUNITY_ALLOWED_DB_HOSTS || '')
+    .split(',')
+    .map(h => h.trim().toLowerCase())
+    .filter(Boolean);
 
-  // 3. Bloqueo absoluto de identificadores de proyecto de producción
+  if (isAuthorizedProd) {
+    if (!process.env.COMMUNITY_DB_CA_CERT || !process.env.COMMUNITY_DB_CA_CERT.trim()) {
+      throw new StagingIsolationError('Producción bloqueada: falta COMMUNITY_DB_CA_CERT para TLS estricto.');
+    }
+    if (!allowedRemoteHosts.includes(host)) {
+      throw new StagingIsolationError('Producción bloqueada: el host PostgreSQL no figura en COMMUNITY_ALLOWED_DB_HOSTS.');
+    }
+    const publicSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    if (!publicSupabaseUrl) {
+      throw new StagingIsolationError('Producción bloqueada: falta NEXT_PUBLIC_SUPABASE_URL.');
+    }
+    const pubRef = extractProjectRefFromHost(new URL(publicSupabaseUrl).hostname.toLowerCase());
+    if (!projectRef || !pubRef || projectRef !== pubRef) {
+      throw new StagingIsolationError('Producción bloqueada: discrepancia entre proyecto Supabase público y destino PostgreSQL.');
+    }
+    return { host, port, database, projectRef };
+  }
+
+  // 3. Bloqueo absoluto de identificadores de proyecto de producción fuera de corte autorizado
   const extraProdRefs = (process.env.PRODUCTION_SUPABASE_PROJECT_REF || '')
     .split(',')
     .map(s => s.trim().toLowerCase())
@@ -116,11 +148,6 @@ export function assertStagingIsolation(dbConfig: {
   }
 
   // 5. Lista blanca estricta de destinos permitidos
-  const allowedRemoteHosts = (process.env.COMMUNITY_ALLOWED_DB_HOSTS || '')
-    .split(',')
-    .map(h => h.trim().toLowerCase())
-    .filter(Boolean);
-
   if (!isLocalStaging) {
     if (process.env.COMMUNITY_ALLOWED_ENV !== 'staging') {
       throw new StagingIsolationError('Aislamiento bloqueado: destino remoto requiere COMMUNITY_ALLOWED_ENV=staging.');
