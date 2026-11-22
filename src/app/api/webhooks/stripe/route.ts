@@ -5,6 +5,7 @@ import crypto from 'crypto'
 import { resend } from '@/lib/resend'
 import { notifyNeighborsOfNewPet } from '@/lib/notifications'
 import { getPlanOrDefault } from '@/lib/plans'
+import { isBlockGridValidAndFree } from '@/lib/mural/blockAvailability'
 import { generateSponsorshipEmailHtml } from '@/lib/emails/sponsorshipEmail'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -77,21 +78,33 @@ export async function POST(req: NextRequest) {
 
     const isBlockFree = async (
       startX: number,
-      startY: number, 
+      startY: number,
       size: number
     ): Promise<boolean> => {
+      if (startX < 0 || startY < 0 || startX + size > 1000 || startY + size > 1000) {
+        return false
+      }
       const { data } = await (supabase
         .from('mural_slots') as any)
-        .select('status')
+        .select('x, y, status, reserved_until, memorial_id')
         .gte('x', startX)
         .lt('x', startX + size)
         .gte('y', startY)
         .lt('y', startY + size)
-      
-      if (data && data.some((s: any) => s.status === 'occupied')) {
-        return false
-      }
-      return true
+
+      return isBlockGridValidAndFree(startX, startY, size, data || []).ok
+    }
+
+    // Idempotencia: si /gracias fallback o un reintento previo ya creó el memorial para esta sesión Stripe, no duplicar
+    const { data: alreadyProcessed } = await (supabase
+      .from('memorials') as any)
+      .select('id, slot_assigned')
+      .eq('stripe_session_id', session.id)
+      .maybeSingle()
+
+    if (alreadyProcessed) {
+      console.log('Webhook idempotente: sesión ya procesada:', session.id, alreadyProcessed.id)
+      return NextResponse.json({ received: true, alreadyProcessed: true })
     }
 
     // Generar order_id único
@@ -241,7 +254,7 @@ export async function POST(req: NextRequest) {
             location: location || '',
             photo_url: photoUrl || '', // de los metadatos de Stripe
             death_date: petDate || new Date().toISOString().split('T')[0],
-            slots_count: [1, 4, 9].includes(planCfg.slotsCount) ? planCfg.slotsCount : 9,
+            slots_count: planCfg.slotsCount,
             profile_slug: `${petName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`,
             visibility: 'public',
             publication_status: 'published',

@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 import { Resend } from 'resend'
 import { getPlanOrDefault } from '@/lib/plans'
+import { isBlockGridValidAndFree } from '@/lib/mural/blockAvailability'
 import { generateSponsorshipEmailHtml } from '@/lib/emails/sponsorshipEmail'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -19,8 +20,6 @@ function buildMemorialResponse(memorial: any) {
   const isSponsorship = Boolean(
     answers.isSponsorship ||
     answers.isSponsored ||
-    memorial.plan_type === 'corazon_eterno' ||
-    memorial.plan_type?.toLowerCase().includes('corazon') ||
     memorial.plan_type?.toLowerCase().includes('apadrinamiento')
   )
   return NextResponse.json({
@@ -161,27 +160,27 @@ export async function GET(req: NextRequest) {
 
     const isBlockFree = async (
       startX: number,
-      startY: number, 
+      startY: number,
       size: number
     ): Promise<boolean> => {
+      if (startX < 0 || startY < 0 || startX + size > 1000 || startY + size > 1000) {
+        return false
+      }
       const { data } = await (supabase
         .from('mural_slots') as any)
-        .select('status')
+        .select('x, y, status, reserved_until, memorial_id')
         .gte('x', startX)
         .lt('x', startX + size)
         .gte('y', startY)
         .lt('y', startY + size)
-      
-      if (data && data.some((s: any) => s.status === 'occupied')) {
-        return false
-      }
-      return true
+
+      return isBlockGridValidAndFree(startX, startY, size, data || []).ok
     }
 
     // Verificar si ya existe un memorial para esta sesión
     const { data: existingMemorial } = await (supabase
       .from('memorials') as any)
-      .select('id, slot_assigned')
+      .select('id, slot_assigned, profile_slug')
       .eq('stripe_session_id', sessionId)
       .maybeSingle()
 
@@ -343,7 +342,7 @@ export async function GET(req: NextRequest) {
               location: location || '',
               photo_url: photoUrl || '',
               death_date: petDate || new Date().toISOString().split('T')[0],
-              slots_count: [1, 4, 9].includes(planCfg.slotsCount) ? planCfg.slotsCount : 9,
+              slots_count: planCfg.slotsCount,
               profile_slug: `${petName.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`,
               visibility: 'public',
               publication_status: 'published',

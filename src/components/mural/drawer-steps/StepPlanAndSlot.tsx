@@ -127,50 +127,60 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
               El espacio seleccionado empezará en la coordenada <strong>{preSelectedSlot?.col}, {preSelectedSlot?.row}</strong> y ocupará el espacio correspondiente al plan.
             </div>
             <div className="w-full flex justify-center">
-              <div 
-                className="bg-white border border-gray-200 rounded shadow-inner"
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(10, 16px)',
-                  gridTemplateRows: 'repeat(6, 16px)',
-                  gap: '2px',
-                  padding: '8px'
-                }}
-              >
-                {Array.from({ length: 60 }).map((_, idx) => {
-                  const colIdx = idx % 10;
-                  const rowIdx = Math.floor(idx / 10);
-                  
-                  // Calculate actual coordinates for this cell
-                  const actualCol = (preSelectedSlot?.col || 0) - 4 + colIdx;
-                  const actualRow = (preSelectedSlot?.row || 0) - 2 + rowIdx;
-                  
-                  // Determine if this cell is part of the selected plan
-                  let isSelected = false;
-                  const selectedPlanConfig = getPlan(selectedPlan);
+              {(() => {
+                const selectedPlanConfig = getPlan(selectedPlan);
+                const blockSize = selectedPlanConfig?.size ?? 1;
+                const previewCols = Math.max(10, blockSize + 4);
+                const previewRows = Math.max(7, blockSize + 2);
+                const colOffset = Math.max(2, Math.floor((previewCols - blockSize) / 2));
+                const rowOffset = Math.max(1, Math.floor((previewRows - blockSize) / 2));
 
-                  if (selectedPlanConfig && preSelectedSlot) {
-                    const blockSize = selectedPlanConfig.size;
-                    isSelected = actualCol >= preSelectedSlot.col && actualCol < preSelectedSlot.col + blockSize &&
-                                 actualRow >= preSelectedSlot.row && actualRow < preSelectedSlot.row + blockSize;
-                  }
+                return (
+                  <div
+                    className="bg-white border border-gray-200 rounded shadow-inner"
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${previewCols}, 16px)`,
+                      gridTemplateRows: `repeat(${previewRows}, 16px)`,
+                      gap: '2px',
+                      padding: '8px',
+                    }}
+                  >
+                    {Array.from({ length: previewCols * previewRows }).map((_, idx) => {
+                      const colIdx = idx % previewCols;
+                      const rowIdx = Math.floor(idx / previewCols);
 
-                  // Mock: Some random neighbors are occupied based on coordinates to look realistic
-                  const isOccupiedNeighbor = !isSelected && ((actualCol * 7 + actualRow * 13) % 10 === 0);
+                      const actualCol = (preSelectedSlot?.col || 0) - colOffset + colIdx;
+                      const actualRow = (preSelectedSlot?.row || 0) - rowOffset + rowIdx;
 
-                  return (
-                    <div 
-                      key={idx}
-                      className={`w-full h-full rounded-[2px] transition-colors ${
-                        isSelected ? 'bg-[#C9A961] shadow-sm animate-pulse' : 
-                        isOccupiedNeighbor ? 'bg-[#F8C7D8]' : 
-                        'bg-gray-100 border border-gray-200'
-                      }`}
-                      title={isSelected ? 'Tu selección' : isOccupiedNeighbor ? 'Ocupado' : 'Libre'}
-                    />
-                  );
-                })}
-              </div>
+                      const isSelected = Boolean(
+                        selectedPlanConfig &&
+                        preSelectedSlot &&
+                        actualCol >= preSelectedSlot.col &&
+                        actualCol < preSelectedSlot.col + blockSize &&
+                        actualRow >= preSelectedSlot.row &&
+                        actualRow < preSelectedSlot.row + blockSize
+                      );
+
+                      const isOccupiedNeighbor = !isSelected && ((actualCol * 7 + actualRow * 13) % 10 === 0);
+
+                      return (
+                        <div
+                          key={idx}
+                          className={`w-full h-full rounded-[2px] transition-colors ${
+                            isSelected
+                              ? 'bg-[#C9A961] shadow-sm animate-pulse'
+                              : isOccupiedNeighbor
+                                ? 'bg-[#F8C7D8]'
+                                : 'bg-gray-100 border border-gray-200'
+                          }`}
+                          title={isSelected ? 'Tu selección' : isOccupiedNeighbor ? 'Ocupado' : 'Libre'}
+                        />
+                      );
+                    })}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
