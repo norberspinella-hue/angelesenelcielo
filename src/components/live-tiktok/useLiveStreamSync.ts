@@ -183,6 +183,33 @@ export function useLiveStreamSync({ isController = false }: UseLiveStreamSyncOpt
     }
   }, []);
 
+  // Validar token persistido en localStorage al montar el controlador para no mostrar sesión caducada
+  useEffect(() => {
+    if (!isController || !authToken) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/live-tiktok/auth', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({ action: 'verify' }),
+        });
+        const data = await res.json().catch(() => null);
+        if (!cancelled && ((res.ok && data?.valid === false) || res.status === 401)) {
+          logout();
+        }
+      } catch {
+        // Error temporal de red: mantener estado actual hasta la siguiente acción
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isController, authToken, logout]);
+
   // Emisión de cambios por todos los canales
   const broadcastStateChange = useCallback((newState: LiveStreamState) => {
     const currentToken = authTokenRef.current;

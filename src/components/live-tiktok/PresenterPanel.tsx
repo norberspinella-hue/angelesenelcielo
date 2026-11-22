@@ -342,6 +342,7 @@ export function PresenterPanel() {
                 <CieloControlPanel
                   authToken={authToken}
                   onEscenaChange={setCieloOutputMode}
+                  onUnauthorized={logout}
                 />
               </div>
 

@@ -30,11 +30,13 @@ interface EstadoResponse {
 interface CieloControlPanelProps {
   authToken: string | null;
   onEscenaChange?: (escena: LiveEscenaOutput) => void;
+  onUnauthorized?: () => void;
 }
 
-export function CieloControlPanel({ authToken, onEscenaChange }: CieloControlPanelProps) {
+export function CieloControlPanel({ authToken, onEscenaChange, onUnauthorized }: CieloControlPanelProps) {
   const [estado, setEstado] = useState<EstadoResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
 
   // Estado editable local (nunca pisado por el polling de 1,5 s mientras el usuario edita)
@@ -90,10 +92,18 @@ export function CieloControlPanel({ authToken, onEscenaChange }: CieloControlPan
         cache: 'no-store',
       });
       if (!res.ok) {
+        const errJson = await res.json().catch(() => null);
+        if (res.status === 401) {
+          setErrorDetail('Tu sesión de presentador caducó. Vuelve a introducir el PIN.');
+          onUnauthorized?.();
+        } else {
+          setErrorDetail(errJson?.error || `Error ${res.status} al consultar /api/live/estado`);
+        }
         setLoading(false);
         return;
       }
       const data = (await res.json()) as EstadoResponse;
+      setErrorDetail(null);
       setEstado(data);
       onEscenaChange?.(data.ajustes.escena_output);
       setLoading(false);
@@ -140,9 +150,10 @@ export function CieloControlPanel({ authToken, onEscenaChange }: CieloControlPan
         });
       }
     } catch {
+      setErrorDetail('No se pudo conectar con /api/live/estado.');
       setLoading(false);
     }
-  }, [authToken, onEscenaChange]);
+  }, [authToken, onEscenaChange, onUnauthorized]);
 
   useEffect(() => {
     fetchEstado();
@@ -161,6 +172,11 @@ export function CieloControlPanel({ authToken, onEscenaChange }: CieloControlPan
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
+          if (res.status === 401) {
+            showNotice('err', 'Tu sesión expiró. Introduce el PIN de nuevo.');
+            onUnauthorized?.();
+            return false;
+          }
           const rawErr = String(data.error || 'No se pudo completar la acción.');
           if (rawErr.includes('CIELO_LLENO')) {
             showNotice('err', 'Cielo lleno: sube el máximo o quita alguna estrella.');
@@ -179,7 +195,7 @@ export function CieloControlPanel({ authToken, onEscenaChange }: CieloControlPan
         return false;
       }
     },
-    [authHeaders, fetchEstado, showNotice]
+    [authHeaders, fetchEstado, onUnauthorized, showNotice]
   );
 
   if (loading && !estado) {
@@ -192,8 +208,18 @@ export function CieloControlPanel({ authToken, onEscenaChange }: CieloControlPan
 
   if (!estado) {
     return (
-      <div className="bg-[#160B24] border border-red-400/30 rounded-3xl p-6 text-center text-sm text-red-200">
-        No se pudo conectar con /api/live/estado. Verifica la migración de base de datos y variables del servidor.
+      <div className="bg-[#160B24] border border-red-400/30 rounded-3xl p-6 text-center text-sm text-red-200 space-y-3">
+        <p>{errorDetail || 'No se pudo conectar con /api/live/estado.'}</p>
+        <button
+          type="button"
+          onClick={() => {
+            setLoading(true);
+            fetchEstado();
+          }}
+          className="px-4 py-2 rounded-xl bg-amber-400 text-stone-950 font-bold text-xs cursor-pointer hover:bg-amber-300"
+        >
+          Reintentar
+        </button>
       </div>
     );
   }

@@ -800,7 +800,7 @@ export function CieloLive({
       // Instrucción y contador inferior
       if (ajustes.instruccion) {
         const yI = H * (isLandscape ? 0.905 : 0.925);
-        texto(`Escribe  ${ajustes.comando} y su nombre  para subirlo al cielo`, W / 2, yI, SANS(28), 'rgba(225,230,250,A)', 0.82);
+        texto('Síguenos, escribe su nombre y su edad para subirlo al cielo', W / 2, yI, SANS(isLandscape ? 28 : 25), 'rgba(225,230,250,A)', 0.82);
         const ocupados = aprobados.length;
         const max = ajustes.max_perritos || 40;
         const lleno = ocupados >= max;
