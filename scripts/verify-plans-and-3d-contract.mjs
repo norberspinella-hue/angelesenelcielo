@@ -176,6 +176,54 @@ const mockMemorials = [
     slot_assigned: '524,494',
     story_answers: {},
   },
+  {
+    id: '00000000-0000-4000-8000-000000000091',
+    pet_name: 'SinFoto5x5',
+    species: 'gato',
+    photo_url: '',
+    dedication: 'Mascota sin foto',
+    plan_type: 'galaxia_amor',
+    slots_count: 25,
+    payment_status: 'paid',
+    publication_status: 'published',
+    visibility: 'public',
+    moderation_status: 'approved',
+    profile_slug: 'sin-foto-test',
+    slot_assigned: '600,600',
+    story_answers: {},
+  },
+  {
+    id: '00000000-0000-4000-8000-000000000092',
+    pet_name: 'PrivadoTest',
+    species: 'perro',
+    photo_url: '',
+    dedication: 'No debe mostrarse',
+    plan_type: 'corazon_eterno',
+    slots_count: 9,
+    payment_status: 'paid',
+    publication_status: 'published',
+    visibility: 'private',
+    moderation_status: 'approved',
+    profile_slug: 'privado-test',
+    slot_assigned: '610,610',
+    story_answers: {},
+  },
+  {
+    id: '00000000-0000-4000-8000-000000000093',
+    pet_name: 'BorradorTest',
+    species: 'perro',
+    photo_url: '',
+    dedication: 'Tampoco debe mostrarse',
+    plan_type: 'corazon_eterno',
+    slots_count: 9,
+    payment_status: 'pending',
+    publication_status: 'draft',
+    visibility: 'public',
+    moderation_status: 'approved',
+    profile_slug: 'borrador-test',
+    slot_assigned: null,
+    story_answers: {},
+  },
 ];
 
 const activeCandleSet = new Set([housePaid.id]); // Dino no tiene vela
@@ -183,19 +231,23 @@ const paidOnlyCatalog = catalogService.buildPublic3DMuralCatalog(mockMemorials, 
   includeCommunityFree: false,
   activeCandleMemorialIds: activeCandleSet,
 });
-assert.equal(paidOnlyCatalog.length, 2, 'Paid catalog must include House + Dino even without candle');
+assert.equal(paidOnlyCatalog.length, 3, 'Paid catalog must include House, Dino and SinFoto5x5 while excluding private/draft');
 const houseEntry = paidOnlyCatalog.find((x) => x.memorialId === housePaid.id);
 const dinoEntry = paidOnlyCatalog.find((x) => x.memorialId === '13fc24d5-a064-4495-a16b-7db84c1bc76d');
+const sinFotoEntry = paidOnlyCatalog.find((x) => x.memorialId === '00000000-0000-4000-8000-000000000091');
 assert.equal(houseEntry.muralCoords.x, 495);
 assert.equal(houseEntry.hasActiveCandle, true);
 assert.equal(dinoEntry.hasActiveCandle, false);
 assert.equal(dinoEntry.muralSlotsCount, 16, 'Catalog normalizes Dino 4x4 to 16 slots even before DB backfill');
+assert.equal(sinFotoEntry.photoUrl, null, 'Missing photo must yield null for 3D fallback');
+assert.equal(sinFotoEntry.muralSlotsCount, 25);
+assert.equal(paidOnlyCatalog.some((x) => x.petName === 'PrivadoTest' || x.petName === 'BorradorTest'), false);
 
 const withCommunity = catalogService.buildPublic3DMuralCatalog(mockMemorials, {
   includeCommunityFree: true,
   activeCandleMemorialIds: activeCandleSet,
 });
-assert.equal(withCommunity.length, 3, 'Including community must preserve distinct IDs for both House records');
+assert.equal(withCommunity.length, 4, 'Including community must preserve distinct IDs for both House records');
 
 console.log(JSON.stringify({
   ok: true,

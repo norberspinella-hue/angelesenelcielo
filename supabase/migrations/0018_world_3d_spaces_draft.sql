@@ -1,100 +1,35 @@
 -- ============================================================================
--- Migración 0017: Corrección de planes 4x4/5x5/6x6 (16/25/36 espacios) +
---                 Soporte de reservas coordinadas Mural Global <-> Mundo 3D
---
--- NOTA: Preparada en rama aislada. NO ejecutar en Producción hasta validación
--- y recepción del catálogo definitivo de space_id por parte de Work.
+-- Migración 0018 (BORRADOR / PENDIENTE DE APROBACIÓN FUTURA):
+--   Tablas y RPCs de reservas coordinadas Mural Global <-> Mundo 3D
+--   Separada deliberadamente de 0017 para no mezclar correcciones comerciales
+--   de planes existentes con compras/reservas 3D todavía no activadas.
 -- ============================================================================
 
 BEGIN;
 
--- 1. Ampliar CHECK de memorials.slots_count para soportar los 6 planes (1, 4, 9, 16, 25, 36)
-ALTER TABLE public.memorials
-  DROP CONSTRAINT IF EXISTS memorials_slots_count_check;
-
-ALTER TABLE public.memorials
-  ADD CONSTRAINT memorials_slots_count_check
-  CHECK (slots_count IN (1, 4, 9, 16, 25, 36));
-
--- 2. Backfill idempotente de compras históricas truncadas a 9 por el límite previo
-UPDATE public.memorials
-SET slots_count = 16,
-    updated_at = now()
-WHERE plan_type::text = 'angelito_protector'
-  AND slots_count <> 16;
-
-UPDATE public.memorials
-SET slots_count = 25,
-    updated_at = now()
-WHERE plan_type::text = 'galaxia_amor'
-  AND slots_count <> 25;
-
-UPDATE public.memorials
-SET slots_count = 36,
-    updated_at = now()
-WHERE plan_type::text = 'vinculo_infinito'
-  AND slots_count <> 36;
-
--- 3. Actualizar is_block_available para ignorar reservas expiradas en mural_slots
-CREATE OR REPLACE FUNCTION public.is_block_available(
-  start_x int,
-  start_y int,
-  block_size int
-) RETURNS boolean
-LANGUAGE plpgsql
-STABLE
-AS $$
-DECLARE
-  occupied_count int;
-BEGIN
-  IF block_size < 1 OR block_size > 6 THEN
-    RETURN false;
-  END IF;
-
-  IF start_x < 0 OR start_y < 0 OR
-     start_x + block_size > 1000 OR
-     start_y + block_size > 1000 THEN
-    RETURN false;
-  END IF;
-
-  SELECT count(*) INTO occupied_count
-  FROM public.mural_slots
-  WHERE x >= start_x AND x < start_x + block_size
-    AND y >= start_y AND y < start_y + block_size
-    AND (
-      status IN ('occupied', 'blocked_admin', 'sponsor_private')
-      OR (status = 'reserved_pending_payment' AND (reserved_until IS NULL OR reserved_until > now()))
-    );
-
-  RETURN occupied_count = 0;
-END;
-$$;
-
--- 4. Catálogo agnóstico de espacios del Mundo 3D (se poblará cuando Work entregue IDs definitivos)
 CREATE TABLE IF NOT EXISTS public.world_spaces (
-  space_id         TEXT PRIMARY KEY,
-  zone             TEXT NOT NULL,
-  support_type     TEXT NOT NULL,
-  display_name     TEXT NOT NULL,
-  plan_id          TEXT NOT NULL CHECK (plan_id IN (
+  space_id          TEXT PRIMARY KEY,
+  zone              TEXT NOT NULL,
+  support_type      TEXT NOT NULL,
+  display_name      TEXT NOT NULL,
+  plan_id           TEXT NOT NULL CHECK (plan_id IN (
     'huellita', 'estrella_brillante', 'corazon_eterno',
     'angelito_protector', 'galaxia_amor', 'vinculo_infinito'
   )),
-  is_sellable      BOOLEAN NOT NULL DEFAULT TRUE,
+  is_sellable       BOOLEAN NOT NULL DEFAULT FALSE,
   is_reserved_admin BOOLEAN NOT NULL DEFAULT FALSE,
-  supports_photo   BOOLEAN NOT NULL DEFAULT TRUE,
-  coords_json      JSONB NOT NULL DEFAULT '{}'::jsonb,
-  camera_json      JSONB NOT NULL DEFAULT '{}'::jsonb,
-  metadata_json    JSONB NOT NULL DEFAULT '{}'::jsonb,
-  catalog_version  TEXT NOT NULL DEFAULT 'pending_work_v1',
-  created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at       TIMESTAMPTZ NOT NULL DEFAULT now()
+  supports_photo    BOOLEAN NOT NULL DEFAULT TRUE,
+  coords_json       JSONB NOT NULL DEFAULT '{}'::jsonb,
+  camera_json       JSONB NOT NULL DEFAULT '{}'::jsonb,
+  metadata_json     JSONB NOT NULL DEFAULT '{}'::jsonb,
+  catalog_version   TEXT NOT NULL DEFAULT 'piloto_75_1',
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE INDEX IF NOT EXISTS idx_world_spaces_plan_sellable
   ON public.world_spaces (plan_id, is_sellable, is_reserved_admin);
 
--- 5. Tabla de reservas y asignaciones coordinadas Mundo 3D <-> Mural Global
 CREATE TABLE IF NOT EXISTS public.world_space_allocations (
   id                 UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   space_id           TEXT NOT NULL,
@@ -120,12 +55,10 @@ CREATE TABLE IF NOT EXISTS public.world_space_allocations (
   updated_at         TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- Un space_id solo puede tener UNA asignación o reserva activa a la vez (anti doble-venta / doble-ocupación)
 CREATE UNIQUE INDEX IF NOT EXISTS uq_world_space_active_allocation
   ON public.world_space_allocations (space_id)
   WHERE status IN ('reserved_pending_payment', 'occupied');
 
--- Un memorial solo puede ocupar activamente un espacio principal en 3D (salvo futuras ampliaciones explícitas)
 CREATE UNIQUE INDEX IF NOT EXISTS uq_world_memorial_active_allocation
   ON public.world_space_allocations (memorial_id)
   WHERE memorial_id IS NOT NULL AND status = 'occupied';
@@ -138,7 +71,6 @@ CREATE INDEX IF NOT EXISTS idx_world_alloc_expires
   ON public.world_space_allocations (expires_at)
   WHERE status = 'reserved_pending_payment';
 
--- RLS estricto: solo service_role muta asignaciones; lectura pública solo de ocupaciones confirmadas
 ALTER TABLE public.world_spaces ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.world_space_allocations ENABLE ROW LEVEL SECURITY;
 
@@ -155,7 +87,6 @@ CREATE POLICY "public_read_confirmed_world_allocations"
   ON public.world_space_allocations FOR SELECT
   USING (status = 'occupied');
 
--- 6. Liberar reservas coordinadas expiradas (espacio 3D + mural_slots en hold)
 CREATE OR REPLACE FUNCTION public.release_expired_coordinated_holds()
 RETURNS INT
 LANGUAGE plpgsql
@@ -187,7 +118,6 @@ BEGIN
 END;
 $$;
 
--- 7. Adquirir hold atómico coordinado (bloque N×N del Mural + space_id 3D) con TTL
 CREATE OR REPLACE FUNCTION public.acquire_coordinated_hold(
   p_space_id TEXT,
   p_plan_id TEXT,
@@ -229,7 +159,6 @@ BEGIN
     RETURN;
   END IF;
 
-  -- Reservar las N*N celdas del Mural Global
   FOR v_dx IN 0..(p_block_size - 1) LOOP
     FOR v_dy IN 0..(p_block_size - 1) LOOP
       INSERT INTO public.mural_slots (x, y, status, reserved_until)

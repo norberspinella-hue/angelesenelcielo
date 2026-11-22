@@ -36,7 +36,7 @@ export interface CatalogMemorial3DItem {
   petName: string;
   species: string;
   breed: string;
-  photoUrl: string;
+  photoUrl: string | null;
   dedication: string;
   planId: PlanId;
   muralSlotsCount: number;
@@ -130,13 +130,17 @@ export function buildPublic3DMuralCatalog(
       ? `${webBaseUrl}/mural-global?highlight=${muralCoords.x},${muralCoords.y}&zoom=true`
       : `${webBaseUrl}/mural-global?memorialId=${row.id}`;
 
+    const cleanPhoto = typeof row.photo_url === 'string' && row.photo_url.trim().length > 0
+      ? row.photo_url.trim()
+      : null;
+
     items.push({
       memorialId: row.id,
       profileSlug: row.profile_slug || null,
       petName: row.pet_name || 'Ángel',
       species: row.species || 'otro',
       breed: row.breed || '',
-      photoUrl: row.photo_url || '/images/placeholders/first.webp',
+      photoUrl: cleanPhoto,
       dedication: row.dedication || '',
       planId,
       // Usamos tamaño canónico del plan para no propagar registros heredados truncados a 9
