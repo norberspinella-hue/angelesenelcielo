@@ -764,7 +764,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
 
         if (uploadRes.ok) {
           const uploadData = await uploadRes.json();
-          finalPhotoUrl = uploadData.thumbnailUrl || uploadData.originalUrl || '';
+          finalPhotoUrl = uploadData.originalUrl || uploadData.thumbnailUrl || '';
         }
       }
 
@@ -1047,54 +1047,83 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
       ctx.fillStyle = '#8C7084';
       ctx.fillText('El Libro de los Ángeles · Postal Conmemorativa', 540, 132);
 
-      const imgX = 85;
-      const imgY = 165;
-      const imgW = 910;
-      const imgH = 630;
-      const r = 26;
+      // Contenedor cuadrado centrado estilo .libro-foto (mismo encuadre y proporción 1:1 que la ficha web)
+      const frameSize = 560;
+      const frameX = Math.round((1080 - frameSize) / 2);
+      const frameY = 185;
+      const framePad = 14;
+      const frameRadius = 20;
+
+      const traceRoundedRect = (rx: number, ry: number, rw: number, rh: number, rad: number) => {
+        ctx.beginPath();
+        ctx.moveTo(rx + rad, ry);
+        ctx.lineTo(rx + rw - rad, ry);
+        ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + rad);
+        ctx.lineTo(rx + rw, ry + rh - rad);
+        ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - rad, ry + rh);
+        ctx.lineTo(rx + rad, ry + rh);
+        ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - rad);
+        ctx.lineTo(rx, ry + rad);
+        ctx.quadraticCurveTo(rx, ry, rx + rad, ry);
+        ctx.closePath();
+      };
+
+      // Marco marfil suave (#FFFCF3) con sombra elegante equivalente a .libro-foto
+      ctx.save();
+      ctx.shadowColor = 'rgba(84, 45, 38, 0.16)';
+      ctx.shadowBlur = 24;
+      ctx.shadowOffsetY = 8;
+      traceRoundedRect(frameX, frameY, frameSize, frameSize, frameRadius);
+      ctx.fillStyle = '#FFFCF3';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      traceRoundedRect(frameX, frameY, frameSize, frameSize, frameRadius);
+      ctx.strokeStyle = 'rgba(212, 183, 158, 0.75)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.restore();
+
+      const imgX = frameX + framePad;
+      const imgY = frameY + framePad;
+      const imgW = frameSize - framePad * 2;
+      const imgH = frameSize - framePad * 2;
+      const r = 12;
 
       if (imageObj) {
+        const iw = imageObj.naturalWidth || imageObj.width;
+        const ih = imageObj.naturalHeight || imageObj.height;
+        const srcAspect = iw / ih;
+        const dstAspect = imgW / imgH;
+
+        // Equivalente exacto a object-fit: cover + object-position: center center
+        let sx = 0;
+        let sy = 0;
+        let sw = iw;
+        let sh = ih;
+        if (srcAspect > dstAspect) {
+          sw = ih * dstAspect;
+          sx = (iw - sw) / 2;
+        } else if (srcAspect < dstAspect) {
+          sh = iw / dstAspect;
+          sy = (ih - sh) / 2;
+        }
+
         ctx.save();
-        ctx.beginPath();
-        ctx.moveTo(imgX + r, imgY);
-        ctx.lineTo(imgX + imgW - r, imgY);
-        ctx.quadraticCurveTo(imgX + imgW, imgY, imgX + imgW, imgY + r);
-        ctx.lineTo(imgX + imgW, imgY + imgH - r);
-        ctx.quadraticCurveTo(imgX + imgW, imgY + imgH, imgX + imgW - r, imgY + imgH);
-        ctx.lineTo(imgX + r, imgY + imgH);
-        ctx.quadraticCurveTo(imgX, imgY + imgH, imgX, imgY + imgH - r);
-        ctx.lineTo(imgX, imgY + r);
-        ctx.quadraticCurveTo(imgX, imgY, imgX + r, imgY);
-        ctx.closePath();
+        traceRoundedRect(imgX, imgY, imgW, imgH, r);
         ctx.clip();
-
-        const hRatio = imgW / imageObj.width;
-        const vRatio = imgH / imageObj.height;
-        const ratio = Math.max(hRatio, vRatio);
-        const shiftX = (imgW - imageObj.width * ratio) / 2;
-        const shiftY = (imgH - imageObj.height * ratio) / 2;
-
-        ctx.drawImage(
-          imageObj,
-          0,
-          0,
-          imageObj.width,
-          imageObj.height,
-          imgX + shiftX,
-          imgY + shiftY,
-          imageObj.width * ratio,
-          imageObj.height * ratio
-        );
+        ctx.drawImage(imageObj, sx, sy, sw, sh, imgX, imgY, imgW, imgH);
         ctx.restore();
-
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 6;
-        ctx.strokeRect(imgX, imgY, imgW, imgH);
       } else {
+        ctx.save();
+        traceRoundedRect(imgX, imgY, imgW, imgH, r);
         ctx.fillStyle = '#FAF0F6';
-        ctx.fillRect(imgX, imgY, imgW, imgH);
+        ctx.fill();
         ctx.font = '80px sans-serif';
-        ctx.fillText('🕊️', 540, 500);
+        ctx.textAlign = 'center';
+        ctx.fillText('🕊️', 540, imgY + imgH / 2 + 28);
+        ctx.restore();
       }
 
       ctx.textAlign = 'center';
@@ -1231,6 +1260,7 @@ export default function ComunidadClient({ initialMemories, isMulticartaActive = 
     Promise.all([
       loadAsset(memory.photoUrl),
       loadAsset('/images/icons/plans/icon-plan-estrella.svg'),
+      typeof document !== 'undefined' && document.fonts ? document.fonts.ready.catch(() => {}) : Promise.resolve(),
     ]).then(([photoImg, starImg]) => {
       renderCard(photoImg, starImg);
     });
