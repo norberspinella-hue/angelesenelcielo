@@ -4,6 +4,7 @@ import { verifyLiveIngestAuth } from '@/lib/live/auth';
 import { ingestChatMessage } from '@/lib/live/db';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 const IngestSchema = z.object({
   usuario: z.string().max(80).optional().nullable(),

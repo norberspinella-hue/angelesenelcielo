@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { verifyLivePanelAuth } from '@/lib/live/auth';
-import { createAdminClient } from '@/lib/supabase/server';
 import {
   addManualPerrito,
   approvePendingPerrito,
   getActiveLiveContext,
+  getLiveSupabase,
   ingestChatMessage,
   startNewLiveSession,
   updateLiveAjustesPartial,
 } from '@/lib/live/db';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 const AccionSchema = z.discriminatedUnion('tipo', [
   z.object({
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Acción o parámetros no válidos.' }, { status: 400 });
   }
 
-  const sb = createAdminClient() as any;
+  const sb = getLiveSupabase();
   const action = parsed.data;
 
   try {

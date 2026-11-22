@@ -4,6 +4,7 @@ import { verifyLiveIngestAuth } from '@/lib/live/auth';
 import { getActiveLiveContext, updateLectorHeartbeat } from '@/lib/live/db';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 const HeartbeatSchema = z.object({
   estado: z.enum(['desconectado', 'conectando', 'conectado', 'error']),
@@ -23,6 +24,8 @@ export async function GET(req: NextRequest) {
       tiktokUsuario: ajustes.tiktok_usuario || '',
       comando: ajustes.comando,
       sessionId: ajustes.sesion_id,
+    }, {
+      headers: { 'Cache-Control': 'no-store' },
     });
   } catch (err: any) {
     console.error('Error en GET /api/live/lector:', err?.message || err);

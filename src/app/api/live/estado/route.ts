@@ -3,6 +3,7 @@ import { verifyLivePanelAuth } from '@/lib/live/auth';
 import { getPanelEstado } from '@/lib/live/db';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 export async function GET(req: NextRequest) {
   const auth = verifyLivePanelAuth(req);
