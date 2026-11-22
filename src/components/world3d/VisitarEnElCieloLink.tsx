@@ -14,7 +14,7 @@ export interface VisitarEnElCieloLinkProps {
   nombre?: string | null;
   profileSlug?: string | null;
   spaceId?: string | null;
-  mode?: 'portal' | 'memorial';
+  mode?: 'portal' | 'memorial' | 'space';
   label?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -28,9 +28,13 @@ export function getWorld3DHref(options?: {
   memorialId?: string | null;
   profileSlug?: string | null;
   spaceId?: string | null;
-  mode?: 'portal' | 'memorial';
+  mode?: 'portal' | 'memorial' | 'space';
 }): string {
   const base = DEFAULT_WORLD_3D_BASE_URL;
+  if (options?.mode === 'space' && options?.spaceId && isValidWorldSpaceId(options.spaceId)) {
+    return `${base.replace(/#.*$/, '')}#lugar-${options.spaceId.trim()}`;
+  }
+
   if (options?.mode === 'portal' || !options?.memorialId) {
     return `${base.replace(/#.*$/, '')}#portal`;
   }
@@ -40,18 +44,15 @@ export function getWorld3DHref(options?: {
     return `${base.replace(/#.*$/, '')}#portal`;
   }
 
+  // En el cliente 3D (world.js), ?homenaje=<id> debe ir SIN fragmento #hash para abrir garden.visitById(id).
   const url = new URL(buildWorld3DDeepLink(base, {
     memorialId: cleanId,
     profileSlug: options.profileSlug,
-    spaceId: options.spaceId && isValidWorldSpaceId(options.spaceId) ? options.spaceId : null,
   }));
-  // Mantener parámetro exacto `?homenaje=<id>` que consume public/cielo3d/bootstrap/world.js
   url.searchParams.set('homenaje', cleanId);
   url.searchParams.delete('memorial_id');
+  url.hash = '';
 
-  if (options.spaceId && isValidWorldSpaceId(options.spaceId)) {
-    url.hash = `lugar-${options.spaceId.trim()}`;
-  }
   return url.toString();
 }
 
