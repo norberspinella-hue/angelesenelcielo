@@ -538,6 +538,7 @@ export function useLiveStreamSync({ isController = false }: UseLiveStreamSyncOpt
     syncStatus,
     activeOutputsCount,
     isAuthenticated: Boolean(authToken),
+    authToken,
     loginWithPin,
     logout,
   };

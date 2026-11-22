@@ -1,0 +1,14 @@
+{
+  "name": "angeles-cielo-tiktok-lector",
+  "version": "1.0.0",
+  "description": "Lector independiente (solo lectura) del chat de TikTok LIVE para Ángeles en el Cielo",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "tiktok-live-connector": "^2.5.0"
+  }
+}

@@ -1,12 +1,56 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLiveStreamSync } from '@/components/live-tiktok/useLiveStreamSync';
 import { LiveCanvas } from '@/components/live-tiktok/LiveCanvas';
+import { CieloLive } from '@/components/live/CieloLive';
+import { createClient } from '@/lib/supabase/client';
+import type { LiveEscenaOutput } from '@/lib/live/types';
 
 export default function LiveOutputClient() {
   const { state } = useLiveStreamSync({ isController: false });
-  const isHorizontal = state.activeScene === 1;
+  const [escenaOutput, setEscenaOutput] = useState<LiveEscenaOutput>('video');
+  const [mountCielo, setMountCielo] = useState<boolean>(false);
+
+  // Escucha exclusivamente escena_output desde live_ajustes_publicos (con fallback seguro a 'video')
+  useEffect(() => {
+    let active = true;
+    const supabase = createClient() as any;
+
+    async function fetchEscena() {
+      try {
+        const { data } = await supabase
+          .from('live_ajustes_publicos')
+          .select('escena_output')
+          .eq('id', 1)
+          .single();
+        if (active && data && (data.escena_output === 'video' || data.escena_output === 'cielo')) {
+          setEscenaOutput(data.escena_output);
+          if (data.escena_output === 'cielo') setMountCielo(true);
+        }
+      } catch {
+        // Si la migración aún no está aplicada o falla, conserva 'video' sin romper el directo
+      }
+    }
+
+    fetchEscena();
+
+    const ch = supabase
+      .channel('live_output_escena_switch')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'live_ajustes' }, fetchEscena)
+      .subscribe();
+
+    const interval = setInterval(fetchEscena, 30_000);
+
+    return () => {
+      active = false;
+      clearInterval(interval);
+      supabase.removeChannel(ch);
+    };
+  }, []);
+
+  const isCieloActive = escenaOutput === 'cielo';
+  const isHorizontal = isCieloActive || state.activeScene === 1;
 
   return (
     <div
@@ -17,9 +61,9 @@ export default function LiveOutputClient() {
       }}
     >
       {/*
-        Contenedor 16:9 (1920x1080) para la escena principal con vídeo en bucle continuo,
+        Contenedor 16:9 (1920x1080) para la escena principal de vídeo o Cielo en el output unificado,
         o 9:16 (1080x1920) para escenas verticales secundarias.
-        En TikTok LIVE Studio / OBS (1920x1080) ocupa exactamente el 100% sin bordes ni deformación.
+        Fundido suave de 0,8 s al conmutar entre Vídeo y Cielo desde /live-tiktok/control.
       */}
       <div
         className={`relative overflow-hidden flex items-center justify-center shadow-2xl ${
@@ -37,11 +81,32 @@ export default function LiveOutputClient() {
               }
         }
       >
-        <LiveCanvas
-          state={state}
-          showSafeZone={false}
-          className="w-full h-full"
-        />
+        {/* Escena de vídeo / canvas existente (intacta cuando escena_output = 'video') */}
+        <div
+          className={`absolute inset-0 w-full h-full transition-opacity duration-[800ms] ${
+            isCieloActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+          aria-hidden={isCieloActive}
+        >
+          <LiveCanvas
+            state={state}
+            showSafeZone={false}
+            forceMutedPreview={isCieloActive}
+            className="w-full h-full"
+          />
+        </div>
+
+        {/* Escena Cielo interactivo (montada al activarse, con fundido de 0,8 s) */}
+        {mountCielo && (
+          <div
+            className={`absolute inset-0 w-full h-full transition-opacity duration-[800ms] ${
+              isCieloActive ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            aria-hidden={!isCieloActive}
+          >
+            <CieloLive soundEnabled={isCieloActive} className="w-full h-full" />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -9,6 +9,9 @@ import {
 import { useLiveStreamSync } from './useLiveStreamSync';
 import { LiveCanvas } from './LiveCanvas';
 import { AddCandleModal } from './AddCandleModal';
+import { CieloControlPanel } from '@/components/live/CieloControlPanel';
+import { CieloLive } from '@/components/live/CieloLive';
+import type { LiveEscenaOutput } from '@/lib/live/types';
 
 export function PresenterPanel() {
   const {
@@ -21,11 +24,14 @@ export function PresenterPanel() {
     syncStatus,
     activeOutputsCount,
     isAuthenticated,
+    authToken,
     loginWithPin,
     logout,
   } = useLiveStreamSync({ isController: true });
 
-  const [activeTab, setActiveTab] = useState<'scenes' | 'candles' | 'preview' | 'sync'>('scenes');
+  const [activeTab, setActiveTab] = useState<'scenes' | 'cielo' | 'candles' | 'preview' | 'sync'>('scenes');
+  const [desktopWorkspace, setDesktopWorkspace] = useState<'estudio' | 'cielo'>('estudio');
+  const [cieloOutputMode, setCieloOutputMode] = useState<LiveEscenaOutput>('video');
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [showSafeZone, setShowSafeZone] = useState<boolean>(false);
   const [safeZoneOpacity, setSafeZoneOpacity] = useState<number>(0.85);
@@ -256,6 +262,7 @@ export function PresenterPanel() {
           >
             {[
               { id: 'scenes', label: 'Escenas', icon: '🎬' },
+              { id: 'cielo', label: 'Cielo', icon: '🌌' },
               { id: 'candles', label: 'Velitas', icon: '🕯️' },
               { id: 'preview', label: 'Monitor', icon: '📺' },
               { id: 'sync', label: 'Ajustes', icon: '⚡' },
@@ -264,8 +271,12 @@ export function PresenterPanel() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex-1 py-2.5 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 min-h-[44px] cursor-pointer ${
+                  onClick={() => {
+                    setActiveTab(tab.id as any);
+                    if (tab.id === 'cielo') setDesktopWorkspace('cielo');
+                    else if (tab.id === 'scenes') setDesktopWorkspace('estudio');
+                  }}
+                  className={`flex-1 py-2.5 px-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 min-h-[44px] cursor-pointer ${
                     isActive
                       ? 'bg-amber-400 text-stone-950 font-black shadow-md'
                       : 'text-pink-200 hover:bg-white/5'
@@ -292,10 +303,58 @@ export function PresenterPanel() {
                 activeTab === 'preview' ? 'hidden lg:flex' : 'flex'
               }`}
             >
+              {/* Selector rápido de modo en escritorio: Estudio clásico vs Cielo interactivo */}
+              <div className="hidden lg:flex items-center gap-2 bg-[#160B24] border border-white/10 p-1.5 rounded-2xl">
+                <button
+                  type="button"
+                  onClick={() => setDesktopWorkspace('estudio')}
+                  className={`flex-1 py-2 px-4 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    desktopWorkspace === 'estudio'
+                      ? 'bg-amber-400 text-stone-950 shadow'
+                      : 'text-pink-200 hover:bg-white/5'
+                  }`}
+                >
+                  🎬 Estudio Principal y Velitas
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDesktopWorkspace('cielo')}
+                  className={`flex-1 py-2 px-4 rounded-xl text-xs font-black transition-all cursor-pointer ${
+                    desktopWorkspace === 'cielo'
+                      ? 'bg-amber-400 text-stone-950 shadow'
+                      : 'text-pink-200 hover:bg-white/5'
+                  }`}
+                >
+                  🌌 Cielo Interactivo (Chat TikTok)
+                </button>
+              </div>
+
+              {/* SECCIÓN CIELO INTERACTIVO */}
+              <div
+                className={`${
+                  activeTab === 'cielo'
+                    ? 'flex flex-col'
+                    : desktopWorkspace === 'cielo'
+                      ? 'hidden lg:flex lg:flex-col'
+                      : 'hidden'
+                }`}
+              >
+                <CieloControlPanel
+                  authToken={authToken}
+                  onEscenaChange={setCieloOutputMode}
+                />
+              </div>
+
               {/* TAB 1: ESCENAS Y CARTAS */}
               <div
                 className={`flex flex-col gap-5 ${
-                  activeTab !== 'scenes' ? 'hidden lg:flex' : 'flex'
+                  activeTab !== 'scenes'
+                    ? desktopWorkspace === 'estudio'
+                      ? 'hidden lg:flex'
+                      : 'hidden'
+                    : desktopWorkspace === 'cielo'
+                      ? 'flex lg:hidden'
+                      : 'flex'
                 }`}
               >
                 {/* 1.1 Conmutador de Escenas */}
@@ -475,7 +534,13 @@ export function PresenterPanel() {
               {/* TAB 2: GESTIÓN DE VELITAS DEL CHAT */}
               <div
                 className={`flex flex-col gap-4 ${
-                  activeTab !== 'candles' ? 'hidden lg:flex' : 'flex'
+                  activeTab !== 'candles'
+                    ? desktopWorkspace === 'estudio'
+                      ? 'hidden lg:flex'
+                      : 'hidden'
+                    : desktopWorkspace === 'cielo'
+                      ? 'flex lg:hidden'
+                      : 'flex'
                 }`}
               >
                 <div className="bg-[#160B24] border border-[#F3D5E4]/25 rounded-3xl p-5 shadow-xl space-y-4">
@@ -647,7 +712,13 @@ export function PresenterPanel() {
               {/* TAB 4: AJUSTES, ENCUADRE Y ATAJOS */}
               <div
                 className={`flex flex-col gap-4 ${
-                  activeTab !== 'sync' ? 'hidden lg:flex' : 'flex'
+                  activeTab !== 'sync'
+                    ? desktopWorkspace === 'estudio'
+                      ? 'hidden lg:flex'
+                      : 'hidden'
+                    : desktopWorkspace === 'cielo'
+                      ? 'flex lg:hidden'
+                      : 'flex'
                 }`}
               >
                 <div className="bg-[#160B24] border border-[#F3D5E4]/25 rounded-3xl p-5 shadow-xl space-y-4">
@@ -777,17 +848,21 @@ export function PresenterPanel() {
                 {/* MARCO DE PREVISUALIZACIÓN DEL LIENZO */}
                 <div
                   className={`relative w-full rounded-3xl overflow-hidden border-2 border-[#F3D5E4]/30 shadow-2xl bg-black ${
-                    state.activeScene === 1
+                    desktopWorkspace === 'cielo' || cieloOutputMode === 'cielo' || state.activeScene === 1
                       ? 'max-w-[540px] aspect-video'
                       : 'max-w-[360px] aspect-[9/16]'
                   }`}
                 >
-                  <LiveCanvas
-                    state={state}
-                    showSafeZone={showSafeZone}
-                    safeZoneOpacity={safeZoneOpacity}
-                    forceMutedPreview={!previewSoundEnabled}
-                  />
+                  {desktopWorkspace === 'cielo' || cieloOutputMode === 'cielo' ? (
+                    <CieloLive soundEnabled={previewSoundEnabled} className="w-full h-full" />
+                  ) : (
+                    <LiveCanvas
+                      state={state}
+                      showSafeZone={showSafeZone}
+                      safeZoneOpacity={safeZoneOpacity}
+                      forceMutedPreview={!previewSoundEnabled}
+                    />
+                  )}
                 </div>
 
                 <div

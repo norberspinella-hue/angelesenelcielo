@@ -172,15 +172,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Credenciales de emisión no válidas.' }, { status: 401 });
     }
 
-    // 3. Éxito: limpiar intentos y emitir token criptográfico
+    // 3. Éxito: limpiar intentos y emitir token criptográfico (Bearer + cookie HttpOnly compartida con /api/live/*)
     await clearLiveAttemptsOnSuccess(req, config.secret);
     const token = generateSessionToken(config.secret);
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
       token,
       expiresInHours: 12,
     });
+    res.cookies.set('live_panel_session', token, {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 12 * 60 * 60,
+    });
+    return res;
   } catch (err: any) {
     console.error('Error interno en autenticación LIVE:', err?.message || err);
     return NextResponse.json({ error: 'Error interno del servidor.' }, { status: 500 });

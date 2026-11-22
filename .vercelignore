@@ -9,3 +9,4 @@ mockup_*
 *.zip
 *.dump
 data/backups
+workers/tiktok-lector
