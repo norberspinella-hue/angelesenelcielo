@@ -88,8 +88,12 @@ export default function MuralGlobalPage() {
   const [showMobileInfo, setShowMobileInfo] = useState(false);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const hasDeepLink = Boolean(
+      params.get('memorialId') || params.get('highlight') || params.get('space_id')
+    )
     const hasSeenWelcome = localStorage.getItem('mural-welcome-seen')
-    if (!hasSeenWelcome) {
+    if (!hasSeenWelcome && !hasDeepLink) {
       setTimeout(() => setShowWelcome(true), 500)
     }
   }, [])
@@ -187,9 +191,13 @@ export default function MuralGlobalPage() {
       setIsFromAltar(true)
     }
     const memorialIdParam = params.get('memorialId')
+    const fromAltar = params.get('from') === 'altar'
     if (memorialIdParam) {
-      setTimeout(() => {
-        handleResultClick(memorialIdParam)
+      setTimeout(async () => {
+        await handleResultClick(memorialIdParam)
+        if (!fromAltar) {
+          canvasRef.current?.openMemorialCard(memorialIdParam)
+        }
       }, 800)
     }
 

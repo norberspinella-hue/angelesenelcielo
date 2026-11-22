@@ -518,6 +518,7 @@ export function PetProfileCard({
           {/* Panel de compartir y descargas en alta resolución */}
           <PetCardSharePanel
             nombre={nombre}
+            memorialId={petData?.id || memorialId}
             shareUrl={shareUrl}
             profileSlug={petData?.profile_slug}
             isExporting={isExporting}

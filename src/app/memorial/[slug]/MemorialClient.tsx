@@ -209,7 +209,12 @@ export default function MemorialClient({
       />
 
       {/* SECCIÓN 03 — SU LUZ EN EL MURAL */}
-      <MemorialMuralSection muralUrl={muralUrl} />
+      <MemorialMuralSection
+        muralUrl={muralUrl}
+        memorialId={memorial.id}
+        petName={memorial.pet_name}
+        profileSlug={memorial.profile_slug}
+      />
 
       {/* SECCIÓN 04 — COMPARTE SU RECUERDO */}
       <MemorialShareSection

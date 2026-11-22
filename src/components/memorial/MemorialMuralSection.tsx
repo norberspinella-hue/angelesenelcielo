@@ -2,12 +2,21 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { VisitarEnElCieloLink } from '@/components/world3d/VisitarEnElCieloLink';
 
 interface MemorialMuralSectionProps {
   muralUrl: string;
+  memorialId?: string;
+  petName?: string;
+  profileSlug?: string | null;
 }
 
-export const MemorialMuralSection: React.FC<MemorialMuralSectionProps> = ({ muralUrl }) => {
+export const MemorialMuralSection: React.FC<MemorialMuralSectionProps> = ({
+  muralUrl,
+  memorialId,
+  petName,
+  profileSlug,
+}) => {
   return (
     <section className="relative w-full overflow-hidden select-none py-12 sm:py-20 flex flex-col items-center">
       {/* 1. FONDOS CELESTIALES MAESTROS APROBADOS CON MÁSCARA DE DEGRADADO VERTICAL PARA TRANSICIÓN SUAVE */}
@@ -108,20 +117,30 @@ export const MemorialMuralSection: React.FC<MemorialMuralSectionProps> = ({ mura
           />
         </div>
 
-        {/* Botón de acción hacia el mural */}
-        <Link
-          href={muralUrl}
-          className="inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3 sm:py-3.5 rounded-full text-white text-xs sm:text-sm font-bold tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
-          style={{
-            background: 'linear-gradient(90deg, #7C3AED 0%, #A855F7 45%, #EC4899 100%)',
-            boxShadow: '0 6px 20px rgba(168, 85, 247, 0.35)',
-            border: '1px solid rgba(255, 255, 255, 0.35)',
-          }}
-        >
-          <span>⭐</span>
-          <span>Ver su estrella en el mural</span>
-          <span className="text-base leading-none">›</span>
-        </Link>
+        {/* Botones de acción hacia el mural y el mundo 3D */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href={muralUrl}
+            className="inline-flex items-center justify-center gap-2 px-8 sm:px-10 py-3 sm:py-3.5 rounded-full text-white text-xs sm:text-sm font-bold tracking-wide shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+            style={{
+              background: 'linear-gradient(90deg, #7C3AED 0%, #A855F7 45%, #EC4899 100%)',
+              boxShadow: '0 6px 20px rgba(168, 85, 247, 0.35)',
+              border: '1px solid rgba(255, 255, 255, 0.35)',
+            }}
+          >
+            <span>⭐</span>
+            <span>Ver su estrella en el mural</span>
+            <span className="text-base leading-none">›</span>
+          </Link>
+
+          <VisitarEnElCieloLink
+            memorialId={memorialId}
+            nombre={petName}
+            profileSlug={profileSlug}
+            label={petName ? `Visitar a ${petName} en el cielo 3D ✨` : 'Visitar en el cielo 3D ✨'}
+            className="inline-flex items-center justify-center gap-2 px-7 sm:px-9 py-3 sm:py-3.5 rounded-full bg-white/95 hover:bg-white text-[#4A3258] border border-[#C9A961]/70 text-xs sm:text-sm font-bold tracking-wide shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+          />
+        </div>
 
       </div>
     </section>

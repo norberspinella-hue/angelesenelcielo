@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { HeavenCTAButton } from '@/components/ui/HeavenCTAButton';
+import { VisitarEnElCieloLink } from '@/components/world3d/VisitarEnElCieloLink';
 
 export function HeroSection() {
   return (
@@ -34,6 +35,11 @@ export function HeroSection() {
             <Link href="/mural-global" className="btn-secondary-heaven !bg-[#EBD5D0] hover:!bg-[#D7BCB6] !text-[#1E2A78] !border-none">
               Explorar el mural
             </Link>
+            <VisitarEnElCieloLink
+              mode="portal"
+              label="Explorar el cielo en 3D ✨"
+              className="btn-secondary-heaven !bg-white/90 hover:!bg-white !text-[#4A3258] !border !border-[#C9A961]/50 shadow-sm"
+            />
           </div>
         </div>
         

@@ -2,9 +2,12 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { VisitarEnElCieloLink } from '@/components/world3d/VisitarEnElCieloLink';
 
 interface PetCardSharePanelProps {
   nombre: string;
+  memorialId?: string | null;
+  worldSpaceId?: string | null;
   shareUrl: string;
   profileSlug?: string | null;
   isExporting: boolean;
@@ -20,6 +23,8 @@ interface PetCardSharePanelProps {
 
 export const PetCardSharePanel: React.FC<PetCardSharePanelProps> = ({
   nombre,
+  memorialId,
+  worldSpaceId,
   shareUrl,
   profileSlug,
   isExporting,
@@ -234,28 +239,38 @@ export const PetCardSharePanel: React.FC<PetCardSharePanelProps> = ({
         </div>
       </div>
 
-      {/* Botón inferior: "Visitar el cielo de {nombre}" */}
-      {profileSlug && (
-        <div className="relative z-10 w-full pt-3 border-t border-[#FCE7F3] flex justify-center">
-          <Link
-            href={`/memorial/${profileSlug}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full py-2.5 px-4 rounded-full text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
-            style={{
-              background: 'linear-gradient(90deg, #F43F5E 0%, #EC4899 50%, #A855F7 100%)',
-              boxShadow: '0 4px 16px rgba(236, 72, 153, 0.35)',
-              border: '1px solid rgba(255, 255, 255, 0.40)',
-            }}
-          >
-            <img
-              src="/images/icons/plans/icon-plan-eterno.svg"
-              alt=""
-              className="w-4 h-4 object-contain"
-            />
-            <span>Visitar el cielo de {nombre}</span>
-            <span className="text-xs">›</span>
-          </Link>
+      {/* Botón inferior: "Visitar el cielo de {nombre}" y acceso directo al Mundo 3D */}
+      {(profileSlug || memorialId) && (
+        <div className="relative z-10 w-full pt-3 border-t border-[#FCE7F3] flex flex-col gap-2 items-center">
+          {profileSlug && (
+            <Link
+              href={`/memorial/${profileSlug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-2.5 px-4 rounded-full text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
+              style={{
+                background: 'linear-gradient(90deg, #F43F5E 0%, #EC4899 50%, #A855F7 100%)',
+                boxShadow: '0 4px 16px rgba(236, 72, 153, 0.35)',
+                border: '1px solid rgba(255, 255, 255, 0.40)',
+              }}
+            >
+              <img
+                src="/images/icons/plans/icon-plan-eterno.svg"
+                alt=""
+                className="w-4 h-4 object-contain"
+              />
+              <span>Visitar el cielo de {nombre}</span>
+              <span className="text-xs">›</span>
+            </Link>
+          )}
+          <VisitarEnElCieloLink
+            memorialId={memorialId}
+            nombre={nombre}
+            profileSlug={profileSlug}
+            spaceId={worldSpaceId}
+            label={`Visitar a ${nombre} en el cielo 3D ✨`}
+            className="w-full py-2 px-4 rounded-full text-[#4A3258] bg-white/95 hover:bg-white border border-[#C9A961]/60 font-bold text-xs flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02] shadow-xs"
+          />
         </div>
       )}
     </div>

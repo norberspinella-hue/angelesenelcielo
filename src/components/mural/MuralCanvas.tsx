@@ -53,6 +53,7 @@ export interface MuralCanvasRef {
   centerPremium: () => void;
   centerOnSlot: (x: number, y: number) => void;
   zoomToSlot: (x: number, y: number) => void;
+  openMemorialCard: (memorialId: string) => void;
 }
 
 export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({ 
@@ -156,7 +157,12 @@ export const MuralCanvas = forwardRef<MuralCanvasRef, MuralCanvasProps>(({
       }
 
       requestAnimationFrame(animate)
-    }
+    },
+    openMemorialCard: (memorialId: string) => {
+      if (!memorialId) return;
+      setSelectedPet({ memorial_id: memorialId });
+      setShowPetProfile(true);
+    },
   }));
 
   useEffect(() => {
