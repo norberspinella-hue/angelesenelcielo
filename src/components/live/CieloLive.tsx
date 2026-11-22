@@ -1,22 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Lora, Inter } from 'next/font/google';
 import { createClient } from '@/lib/supabase/client';
 import type { LiveAjustesPublicos, LivePerrito } from '@/lib/live/types';
-
-const lora = Lora({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  style: ['italic'],
-  display: 'swap',
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['500', '600'],
-  display: 'swap',
-});
 
 const COLORES = [
   '#ffbe96', '#a0c8ff', '#beffd2', '#ffaabe', '#ffe196',
@@ -288,8 +274,8 @@ export function CieloLive({
     let rafId = 0;
     let lastPerf = performance.now();
 
-    const loraFamily = `${lora.style.fontFamily}, Georgia, serif`;
-    const interFamily = `${inter.style.fontFamily}, "Segoe UI", Arial, sans-serif`;
+    const loraFamily = 'Lora, Georgia, serif';
+    const interFamily = 'Inter, "Segoe UI", Arial, sans-serif';
 
     const colorDe = (p: LivePerrito) => hex2rgb(COLORES[hashStr(p.id + p.nombre) % COLORES.length]);
     const faseDe = (p: LivePerrito) => (hashStr(p.id) % 6283) / 1000;
@@ -859,9 +845,12 @@ export function CieloLive({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full h-full overflow-hidden select-none ${inter.className} ${className}`}
+      className={`relative w-full h-full overflow-hidden select-none ${className}`}
       style={{ background: 'transparent' }}
     >
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,400;1,500&display=swap');
+      `}</style>
       <canvas ref={canvasRef} className="block w-full h-full" />
       {showAudioPrompt && (
         <div
