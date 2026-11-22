@@ -6,6 +6,7 @@ import { LiveCanvas } from '@/components/live-tiktok/LiveCanvas';
 
 export default function LiveOutputClient() {
   const { state } = useLiveStreamSync({ isController: false });
+  const isHorizontal = state.activeScene === 1;
 
   return (
     <div
@@ -15,18 +16,26 @@ export default function LiveOutputClient() {
         padding: 0,
       }}
     >
-      {/* 
-        Contenedor 9:16 con resolución lógica 1080 x 1920.
-        En OBS (1080x1920) ocupa exactamente el 100% sin márgenes.
-        En monitores estándar se escala respetando 9:16 centrado.
+      {/*
+        Contenedor 16:9 (1920x1080) para la escena principal con vídeo en bucle continuo,
+        o 9:16 (1080x1920) para escenas verticales secundarias.
+        En TikTok LIVE Studio / OBS (1920x1080) ocupa exactamente el 100% sin bordes ni deformación.
       */}
       <div
-        className="relative h-full max-h-screen aspect-[9/16] overflow-hidden flex items-center justify-center shadow-2xl"
-        style={{
-          width: 'auto',
-          height: '100%',
-          maxHeight: '100vh',
-        }}
+        className={`relative overflow-hidden flex items-center justify-center shadow-2xl ${
+          isHorizontal ? 'aspect-video' : 'aspect-[9/16]'
+        }`}
+        style={
+          isHorizontal
+            ? {
+                width: 'min(100vw, calc(100vh * 16 / 9))',
+                height: 'min(100vh, calc(100vw * 9 / 16))',
+              }
+            : {
+                width: 'min(100vw, calc(100vh * 9 / 16))',
+                height: 'min(100vh, calc(100vw * 16 / 9))',
+              }
+        }
       >
         <LiveCanvas
           state={state}
