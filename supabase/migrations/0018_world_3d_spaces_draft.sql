@@ -438,6 +438,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public, pg_temp
 AS $$
+#variable_conflict use_column
 DECLARE
   v_tok public.world_3d_claim_tokens%ROWTYPE;
   v_mem public.memorials%ROWTYPE;
@@ -449,8 +450,8 @@ DECLARE
   v_alloc_id UUID;
 BEGIN
   SELECT * INTO v_tok
-  FROM public.world_3d_claim_tokens
-  WHERE token_hash = p_token_hash
+  FROM public.world_3d_claim_tokens wct
+  WHERE wct.token_hash = p_token_hash
   FOR UPDATE;
 
   IF NOT FOUND THEN
@@ -468,7 +469,7 @@ BEGIN
     RETURN;
   END IF;
 
-  SELECT * INTO v_mem FROM public.memorials WHERE id = v_tok.memorial_id;
+  SELECT * INTO v_mem FROM public.memorials m WHERE m.id = v_tok.memorial_id;
   IF NOT FOUND OR v_mem.payment_status <> 'paid' OR v_mem.publication_status <> 'published' OR v_mem.moderation_status = 'rejected' THEN
     RETURN QUERY SELECT FALSE, NULL::UUID, v_tok.memorial_id, v_tok.space_id, NULL::TEXT, 'MEMORIAL_INELIGIBLE'::TEXT;
     RETURN;
@@ -497,7 +498,7 @@ BEGIN
     ELSE NULL
   END;
 
-  SELECT * INTO v_space FROM public.world_spaces WHERE space_id = v_tok.space_id FOR UPDATE;
+  SELECT * INTO v_space FROM public.world_spaces ws WHERE ws.space_id = v_tok.space_id FOR UPDATE;
   IF NOT FOUND OR v_space.plan_id <> v_mem_plan THEN
     RETURN QUERY SELECT FALSE, NULL::UUID, v_tok.memorial_id, v_tok.space_id, v_mem_plan, 'PLAN_MISMATCH'::TEXT;
     RETURN;
@@ -508,7 +509,7 @@ BEGIN
     RETURN;
   END IF;
 
-  IF EXISTS (SELECT 1 FROM public.world_space_allocations WHERE memorial_id = v_tok.memorial_id AND status = 'occupied') THEN
+  IF EXISTS (SELECT 1 FROM public.world_space_allocations wsa WHERE wsa.memorial_id = v_tok.memorial_id AND wsa.status = 'occupied') THEN
     RETURN QUERY SELECT FALSE, NULL::UUID, v_tok.memorial_id, v_tok.space_id, v_mem_plan, 'MEMORIAL_ALREADY_HAS_WORLD_SPACE'::TEXT;
     RETURN;
   END IF;
@@ -531,14 +532,14 @@ BEGIN
   )
   RETURNING id INTO v_alloc_id;
 
-  UPDATE public.world_spaces
+  UPDATE public.world_spaces ws
   SET occupancy_state = 'occupied',
       updated_at = now()
-  WHERE space_id = v_tok.space_id;
+  WHERE ws.space_id = v_tok.space_id;
 
-  UPDATE public.world_3d_claim_tokens
+  UPDATE public.world_3d_claim_tokens wct
   SET consumed_at = now()
-  WHERE id = v_tok.id;
+  WHERE wct.id = v_tok.id;
 
   RETURN QUERY SELECT TRUE, v_alloc_id, v_tok.memorial_id, v_tok.space_id, v_mem_plan, 'CLAIMED'::TEXT;
 EXCEPTION
