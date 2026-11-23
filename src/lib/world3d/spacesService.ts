@@ -480,7 +480,7 @@ export async function prepareWorld3DClaimToken(
     memorial_id: eligibleMemorial.id,
     space_id: spaceId,
     token_hash: tokenHash,
-    requested_email: normalizedEmail,
+    email_hash: hashClaimToken(normalizedEmail),
     expires_at: expiresAt,
   });
 
