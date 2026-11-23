@@ -9,13 +9,24 @@ const ALLOWED_ORIGINS = new Set([
   'https://todaslasmascotasvanalcielo.com',
   'https://www.todaslasmascotasvanalcielo.com',
   'https://cielo-jardin-de-los-recuerdos.norber-spinella.chatgpt.site',
+  'https://cielo3d-piloto-75-1.vercel.app',
+  'https://angelesenelcielo-git-feat-int-cda2e0-todoslasmascotasvanalcielo.vercel.app',
   'http://localhost:3000',
   'http://127.0.0.1:8787',
 ]);
 
 function corsHeaders(req: NextRequest): HeadersInit {
   const origin = req.headers.get('origin') || '';
-  const allowOrigin = ALLOWED_ORIGINS.has(origin) ? origin : 'https://cielo-jardin-de-los-recuerdos.norber-spinella.chatgpt.site';
+  let configuredOrigin = '';
+  try {
+    if (process.env.NEXT_PUBLIC_WORLD3D_URL) {
+      configuredOrigin = new URL(process.env.NEXT_PUBLIC_WORLD3D_URL).origin;
+    }
+  } catch {}
+  const allowOrigin =
+    ALLOWED_ORIGINS.has(origin) || (configuredOrigin && origin === configuredOrigin)
+      ? origin
+      : 'https://cielo-jardin-de-los-recuerdos.norber-spinella.chatgpt.site';
   return {
     'Access-Control-Allow-Origin': allowOrigin,
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
