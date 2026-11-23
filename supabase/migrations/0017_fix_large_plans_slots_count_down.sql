@@ -1,14 +1,23 @@
 -- ============================================================================
--- Rollback reversible de Migración 0017 (solo en caso de necesitar volver atrás)
+-- Rollback NO DESTRUCTIVO de Migración 0017
+--
+-- Política de seguridad:
+--   - Jamás degrada ni modifica slots_count de compras legítimas (16, 25 o 36).
+--   - Impide estrechar el CHECK si existen registros con 16, 25 o 36 casillas;
+--     en caso de rollback de aplicación, debe revertirse únicamente código
+--     compatible conservando el esquema ampliado y el índice de unicidad.
 -- ============================================================================
 
 BEGIN;
 
--- Restaura el estado previo de los registros 4x4/5x5/6x6 antes de re-aplicar el constraint anterior
-UPDATE public.memorials
-SET slots_count = 9,
-    updated_at = now()
-WHERE slots_count IN (16, 25, 36);
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.memorials WHERE slots_count IN (16, 25, 36)) THEN
+    RAISE EXCEPTION 'Reversión bloqueada: existen registros válidos con 16, 25 o 36 casillas. Conservar esquema ampliado y memorials_stripe_session_id_uidx; revertir solo código compatible.';
+  END IF;
+END $$;
+
+DROP INDEX IF EXISTS public.memorials_stripe_session_id_uidx;
 
 ALTER TABLE public.memorials
   DROP CONSTRAINT IF EXISTS memorials_slots_count_check;
