@@ -1,42 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { buildPublic3DMuralCatalog, CatalogMemorial3DItem, RawMemorialCatalogRow, WorldAllocationLookup } from '@/lib/world3d/catalogService';
+import { world3dCorsHeaders } from '@/lib/world3d/cors';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-const ALLOWED_ORIGINS = new Set([
-  'https://todaslasmascotasvanalcielo.com',
-  'https://www.todaslasmascotasvanalcielo.com',
-  'https://cielo-jardin-de-los-recuerdos.norber-spinella.chatgpt.site',
-  'https://cielo3d-piloto-75-1.vercel.app',
-  'https://angelesenelcielo-git-feat-int-cda2e0-todoslasmascotasvanalcielo.vercel.app',
-  'http://localhost:3000',
-  'http://127.0.0.1:8787',
-]);
-
-function corsHeaders(req: NextRequest): HeadersInit {
-  const origin = req.headers.get('origin') || '';
-  let configuredOrigin = '';
-  try {
-    if (process.env.NEXT_PUBLIC_WORLD3D_URL) {
-      configuredOrigin = new URL(process.env.NEXT_PUBLIC_WORLD3D_URL).origin;
-    }
-  } catch {}
-  const allowOrigin =
-    ALLOWED_ORIGINS.has(origin) || (configuredOrigin && origin === configuredOrigin)
-      ? origin
-      : 'https://cielo-jardin-de-los-recuerdos.norber-spinella.chatgpt.site';
-  return {
-    'Access-Control-Allow-Origin': allowOrigin,
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Cache-Control': 'no-store, no-cache, must-revalidate',
-  };
-}
-
 export async function OPTIONS(req: NextRequest) {
-  return new NextResponse(null, { status: 204, headers: corsHeaders(req) });
+  return new NextResponse(null, { status: 204, headers: world3dCorsHeaders(req) });
 }
 
 function toLegacyGardenMemory(item: CatalogMemorial3DItem, activeCandleId: string | undefined) {
@@ -54,6 +25,8 @@ function toLegacyGardenMemory(item: CatalogMemorial3DItem, activeCandleId: strin
     ...(activeCandleId ? { light: `https://todaslasmascotasvanalcielo.com/cielo-lleno-de-luces?candleId=${activeCandleId}` } : {}),
     ...(item.worldSpaceId ? { spaceId: item.worldSpaceId } : {}),
     planId: item.planId,
+    catalogKind: item.catalogKind,
+    hasCommercial3DRight: item.hasCommercial3DRight,
     muralSlotsCount: item.muralSlotsCount,
     hasActiveCandle: item.hasActiveCandle,
   };
@@ -87,7 +60,7 @@ export async function GET(req: NextRequest) {
     const { data: memorialRows, error: memError } = await query;
     if (memError) {
       console.error('Error querying memorials for world-3d catalog:', memError);
-      return NextResponse.json({ success: false, error: 'Catalog query failed' }, { status: 500, headers: corsHeaders(req) });
+      return NextResponse.json({ success: false, error: 'Catalog query failed' }, { status: 500, headers: world3dCorsHeaders(req) });
     }
 
     // Lectura opcional de velas para enriquecer estado `lit`, nunca como filtro excluyente
@@ -138,10 +111,10 @@ export async function GET(req: NextRequest) {
         items,
         memories,
       },
-      { headers: corsHeaders(req) }
+      { headers: world3dCorsHeaders(req) }
     );
   } catch (err: any) {
     console.error('Unexpected error in /api/world-3d/catalog:', err);
-    return NextResponse.json({ success: false, error: 'Internal error' }, { status: 500, headers: corsHeaders(req) });
+    return NextResponse.json({ success: false, error: 'Internal error' }, { status: 500, headers: world3dCorsHeaders(req) });
   }
 }

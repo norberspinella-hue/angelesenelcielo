@@ -9,6 +9,9 @@ import Image from 'next/image';
 import { ParticlesBackground } from '@/components/mural/ParticlesBackground';
 import { RecentAngelToast } from '@/components/mural/RecentAngelToast';
 import { createClient } from '@/lib/supabase/client';
+import { PLANS } from '@/lib/plans';
+import { buildWorld3DDeepLink } from '@/lib/world3d/contracts';
+import type { WorldSpaceContextInfo } from '@/components/mural/drawer-steps/StepPlanAndSlot';
 
 
 function WelcomePopup({ onClose }: { onClose: () => void }) {
@@ -86,11 +89,23 @@ export default function MuralGlobalPage() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [isFounderSlot, setIsFounderSlot] = useState(false);
   const [showMobileInfo, setShowMobileInfo] = useState(false);
+  const [worldSpaceContext, setWorldSpaceContext] = useState<WorldSpaceContextInfo | null>(null);
+  const [worldSpaceError, setWorldSpaceError] = useState<string | null>(null);
+  const [showClaimModal, setShowClaimModal] = useState(false);
+  const [claimEmail, setClaimEmail] = useState('');
+  const [claimSubmitting, setClaimSubmitting] = useState(false);
+  const [claimFeedback, setClaimFeedback] = useState<{ ok: boolean; text: string } | null>(null);
+  const [claimResultBanner, setClaimResultBanner] = useState<{
+    ok: boolean;
+    text: string;
+    spaceId?: string | null;
+    memorialId?: string | null;
+  } | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const hasDeepLink = Boolean(
-      params.get('memorialId') || params.get('highlight') || params.get('space_id')
+      params.get('memorialId') || params.get('highlight') || params.get('space_id') || params.get('claim_token')
     )
     const hasSeenWelcome = localStorage.getItem('mural-welcome-seen')
     if (!hasSeenWelcome && !hasDeepLink) {
@@ -221,7 +236,99 @@ export default function MuralGlobalPage() {
         findAndHighlight()
       }, 1000)
     }
+
+    const spaceIdParam = params.get('space_id')?.trim()
+    const claimTokenParam = params.get('claim_token')?.trim()
+
+    if (spaceIdParam && !claimTokenParam) {
+      fetch(`/api/world-3d/spaces?space_id=${encodeURIComponent(spaceIdParam)}`)
+        .then((res) => res.json().then((d) => ({ ok: res.ok, d })))
+        .then(({ ok, d }) => {
+          if (!ok || !d?.space) {
+            setWorldSpaceError('No pudimos encontrar el espacio 3D seleccionado.')
+            return
+          }
+          if (d.space.status !== 'available') {
+            setWorldSpaceError(
+              `El espacio ${d.space.displayName} (${d.space.zone}) ya está reservado, ocupado o en revisión.`
+            )
+            return
+          }
+          setWorldSpaceContext({
+            spaceId: d.space.spaceId,
+            planId: d.space.planId,
+            displayName: d.space.displayName,
+            zone: d.space.zone,
+            supportType: d.space.supportType,
+          })
+        })
+        .catch(() => {
+          setWorldSpaceError('No se pudo validar el espacio 3D seleccionado.')
+        })
+    }
+
+    if (claimTokenParam) {
+      fetch('/api/world-3d/claim/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: claimTokenParam }),
+      })
+        .then((res) => res.json().then((d) => ({ ok: res.ok, d })))
+        .then(({ ok, d }) => {
+          if (ok && d?.success) {
+            setClaimResultBanner({
+              ok: true,
+              text: '¡Lugar 3D confirmado sin coste adicional! Tu homenaje pagado del Mural Global ya vive también en ese espacio.',
+              spaceId: d.spaceId,
+              memorialId: d.memorialId,
+            })
+          } else {
+            const errMap: Record<string, string> = {
+              TOKEN_EXPIRED: 'Este enlace temporal ha caducado. Solicita uno nuevo desde el lugar elegido.',
+              TOKEN_ALREADY_USED: 'Este enlace ya fue utilizado anteriormente.',
+              MEMORIAL_ALREADY_HAS_WORLD_SPACE: 'Tu homenaje del Mural ya tiene asignado su espacio 3D principal.',
+              COMMUNITY_FREE_NO_3D_RIGHT: 'Los recuerdos gratuitos de Cartas al Cielo no incluyen plaza comercial 3D.',
+              PLAN_MISMATCH: 'El plan de tu homenaje no coincide con el plan de ese lugar 3D.',
+              SPACE_NOT_FREE: 'Otro ángel acaba de reservar u ocupar ese lugar 3D.',
+            }
+            setClaimResultBanner({
+              ok: false,
+              text: errMap[d?.error] || 'No pudimos confirmar el enlace temporal.',
+            })
+          }
+        })
+        .catch(() => {
+          setClaimResultBanner({ ok: false, text: 'Error al validar tu enlace temporal.' })
+        })
+    }
   }, [])
+
+  const handleRequestClaimLink = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!worldSpaceContext || !claimEmail.trim()) return
+    setClaimSubmitting(true)
+    setClaimFeedback(null)
+    try {
+      const res = await fetch('/api/world-3d/claim/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          spaceId: worldSpaceContext.spaceId,
+          email: claimEmail.trim(),
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data?.success) {
+        setClaimFeedback({ ok: true, text: data.message })
+      } else {
+        setClaimFeedback({ ok: false, text: data?.message || 'No pudimos procesar la solicitud.' })
+      }
+    } catch {
+      setClaimFeedback({ ok: false, text: 'Error de conexión al solicitar el enlace.' })
+    } finally {
+      setClaimSubmitting(false)
+    }
+  }
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -556,7 +663,130 @@ export default function MuralGlobalPage() {
         selectedSlot={selectedSlot}
         slotData={slotData}
         isFounderSlot={isFounderSlot}
+        worldSpaceContext={worldSpaceContext}
       />
+
+      {/* Banner flotante de integración Cielo 3D <-> Mural Global */}
+      {(worldSpaceContext || worldSpaceError || claimResultBanner) && (
+        <div className="fixed top-16 sm:top-20 left-1/2 -translate-x-1/2 z-40 w-[min(640px,94vw)] pointer-events-auto">
+          {claimResultBanner && (
+            <div className={`mb-2 rounded-2xl p-4 shadow-xl border backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+              claimResultBanner.ok
+                ? 'bg-[#FFF9F2]/95 border-[#C9A961] text-[#1E2A78]'
+                : 'bg-red-50/95 border-red-200 text-red-800'
+            }`}>
+              <p className="text-xs sm:text-sm font-semibold leading-snug">{claimResultBanner.text}</p>
+              <div className="flex items-center gap-2 shrink-0">
+                {claimResultBanner.ok && claimResultBanner.spaceId && (
+                  <a
+                    href={buildWorld3DDeepLink(
+                      process.env.NEXT_PUBLIC_WORLD3D_URL || 'https://cielo3d-piloto-75-1.vercel.app/cielo3d/',
+                      { memorialId: claimResultBanner.memorialId || undefined, spaceId: claimResultBanner.spaceId }
+                    )}
+                    className="px-3.5 py-1.5 rounded-full bg-[#1E2A78] text-white text-xs font-bold hover:opacity-90"
+                  >
+                    Ver en Mundo 3D →
+                  </a>
+                )}
+                <button
+                  onClick={() => setClaimResultBanner(null)}
+                  className="text-xs font-bold px-2 py-1 rounded-full hover:bg-black/5"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
+
+          {worldSpaceError && (
+            <div className="mb-2 rounded-2xl p-3.5 bg-amber-50/95 border border-amber-300 text-amber-900 shadow-lg flex items-center justify-between gap-3">
+              <p className="text-xs sm:text-sm font-semibold">{worldSpaceError}</p>
+              <button onClick={() => setWorldSpaceError(null)} className="text-xs font-bold px-2">✕</button>
+            </div>
+          )}
+
+          {worldSpaceContext && (
+            <div className="rounded-2xl p-3.5 sm:p-4 bg-white/95 backdrop-blur-md border-2 border-[#C9A961] shadow-xl flex flex-col gap-2">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#8C3F71]">
+                    Lugar 3D elegido · {PLANS[worldSpaceContext.planId].title}
+                  </p>
+                  <p className="text-xs sm:text-sm font-bold text-[#1E2A78]">
+                    {worldSpaceContext.displayName} · <span className="font-normal text-[#706A95]">{worldSpaceContext.zone}</span>
+                  </p>
+                </div>
+                <button
+                  onClick={() => setWorldSpaceContext(null)}
+                  className="text-xs text-[#706A95] hover:text-[#1E2A78] font-bold px-1.5"
+                  title="Quitar selección 3D"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#4E4670]">
+                <span>Haz clic en un bloque libre del Mural Global para continuar con tu nueva compra, o:</span>
+                <button
+                  onClick={() => {
+                    setClaimFeedback(null)
+                    setShowClaimModal(true)
+                  }}
+                  className="px-3 py-1.5 rounded-full bg-[#FFF6EE] border border-[#C9A961] text-[#541731] font-bold hover:bg-[#FDEEE0] transition-colors"
+                >
+                  Ya tengo un homenaje pagado — Reclamar con Magic Link
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Modal de reclamación Magic Link para familias con homenaje pagado */}
+      {showClaimModal && worldSpaceContext && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm p-4"
+          onClick={() => setShowClaimModal(false)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#C9A961]/50"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-lg font-bold text-[#1E2A78] font-serif">
+                Vincular homenaje ya pagado
+              </h3>
+              <button onClick={() => setShowClaimModal(false)} className="text-gray-400 hover:text-gray-700 font-bold">
+                ✕
+              </button>
+            </div>
+            <p className="text-xs text-[#706A95] mb-4 leading-relaxed">
+              Si ya tienes un homenaje pagado del plan <strong>{PLANS[worldSpaceContext.planId].title}</strong> en el Mural Global sin plaza 3D asignada, introduce tu correo para reclamar <strong>{worldSpaceContext.displayName}</strong> sin coste adicional.
+            </p>
+            <form onSubmit={handleRequestClaimLink} className="flex flex-col gap-3">
+              <input
+                type="email"
+                required
+                placeholder="tu-correo@ejemplo.com"
+                value={claimEmail}
+                onChange={(e) => setClaimEmail(e.target.value)}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-[#1E2A78] outline-none focus:border-[#C9A961]"
+              />
+              {claimFeedback && (
+                <p className={`text-xs font-semibold p-3 rounded-xl ${claimFeedback.ok ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                  {claimFeedback.text}
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={claimSubmitting}
+                className="btn-primary-heaven btn-drawer-cta w-full py-2.5 rounded-full text-sm font-bold disabled:opacity-50"
+              >
+                {claimSubmitting ? 'Enviando enlace...' : 'Enviar enlace temporal (Magic Link)'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {showWelcome && (
         <WelcomePopup onClose={handleCloseWelcome} />

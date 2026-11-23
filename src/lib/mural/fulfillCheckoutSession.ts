@@ -5,6 +5,7 @@ import { notifyNeighborsOfNewPet } from '@/lib/notifications';
 import { getPlanOrDefault } from '@/lib/plans';
 import { isBlockGridValidAndFree } from '@/lib/mural/blockAvailability';
 import { generateSponsorshipEmailHtml } from '@/lib/emails/sponsorshipEmail';
+import { isValidWorldSpaceId } from '@/lib/world3d/contracts';
 
 export function buildDeterministicOrderId(stripeSessionId: string): string {
   const hash = crypto.createHash('sha256').update(stripeSessionId).digest('hex').slice(0, 12).toUpperCase();
@@ -21,6 +22,9 @@ export interface FulfillCheckoutResult {
   emailSent: boolean;
   duplicateMemorialConflict: boolean;
   duplicateCertificateConflict: boolean;
+  worldSpaceId: string | null;
+  worldAllocationConfirmed: boolean;
+  worldAllocationReason: string | null;
 }
 
 function parseCoords(slotStr: string | null | undefined): { x: number; y: number } | null {
@@ -37,7 +41,8 @@ async function isBlockFree(
   startX: number,
   startY: number,
   size: number,
-  allowMemorialId?: string
+  allowMemorialId?: string,
+  ignorePendingHolds: boolean = false
 ): Promise<boolean> {
   if (startX < 0 || startY < 0 || startX + size > 1000 || startY + size > 1000) {
     return false;
@@ -50,14 +55,15 @@ async function isBlockFree(
     .lt('y', startY + size);
 
   const allowIds = allowMemorialId ? new Set<string>([allowMemorialId]) : undefined;
-  return isBlockGridValidAndFree(startX, startY, size, data || [], Date.now(), allowIds).ok;
+  return isBlockGridValidAndFree(startX, startY, size, data || [], Date.now(), allowIds, ignorePendingHolds).ok;
 }
 
 async function resolveFreeBlockCoords(
   supabase: any,
   slotId: string | undefined,
   planSize: number,
-  allowMemorialId?: string
+  allowMemorialId?: string,
+  ignoreInitialPendingHolds: boolean = false
 ): Promise<{ finalX: number | null; finalY: number | null; slotAssignedStr: string }> {
   if (!slotId || slotId === 'auto') {
     return { finalX: null, finalY: null, slotAssignedStr: '' };
@@ -70,7 +76,7 @@ async function resolveFreeBlockCoords(
   let finalX = parsed.x;
   let finalY = parsed.y;
 
-  const free = await isBlockFree(supabase, finalX, finalY, planSize, allowMemorialId);
+  const free = await isBlockFree(supabase, finalX, finalY, planSize, allowMemorialId, ignoreInitialPendingHolds);
   if (!free) {
     let found = false;
     for (let radius = 1; radius <= 50 && !found; radius++) {
@@ -157,6 +163,28 @@ export async function fulfillPaidCheckoutSession(
   let finalX: number | null = null;
   let finalY: number | null = null;
   let slotAssignedStr = '';
+  const worldSpaceId = isValidWorldSpaceId(md.worldSpaceId) ? md.worldSpaceId!.trim() : null;
+  const worldHoldToken = typeof md.worldHoldToken === 'string' && md.worldHoldToken.trim() ? md.worldHoldToken.trim() : null;
+  let ownsPendingMuralHold = false;
+  if (worldSpaceId && worldHoldToken) {
+    try {
+      const { data: holdRow } = await (supabase.from('world_space_allocations') as any)
+        .select('id, mural_start_x, mural_start_y, status')
+        .eq('hold_token', worldHoldToken)
+        .eq('space_id', worldSpaceId)
+        .in('status', ['reserved_pending_payment', 'expired', 'occupied'])
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (holdRow && `${holdRow.mural_start_x},${holdRow.mural_start_y}` === slotId) {
+        ownsPendingMuralHold = true;
+      }
+    } catch {
+      ownsPendingMuralHold = false;
+    }
+  }
+  let worldAllocationConfirmed = false;
+  let worldAllocationReason: string | null = null;
 
   // 1. Verificar apadrinamiento sobre mascota de protectora existente
   if (isSponsor) {
@@ -240,7 +268,7 @@ export async function fulfillPaidCheckoutSession(
     if (existingBySession) {
       memorialRecord = existingBySession;
     } else {
-      const resolved = await resolveFreeBlockCoords(supabase, slotId, planCfg.size);
+      const resolved = await resolveFreeBlockCoords(supabase, slotId, planCfg.size, undefined, ownsPendingMuralHold);
       finalX = resolved.finalX;
       finalY = resolved.finalY;
       slotAssignedStr = resolved.slotAssignedStr;
@@ -323,6 +351,9 @@ export async function fulfillPaidCheckoutSession(
       emailSent: false,
       duplicateMemorialConflict,
       duplicateCertificateConflict,
+      worldSpaceId,
+      worldAllocationConfirmed: false,
+      worldAllocationReason: 'MEMORIAL_NOT_CREATED',
     };
   }
 
@@ -337,7 +368,7 @@ export async function fulfillPaidCheckoutSession(
     let canonicalCoords = parseCoords(memorial.slot_assigned);
 
     if (!canonicalCoords && slotId && slotId !== 'auto') {
-      const resolved = await resolveFreeBlockCoords(supabase, slotId, planCfg.size, memorial.id);
+      const resolved = await resolveFreeBlockCoords(supabase, slotId, planCfg.size, memorial.id, ownsPendingMuralHold);
       if (resolved.finalX !== null && resolved.finalY !== null) {
         canonicalCoords = { x: resolved.finalX, y: resolved.finalY };
         slotAssignedStr = resolved.slotAssignedStr;
@@ -355,9 +386,9 @@ export async function fulfillPaidCheckoutSession(
 
       if (existingCount < planCfg.slotsCount) {
         // Asegurar que las coordenadas no estén ocupadas por OTRA mascota distinta tras un fallo previo
-        const stillMineOrFree = await isBlockFree(supabase, finalX, finalY, planCfg.size, memorial.id);
+        const stillMineOrFree = await isBlockFree(supabase, finalX, finalY, planCfg.size, memorial.id, ownsPendingMuralHold);
         if (!stillMineOrFree) {
-          const relocated = await resolveFreeBlockCoords(supabase, `${finalX},${finalY}`, planCfg.size, memorial.id);
+          const relocated = await resolveFreeBlockCoords(supabase, `${finalX},${finalY}`, planCfg.size, memorial.id, ownsPendingMuralHold);
           if (relocated.finalX !== null && relocated.finalY !== null) {
             finalX = relocated.finalX;
             finalY = relocated.finalY;
@@ -375,6 +406,7 @@ export async function fulfillPaidCheckoutSession(
               x: finalX + dx,
               y: finalY + dy,
               status: 'occupied',
+              reserved_until: null,
               memorial_id: memorial.id,
               plan_type: planDb,
               thumbnail_url: thumbnailUrl || '',
@@ -398,6 +430,37 @@ export async function fulfillPaidCheckoutSession(
       finalX = c.x;
       finalY = c.y;
       slotAssignedStr = `${c.x},${c.y}`;
+    }
+  }
+
+  // 3B. Confirmación atómica del espacio 3D elegido (sin reubicación silenciosa ante conflicto)
+  if (worldSpaceId && memorial?.id) {
+    try {
+      const { data: rpcRes, error: rpcErr } = await supabase.rpc('confirm_world_3d_allocation', {
+        p_space_id: worldSpaceId,
+        p_plan_id: planCfg.id,
+        p_memorial_id: memorial.id,
+        p_stripe_session_id: session.id,
+        p_start_x: finalX,
+        p_start_y: finalY,
+        p_block_size: planCfg.size,
+        p_hold_token: worldHoldToken || '',
+        p_entitlement_source: 'new_checkout',
+      });
+      if (rpcErr) {
+        console.error(`Error confirm_world_3d_allocation (${source}):`, rpcErr);
+        worldAllocationReason = 'WORLD_SPACE_RPC_ERROR';
+      } else {
+        const row = Array.isArray(rpcRes) ? rpcRes[0] : rpcRes;
+        worldAllocationConfirmed = Boolean(row?.confirmed);
+        worldAllocationReason = row?.reason || null;
+        if (!worldAllocationConfirmed) {
+          console.warn(`[world3d] Conflicto/bloqueo sin reubicación silenciosa para ${worldSpaceId}:`, worldAllocationReason);
+        }
+      }
+    } catch (e) {
+      console.error(`Excepción confirm_world_3d_allocation (${source}):`, e);
+      worldAllocationReason = 'WORLD_SPACE_EXCEPTION';
     }
   }
 
@@ -592,5 +655,8 @@ export async function fulfillPaidCheckoutSession(
     emailSent,
     duplicateMemorialConflict,
     duplicateCertificateConflict,
+    worldSpaceId,
+    worldAllocationConfirmed,
+    worldAllocationReason,
   };
 }

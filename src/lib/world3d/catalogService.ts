@@ -42,6 +42,7 @@ export interface CatalogMemorial3DItem {
   muralSlotsCount: number;
   catalogKind: 'mural_paid' | 'shelter' | 'community_free';
   isPaidMural: boolean;
+  hasCommercial3DRight: boolean;
   isFounder: boolean;
   muralCoords: { x: number; y: number } | null;
   muralUrl: string;
@@ -152,6 +153,7 @@ export function buildPublic3DMuralCatalog(
         planId === 'estrella_brillante' ? 4 : 1,
       catalogKind,
       isPaidMural: isPaid,
+      hasCommercial3DRight: isPaid && !isCommunity,
       isFounder: ['corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(planId),
       muralCoords,
       muralUrl,

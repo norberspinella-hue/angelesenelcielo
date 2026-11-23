@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DrawerStepper } from './drawer-steps/DrawerStepper';
-import { StepPlanAndSlot } from './drawer-steps/StepPlanAndSlot';
+import { StepPlanAndSlot, WorldSpaceContextInfo } from './drawer-steps/StepPlanAndSlot';
 import { StepPhotoAndData } from './drawer-steps/StepPhotoAndData';
 import { StepStory } from './drawer-steps/StepStory';
 import { StepCheckoutSummary } from './drawer-steps/StepCheckoutSummary';
@@ -11,11 +11,25 @@ interface MuralDrawerProps {
   selectedSlot: { col: number; row: number } | null;
   slotData: any | null;
   isFounderSlot: boolean;
+  worldSpaceContext?: WorldSpaceContextInfo | null;
 }
 
-export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounderSlot }: MuralDrawerProps) {
+export function MuralDrawer({
+  isOpen,
+  onClose,
+  selectedSlot,
+  slotData,
+  isFounderSlot,
+  worldSpaceContext,
+}: MuralDrawerProps) {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
-  const [selectedPlan, setSelectedPlan] = useState<string>('corazon_eterno');
+  const [selectedPlan, setSelectedPlan] = useState<string>(worldSpaceContext?.planId || 'corazon_eterno');
+
+  useEffect(() => {
+    if (worldSpaceContext?.planId) {
+      setSelectedPlan(worldSpaceContext.planId);
+    }
+  }, [worldSpaceContext?.planId]);
   const [draftData, setDraftData] = useState<any>({
     name: '',
     date: '',
@@ -200,6 +214,7 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounder
                   setSelectedPlan={setSelectedPlan}
                   preSelectedSlot={selectedSlot}
                   isFounderSlot={isFounderSlot}
+                  worldSpaceContext={worldSpaceContext}
                 />
               )}
               {step === 2 && (
@@ -225,6 +240,7 @@ export function MuralDrawer({ isOpen, onClose, selectedSlot, slotData, isFounder
                   draftData={draftData}
                   selectedPlan={selectedPlan}
                   selectedSlot={selectedSlot}
+                  worldSpaceContext={worldSpaceContext}
                 />
               )}
             </div>

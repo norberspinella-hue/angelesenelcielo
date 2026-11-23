@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import PostalStoryShareModal from '@/components/ui/PostalStoryShareModal'
 import SponsorshipCertificateA4 from '@/components/certificates/SponsorshipCertificateA4'
+import { buildWorld3DDeepLink } from '@/lib/world3d/contracts'
 
 interface GraciasClientProps {
   sessionId: string
@@ -28,6 +29,9 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
   const [shelterPetName, setShelterPetName] = useState<string>('')
   const [sponsorPetName, setSponsorPetName] = useState<string>('')
   const [isSponsorship, setIsSponsorship] = useState<boolean>(false)
+  const [worldSpaceId, setWorldSpaceId] = useState<string | null>(null)
+  const [worldAllocationConfirmed, setWorldAllocationConfirmed] = useState<boolean>(false)
+  const [worldAllocationReason, setWorldAllocationReason] = useState<string | null>(null)
 
   const formatDate = (dateStr: string) => {
     if (!dateStr) return ''
@@ -63,6 +67,9 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
           if (data.shelterPetName) setShelterPetName(data.shelterPetName)
           if (data.sponsorPetName) setSponsorPetName(data.sponsorPetName)
           if (data.isSponsorship) setIsSponsorship(true)
+          if (data.worldSpaceId) setWorldSpaceId(data.worldSpaceId)
+          setWorldAllocationConfirmed(Boolean(data.worldAllocationConfirmed))
+          if (data.worldAllocationReason) setWorldAllocationReason(data.worldAllocationReason)
         }
       } catch (err) {
         console.error('Error obteniendo datos de sesión:', err)
@@ -385,9 +392,41 @@ export default function GraciasClient({ sessionId }: GraciasClientProps) {
             </div>
           )}
 
+          {/* Estado 3D coordinado tras confirmación */}
+          {!loading && worldSpaceId && (
+            <div className={`mt-4 w-full rounded-2xl p-4 border text-left ${
+              worldAllocationConfirmed
+                ? 'bg-[#FFF9F2] border-[#C9A961] text-[#541731]'
+                : 'bg-amber-50 border-amber-300 text-amber-900'
+            }`}>
+              {worldAllocationConfirmed ? (
+                <p className="text-xs sm:text-sm font-semibold">
+                  ✨ Espacio 3D asignado en firme: <strong>{worldSpaceId}</strong>. La foto de {petName} ya forma parte del Cielo 3D.
+                </p>
+              ) : (
+                <p className="text-xs sm:text-sm font-semibold">
+                  Tu homenaje del Mural Global está confirmado. Sin embargo, el lugar 3D <strong>{worldSpaceId}</strong> no pudo confirmarse automáticamente ({worldAllocationReason || 'CONFLICTO'}). No lo reubicamos sin tu permiso: puedes elegir otro lugar equivalente con tu Magic Link sin pagar de nuevo.
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Botones de acción (Aparecen al completar la carga) */}
           {!loading && (
             <div className="flex flex-wrap items-center gap-4 mt-6 w-full z-20">
+              {worldSpaceId && worldAllocationConfirmed && (
+                <a
+                  href={buildWorld3DDeepLink(
+                    process.env.NEXT_PUBLIC_WORLD3D_URL || 'https://cielo3d-piloto-75-1.vercel.app/cielo3d/',
+                    { spaceId: worldSpaceId }
+                  )}
+                  className="heaven-cta-btn"
+                  style={{ padding: '14px 28px', textDecoration: 'none' }}
+                >
+                  <span className="cta-icon text-lg select-none">🌌</span>
+                  <span className="font-semibold">Ver su lugar en el Cielo 3D</span>
+                </a>
+              )}
               <button
                 onClick={() => {
                   if (slotId) {

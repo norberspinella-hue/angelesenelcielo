@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useCurrency } from '@/context/CurrencyContext';
-import { PLANS, PLAN_ORDER, getPlan, slotsLabel } from '@/lib/plans';
+import { PLANS, PLAN_ORDER, PlanId, getPlan, slotsLabel } from '@/lib/plans';
+
+export interface WorldSpaceContextInfo {
+  spaceId: string;
+  planId: PlanId;
+  displayName: string;
+  zone: string;
+  supportType?: string;
+}
 
 interface StepPlanAndSlotProps {
   onNext: () => void;
@@ -8,9 +16,17 @@ interface StepPlanAndSlotProps {
   setSelectedPlan: (plan: string) => void;
   preSelectedSlot: { col: number; row: number } | null;
   isFounderSlot: boolean;
+  worldSpaceContext?: WorldSpaceContextInfo | null;
 }
 
-export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSelectedSlot, isFounderSlot }: StepPlanAndSlotProps) {
+export function StepPlanAndSlot({
+  onNext,
+  selectedPlan,
+  setSelectedPlan,
+  preSelectedSlot,
+  isFounderSlot,
+  worldSpaceContext,
+}: StepPlanAndSlotProps) {
   const { formatPrice } = useCurrency();
 
   const plans = PLAN_ORDER.map((id) => {
@@ -26,13 +42,25 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
   });
 
   const [founderInfo, setFounderInfo] = useState<{ count: number; maxFounders: number; available: boolean } | null>(null);
+  const lockedPlanId = worldSpaceContext?.planId || null;
+  const isFounderConflictWithWorld3D = Boolean(
+    lockedPlanId &&
+    isFounderSlot &&
+    !['corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(lockedPlanId)
+  );
 
   useEffect(() => {
+    if (lockedPlanId) {
+      if (selectedPlan !== lockedPlanId) {
+        setSelectedPlan(lockedPlanId);
+      }
+      return;
+    }
     const isFounderEligible = ['corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(selectedPlan);
     if (isFounderSlot && !isFounderEligible) {
       setSelectedPlan('corazon_eterno');
     }
-  }, [isFounderSlot, selectedPlan, setSelectedPlan]);
+  }, [isFounderSlot, selectedPlan, setSelectedPlan, lockedPlanId]);
 
   useEffect(() => {
     fetch('/api/mural/founders')
@@ -53,7 +81,24 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       </div>
 
       <div className="flex flex-col gap-4 mb-8 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-        {isFounderSlot && (
+        {worldSpaceContext && (
+          <div className="p-3.5 bg-[#FFF6EE] rounded-2xl border-2 border-[#C9A961]/70 shadow-sm">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[#8C3F71] mb-1">
+              Lugar 3D seleccionado · Cielo 3D
+            </p>
+            <p className="text-sm font-bold text-[#1E2A78]">{worldSpaceContext.displayName}</p>
+            <p className="text-xs text-[#706A95] mt-0.5">
+              {worldSpaceContext.zone} · Plan requerido: <strong>{PLANS[worldSpaceContext.planId].title}</strong>
+            </p>
+            {isFounderConflictWithWorld3D && (
+              <p className="text-xs text-red-700 font-semibold mt-2 bg-red-50 border border-red-200 rounded-lg p-2">
+                Esta casilla está en la zona central de Fundadores (3×3 o superior). Cierra este panel y haz clic en otro hueco del Mural Global para usar este espacio 3D.
+              </p>
+            )}
+          </div>
+        )}
+
+        {isFounderSlot && !isFounderConflictWithWorld3D && (
           <div className="p-4 bg-gradient-to-r from-[#FFF9E6] via-[#FFEBB3] to-[#FFF1CC] rounded-2xl border-2 border-[#D4AF37] shadow-[0_4px_12px_rgba(212,175,55,0.15)] flex items-center gap-4 animate-in fade-in zoom-in-95 duration-300">
             <div className="w-12 h-12 bg-white/80 rounded-full flex items-center justify-center shadow-md shrink-0 border border-[#D4AF37]/30">
               <img src="/images/icons/plans/icon-plan-eterno.svg" alt="Ángeles Fundadores" className="w-8 h-8 object-contain" />
@@ -69,7 +114,7 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
 
         {plans.map((plan) => {
           const isFounderPlan = ['corazon_eterno', 'angelito_protector', 'galaxia_amor', 'vinculo_infinito'].includes(plan.id);
-          const isDisabled = isFounderSlot && !isFounderPlan;
+          const isDisabled = (lockedPlanId ? plan.id !== lockedPlanId : false) || (isFounderSlot && !isFounderPlan);
           return (
             <div 
               key={plan.id}
@@ -189,7 +234,8 @@ export function StepPlanAndSlot({ onNext, selectedPlan, setSelectedPlan, preSele
       <div className="pt-4 border-t border-gray-100">
         <button 
           onClick={onNext}
-          className="btn-primary-heaven btn-drawer-cta w-full"
+          disabled={isFounderConflictWithWorld3D}
+          className="btn-primary-heaven btn-drawer-cta w-full disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Continuar →
         </button>

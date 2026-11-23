@@ -1,26 +1,35 @@
 import React, { useState } from 'react';
 import { useCurrency } from '@/context/CurrencyContext';
 import { getPlanOrDefault, slotsLabel } from '@/lib/plans';
+import type { WorldSpaceContextInfo } from './StepPlanAndSlot';
 
 interface StepCheckoutSummaryProps {
   onBack: () => void;
   draftData: any;
   selectedPlan: string;
   selectedSlot: { col: number; row: number } | null;
+  worldSpaceContext?: WorldSpaceContextInfo | null;
 }
 
-export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedSlot }: StepCheckoutSummaryProps) {
+export function StepCheckoutSummary({
+  onBack,
+  draftData,
+  selectedPlan,
+  selectedSlot,
+  worldSpaceContext,
+}: StepCheckoutSummaryProps) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const { formatPrice, currency } = useCurrency();
-  
+
   const getPlanDetails = () => {
     const p = getPlanOrDefault(selectedPlan);
     return {
       title: p.title,
       price: formatPrice(p.id, { showPeriod: true }),
       duration: p.durationLong,
-      slots: `${slotsLabel(p)} en el cielo`
+      slots: `${slotsLabel(p)} en el cielo`,
     };
   };
 
@@ -28,11 +37,37 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
 
   const handleCheckout = async () => {
     try {
-      setLoading(true)
-      
-      const planKey = getPlanOrDefault(selectedPlan).id
+      setLoading(true);
+      setErrorMsg(null);
 
+      const planKey = getPlanOrDefault(selectedPlan).id;
       const slotIdStr = selectedSlot ? `${selectedSlot.col},${selectedSlot.row}` : 'auto';
+      let worldHoldToken = '';
+
+      if (worldSpaceContext) {
+        if (!selectedSlot) {
+          setErrorMsg('Selecciona una casilla libre en el Mural Global para tu lugar 3D.');
+          setLoading(false);
+          return;
+        }
+        const holdRes = await fetch('/api/world-3d/hold', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            spaceId: worldSpaceContext.spaceId,
+            planId: planKey,
+            startX: selectedSlot.col,
+            startY: selectedSlot.row,
+          }),
+        });
+        const holdData = await holdRes.json().catch(() => ({}));
+        if (!holdRes.ok || !holdData?.holdToken) {
+          setErrorMsg(holdData?.message || 'Este lugar 3D acaba de reservarse u ocuparse. Elige otro espacio.');
+          setLoading(false);
+          return;
+        }
+        worldHoldToken = holdData.holdToken;
+      }
 
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -54,22 +89,37 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
           socialHandle: draftData.socialHandle ?? '',
           instagram: draftData.instagram ?? '',
           tiktok: draftData.tiktok ?? '',
+          ...(worldSpaceContext
+            ? {
+                worldSpaceId: worldSpaceContext.spaceId,
+                worldHoldToken,
+                integrationSource: 'cielo3d_to_mural',
+              }
+            : {}),
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json().catch(() => ({}));
 
       if (data.url) {
-        window.location.href = data.url
+        window.location.href = data.url;
       } else {
-        console.error('No URL returned from checkout')
-        setLoading(false)
+        if (worldHoldToken) {
+          fetch('/api/world-3d/hold', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ holdToken: worldHoldToken }),
+          }).catch(() => {});
+        }
+        setErrorMsg(data?.error || 'No se pudo iniciar la sesión de pago.');
+        setLoading(false);
       }
     } catch (error) {
-      console.error('Checkout error:', error)
-      setLoading(false)
+      console.error('Checkout error:', error);
+      setErrorMsg('Ocurrió un error al preparar tu reserva. Inténtalo de nuevo.');
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col h-full animate-in fade-in slide-in-from-right-4 duration-300">
@@ -108,6 +158,11 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
               <div>📅 <span className="font-semibold text-[#1E2A78]">{plan.slots}</span></div>
               <div>⏱ <span className="font-semibold text-[#1E2A78]">{plan.duration}</span></div>
             </div>
+            {worldSpaceContext && (
+              <p className="text-[11px] font-semibold text-[#8C3F71] mt-1.5">
+                ✨ Lugar 3D: {worldSpaceContext.displayName} ({worldSpaceContext.zone})
+              </p>
+            )}
           </div>
         </div>
 
@@ -131,10 +186,10 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
         {/* Campo Email del usuario */}
         <div className="flex flex-col gap-1">
           <label className="block text-sm font-bold text-[#1E2A78] mb-1">Tu Correo Electrónico</label>
-          <input 
-            type="email" 
+          <input
+            type="email"
             required
-            placeholder="ejemplo@correo.com" 
+            placeholder="ejemplo@correo.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full border border-gray-200 rounded-lg px-4 py-2 text-sm text-[#1E2A78] focus:border-[#C9A961] focus:ring-1 focus:ring-[#C9A961] outline-none bg-white"
@@ -172,7 +227,7 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
           border: '1.5px solid rgba(255,200,60,0.40)',
           borderRadius: 12,
           padding: '12px 16px',
-          marginBottom: 16,
+          marginBottom: 8,
         }}>
           <p style={{
             fontSize: 12,
@@ -182,16 +237,22 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
             lineHeight: 1.6,
             margin: 0,
           }}>
-            Este espacio es muy popular. En el caso de que 
-            otro ángel lo reserve justo antes que tú, 
-            colocaremos a tu mascota en el espacio más 
-            cercano disponible con el mismo amor.{' '}
-            <img 
+            {worldSpaceContext ? (
+              <>
+                Lugar 3D exacto garantizado: bloquearemos temporalmente (20 min){' '}
+                <strong>{worldSpaceContext.displayName}</strong> ({worldSpaceContext.zone}) durante el pago. Nunca reubicaremos tu plaza 3D sin tu consentimiento.
+              </>
+            ) : (
+              <>
+                Este espacio es muy popular. En el caso de que otro ángel lo reserve justo antes que tú, colocaremos a tu mascota en el espacio más cercano disponible con el mismo amor.
+              </>
+            )}{' '}
+            <img
               src="/images/icons/plans/pawrosa.svg"
               alt=""
-              style={{ 
-                width: 14, 
-                height: 14, 
+              style={{
+                width: 14,
+                height: 14,
                 display: 'inline',
                 verticalAlign: 'middle',
                 marginLeft: 2,
@@ -199,14 +260,19 @@ export function StepCheckoutSummary({ onBack, draftData, selectedPlan, selectedS
             />
           </p>
         </div>
-        <button 
+        {errorMsg && (
+          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 font-semibold">
+            {errorMsg}
+          </div>
+        )}
+        <button
           onClick={handleCheckout}
           disabled={loading || !email}
           className="btn-drawer-cta text-white font-bold py-3 px-6 rounded-full shadow-md hover:shadow-lg transition-all w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Procesando...' : 'Ir a Stripe Checkout →'}
         </button>
-        <button 
+        <button
           onClick={onBack}
           disabled={loading}
           className="text-[#1E2A78] text-sm font-bold mt-2 hover:underline btn-drawer-back"

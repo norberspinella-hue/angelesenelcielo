@@ -150,11 +150,17 @@ export async function GET(req: NextRequest) {
 
     let finalSlotId = session.metadata?.slotId || ''
     let resolvedSlug = ''
+    let worldSpaceId: string | null = session.metadata?.worldSpaceId || null
+    let worldAllocationConfirmed = false
+    let worldAllocationReason: string | null = null
 
     if (isPaid && session.metadata?.petName && session.metadata?.email) {
       const result = await fulfillPaidCheckoutSession(supabase, session, { source: 'gracias' })
       if (result.slotAssigned) finalSlotId = result.slotAssigned
       if (result.memorial?.profile_slug) resolvedSlug = result.memorial.profile_slug
+      worldSpaceId = result.worldSpaceId
+      worldAllocationConfirmed = result.worldAllocationConfirmed
+      worldAllocationReason = result.worldAllocationReason
     }
 
     return NextResponse.json({
@@ -171,6 +177,9 @@ export async function GET(req: NextRequest) {
       dedication: session.metadata?.dedication || '',
       slug: resolvedSlug,
       slotId: finalSlotId,
+      worldSpaceId,
+      worldAllocationConfirmed,
+      worldAllocationReason,
       sponsorName: session.metadata?.sponsorName || session.customer_details?.name || 'Padrino Solidario',
       shelterName: session.metadata?.shelterName || 'Refugio Nueva Vida',
       shelterPetName: session.metadata?.shelterPetName || session.metadata?.petName || 'Juliette',

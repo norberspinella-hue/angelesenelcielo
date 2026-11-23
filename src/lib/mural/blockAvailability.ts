@@ -43,7 +43,8 @@ export function isBlockGridValidAndFree(
   blockSize: number,
   fetchedCells: SlotCellState[],
   nowMs: number = Date.now(),
-  allowHoldIds?: Set<string>
+  allowHoldIds?: Set<string>,
+  ignorePendingHolds: boolean = false
 ): { ok: boolean; reason?: 'OUT_OF_BOUNDS' | 'COLLISION' | 'INVALID_SIZE' } {
   if (!Number.isInteger(blockSize) || blockSize < 1 || blockSize > 6) {
     return { ok: false, reason: 'INVALID_SIZE' };
@@ -67,7 +68,7 @@ export function isBlockGridValidAndFree(
       cell.y < startY + blockSize
     ) {
       const ownedBySelf = Boolean(cell.memorial_id && allowHoldIds?.has(cell.memorial_id));
-      if (!ownedBySelf && isSlotCellBlocking(cell, nowMs)) {
+      if (!ownedBySelf && isSlotCellBlocking(cell, nowMs, ignorePendingHolds)) {
         return { ok: false, reason: 'COLLISION' };
       }
     }
