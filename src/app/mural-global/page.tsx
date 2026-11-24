@@ -668,7 +668,7 @@ export default function MuralGlobalPage() {
 
       {/* Banner flotante de integración Cielo 3D <-> Mural Global */}
       {(worldSpaceContext || worldSpaceError || claimResultBanner) && (
-        <div className="fixed top-16 sm:top-20 left-1/2 -translate-x-1/2 z-40 w-[min(640px,94vw)] pointer-events-auto">
+        <div className="fixed top-16 sm:top-20 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 z-40 w-[min(580px,94vw)] pointer-events-auto">
           {claimResultBanner && (
             <div className={`mb-2 rounded-2xl p-4 shadow-xl border backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
               claimResultBanner.ok
