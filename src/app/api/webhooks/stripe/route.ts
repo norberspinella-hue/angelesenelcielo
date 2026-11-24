@@ -49,10 +49,28 @@ export async function POST(req: NextRequest) {
         received: true,
         memorialId: result.memorial?.id || null,
         alreadyProcessed: result.duplicateMemorialConflict || result.duplicateCertificateConflict,
+        worldSpaceId: result.worldSpaceId,
+        worldAllocationConfirmed: result.worldAllocationConfirmed,
+        worldAllocationReason: result.worldAllocationReason,
       })
     } catch (err) {
       console.error('Error procesando webhook:', err)
       return NextResponse.json({ error: 'Webhook processing error' }, { status: 500 })
+    }
+  }
+
+  if (event.type === 'checkout.session.expired') {
+    const session = event.data.object as Stripe.Checkout.Session
+    try {
+      const supabase = createAdminClient()
+      const { data: released } = await (supabase as any).rpc('release_coordinated_hold_by_session', {
+        p_stripe_session_id: session.id,
+        p_hold_token: session.metadata?.worldHoldToken || null,
+      })
+      return NextResponse.json({ received: true, expiredHoldReleased: Boolean(released) })
+    } catch (err) {
+      console.error('Error liberando reserva tras checkout.session.expired:', err)
+      return NextResponse.json({ error: 'Expired hold release error' }, { status: 500 })
     }
   }
 

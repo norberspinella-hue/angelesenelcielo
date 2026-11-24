@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/server';
 import { SPECIAL_PROTECTED_MEMORIAL_IDS, hashClaimToken } from '@/lib/world3d/spacesService';
+import {
+  FAMILY_3D_COOKIE_NAME,
+  createFamily3DSessionToken,
+} from '@/lib/world3d/familySession';
 
 export const dynamic = 'force-dynamic';
 
@@ -62,7 +66,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
       reason: row.reason || 'CLAIMED',
       allocationId: row.allocation_id,
@@ -70,6 +74,46 @@ export async function POST(req: NextRequest) {
       spaceId: row.space_id,
       planId: row.plan_id,
     });
+
+    // Emitir sesión familiar firmada HttpOnly (sin dependencia de ChatGPT ni secretos en URL)
+    try {
+      const { data: claimedMem } = await (supabase.from('memorials') as any)
+        .select('id, email')
+        .eq('id', row.memorial_id)
+        .maybeSingle();
+
+      if (claimedMem?.email) {
+        const normalizedEmail = String(claimedMem.email).trim().toLowerCase();
+        const { data: familyMems } = await (supabase.from('memorials') as any)
+          .select('id, story_answers')
+          .ilike('email', normalizedEmail)
+          .eq('payment_status', 'paid')
+          .eq('publication_status', 'published');
+
+        const eligibleIds = (familyMems || [])
+          .filter((m: any) => !m.story_answers?.isCommunity)
+          .map((m: any) => m.id);
+
+        const sessionCookie = createFamily3DSessionToken({
+          emailHash: hashClaimToken(normalizedEmail),
+          memorialIds: eligibleIds.length > 0 ? eligibleIds : [row.memorial_id],
+        });
+
+        if (sessionCookie) {
+          res.cookies.set(FAMILY_3D_COOKIE_NAME, sessionCookie, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 7 * 24 * 60 * 60,
+          });
+        }
+      }
+    } catch {
+      // No bloquear la reclamación si falla el cookie opcional de sesión 3D
+    }
+
+    return res;
   } catch (err: any) {
     console.error('Error en POST /api/world-3d/claim/verify:', err);
     return NextResponse.json({ success: false, error: 'CLAIM_VERIFY_INTERNAL_ERROR' }, { status: 500 });

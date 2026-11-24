@@ -6,6 +6,7 @@ import { getPlanOrDefault } from '@/lib/plans';
 import { isBlockGridValidAndFree } from '@/lib/mural/blockAvailability';
 import { generateSponsorshipEmailHtml } from '@/lib/emails/sponsorshipEmail';
 import { isValidWorldSpaceId } from '@/lib/world3d/contracts';
+import { resolveAuthorizedTestRecipient } from '@/lib/community/stagingEmailAdapter';
 
 export function buildDeterministicOrderId(stripeSessionId: string): string {
   const hash = crypto.createHash('sha256').update(stripeSessionId).digest('hex').slice(0, 12).toUpperCase();
@@ -456,6 +457,22 @@ export async function fulfillPaidCheckoutSession(
         worldAllocationReason = row?.reason || null;
         if (!worldAllocationConfirmed) {
           console.warn(`[world3d] Conflicto/bloqueo sin reubicación silenciosa para ${worldSpaceId}:`, worldAllocationReason);
+          await (supabase.from('world_3d_allocation_incidents') as any).upsert(
+            {
+              stripe_session_id: session.id,
+              memorial_id: memorial.id,
+              requested_space_id: worldSpaceId,
+              plan_id: planCfg.id,
+              reason: worldAllocationReason || 'WORLD_SPACE_CONFLICT',
+              status: 'open',
+              details: {
+                slotAssigned: slotAssignedStr,
+                holdToken: worldHoldToken || null,
+                source,
+              },
+            },
+            { onConflict: 'stripe_session_id' }
+          );
         }
       }
     } catch (e) {
@@ -600,34 +617,48 @@ export async function fulfillPaidCheckoutSession(
 </body>
 </html>`;
 
-      const userSendRes = await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL!,
-        to: email,
-        subject: userEmailSubject,
-        html: userEmailHtml,
-      });
+      const isStagingIsolated =
+        process.env.COMMUNITY_ALLOWED_ENV === 'staging' || process.env.VERCEL_ENV === 'preview';
+      const stagingEmailEnabled = process.env.COMMUNITY_EMAIL_SEND_ENABLED === 'true';
+      const resolvedBuyerRecipient = isStagingIsolated
+        ? (stagingEmailEnabled ? resolveAuthorizedTestRecipient(email) : null)
+        : email;
+      const resolvedAdminRecipient = isStagingIsolated
+        ? (stagingEmailEnabled ? resolveAuthorizedTestRecipient(process.env.ADMIN_EMAIL || '') : null)
+        : (process.env.ADMIN_EMAIL || 'admin@todaslasmascotasvanalcielo.com');
 
-      emailSent = true;
-      await (supabase.from('email_logs') as any).insert({
-        memorial_id: memorial.id,
-        to_email: email,
-        type: 'confirmation',
-        resend_id: userSendRes?.data?.id || null,
-        status: 'sent',
-      });
+      if (resolvedBuyerRecipient) {
+        const userSendRes = await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL!,
+          to: resolvedBuyerRecipient,
+          subject: isStagingIsolated ? `[STAGING] ${userEmailSubject}` : userEmailSubject,
+          html: userEmailHtml,
+        });
+
+        emailSent = true;
+        await (supabase.from('email_logs') as any).insert({
+          memorial_id: memorial.id,
+          to_email: resolvedBuyerRecipient,
+          type: 'confirmation',
+          resend_id: userSendRes?.data?.id || null,
+          status: 'sent',
+        });
+      }
 
       const adminSubject = isSponsor
         ? `💖 ¡Nuevo Apadrinamiento!: ${petName} (Por ${sponsorNameVal})`
         : `🐾 Nuevo ángel: ${petName} (${plan})`;
 
-      await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL!,
-        to: process.env.ADMIN_EMAIL || 'admin@todaslasmascotasvanalcielo.com',
-        subject: adminSubject,
-        html: `<div style="font-family:sans-serif;padding:20px;"><h2>Nuevo ángel registrado</h2><p><strong>Mascota:</strong> ${petName}</p><p><strong>Plan:</strong> ${planCfg.title} (${plan})</p><p><strong>Slot:</strong> ${slotAssignedStr}</p><p><strong>Sesión Stripe:</strong> ${session.id}</p></div>`,
-      });
+      if (resolvedAdminRecipient) {
+        await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL!,
+          to: resolvedAdminRecipient,
+          subject: isStagingIsolated ? `[STAGING ADMIN] ${adminSubject}` : adminSubject,
+          html: `<div style="font-family:sans-serif;padding:20px;"><h2>Nuevo ángel registrado</h2><p><strong>Mascota:</strong> ${petName}</p><p><strong>Plan:</strong> ${planCfg.title} (${plan})</p><p><strong>Slot:</strong> ${slotAssignedStr}</p><p><strong>Sesión Stripe:</strong> ${session.id}</p></div>`,
+        });
+      }
 
-      if (certWinner && memorial?.id && finalX !== null && finalY !== null) {
+      if (!isStagingIsolated && certWinner && memorial?.id && finalX !== null && finalY !== null) {
         notifyNeighborsOfNewPet({
           newPetId: memorial.id,
           newPetName: petName,

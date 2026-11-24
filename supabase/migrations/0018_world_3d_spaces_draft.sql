@@ -548,4 +548,121 @@ EXCEPTION
 END;
 $$;
 
+-- Incidencias recuperables cuando un pago Stripe se confirma pero la plaza 3D ya no pudo asignarse
+CREATE TABLE IF NOT EXISTS public.world_3d_allocation_incidents (
+  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  stripe_session_id   TEXT NOT NULL UNIQUE,
+  memorial_id         UUID NOT NULL REFERENCES public.memorials(id) ON DELETE CASCADE,
+  requested_space_id  TEXT NOT NULL,
+  plan_id             TEXT NOT NULL,
+  reason              TEXT NOT NULL,
+  status              TEXT NOT NULL DEFAULT 'open'
+                        CHECK (status IN ('open', 'resolved_manual', 'refunded')),
+  details             JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at          TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE public.world_3d_allocation_incidents ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON public.world_3d_allocation_incidents FROM anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.extend_coordinated_hold_for_checkout(
+  p_hold_token TEXT,
+  p_space_id TEXT,
+  p_stripe_session_id TEXT,
+  p_ttl_minutes INT DEFAULT 35
+)
+RETURNS TABLE (
+  extended BOOLEAN,
+  expires_at TIMESTAMPTZ
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_alloc public.world_space_allocations%ROWTYPE;
+  v_new_expires TIMESTAMPTZ := now() + make_interval(mins => GREATEST(30, LEAST(p_ttl_minutes, 1440)));
+BEGIN
+  SELECT * INTO v_alloc
+  FROM public.world_space_allocations wsa
+  WHERE wsa.hold_token = p_hold_token
+    AND wsa.space_id = p_space_id
+    AND wsa.status = 'reserved_pending_payment'
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RETURN QUERY SELECT FALSE, NULL::TIMESTAMPTZ;
+    RETURN;
+  END IF;
+
+  v_new_expires := GREATEST(COALESCE(v_alloc.expires_at, v_new_expires), v_new_expires);
+
+  UPDATE public.world_space_allocations wsa
+  SET expires_at = v_new_expires,
+      stripe_session_id = p_stripe_session_id,
+      updated_at = now()
+  WHERE wsa.id = v_alloc.id;
+
+  IF v_alloc.mural_start_x IS NOT NULL AND v_alloc.mural_start_y IS NOT NULL AND v_alloc.block_size IS NOT NULL THEN
+    UPDATE public.mural_slots ms
+    SET reserved_until = v_new_expires,
+        updated_at = now()
+    WHERE ms.x >= v_alloc.mural_start_x AND ms.x < v_alloc.mural_start_x + v_alloc.block_size
+      AND ms.y >= v_alloc.mural_start_y AND ms.y < v_alloc.mural_start_y + v_alloc.block_size
+      AND ms.status = 'reserved_pending_payment'
+      AND ms.memorial_id IS NULL;
+  END IF;
+
+  RETURN QUERY SELECT TRUE, v_new_expires;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.release_coordinated_hold_by_session(
+  p_stripe_session_id TEXT,
+  p_hold_token TEXT DEFAULT NULL
+)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_alloc public.world_space_allocations%ROWTYPE;
+BEGIN
+  SELECT * INTO v_alloc
+  FROM public.world_space_allocations wsa
+  WHERE (
+    (p_stripe_session_id IS NOT NULL AND p_stripe_session_id <> '' AND wsa.stripe_session_id = p_stripe_session_id)
+    OR (p_hold_token IS NOT NULL AND p_hold_token <> '' AND wsa.hold_token = p_hold_token)
+  )
+    AND wsa.status = 'reserved_pending_payment'
+  ORDER BY wsa.created_at DESC
+  LIMIT 1
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RETURN FALSE;
+  END IF;
+
+  UPDATE public.world_space_allocations wsa
+  SET status = 'released',
+      updated_at = now()
+  WHERE wsa.id = v_alloc.id;
+
+  IF v_alloc.mural_start_x IS NOT NULL AND v_alloc.mural_start_y IS NOT NULL AND v_alloc.block_size IS NOT NULL THEN
+    UPDATE public.mural_slots ms
+    SET status = 'available',
+        reserved_until = NULL,
+        updated_at = now()
+    WHERE ms.x >= v_alloc.mural_start_x AND ms.x < v_alloc.mural_start_x + v_alloc.block_size
+      AND ms.y >= v_alloc.mural_start_y AND ms.y < v_alloc.mural_start_y + v_alloc.block_size
+      AND ms.status = 'reserved_pending_payment'
+      AND ms.memorial_id IS NULL;
+  END IF;
+
+  RETURN TRUE;
+END;
+$$;
+
 COMMIT;

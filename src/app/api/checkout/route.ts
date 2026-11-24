@@ -78,19 +78,45 @@ export async function POST(req: NextRequest) {
       }
       safeWorldSpaceId = spaceRow.space_id
       safeWorldHoldToken = typeof worldHoldToken === 'string' ? worldHoldToken.trim().slice(0, 120) : ''
+      if (!safeWorldHoldToken) {
+        return NextResponse.json(
+          { error: 'Se requiere una reserva temporal activa (hold) para este espacio 3D' },
+          { status: 409 }
+        )
+      }
+      const { data: holdCheck } = await (supabase.from('world_space_allocations') as any)
+        .select('id, status, expires_at')
+        .eq('hold_token', safeWorldHoldToken)
+        .eq('space_id', safeWorldSpaceId)
+        .eq('status', 'reserved_pending_payment')
+        .maybeSingle()
+
+      if (!holdCheck || (holdCheck.expires_at && Date.parse(holdCheck.expires_at) <= Date.now())) {
+        return NextResponse.json(
+          { error: 'La reserva temporal del espacio 3D ha caducado o ya no está disponible' },
+          { status: 409 }
+        )
+      }
     }
 
     // Recuperar detalles del precio para saber si es recurrente o de un solo pago
     const price = await stripe.prices.retrieve(priceId)
     const mode = price.type === 'recurring' ? 'subscription' : 'payment'
+    const baseUrl = (process.env.NEXT_PUBLIC_URL || req.nextUrl.origin).replace(/\/$/, '')
+    const cancelUrl = safeWorldSpaceId
+      ? `${baseUrl}/mural-global?space_id=${encodeURIComponent(safeWorldSpaceId)}&plan=${encodeURIComponent(planCfg.id)}&source=cielo3d`
+      : `${baseUrl}/mural-global`
+    // Stripe Checkout admite expires_at entre 30 min y 24h; usamos exactamente 30 min en flujo 3D
+    const checkoutExpiresAt = Math.floor(Date.now() / 1000) + 30 * 60
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: mode,
       line_items: [{ price: priceId, quantity: 1 }],
       allow_promotion_codes: true,
-      success_url: `${process.env.NEXT_PUBLIC_URL}/gracias/{CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_URL}/mural-global`,
+      ...(safeWorldSpaceId ? { expires_at: checkoutExpiresAt } : {}),
+      success_url: `${baseUrl}/gracias/{CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl,
       customer_email: email,
       metadata: {
         plan,
@@ -122,7 +148,25 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    return NextResponse.json({ url: session.url })
+    if (safeWorldSpaceId && safeWorldHoldToken) {
+      try {
+        const supabase = createAdminClient()
+        await (supabase as any).rpc('extend_coordinated_hold_for_checkout', {
+          p_hold_token: safeWorldHoldToken,
+          p_space_id: safeWorldSpaceId,
+          p_stripe_session_id: session.id,
+          p_ttl_minutes: 35,
+        })
+      } catch (extErr) {
+        console.error('Error extendiendo hold 35 min tras crear sesión Checkout:', extErr)
+      }
+    }
+
+    return NextResponse.json({
+      url: session.url,
+      sessionId: session.id,
+      expiresAt: session.expires_at,
+    })
   } catch (error) {
     console.error('Stripe checkout error for plan:', currentPlan, 'priceId:', currentPriceId, error)
     return NextResponse.json(
