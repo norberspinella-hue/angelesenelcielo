@@ -138,6 +138,93 @@ export async function GET(req: NextRequest) {
   }
 }
 
+const PUBLIC_PHOTO_BUCKET = 'pet-photos';
+const QUARANTINE_PHOTO_BUCKET = 'pet-photos-quarantine';
+
+function extractPetPhotoStoragePath(rawUrl: string | null | undefined): string | null {
+  if (!rawUrl || typeof rawUrl !== 'string') return null;
+  try {
+    const parsed = new URL(rawUrl.trim());
+    const marker = `/storage/v1/object/public/${PUBLIC_PHOTO_BUCKET}/`;
+    const idx = parsed.pathname.indexOf(marker);
+    if (idx === -1) return null;
+    const objectPath = decodeURIComponent(parsed.pathname.slice(idx + marker.length)).replace(/^\/+/, '');
+    if (!objectPath || objectPath.includes('..')) return null;
+    return objectPath;
+  } catch {
+    return null;
+  }
+}
+
+function buildMatchingThumbnailPath(objectPath: string): string | null {
+  const m = /^pets\/original\/([0-9]+)\.[^/]+$/i.exec(objectPath);
+  return m ? `pets/thumbnails/${m[1]}.webp` : null;
+}
+
+async function ensureQuarantineBucket(supabase: any): Promise<void> {
+  try {
+    const { data } = await supabase.storage.getBucket(QUARANTINE_PHOTO_BUCKET);
+    if (!data) {
+      await supabase.storage.createBucket(QUARANTINE_PHOTO_BUCKET, { public: false });
+    }
+  } catch {
+    await supabase.storage.createBucket(QUARANTINE_PHOTO_BUCKET, { public: false }).catch(() => {});
+  }
+}
+
+async function transferBetweenBuckets(
+  supabase: any,
+  fromBucket: string,
+  toBucket: string,
+  objectPaths: string[],
+  deleteSource: boolean
+): Promise<string[]> {
+  const moved: string[] = [];
+  for (const path of objectPaths) {
+    try {
+      const { data: blob, error: dlErr } = await supabase.storage.from(fromBucket).download(path);
+      if (!dlErr && blob) {
+        const contentType = path.endsWith('.webp') ? 'image/webp' : path.endsWith('.png') ? 'image/png' : 'image/jpeg';
+        const arrayBuf = await blob.arrayBuffer();
+        const { error: upErr } = await supabase.storage
+          .from(toBucket)
+          .upload(path, Buffer.from(arrayBuf), { contentType, upsert: true });
+        if (!upErr && deleteSource) {
+          await supabase.storage.from(fromBucket).remove([path]);
+          moved.push(path);
+        }
+      }
+    } catch {}
+  }
+  return moved;
+}
+
+async function purgeWorld3DPortraitCache(photoUrls: string[]): Promise<{ attempted: boolean; ok: boolean; status?: number }> {
+  const world3dOrigin = (process.env.WORLD3D_REWRITE_ORIGIN || '').trim().replace(/\/$/, '');
+  const gatewaySecret = (process.env.WORLD3D_GATEWAY_SECRET || '').trim();
+  const bypassSecret = (process.env.VERCEL_AUTOMATION_BYPASS_SECRET || '').trim();
+  const cleanUrls = photoUrls.filter((u) => typeof u === 'string' && u.trim().length > 0);
+  if (!world3dOrigin || !gatewaySecret || cleanUrls.length === 0) {
+    return { attempted: false, ok: false };
+  }
+  try {
+    const headers: Record<string, string> = {
+      'content-type': 'application/json',
+      'x-world3d-gateway-secret': gatewaySecret,
+    };
+    if (bypassSecret) headers['x-vercel-protection-bypass'] = bypassSecret;
+    const res = await fetch(`${world3dOrigin}/cielo3d/retrato/purge`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ photoUrls: cleanUrls }),
+      signal: AbortSignal.timeout(5000),
+    });
+    return { attempted: true, ok: res.ok, status: res.status };
+  } catch {
+    return { attempted: true, ok: false };
+  }
+}
+
 // PATCH: Actualizar visibilidad, estado de moderación o dedicatoria (memorials o multicarta)
 export async function PATCH(req: NextRequest) {
   try {
@@ -189,11 +276,17 @@ export async function PATCH(req: NextRequest) {
     }
 
     const supabase = createAdminClient();
-    const { id, visibility, moderation_status, dedication, pet_name, socialHandle } = body;
+    const { id, visibility, moderation_status, dedication, pet_name, socialHandle, removePhoto } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'El ID del memorial es obligatorio' }, { status: 400 });
     }
+
+    const { data: existingMemorial } = await (supabase
+      .from('memorials') as any)
+      .select('id, photo_url, visibility, moderation_status, story_answers')
+      .eq('id', id)
+      .maybeSingle();
 
     // Mapear visibilidad al enum de postgres: 'public' o 'private'
     let dbVisibility: 'public' | 'private' | undefined = undefined;
@@ -214,14 +307,10 @@ export async function PATCH(req: NextRequest) {
     if (dbModeration !== undefined) updatePayload.moderation_status = dbModeration;
     if (dedication !== undefined) updatePayload.dedication = dedication;
     if (pet_name !== undefined) updatePayload.pet_name = pet_name;
+    if (removePhoto === true) updatePayload.photo_url = '';
 
     if (socialHandle !== undefined) {
-      const { data: current } = await (supabase
-        .from('memorials') as any)
-        .select('story_answers')
-        .eq('id', id)
-        .single();
-      const currentStoryAnswers = current?.story_answers || {};
+      const currentStoryAnswers = existingMemorial?.story_answers || {};
       updatePayload.story_answers = {
         ...currentStoryAnswers,
         socialHandle: socialHandle ? socialHandle.replace(/^@/, '').trim() : '',
@@ -241,23 +330,73 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // 2. Si cambia la visibilidad, sincronizar los slots en mural_slots
+    // 2. Si cambia la visibilidad o se retira foto, sincronizar slots y retirar archivo público de Storage + caché CDN
     if (dbVisibility !== undefined) {
       const slotStatus = dbVisibility === 'private' ? 'blocked_admin' : 'occupied';
+      const slotPatch: Record<string, any> = { status: slotStatus };
+      if (removePhoto === true) slotPatch.thumbnail_url = '';
       const { error: slotErr } = await (supabase
         .from('mural_slots') as any)
-        .update({ status: slotStatus })
+        .update(slotPatch)
         .eq('memorial_id', id);
 
       if (slotErr) {
         console.error('Error al sincronizar mural_slots en moderación:', slotErr);
       }
+    } else if (removePhoto === true) {
+      await (supabase.from('mural_slots') as any).update({ thumbnail_url: '' }).eq('memorial_id', id);
+    }
+
+    const existingPhotoUrl = existingMemorial?.photo_url || '';
+    const photoPath = extractPetPhotoStoragePath(existingPhotoUrl);
+    const candidatePaths = photoPath
+      ? Array.from(new Set([photoPath, buildMatchingThumbnailPath(photoPath)].filter((p): p is string => Boolean(p))))
+      : [];
+
+    let storageAction: string = 'none';
+    let cachePurge: { attempted: boolean; ok: boolean; status?: number } = { attempted: false, ok: false };
+
+    const shouldRetireFromPublicStorage =
+      removePhoto === true || dbVisibility === 'private' || dbModeration === 'rejected';
+
+    if (shouldRetireFromPublicStorage) {
+      if (candidatePaths.length > 0) {
+        if (removePhoto === true) {
+          await supabase.storage.from(PUBLIC_PHOTO_BUCKET).remove(candidatePaths).catch(() => {});
+          await supabase.storage.from(QUARANTINE_PHOTO_BUCKET).remove(candidatePaths).catch(() => {});
+          storageAction = 'deleted_permanently';
+        } else {
+          await ensureQuarantineBucket(supabase);
+          const moved = await transferBetweenBuckets(
+            supabase,
+            PUBLIC_PHOTO_BUCKET,
+            QUARANTINE_PHOTO_BUCKET,
+            candidatePaths,
+            true
+          );
+          storageAction = moved.length > 0 ? 'quarantined_private' : 'already_absent';
+        }
+      }
+      if (existingPhotoUrl) {
+        cachePurge = await purgeWorld3DPortraitCache([existingPhotoUrl]);
+      }
+    } else if (dbVisibility === 'public' && dbModeration !== 'rejected' && candidatePaths.length > 0) {
+      await transferBetweenBuckets(
+        supabase,
+        QUARANTINE_PHOTO_BUCKET,
+        PUBLIC_PHOTO_BUCKET,
+        candidatePaths,
+        true
+      );
+      storageAction = 'restored_from_quarantine';
     }
 
     return NextResponse.json({
       success: true,
       message: 'Memorial actualizado con éxito',
       memorial: updated,
+      storageAction,
+      cachePurge,
     });
   } catch (error: any) {
     console.error('Error no controlado en PATCH /api/admin/moderacion:', error);

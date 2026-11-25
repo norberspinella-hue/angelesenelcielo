@@ -665,4 +665,28 @@ BEGIN
 END;
 $$;
 
+-- Endurecimiento explícito: bloquear ejecución directa de funciones SECURITY DEFINER por anon / authenticated / PUBLIC
+REVOKE ALL ON TABLE public.world_3d_allocation_incidents FROM anon, authenticated;
+
+REVOKE ALL ON FUNCTION public.release_expired_coordinated_holds() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.release_expired_coordinated_holds() TO service_role;
+
+REVOKE ALL ON FUNCTION public.acquire_coordinated_hold(TEXT, TEXT, INT, INT, INT, TEXT, INT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.acquire_coordinated_hold(TEXT, TEXT, INT, INT, INT, TEXT, INT) TO service_role;
+
+REVOKE ALL ON FUNCTION public.release_coordinated_hold(TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.release_coordinated_hold(TEXT) TO service_role;
+
+REVOKE ALL ON FUNCTION public.confirm_world_3d_allocation(TEXT, TEXT, UUID, TEXT, INT, INT, INT, TEXT, TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.confirm_world_3d_allocation(TEXT, TEXT, UUID, TEXT, INT, INT, INT, TEXT, TEXT) TO service_role;
+
+REVOKE ALL ON FUNCTION public.claim_world_space_with_token(TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.claim_world_space_with_token(TEXT) TO service_role;
+
+REVOKE ALL ON FUNCTION public.extend_coordinated_hold_for_checkout(TEXT, TEXT, TEXT, INT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.extend_coordinated_hold_for_checkout(TEXT, TEXT, TEXT, INT) TO service_role;
+
+REVOKE ALL ON FUNCTION public.release_coordinated_hold_by_session(TEXT, TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.release_coordinated_hold_by_session(TEXT, TEXT) TO service_role;
+
 COMMIT;
