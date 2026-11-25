@@ -13,6 +13,12 @@ export const dynamic = 'force-dynamic';
  * `claim_world_space_with_token`. Nunca acepta `community_guardian_tokens` ni `community_free`.
  */
 export async function POST(req: NextRequest) {
+  if (process.env.WORLD3D_WRITES_PAUSED === '1') {
+    return NextResponse.json(
+      { success: false, error: 'WORLD3D_READONLY_MODE', message: 'El canje de espacios 3D está temporalmente desactivado en modo consulta.' },
+      { status: 503, headers: { 'Cache-Control': 'private, no-store' } }
+    );
+  }
   try {
     const body = await req.json();
     const rawToken = typeof body?.token === 'string' ? body.token.trim() : '';

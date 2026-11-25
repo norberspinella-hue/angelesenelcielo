@@ -15,6 +15,12 @@ const NEUTRAL_CLAIM_MESSAGE =
  * Respuesta no enumeradora ante cualquier resultado de correo o elegibilidad.
  */
 export async function POST(req: NextRequest) {
+  if (process.env.WORLD3D_WRITES_PAUSED === '1') {
+    return NextResponse.json(
+      { success: false, error: 'WORLD3D_READONLY_MODE', message: 'Las asignaciones 3D están temporalmente desactivadas en modo consulta.' },
+      { status: 503, headers: { 'Cache-Control': 'private, no-store' } }
+    );
+  }
   try {
     const body = await req.json();
     const spaceId = typeof body?.spaceId === 'string' ? body.spaceId.trim() : '';
